@@ -30,3 +30,10 @@ FBI =
  - Foxily Blastomyces Inedited
  - Fastland Bouncingly Idiospasm
 ````
+
+# Skills
+
+* Using `argparse`
+* Reading words from a file into a list
+* Randomly selecting words from a list
+* Formatting string output
