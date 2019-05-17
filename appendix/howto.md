@@ -164,6 +164,63 @@ bar
 baz
 ````
 
+## Accept/use a random seed argument
+
+Here is how I would define and use a random seed argument using `argparse`. If the `--seed` is defined with `default=None`, then you can pass it directly to `random.seed`. When it is defined by the user, it will be used; otherwise it is ignored.
+
+````
+$ cat -n random_seed.py
+     1	#!/usr/bin/env python3
+     2	"""
+     3	Author : kyclark
+     4	Date   : 2019-05-17
+     5	Purpose: Get/use a random seed from argparse
+     6	"""
+     7
+     8	import argparse
+     9	import random
+    10	import sys
+    11
+    12
+    13	# --------------------------------------------------
+    14	def get_args():
+    15	    """get command-line arguments"""
+    16	    parser = argparse.ArgumentParser(
+    17	        description='Get/use a random seed from argparse',
+    18	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    19
+    20	    parser.add_argument('-s',
+    21	                        '--seed',
+    22	                        help='Random seed',
+    23	                        metavar='int',
+    24	                        type=int,
+    25	                        default=None)
+    26
+    27	    return parser.parse_args()
+    28
+    29
+    30	# --------------------------------------------------
+    31	def main():
+    32	    """Make a jazz noise here"""
+    33	    args = get_args()
+    34	    random.seed(args.seed)
+    35
+    36	    print('Random number is "{}"'.format(random.randint(1, 100)))
+    37
+    38
+    39	# --------------------------------------------------
+    40	if __name__ == '__main__':
+    41	    main()
+$ ./random_seed.py
+Random number is "31"
+$ ./random_seed.py
+Random number is "35"
+$ ./random_seed.py -s 1
+Random number is "18"
+$ ./random_seed.py -s 1
+Random number is "18"
+````
+
 ## Test if an argument is a directory and list the contents
 
 ````
