@@ -1,7 +1,7 @@
-.PHONY: doc test
+.PHONY: pdf test
 
-doc:
-	pandoc README.md -o README.pdf --latex-engine=xelatex
+pdf:
+	pandoc README.md -o README.pdf --pdf-engine=xelatex
 
 test:
 	pytest -v test.py
