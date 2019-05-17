@@ -266,6 +266,51 @@ codons.py
 default_arg.py
 ````
 
+## Loop N Times
+
+If you want to go through a loop some defined number of times, maybe combine `for` and `range`:
+
+````
+$ cat -n looping_n_times.py
+     1	#!/usr/bin/env python3
+     2	"""
+     3	Author : kyclark
+     4	Date   : 2019-05-17
+     5	Purpose: Looping N times
+     6	"""
+     7
+     8	import os
+     9	import sys
+    10
+    11
+    12	# --------------------------------------------------
+    13	def main():
+    14	    """main"""
+    15	    args = sys.argv[1:]
+    16
+    17	    if len(args) != 1:
+    18	        print('Usage: {} NUM'.format(os.path.basename(sys.argv[0])))
+    19	        sys.exit(1)
+    20
+    21	    arg = args[0]
+    22
+    23	    if arg.isdigit():
+    24	        for i in range(1, int(arg) + 1):
+    25	            print('{} time{}'.format(i, '' if i == 1 else 's'))
+    26	    else:
+    27	        print('"{}" is not a number'.format(arg))
+    28
+    29
+    30
+    31	# --------------------------------------------------
+    32	if __name__ == '__main__':
+    33	    main()
+$ ./looping_n_times.py 3
+1 time
+2 times
+3 times
+````
+
 ## Skip an iteration of a loop
 
 Sometimes in a loop (`for` or `while`) you want to skip immediately to the top of the loop. You can use `continue` to do this. In this example, we skip the even-numbered lines by using the modulus `%` operator to find those line numbers which have a remainder of 0 after dividing by 2. We can use the `enumerate` function to provide both the array index and value of any list.
