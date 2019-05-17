@@ -1,0 +1,7 @@
+__pycache__
+.pytest_cache
+*.swp
+*~
+.cache
+.ipynb_checkpoints
+.DS_Store
