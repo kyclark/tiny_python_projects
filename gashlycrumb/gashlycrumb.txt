@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-
-import os
-import sys
-
-lines = """
 A is for Amy who fell down the stairs.
 B is for Basil assaulted by bears.
 C is for Clara who wasted away.
@@ -30,17 +24,3 @@ W is for Winnie embedded in ice.
 X is for Xerxes devoured by mice.
 Y is for Yorick whose head was bashed in.
 Z is for Zillah who drank too much gin.
-""".strip().splitlines()
-
-lookup = {}
-for line in lines:
-    lookup[line[0]] = line
-
-while True:
-    letter = input('What letter? [! to quit] ').upper()
-    if letter == '!':
-        break
-    elif letter in lookup:
-        print(lookup[letter])
-    else:
-        print('I do not know "{}"'.format(letter))
