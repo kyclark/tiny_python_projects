@@ -1,6 +1,6 @@
 # How To Do Common Operations in Python
 
-## Get positional command-line arguments
+# Get positional command-line arguments
 
 You can get the command-line arguments using `sys.argv` (argument vector), but it's annoying that the name of the Python program itself is in the first position (`sys.argv[0]`). To skip over this, take a slice of the argument vector starting at the second position (index `1`) which will succeed even if there are no arguments -- you'll get an empty list, which is safe.
 
@@ -22,7 +22,7 @@ There are 1 arg
 $ ./args.py foo bar
 There are 2 args
 ````
-## Put positional arguments into named variables
+# Put positional arguments into named variables
 
 If you use `sys.argv[1]` and `sys.argv[2]` throughout your program, it degrades readability. It's better to copy the values into variables that have meaningful names like "file" or "num_lines".
 
@@ -51,7 +51,7 @@ $ ./name_args.py nobody.txt 10
 FILE is "nobody.txt", NUM is "10"
 ````
 
-## Set defaults for optional arguments
+# Set defaults for optional arguments
 
 ````
 $ cat -n default_arg.py
@@ -79,7 +79,7 @@ $ ./default_arg.py nobody.txt 5
 FILE is "nobody.txt", NUM is "5"
 ````
 
-## Test argument is file and read
+# Test argument is file and read
 
 This program takes an argument, tests that it is a file, and then reads it. It's basically `cat`.
 
@@ -121,7 +121,7 @@ To an admiring Bog!
 Emily Dickinson
 ````
 
-## Write data to a file
+# Write data to a file
 
 To write a file, you need to `open` some filename with a second argument of the "mode" where
 
@@ -164,7 +164,7 @@ bar
 baz
 ````
 
-## Accept/use a random seed argument
+# Accept/use a random seed argument
 
 Here is how I would define and use a random seed argument using `argparse`. If the `--seed` is defined with `default=None`, then you can pass it directly to `random.seed`. When it is defined by the user, it will be used; otherwise it is ignored.
 
@@ -221,7 +221,7 @@ $ ./random_seed.py -s 1
 Random number is "18"
 ````
 
-## Test if an argument is a directory and list the contents
+# Test if an argument is a directory and list the contents
 
 ````
 $ cat -n list_dir.py
@@ -266,7 +266,7 @@ codons.py
 default_arg.py
 ````
 
-## Loop N Times
+# Loop N Times
 
 If you want to go through a loop some defined number of times, maybe combine `for` and `range`:
 
@@ -311,7 +311,7 @@ $ ./looping_n_times.py 3
 3 times
 ````
 
-## Skip an iteration of a loop
+# Skip an iteration of a loop
 
 Sometimes in a loop (`for` or `while`) you want to skip immediately to the top of the loop. You can use `continue` to do this. In this example, we skip the even-numbered lines by using the modulus `%` operator to find those line numbers which have a remainder of 0 after dividing by 2. We can use the `enumerate` function to provide both the array index and value of any list.
 
@@ -351,7 +351,7 @@ $ ./skip_loop.py nobody.txt
 11 Emily Dickinson
 ````
 
-## Create a directory if it does not exist
+# Create a directory if it does not exist
 
 This program takes a directory name and looks to see if it already exists or needs to be created.
 
@@ -476,7 +476,7 @@ $ ./unpack_dict2.py
 1982 Signals
 ````
 
-## Sort a dictionary by keys
+# Sort a dictionary by keys
 
 To sort a dictionary by the keys, you have to understand that the `.sort()` method of an list mutates the list *in-place*. We get the keys of a dictionary with the `.keys()` method which does not support the `.sort()` method:
 
@@ -596,7 +596,7 @@ Power Windows             1985
 Signals                   1982
 ````
 
-## Sort a dictionary by values
+# Sort a dictionary by values
 
 To sort a dictionary by the values rather than the keys, we need to reverse the tuples which is what happens on line 24. Notice that in years when two albums were released, the `sorted` first sorts by the first tuple member (the year) and then the second (album name):
 
