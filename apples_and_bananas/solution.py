@@ -54,8 +54,13 @@ def main():
     if os.path.isfile(text):
         text = open(text).read()
 
-    text = re.sub('[aeiou]', vowel, text)
-    text = re.sub('[AEIOU]', vowel.upper(), text)
+    # Method 1: str.replace
+    for v in 'aeiou':
+        text = text.replace(v, vowel).replace(v.upper(), vowel.upper())
+
+    # Method 2: Regular expressions
+    # text = re.sub('[aeiou]', vowel, text)
+    # text = re.sub('[AEIOU]', vowel.upper(), text)
 
     print(text.rstrip())
 
