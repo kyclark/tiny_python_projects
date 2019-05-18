@@ -69,7 +69,6 @@ def main():
     # for v in 'aeiou':
     #     text = text.replace(v, vowel).replace(v.upper(), vowel.upper())
 
-
     # Method 3: Use a list comprehension
     # new_text = [
     #     vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
@@ -80,6 +79,7 @@ def main():
     # Method 4: Define a function, use list comprehension
     def new_char(c):
         return vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
+
     # text = ''.join([new_char(c) for c in text])
 
     # Method 5: Use a `map` to iterate with a `lambda`
