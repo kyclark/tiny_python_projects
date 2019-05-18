@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Author : kyclark
+Author : Ken Youens-Clark <kyclark@gmail.com>
 Date   : 2019-05-18
-Purpose: Rock the Casbah
+Purpose: Apples and bananas
 """
 
 import argparse
@@ -15,19 +15,18 @@ import sys
 def get_args():
     """get command-line arguments"""
     parser = argparse.ArgumentParser(
-        description='Argparse Python script',
+        description='Apples and bananas',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('text', metavar='str', help='Input text or file')
 
-    parser.add_argument(
-        '-v',
-        '--vowel',
-        help='The only vowel allowed',
-        metavar='str',
-        type=str,
-        default='a',
-        choices=list('aeiou'))
+    parser.add_argument('-v',
+                        '--vowel',
+                        help='The only vowel allowed',
+                        metavar='str',
+                        type=str,
+                        default='a',
+                        choices=list('aeiou'))
 
     return parser.parse_args()
 
@@ -59,6 +58,7 @@ def main():
     text = re.sub('[AEIOU]', vowel.upper(), text)
 
     print(text.rstrip())
+
 
 # --------------------------------------------------
 if __name__ == '__main__':
