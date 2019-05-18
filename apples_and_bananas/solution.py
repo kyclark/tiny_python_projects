@@ -54,11 +54,22 @@ def main():
     if os.path.isfile(text):
         text = open(text).read()
 
-    # Method 1: str.replace
-    for v in 'aeiou':
-        text = text.replace(v, vowel).replace(v.upper(), vowel.upper())
+    # Method 1: Iterate every character
+    new_text = []
+    for char in text:
+        if char in 'aeiou':
+            new_text.append(vowel)
+        elif char in 'AEIOU':
+            new_text.append(vowel.upper())
+        else:
+            new_text.append(char)
+    text = ''.join(new_text)
 
-    # Method 2: Regular expressions
+    # Method 2: str.replace
+    # for v in 'aeiou':
+    #     text = text.replace(v, vowel).replace(v.upper(), vowel.upper())
+
+    # Method 3: Regular expressions
     # text = re.sub('[aeiou]', vowel, text)
     # text = re.sub('[AEIOU]', vowel.upper(), text)
 
