@@ -15,33 +15,33 @@ from datetime import date
 
 # --------------------------------------------------
 def get_args():
-    """get arguments"""
+    """Get arguments"""
+
     parser = argparse.ArgumentParser(
         description='Create Python script',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('program', help='Program name', type=str)
 
-    parser.add_argument(
-        '-a',
-        '--argparse',
-        help='Use argparse',
-        dest='use_argparse',
-        action='store_true')
+    parser.add_argument('-a',
+                        '--argparse',
+                        help='Use argparse',
+                        dest='use_argparse',
+                        action='store_true')
 
-    parser.add_argument(
-        '-f',
-        '--force',
-        help='Overwrite existing',
-        dest='overwrite',
-        action='store_true')
+    parser.add_argument('-f',
+                        '--force',
+                        help='Overwrite existing',
+                        dest='overwrite',
+                        action='store_true')
 
     return parser.parse_args()
 
 
 # --------------------------------------------------
 def main():
-    """main"""
+    """Make a jazz noise here"""
+
     args = get_args()
     out_file = args.program
 
@@ -58,7 +58,6 @@ def main():
         if not re.match('^[yY]', answer):
             print('Will not overwrite. Bye!')
             sys.exit()
-
 
     out_fh = open(out_file, 'w')
     preamble = PREAMBLE.format(os.getenv('USER'), str(date.today()))
@@ -87,7 +86,8 @@ import sys
 
 # --------------------------------------------------
 def main():
-    \"\"\"main\"\"\"
+    \"\"\"Make a jazz noise here\"\"\"
+
     args = sys.argv[1:]
 
     if len(args) != 1:
@@ -107,57 +107,48 @@ if __name__ == '__main__':
 # --------------------------------------------------
 ARGPARSE = """
 import argparse
+import os
 import sys
 
 
 # --------------------------------------------------
 def get_args():
-    \"\"\"get command-line arguments\"\"\"
+    \"\"\"Get command-line arguments\"\"\"
+
     parser = argparse.ArgumentParser(
         description='Argparse Python script',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        'positional', metavar='str', help='A positional argument')
+    parser.add_argument('positional',
+                        metavar='str',
+                        help='A positional argument')
 
-    parser.add_argument(
-        '-a',
-        '--arg',
-        help='A named string argument',
-        metavar='str',
-        type=str,
-        default='')
+    parser.add_argument('-a',
+                        '--arg',
+                        help='A named string argument',
+                        metavar='str',
+                        type=str,
+                        default='')
 
-    parser.add_argument(
-        '-i',
-        '--int',
-        help='A named integer argument',
-        metavar='int',
-        type=int,
-        default=0)
+    parser.add_argument('-i',
+                        '--int',
+                        help='A named integer argument',
+                        metavar='int',
+                        type=int,
+                        default=0)
 
-    parser.add_argument(
-        '-f', '--flag', help='A boolean flag', action='store_true')
+    parser.add_argument('-f',
+                        '--flag',
+                        help='A boolean flag',
+                        action='store_true')
 
     return parser.parse_args()
 
 
 # --------------------------------------------------
-def warn(msg):
-    \"\"\"Print a message to STDERR\"\"\"
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    \"\"\"warn() and exit with error\"\"\"
-    warn(msg)
-    sys.exit(1)
-
-
-# --------------------------------------------------
 def main():
     \"\"\"Make a jazz noise here\"\"\"
+
     args = get_args()
     str_arg = args.arg
     int_arg = args.int
