@@ -7,10 +7,10 @@ Purpose: Python program to write a Python program
 
 import argparse
 import os
-import re
 import subprocess
 import sys
 from datetime import date
+from dire import die
 
 
 # --------------------------------------------------
@@ -18,21 +18,19 @@ def get_args():
     """Get arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Create Python script',
+        description='Create Python argparse/simple program',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('program', help='Program name', type=str)
 
-    parser.add_argument('-a',
-                        '--argparse',
-                        help='Use argparse',
-                        dest='use_argparse',
+    parser.add_argument('-s',
+                        '--simple',
+                        help='Use simple format',
                         action='store_true')
 
     parser.add_argument('-f',
                         '--force',
                         help='Overwrite existing',
-                        dest='overwrite',
                         action='store_true')
 
     return parser.parse_args()
@@ -43,25 +41,21 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    out_file = args.program
+    out_file = args.program.strip().replace('-', '_')
 
-    if len(out_file.strip()) < 1:
-        print('Not a usable filename "{}"'.format(out_file))
-        sys.exit(1)
+    if not out_file: die('Not a usable filename "{}"'.format(out_file))
 
-    out_file = re.sub(r'-', r'_', out_file)
-    if not re.search(r'\.py$', out_file):
-        out_file = out_file + '.py'
+    if not out_file.endswith('.py'): out_file += '.py'
 
-    if os.path.isfile(out_file) and not args.overwrite:
+    if os.path.isfile(out_file) and not args.force:
         answer = input('"{}" exists.  Overwrite? [yN] '.format(out_file))
-        if not re.match('^[yY]', answer):
+        if not answer.lower().startswith('y'):
             print('Will not overwrite. Bye!')
             sys.exit()
 
     out_fh = open(out_file, 'w')
     preamble = PREAMBLE.format(os.getenv('USER'), str(date.today()))
-    text = ARGPARSE if args.use_argparse else SIMPLE
+    text = SIMPLE if args.simple else ARGPARSE
 
     out_fh.write(preamble)
     out_fh.write(text)
