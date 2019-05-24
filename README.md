@@ -38,6 +38,7 @@ Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you
 * bacronym (\*\*): back-fit words onto acronyms
 * blackjack (\*\*): play Blackjack (card game)
 * bottles_of_beer (\*): produce the "Bottle of Beer on the Wall" song
+* family_tree (\*\*): use GraphViz to visualize a family tree from text 
 * gashlycrumb (\*): create a morbid lookup table from text
 * gematria (\*\*): calculate numeric values of words from characters
 * guess (\*): write a number-guessing game
