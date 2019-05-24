@@ -18,7 +18,7 @@ This will create a new file called `abc.py` (that has been made executable with 
 
 # How to Use
 
-Do a `git clone $URL` of this repository, then do `git add upstream master $URL` so that you can do `git pull upstream master` to get updates. When you create new files, `git add/commit/push` them to *your* repository. (Please do not create pull requests on *my* repository -- unless, of course, you have suggestions for improving my repo!).
+Do a `git clone $URL` of this repository, then do `git remote add upstream $URL` so that you can do `git pull upstream master` to get updates. When you create new files, `git add/commit/push` them to *your* repository. (Please do not create pull requests on *my* repository -- unless, of course, you have suggestions for improving my repo!).
 
 This is a work in progress. If you see a directory contains a `README.md`, `solution.py`, `Makefile`, and `test.py`, then it's likely ready to be solved.
 
