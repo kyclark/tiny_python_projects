@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """
-Author : kyclark
+Author : Ken Youens-Clark <kyclark@gmail.com>
 Date   : 2019-05-23
 Purpose: Markov Chain
 """
 
 import argparse
+import logging
 import os
-import sys
 import random
 import string
+import sys
 from pprint import pprint as pp
 from collections import defaultdict
 
@@ -56,6 +57,11 @@ def get_args():
                         type=int,
                         default=70)
 
+    parser.add_argument('-d',
+                        '--debug',
+                        help='Debug to ".log"',
+                        action='store_true')
+
     return parser.parse_args()
 
 
@@ -70,6 +76,11 @@ def main():
 
     random.seed(args.seed)
 
+    logging.basicConfig(
+        filename='.log',
+        filemode='w',
+        level=logging.DEBUG if args.debug else logging.CRITICAL)
+
     all_words = defaultdict(list)
     for fh in args.training:
         words = fh.read().split()
@@ -78,15 +89,18 @@ def main():
             l = words[i:i + num_words + 1]
             all_words[tuple(l[:-1])].append(l[-1])
 
-    #pp(all_words)
+    logging.debug('all words = {}'.format(all_words))
 
     prev = ''
     while not prev:
         start = random.choice(
-            list(filter(lambda w: w[0][0] in string.ascii_uppercase,
-                        all_words.keys())))
+            list(
+                filter(lambda w: w[0][0] in string.ascii_uppercase,
+                       all_words.keys())))
         if all_words[start]:
             prev = start
+
+    logging.debug('Starting with "{}"'.format(prev))
 
     p = ' '.join(prev)
     char_count = len(p)
@@ -98,6 +112,7 @@ def main():
 
         new_word = random.choice(all_words[prev])
         new_len = len(new_word) + 1
+        logging.debug('chose = "{}" from {}'.format(new_word, all_words[prev]))
 
         if line_width + new_len >= text_width:
             print()
@@ -108,11 +123,13 @@ def main():
         char_count += new_len
 
         print(new_word, end=' ')
-        prev = prev[1:] + (new_word,)
+        prev = prev[1:] + (new_word, )
 
         if char_count >= char_max and prev[-1][-1] in '.!?': break
 
+    logging.debug('Finished')
     print()
+
 
 # --------------------------------------------------
 if __name__ == '__main__':
