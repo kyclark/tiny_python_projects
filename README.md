@@ -6,15 +6,15 @@ I'd like to make this into a book or something, similar to the Python bioinforma
 
 I think I'm going to present this differently from other material in that I won't necessarily show you beforehand what you need to write a program. I'll describe what the program should do and provide some discussion about how to write it. I'll also create an appendix with short example of how to do things like read/write from/to a file, process all the files in a directory, extract k-mers from a string, etc. I'll provide some building blocks, but I want you to figure out how to put the pieces together!
 
-# new_py.py
+# new_py
 
-I provide a program in the `bin` directory called `new_py.py` that will help you stub out new Python programs using the fabulous `argparse` module to parse the command line arguments and options for your programs. I highly recommend you start every new program with this. For example, if the `README.md` says "Write a Python program called `abc.py` that ...", then you should do this:
+I provide a program in the `bin` directory called `new_py` that will help you stub out new Python programs using the fabulous `argparse` module to parse the command line arguments and options for your programs. I highly recommend you start every new program with this. For example, if the `README.md` says "Write a Python program called `abc.py` that ...", then you should do this:
 
 ````
-$ new_py.py abc
+$ new_py abc
 ````
 
-This will create a new file called `abc.py` (that has been made executable with `chmod +x`, if your operating system supports that) that has example code for you to start writing your program. It's best to put `new_py.py` into your `$PATH` or alter your `$PATH` to include the directory where it's located. FWIW, I always create a `$HOME/.local/bin` that I add to my `$PATH` for programs like this.
+This will create a new file called `abc.py` (that has been made executable with `chmod +x`, if your operating system supports that) that has example code for you to start writing your program. It's best to put `new_py` into your `$PATH` or alter your `$PATH` to include the directory where it's located. FWIW, I always create a `$HOME/.local/bin` that I add to my `$PATH` for programs like this.
 
 # How to Use
 
@@ -46,7 +46,8 @@ Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you
 * jump_the_five (\*): numeric encryption
 * kentucky_fryer (\*\*): turn text into Southern American English
 * mad_libs: TBD
-* markov_chain (\*\*\*): write a Markov chain algorithm
+* markov_words (\*\*): Markov chain to generate words
+* markov_chain (\*\*\*): Markov chain to generate text
 * morse (\*\*\*): write a Morse encoder/decoder
 * movie_reader (\*): print characters of text with movie pauses
 * palindromes (\*): find palindromes in text
@@ -65,7 +66,7 @@ Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you
 In addition, there are:
 
 * appendix: texts on thing like data structures, regular expressions, etc. that are used in different exercises
-* bin: useful programs like `new_py.py`
+* bin: useful programs like `new_py`
 
 # Author
 
