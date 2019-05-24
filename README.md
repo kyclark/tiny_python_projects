@@ -26,9 +26,6 @@ This is a work in progress. If you see a directory contains a `README.md`, `solu
 
 Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you just randomly chose one and see how it goes. They vary quite a bit in difficulty, so maybe I'll just give them 1, 2, or 3 stars to indicate easy to hard. Here I'll give a brief overview of the exercises:
 
-./appendix
-./bin
-
 * abuse (\*\*): generate insults
 * anagram (\*\*\*): find anagrams of text
 * apples_and_bananas (\*): substitute vowels in text
@@ -58,6 +55,11 @@ Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you
 * tictactoe (\*\*): write a Tic-Tac-Toe game
 * twelve_days_of_christmas (\*\*): produce the "12 Days of Christmas" song
 * war (\*\*): play the War card game
+
+In addition, there are:
+
+* appendix: texts on thing like data structures, regular expressions, etc. that are used in different exercises
+* bin: useful programs like `new_py.py`
 
 # Author
 
