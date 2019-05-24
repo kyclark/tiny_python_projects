@@ -19,6 +19,17 @@ optional arguments:
   -n int, --num_words int
                         Number of words (default: 2)
   -s int, --seed int    Random seed (default: None)
-$ ./markov.py -s 2 ../inputs/const.txt
-Law make or equity, commenced or Labour in the seat of the powers and district shall be elected, be determined by ballot for as President, or a punishment for two persons, of Naturalization, and a Law, or the Unanimous Consent of the presence of January, unless actually invaded, or more than two Senators and a Member or term to the State shall be counted; The right of the Executive thereof into, or any Thing in such number shall have qualified; and if it to support the House of the Confederation.
+$ ./markov.py ../inputs/const.txt
+President. But if there should remain two or more States, or any
+place subject to the other House, by which it shall have been chosen
+before the time fixed for the beginning of his office, the Vice
+President, to be prescribed by law. Amendment 8 Excessive bail shall
+not prevent any person of life, liberty, or property, without due
+process of law; nor deny to any of the States by the United States
+shall be necessary to the whole number of male citizens twenty-one
+years of a Member or Members from two-thirds of the government of
+the States, are reserved to the Constitution of the United States,
+shall be drawn from the date of the Adoption of this Constitution,
+or, on the Application of the Senate, the executive departments or
+of the laws thereof, is denied to any other Place.
 ````
