@@ -52,16 +52,20 @@ optional arguments:
                         Max number of characters per line (default: 70)
   -d, --debug           Debug to ".log" (default: False)
 $ ./markov.py ../inputs/const.txt
-President. But if there should remain two or more States, or any
-place subject to the other House, by which it shall have been chosen
-before the time fixed for the beginning of his office, the Vice
-President, to be prescribed by law. Amendment 8 Excessive bail shall
-not prevent any person of life, liberty, or property, without due
-process of law; nor deny to any of the States by the United States
-shall be necessary to the whole number of male citizens twenty-one
-years of a Member or Members from two-thirds of the government of
-the States, are reserved to the Constitution of the United States,
-shall be drawn from the date of the Adoption of this Constitution,
-or, on the Application of the Senate, the executive departments or
-of the laws thereof, is denied to any other Place.
+Discoveries; To constitute Tribunals inferior to the seat of the
+Senate and House of Representatives shall have been committed, which
+district shall have the Qualifications requisite for Electors of the
+sixth Year, so that one third may be imposed on such Importation, not
+exceeding three on the Journal. Neither House, during the Time of
+Adjournment, he may require it. No Bill of Attainder or ex post facto
+Law shall be established by Law: but the Party convicted shall
+nevertheless be liable and subject to their Consideration such
+Measures as he shall nominate, and by and with the Advice and Consent
+of the government of the United States under this Constitution, or,
+on the List the said Office, the same State claiming Lands under
+Grants of different States; between Citizens of each shall constitute
+a Quorum to do Business; but a smaller number may adjourn from day to
+day, and may be included within this Union, according to their
+Consideration such Measures as he shall nominate, and by and with the
+Advice and Consent of the United States.
 ````

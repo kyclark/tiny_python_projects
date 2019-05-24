@@ -114,18 +114,16 @@ def main():
         new_len = len(new_word) + 1
         logging.debug('chose = "{}" from {}'.format(new_word, all_words[prev]))
 
-        if line_width + new_len >= text_width:
+        if line_width + new_len > text_width:
             print()
             line_width = new_len
         else:
             line_width += new_len
 
         char_count += new_len
-
         print(new_word, end=' ')
+        if char_count >= char_max and new_word[-1] in '.!?': break
         prev = prev[1:] + (new_word, )
-
-        if char_count >= char_max and prev[-1][-1] in '.!?': break
 
     logging.debug('Finished')
     print()
