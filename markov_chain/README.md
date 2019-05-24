@@ -1,6 +1,10 @@
 # Markov Chain
 
-_The Practice of Programming_ by Brian Kernighan and Rob Pike describes the Markov Chain algorithm and how it can be implemented in C, C++, Java, awk, and Perl. You should write a Python program called `markov.py` that takes one or more text files as positional arguments for training
+Write a Python program called `markov.py` that takes one or more text files as positional arguments for training
+
+# Background
+
+Read about Markov chains at https://en.wikipedia.org/wiki/Markov_chain or in _The Practice of Programming_ by Brian Kernighan and Rob Pike where they discuss implementations in C, C++, Java, awk, and Perl. 
 
 ````
 $ ./markov.py
