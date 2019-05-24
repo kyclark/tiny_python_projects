@@ -11,7 +11,8 @@ import os
 import re
 import sys
 from collections import defaultdict, Counter
-from itertools import combinations, product
+from itertools import combinations, permutations, product, chain
+from dire import warn, die
 
 
 # --------------------------------------------------
@@ -43,19 +44,6 @@ def get_args():
 
 
 # --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
-
-
-# --------------------------------------------------
 def main():
     """Make a jazz noise here"""
     args = get_args()
@@ -80,29 +68,35 @@ def main():
 
     text_len = len(text)
     counts = Counter(text)
-    anagrams = []
+    anagrams = set()
     lengths = list(words.keys())
     for i in range(1, args.num_combos + 1):
+        #key_combos = list(
+        #    filter(lambda t: sum(t) == text_len, combinations(lengths, i)))
+
         key_combos = list(
-            filter(lambda t: sum(t) == text_len, combinations(lengths, i)))
+            filter(
+                lambda t: sum(t) == text_len,
+                set(
+                    map(lambda t: tuple(sorted(t)),
+                        combinations(chain(lengths, lengths), i)))))
 
         for keys in key_combos:
             logging.debug('Searching keys {}'.format(keys))
             word_combos = list(product(*list(map(lambda k: words[k], keys))))
-            anagrams.extend(
-                filter(
-                    lambda x: x != text,
-                    map(
-                        lambda t: ' '.join(t),
-                        filter(lambda t: Counter(''.join(t)) == counts,
-                               word_combos))))
+
+            for t in word_combos:
+                if Counter(''.join(t)) == counts:
+                    for p in filter(lambda x: x != text, map(lambda x: ' '.join(x), permutations(t))):
+                        anagrams.add(p)
+
             logging.debug('# anagrams = {}'.format(len(anagrams)))
 
     logging.debug('Finished searching')
 
     if anagrams:
         print('{} = '.format(text))
-        for i, t in enumerate(anagrams, 1):
+        for i, t in enumerate(sorted(anagrams), 1):
             print('{:4}. {}'.format(i, t))
     else:
         print('No anagrams for "{}".'.format(text))
