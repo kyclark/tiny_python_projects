@@ -1,0 +1,22 @@
+EM = Ewell Magee
+MLB = Mary Lulu Bond
+EBM = Elizabeth Magee
+BJM = Jean Magee
+DWM = Durwood Magee
+MAM = Martha Magee
+EVM = Evelyn Magee
+EY = Ernest Youens
+MRY = Mrs. Youens
+BY = Bob Youens
+CY = Charlie Youens
+JY = John Youens
+KYC = Ken Youens-Clark
+NCY = Nancy Youens
+
+EM married MLB
+EM and MLB begat EBM, BJM, DWM, MAM, EVM
+MAM married CY
+CY and MAM begat KYC
+EY and MRY begat BY, CY, JY
+EY married MRY
+JY married NCY
