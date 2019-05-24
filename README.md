@@ -8,13 +8,13 @@ I think I'm going to present this differently from other material in that I won'
 
 # new_py.py
 
-I provide a program in the `bin` directory called `new_py.py` that will help you stub out new Python programs using the fabulous `argparse` module to parse the command line arguments and options for your programs. I highly recommend you start every new program with this. For example, if the `README` say "Write a Python program called `abc.py` that ...", then you should do this:
+I provide a program in the `bin` directory called `new_py.py` that will help you stub out new Python programs using the fabulous `argparse` module to parse the command line arguments and options for your programs. I highly recommend you start every new program with this. For example, if the `README.md` says "Write a Python program called `abc.py` that ...", then you should do this:
 
 ````
 $ new_py.py abc
 ````
 
-To create a new `abc.py` program that has example code for you to start writing your program.
+This will create a new file called `abc.py` (that has been made executable with `chmod +x`, if your operating system supports that) that has example code for you to start writing your program. It's best to put `new_py.py` into your `$PATH` or alter your `$PATH` to include the directory where it's located. FWIW, I always create a `$HOME/.local/bin` that I add to my `$PATH` for programs like this.
 
 # How to Use
 
