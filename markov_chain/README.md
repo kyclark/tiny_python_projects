@@ -26,10 +26,6 @@ My implementation includes a `-d|--debug` option that will write a `.log` file s
 
 You should find many diverse texts and use them all as training files with varying numbers for `-n` to see how the texts will be mixed. The results are endlessly entertaining.
 
-# Background
-
-Read about Markov chains at https://en.wikipedia.org/wiki/Markov_chain or in _The Practice of Programming_ by Brian Kernighan and Rob Pike where they discuss implementations in C, C++, Java, awk, and Perl. 
-
 ````
 $ ./markov.py
 usage: markov.py [-h] [-l int] [-n int] [-s int] [-w int] [-d] FILE [FILE ...]
