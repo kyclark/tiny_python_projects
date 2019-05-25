@@ -2,6 +2,8 @@
 
 Write a Python program called `scrambler.py` that will take a single position positional argument that is text or a text file and then convert each word into a scrambled version. The scrambling should only work on words greater than 3 characters in length and should only scramble the letters in the middle, leaving the first and last characters unchanged. The program should take a `-s|--seed` argumen to pass to `random.seed`.
 
+Cf. Typoglycemia https://www.dictionary.com/e/typoglycemia/
+
 ````
 $ ./scrambler.py
 usage: scrambler.py [-h] [-s int] STR
