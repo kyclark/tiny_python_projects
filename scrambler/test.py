@@ -29,6 +29,7 @@ def test_text1():
     out = getoutput('{} foobar -s 1'.format(prg))
     assert out.strip() == 'faobor'
 
+
 # --------------------------------------------------
 def test_text2():
     """Text"""
@@ -56,6 +57,8 @@ Until erttenyi.
     """.strip()
     out = getoutput('{} --seed 3 {}'.format(prg, bustle))
     assert out.strip() == expected
+
+
 # --------------------------------------------------
 def test_file_bustle():
     """File input"""
