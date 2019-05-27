@@ -4,6 +4,8 @@ Write a Python program called `scrambler.py` that will take a single position po
 
 Cf. Typoglycemia https://www.dictionary.com/e/typoglycemia/
 
+We'll need to use the same algorithm for scrambling the words. I used the `random.shuffle` method to mix up the letters in the middle, being sure that the word that gets created is not the same as the word that you are given. If the word is 3 characters or shorter, just return the word unchanged.
+
 ````
 $ ./scrambler.py
 usage: scrambler.py [-h] [-s int] STR
