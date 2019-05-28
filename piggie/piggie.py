@@ -10,6 +10,7 @@ import os
 import re
 import string
 import sys
+from dire import warn
 
 
 # --------------------------------------------------
@@ -35,19 +36,6 @@ def get_args():
 
 
 # --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
-
-
-# --------------------------------------------------
 def main():
     """Make a jazz noise here"""
 
@@ -70,10 +58,8 @@ def main():
 
         num_files += 1
         for line in open(file):
-            for word in line.split():
-                clean = re.sub("[^a-zA-Z0-9']", '', word)
-                out_fh.write(pig(clean) + ' ')
-            out_fh.write('\n')
+            for bit in re.split(r"([\w']+)", line):
+                out_fh.write(pig(bit))
 
         out_fh.close()
 
@@ -85,13 +71,15 @@ def main():
 def pig(word):
     """Create Pig Latin version of a word"""
 
-    consonants = re.sub('[aeiouAEIOU]', '', string.ascii_letters)
-    match = re.match('^([' + consonants + ']+)(.+)', word)
-    if match:
-        return '-'.join([match.group(2), match.group(1) + 'ay'])
-    else:
-        return word + '-yay'
+    if re.match(r"^[\w']+$", word):
+        consonants = re.sub('[aeiouAEIOU]', '', string.ascii_letters)
+        match = re.match('^([' + consonants + ']+)(.+)', word)
+        if match:
+            word = '-'.join([match.group(2), match.group(1) + 'ay'])
+        else:
+            word = word + '-yay'
 
+    return word
 
 # --------------------------------------------------
 if __name__ == '__main__':
