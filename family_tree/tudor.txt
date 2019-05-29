@@ -1,0 +1,25 @@
+H7 = Henry VII
+EOY = Elizabeth of York
+H8 = Henry VIII
+COA = Catherine of Aragon
+AB = Anne Boleyn
+JS = Jane Seymour
+AOC = Anne of Cleves
+CH = Catherine Howard
+CP = Catherine Parr
+HDC = Henry, Duke of Cornwall
+M1 = Mary I
+E1 = Elizabeth I
+E6 = Edward VI
+
+H7 married EOY
+H7 and EOY begat H8
+H8 married COA
+H8 married AB
+H8 married JS
+H8 married AOC
+H8 married CH
+H8 married CP
+H8 and COA begat HDC, M1
+H8 and AB begat E1
+H8 and JS begat E6

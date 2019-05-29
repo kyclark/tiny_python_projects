@@ -42,7 +42,6 @@ def main():
     args = get_args()
     fh = args.file
     out_file = args.outfile or os.path.basename(fh.name) + '.gv'
-    print(out_file)
 
     nodes, edges = parse_tree(fh)
     dot = Digraph(comment='Tree')
@@ -58,6 +57,8 @@ def main():
         dot.edge(n1, n2)
 
     dot.render(out_file, view=True)
+
+    print('Done, see output in "{}".'.format(out_file))
 
 # --------------------------------------------------
 def parse_tree(fh):
