@@ -30,44 +30,7 @@ This is a work in progress. If you see a directory contains a `README.md`, `solu
 
 # Structure
 
-Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you just randomly chose one and see how it goes. They vary quite a bit in difficulty, so maybe I'll just give them 1, 2, or 3 stars to indicate easy to hard. Here I'll give a brief overview of the exercises:
-
-* abuse (\*\*): generate insults
-* anagram (\*\*\*): find anagrams of text
-* apples_and_bananas (\*): substitute vowels in text
-* bacronym (\*\*): back-fit words onto acronyms
-* blackjack (\*\*): play Blackjack (card game)
-* bottles_of_beer (\*): produce the "Bottle of Beer on the Wall" song
-* family_tree (\*\*): use GraphViz to visualize a family tree from text 
-* gashlycrumb (\*): create a morbid lookup table from text
-* gematria (\*\*): calculate numeric values of words from characters
-* guess (\*): write a number-guessing game
-* hangman (\*\*\*): write a Hangman (word/letter-guessing game)
-* howler (\*): uppercase input text
-* jump_the_five (\*): numeric encryption
-* kentucky_fryer (\*\*): turn text into Southern American English
-* mad_libs: TBD
-* markov_words (\*\*): Markov chain to generate words
-* markov_chain (\*\*\*): Markov chain to generate text
-* morse (\*\*\*): write a Morse encoder/decoder
-* movie_reader (\*): print characters of text with movie pauses
-* palindromes (\*): find palindromes in text
-* picnic (\*): write the picnic game
-* piggie (\*\*): encode text in Pig Latin
-* ransom_note (\*): transform input text into RaNSom cASe.
-* rhymer (\*): produce rhyming "words" from input text
-* rock_paper_scissors (\*): write Rock, Paper, Scissors game
-* rot13 (\*\*\*): ROT13-encode input text
-* soundex-rhymer (\*\*): use Soundex to find rhyming words from a word list
-* substring (\*\*): write a game to guess words sharing a common substring
-* tictactoe (\*\*): write a Tic-Tac-Toe game
-* twelve_days_of_christmas (\*\*): produce the "12 Days of Christmas" song
-* war (\*\*): play the War card game
-
-In addition, there are:
-
-* appendix: texts on thing like data structures, regular expressions, etc. that are used in different exercises
-* bin: useful programs like `new.py`
+Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you just randomly chose one and see how it goes. They vary quite a bit in difficulty, so maybe I'll just give them 1, 2, or 3 stars to indicate easy to hard. See OUTLINE.md for more.
 
 # Author
 

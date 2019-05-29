@@ -9,27 +9,32 @@ Write a program called `tree.py` that will take an input file as a single positi
 Use the `graphviz` module to generate a graph like the `kyc.gv.pdf` included here that was generated from the following input:
 
 ````
-$ cat kyc.txt
-EM = Ewell Magee
-MLB = Mary Lulu Bond
-EBM = Elizabeth Magee
-BJM = Jean Magee
-DWM = Durwood Magee
-MAM = Martha Magee
-EVM = Evelyn Magee
-EY = Ernest Youens
-MRY = Mrs. Youens
-BY = Bob Youens
-CY = Charlie Youens
-JY = John Youens
-KYC = Ken Youens-Clark
-NCY = Nancy Youens
+$ cat tudor.txt
+H7 = Henry VII
+EOY = Elizabeth of York
+H8 = Henry VIII
+COA = Catherine of Aragon
+AB = Anne Boleyn
+JS = Jane Seymour
+AOC = Anne of Cleves
+CH = Catherine Howard
+CP = Catherine Parr
+HDC = Henry, Duke of Cornwall
+M1 = Mary I
+E1 = Elizabeth I
+E6 = Edward VI
 
-EM married MLB
-EM and MLB begat EBM, BJM, DWM, MAM, EVM
-MAM married CY
-CY and MAM begat KYC
-EY and MRY begat BY, CY, JY
-EY married MRY
-JY married NCY
+H7 married EOY
+H7 and EOY begat H8
+H8 married COA
+H8 married AB
+H8 married JS
+H8 married AOC
+H8 married CH
+H8 married CP
+H8 and COA begat HDC, M1
+H8 and AB begat E1
+H8 and JS begat E6
+$ ./tree.py tudor.txt
+Done, see output in "tudor.txt.gv".
 ````
