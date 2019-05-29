@@ -9,6 +9,7 @@ import os
 import random
 import re
 import sys
+from dire import die
 
 
 # --------------------------------------------------
@@ -18,21 +19,35 @@ def get_args():
         description='Hangman',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        '-l', '--maxlen', help='Max word length', type=int, default=10)
+    parser.add_argument('-l',
+                        '--maxlen',
+                        help='Max word length',
+                        type=int,
+                        default=10)
 
-    parser.add_argument(
-        '-n', '--minlen', help='Min word length', type=int, default=5)
+    parser.add_argument('-n',
+                        '--minlen',
+                        help='Min word length',
+                        type=int,
+                        default=5)
 
-    parser.add_argument(
-        '-m', '--misses', help='Max number of misses', type=int, default=10)
+    parser.add_argument('-m',
+                        '--misses',
+                        help='Max number of misses',
+                        type=int,
+                        default=10)
 
-    parser.add_argument(
-        '-w',
-        '--wordlist',
-        help='Word list',
-        type=str,
-        default='/usr/share/dict/words')
+    parser.add_argument('-s',
+                        '--seed',
+                        help='Random seed',
+                        type=str,
+                        default=None)
+
+    parser.add_argument('-w',
+                        '--wordlist',
+                        help='Word list',
+                        type=str,
+                        default='/usr/share/dict/words')
 
     return parser.parse_args()
 
@@ -45,19 +60,6 @@ def bail(msg):
 
 
 # --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
-
-
-# --------------------------------------------------
 def main():
     """main"""
     args = get_args()
@@ -65,6 +67,8 @@ def main():
     min_len = args.minlen
     max_misses = args.misses
     wordlist = args.wordlist
+
+    random.seed(args.seed)
 
     if not os.path.isfile(wordlist):
         die('--wordlist "{}" is not a file.'.format(wordlist))
