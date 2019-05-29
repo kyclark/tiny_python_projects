@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Author : kyclark
+Author : Ken Youens-Clark <kyclark@gmail.com>
 Date   : 2019-05-19
 Purpose: Find anagrams
 """
@@ -71,9 +71,6 @@ def main():
     anagrams = set()
     lengths = list(words.keys())
     for i in range(1, args.num_combos + 1):
-        #key_combos = list(
-        #    filter(lambda t: sum(t) == text_len, combinations(lengths, i)))
-
         key_combos = list(
             filter(
                 lambda t: sum(t) == text_len,
@@ -87,7 +84,9 @@ def main():
 
             for t in word_combos:
                 if Counter(''.join(t)) == counts:
-                    for p in filter(lambda x: x != text, map(lambda x: ' '.join(x), permutations(t))):
+                    for p in filter(
+                            lambda x: x != text,
+                            map(lambda x: ' '.join(x), permutations(t))):
                         anagrams.add(p)
 
             logging.debug('# anagrams = {}'.format(len(anagrams)))
