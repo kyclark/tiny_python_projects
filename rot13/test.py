@@ -7,8 +7,8 @@ import string
 from subprocess import getstatusoutput
 
 prg = "./rot13.py"
-sonnet = 'files/sonnet-29.txt'
-fox = 'files/fox.txt'
+sonnet = '../inputs/sonnet-29.txt'
+fox = '../inputs/fox.txt'
 
 
 # --------------------------------------------------
@@ -57,7 +57,9 @@ def test_file():
 
     for in_file in [fox, sonnet]:
         rv, out = getstatusoutput('{} {}'.format(prg, in_file))
-        expected = open(in_file + '.out').read()
+        expected_file = os.path.join('files',
+                                     os.path.basename(in_file) + '.out')
+        expected = open(expected_file).read()
         assert rv == 0
         assert out.rstrip() == expected.rstrip()
 

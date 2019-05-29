@@ -16,19 +16,19 @@ import sys
 def get_args():
     """get command-line arguments"""
     parser = argparse.ArgumentParser(
-        description='Argparse Python script',
+        description='ROT13 encryption',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        'text', metavar='str', help='Input text, file, or "-" for STDIN')
+    parser.add_argument('text',
+                        metavar='str',
+                        help='Input text, file, or "-" for STDIN')
 
-    parser.add_argument(
-        '-s',
-        '--shift',
-        help='Shift arg',
-        metavar='int',
-        type=int,
-        default=0)
+    parser.add_argument('-s',
+                        '--shift',
+                        help='Shift arg',
+                        metavar='int',
+                        type=int,
+                        default=0)
 
     return parser.parse_args()
 
