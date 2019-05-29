@@ -94,7 +94,7 @@ def main():
     logging.debug('Finished searching')
 
     if anagrams:
-        print('{} = '.format(text))
+        print('{} ='.format(text))
         for i, t in enumerate(sorted(anagrams), 1):
             print('{:4}. {}'.format(i, t))
     else:
