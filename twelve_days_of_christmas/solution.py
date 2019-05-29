@@ -7,7 +7,7 @@ Purpose: Twelve Days of Christmas
 
 import argparse
 import sys
-
+from dire import die
 
 # --------------------------------------------------
 def get_args():
@@ -16,36 +16,21 @@ def get_args():
         description='Twelve Days of Christmas',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        '-o',
-        '--outfile',
-        help='Outfile (STDOUT)',
-        metavar='str',
-        type=str,
-        default='')
+    parser.add_argument('-o',
+                        '--outfile',
+                        help='Outfile (STDOUT)',
+                        metavar='str',
+                        type=str,
+                        default='')
 
-    parser.add_argument(
-        '-n',
-        '--number_days',
-        help='Number of days to sing',
-        metavar='int',
-        type=int,
-        default=12)
+    parser.add_argument('-n',
+                        '--number_days',
+                        help='Number of days to sing',
+                        metavar='int',
+                        type=int,
+                        default=12)
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------
