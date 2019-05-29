@@ -24,50 +24,33 @@ def get_args():
         description='Encode and decode text/Morse',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        'input', metavar='FILE', help='Input file or "-" for stdin')
+    parser.add_argument('input',
+                        metavar='FILE',
+                        help='Input file or "-" for stdin')
 
-    parser.add_argument(
-        '-c',
-        '--coding',
-        help='Coding version',
-        metavar='str',
-        type=str,
-        choices=['itu', 'morse'],
-        default='itu')
+    parser.add_argument('-c',
+                        '--coding',
+                        help='Coding version',
+                        metavar='str',
+                        type=str,
+                        choices=['itu', 'morse'],
+                        default='itu')
 
-    parser.add_argument(
-        '-o',
-        '--outfile',
-        help='Output file',
-        metavar='str',
-        type=str,
-        default=None)
+    parser.add_argument('-o',
+                        '--outfile',
+                        help='Output file',
+                        metavar='str',
+                        type=str,
+                        default=None)
 
-    parser.add_argument(
-        '-d',
-        '--decode',
-        help='Decode message from Morse to text',
-        action='store_true')
+    parser.add_argument('-d',
+                        '--decode',
+                        help='Decode message from Morse to text',
+                        action='store_true')
 
     parser.add_argument('-D', '--debug', help='Debug', action='store_true')
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------
@@ -127,8 +110,8 @@ def test_roundtrip():
         for encode_tbl, decode_tbl in [(ENCODE_ITU, DECODE_ITU),
                                        (ENCODE_MORSE, DECODE_MORSE)]:
 
-            assert word.upper() == decode_word(
-                encode_word(word, encode_tbl), decode_tbl)
+            assert word.upper() == decode_word(encode_word(word, encode_tbl),
+                                               decode_tbl)
 
 
 # --------------------------------------------------
