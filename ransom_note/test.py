@@ -6,8 +6,8 @@ import random
 from subprocess import getstatusoutput
 
 prg = './ransom.py'
-fox = './fox.txt'
-now = './now.txt'
+fox = '../inputs/fox.txt'
+now = '../inputs/now.txt'
 
 
 # --------------------------------------------------
