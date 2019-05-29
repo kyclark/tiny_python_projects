@@ -1,40 +1,27 @@
 #!/usr/bin/env python3
 """
-Author : kyclark
+Author : Ken Youens-Clark <kyclark@gmail.com>
 Date   : 2019-05-22
-Purpose: Rock the Casbah
+Purpose: Make rhyming "words"
 """
 
 import argparse
 import re
 import string
 import sys
+from dire import die
 
 
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
     parser = argparse.ArgumentParser(
-        description='Rhymer',
+        description='Make rhyming "words"',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        'word', metavar='str', help='A word')
+    parser.add_argument('word', metavar='str', help='A word')
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------
@@ -44,8 +31,10 @@ def main():
     word = args.word
 
     vowels = 'aeiou'
+    if word[0] in vowels:
+        die('Word "{}" must start with consonants'.format(word))
+
     consonants = [c for c in string.ascii_lowercase if c not in 'aeiou']
-    print(consonants)
     match = re.match('^([' + ''.join(consonants) + ']+)(.+)', word)
 
     clusters = ('bl br ch cl cr dr fl fr gl gr pl pr sc '
@@ -56,6 +45,7 @@ def main():
         start, rest = match.group(1), match.group(2)
         for c in filter(lambda c: c != start, consonants + clusters):
             print(c + rest)
+
 
 # --------------------------------------------------
 if __name__ == '__main__':
