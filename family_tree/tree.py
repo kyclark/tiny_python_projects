@@ -30,7 +30,7 @@ def get_args():
                         help='Output filename',
                         metavar='str',
                         type=str,
-                        default='tree.gv')
+                        default='')
 
     return parser.parse_args()
 
@@ -40,7 +40,11 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    nodes, edges = parse_tree(args.file)
+    fh = args.file
+    out_file = args.outfile or os.path.basename(fh.name) + '.gv'
+    print(out_file)
+
+    nodes, edges = parse_tree(fh)
     dot = Digraph(comment='Tree')
     for initials, name in nodes.items():
         dot.node(name)
@@ -53,13 +57,13 @@ def main():
 
         dot.edge(n1, n2)
 
-    dot.render(args.outfile, view=True)
+    dot.render(out_file, view=True)
 
 # --------------------------------------------------
 def parse_tree(fh):
     """parse input file"""
 
-    ini_patt = '([A-Za-z]+)'
+    ini_patt = '([A-Za-z0-9]+)'
     name_patt = ini_patt + '\s*=\s*(.+)'
     begat_patt = ini_patt + '\s+and\s+' + ini_patt + '\s+begat\s+(.+)'
     married_patt = ini_patt + '\s+married\s+' + ini_patt

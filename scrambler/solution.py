@@ -46,46 +46,6 @@ def scramble(word):
 
     return word
 
-
-# --------------------------------------------------
-def splitter(s, regex, fn=None):
-    """
-    Params:
-    - a string to split on
-    - a regular expression
-    - an optional function to apply to the regex matches
-    Returns:
-    - the input string broken into the parts that match the
-      regex (optionally transformed by the fn) and the bits 
-      in between the parts that match the regex
-    """
-
-    # Find all the parts of the string that match the regex
-    # This will be a list like [(0, 2), (3, 8), (9, 12)]
-    spans = [m.span() for m in regex.finditer(s)]
-
-    # Flatten that into [0, 2, 3, 8, 9, 12]
-    gaps = list(chain(*spans))
-
-    # Bail if there is nothing
-    if not gaps: return []
-
-    # Make sure the list includes the start and end of the string
-    if gaps[0] != 0: gaps.insert(0, 0)
-    if gaps[-1] != len(s): gaps.append(len(s))
-
-    # Find all the substrings, optionally apply the function if the
-    # (start, stop) was in the list of spans matched by the regex.
-    for i in range(0, len(gaps) - 1):
-        start = gaps[i]
-        stop = gaps[i + 1]
-        substr = s[start:stop]
-        if (start, stop) in spans and fn:
-            substr = fn(substr)
-
-        yield substr
-
-
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
@@ -98,9 +58,8 @@ def main():
     if os.path.isfile(text):
         text = open(text).read()
 
-    regex = re.compile(r"([a-zA-Z']+)")
     for line in text.splitlines():
-        print(''.join(splitter(line, regex, scramble)))
+        print(''.join(map(scramble, re.split(r'(\W+)', line))))
 
 
 # --------------------------------------------------

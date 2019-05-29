@@ -9,57 +9,13 @@ We'll need to use the same algorithm for scrambling the words. I used the `rando
 Another very tricky bit is that we want to scramble all the "words" on each line and leave everything that's not a "word" unchanged. We'll use a regular expression that looks for strings composed only of the characters a-z, A-Z, and the single quote so we can find words like `can't` or `Susie's`. Everything else will be consider not a word. Here is the regex you should use:
 
 ````
-regex = re.compile(r"([a-zA-Z']+)")
+>>> import re
+>>> text = 'this is  a\n"sentence?"'
+>>> re.split(r'(\W+)', text)
+['this', ' ', 'is', '  ', 'a', '\n"', 'sentence', '?"', '']
 ````
 
-Now feel free to pop this function into your code to split the text on that regular expression:
-
-````
-# --------------------------------------------------
-def splitter(s, regex, fn=None):
-    """
-    Params:
-    - a string to split on
-    - a regular expression
-    - an optional function to apply to the regex matches
-    Returns:
-    - the input string broken into the parts that match the
-      regex (optionally transformed by the fn) and the bits
-      in between the parts that match the regex
-    """
-
-    # Find all the parts of the string that match the regex
-    # This will be a list like [(0, 2), (3, 8), (9, 12)]
-    spans = [m.span() for m in regex.finditer(s)]
-
-    # Flatten that into [0, 2, 3, 8, 9, 12]
-    gaps = list(chain(*spans))
-
-    # Bail if there is nothing
-    if not gaps: return []
-
-    # Make sure the list includes the start and end of the string
-    if gaps[0] != 0: gaps.insert(0, 0)
-    if gaps[-1] != len(s): gaps.append(len(s))
-
-    # Find all the substrings, optionally apply the function if the
-    # (start, stop) was in the list of spans matched by the regex.
-    for i in range(0, len(gaps) - 1):
-        start = gaps[i]
-        stop = gaps[i + 1]
-        substr = s[start:stop]
-        if (start, stop) in spans and fn:
-            substr = fn(substr)
-
-        yield substr
-````
-
-And now you just need to write the function that will scramble any one word and pass that to the function a la:
-
-````
-for line in text.splitlines():
-    print(''.join(splitter(line, regex, scramble)))
-````
+Now scramble all the things that are "words"!
 
 Here is how the program should perform:
 

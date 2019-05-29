@@ -22,7 +22,7 @@ def get_args():
 
     parser.add_argument('-v',
                         '--vowel',
-                        help='The only vowel allowed',
+                        help='The vowel(s) allowed',
                         metavar='str',
                         type=str,
                         default='a',
