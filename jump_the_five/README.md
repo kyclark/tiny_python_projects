@@ -13,7 +13,18 @@ If given no arguments, print a usage statement.
 
 ````
 $ ./jump.py
-Usage: jump.py NUMBER
+usage: jump.py [-h] str
+jump.py: error: the following arguments are required: str
+$ ./jump.py -h
+usage: jump.py [-h] str
+
+Jump the Five
+
+positional arguments:
+  str         Input text
+
+optional arguments:
+  -h, --help  show this help message and exit
 $ ./jump.py 555-1212
 000-9898
 $ ./jump.py 'Call 1-800-329-8044 today!'
