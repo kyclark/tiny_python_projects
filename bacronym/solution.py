@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""
-Purpose: Make guesses about acronyms
-Author:  Ken Youens-Clark <kyclark@gmail.com>
-Date:    2019-05-19
-"""
+"""Make guesses about acronyms"""
 
 import argparse
 import sys
@@ -56,6 +52,7 @@ def get_args():
 # --------------------------------------------------
 def main():
     """main"""
+
     args = get_args()
     acronym = args.acronym
     wordlist = args.wordlist

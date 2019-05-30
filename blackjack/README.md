@@ -43,34 +43,3 @@ D [19]: ♠10 ♦9
 P [21]: ♣10 ♥8 ♠3
 Player wins. You probably cheated.
 ````
-
-# Test Suite
-
-A passing test suite looks like this:
-
-````
-$ make test
-pytest -v test.py
-============================= test session starts ==============================
-platform darwin -- Python 3.6.8, pytest-4.2.0, py-1.7.0, pluggy-0.8.1 -- /anaconda3/bin/python
-cachedir: .pytest_cache
-rootdir: /Users/kyclark/work/python/practical_python_for_data_science/ch09-python-games/exercises/blackjack_b, inifile:
-plugins: remotedata-0.3.1, openfiles-0.3.2, doctestplus-0.2.0, arraydiff-0.3
-collected 13 items
-
-test.py::test_usage PASSED                                               [  7%]
-test.py::test_play01 PASSED                                              [ 15%]
-test.py::test_play02 PASSED                                              [ 23%]
-test.py::test_play03 PASSED                                              [ 30%]
-test.py::test_play04 PASSED                                              [ 38%]
-test.py::test_play05 PASSED                                              [ 46%]
-test.py::test_play06 PASSED                                              [ 53%]
-test.py::test_play07 PASSED                                              [ 61%]
-test.py::test_play08 PASSED                                              [ 69%]
-test.py::test_play09 PASSED                                              [ 76%]
-test.py::test_play10 PASSED                                              [ 84%]
-test.py::test_play11 PASSED                                              [ 92%]
-test.py::test_play12 PASSED                                              [100%]
-
-========================== 13 passed in 0.82 seconds ===========================
-````

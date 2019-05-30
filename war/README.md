@@ -112,25 +112,3 @@ $ ./war.py -s 10
  ♥K  ♣A P2
 P1 12 P2 12: DRAW
 ````
-
-# Test Suite
-
-A passing test suite looks like this:
-
-````
-$ make test
-pytest -v test.py
-============================= test session starts ==============================
-platform darwin -- Python 3.6.8, pytest-4.2.0, py-1.7.0, pluggy-0.8.1 -- /anaconda3/bin/python
-cachedir: .pytest_cache
-rootdir: /Users/kyclark/work/python/practical_python_for_data_science/ch09-python-games/exercises/war_a, inifile:
-plugins: remotedata-0.3.1, openfiles-0.3.2, doctestplus-0.2.0, arraydiff-0.3
-collected 4 items
-
-test.py::test_usage PASSED                                               [ 25%]
-test.py::test_play01 PASSED                                              [ 50%]
-test.py::test_play02 PASSED                                              [ 75%]
-test.py::test_play03 PASSED                                              [100%]
-
-=========================== 4 passed in 0.32 seconds ===========================
-````

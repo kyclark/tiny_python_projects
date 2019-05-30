@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-19
-Purpose: Find anagrams
-"""
 
 import argparse
 import logging

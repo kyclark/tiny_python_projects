@@ -9,8 +9,6 @@ if a file argument names a non-existent file, print a warning to STDERR and skip
 1. If the word begins with consonants, e.g., "k" or "ch", move them to the end of the word and append "ay" so that "mouse" becomes "ouse-may" and "chair" becomes "air-chay."
 2. If the word begins with a vowel, simple append "-yay" to the end, so "apple" is "apple-yay."
 
-# Expected Output
-
 ````
 $ ./piggie.py
 usage: piggie.py [-h] [-o str] FILE [FILE ...]

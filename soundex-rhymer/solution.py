@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : kyclark
-Date   : 2019-05-22
-Purpose: Use Soundex to find rhyming words
-"""
 
 import argparse
 import re

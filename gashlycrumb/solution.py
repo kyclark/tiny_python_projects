@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
-"""
-Author : kyclark
-Date   : 2019-05-17
-Purpose: Gashlycrumb
-"""
+"""Lookup tables"""
 
 import argparse
 import os
-import sys
+from dire import die
 
 
 # --------------------------------------------------
@@ -27,19 +23,6 @@ def get_args():
                         default='gashlycrumb.txt')
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------

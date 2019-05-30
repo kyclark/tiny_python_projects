@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-02
-Purpose: Ransom Note
-"""
 
 import argparse
 import os
@@ -20,28 +15,14 @@ def get_args():
 
     parser.add_argument('text', metavar='str', help='Input text or file')
 
-    parser.add_argument(
-        '-s',
-        '--seed',
-        help='Random seed',
-        metavar='int',
-        type=int,
-        default=None)
+    parser.add_argument('-s',
+                        '--seed',
+                        help='Random seed',
+                        metavar='int',
+                        type=int,
+                        default=None)
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------

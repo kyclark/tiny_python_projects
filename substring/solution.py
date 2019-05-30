@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-08
-Purpose: Find words sharing a substring
-"""
 
 import argparse
 import os
@@ -11,6 +6,7 @@ import random
 import re
 import sys
 from collections import defaultdict
+from dire import die
 
 
 # --------------------------------------------------
@@ -20,47 +16,35 @@ def get_args():
         description='Find words sharing a substring',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        '-f',
-        '--file',
-        metavar='str',
-        help='Input file',
-        type=str,
-        default='/usr/share/dict/words')
+    parser.add_argument('-f',
+                        '--file',
+                        metavar='str',
+                        help='Input file',
+                        type=str,
+                        default='/usr/share/dict/words')
 
-    parser.add_argument(
-        '-s',
-        '--seed',
-        help='Random seed',
-        metavar='int',
-        type=int,
-        default=None)
+    parser.add_argument('-s',
+                        '--seed',
+                        help='Random seed',
+                        metavar='int',
+                        type=int,
+                        default=None)
 
-    parser.add_argument(
-        '-m',
-        '--min_words',
-        help='Minimum number of words for a given kmer',
-        metavar='int',
-        type=int,
-        default=3)
+    parser.add_argument('-m',
+                        '--min_words',
+                        help='Minimum number of words for a given kmer',
+                        metavar='int',
+                        type=int,
+                        default=3)
 
-    parser.add_argument(
-        '-k', '--ksize', help='Size of k', metavar='int', type=int, default=4)
+    parser.add_argument('-k',
+                        '--ksize',
+                        help='Size of k',
+                        metavar='int',
+                        type=int,
+                        default=4)
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------
@@ -164,8 +148,8 @@ def main():
             # Remove the word, feedback with compliment
             pos = shared[kmer].index(guess)
             word = shared[kmer].pop(pos)
-            print('{}! "{}" is found!'.format(
-                random.choice(compliments), word))
+            print('{}! "{}" is found!'.format(random.choice(compliments),
+                                              word))
             found.append(word)
             guessed.add(guess)
 

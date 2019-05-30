@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-09
-Purpose: Rot13 (rotate 13) encryption
-"""
 
 import argparse
 import os

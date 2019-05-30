@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author:  Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-17
-Purpose: Shakespearean insult generator
-"""
 
 import argparse
 import random
@@ -54,19 +49,6 @@ def get_args():
                         default=None)
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------

@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-24
-Purpose: Picnic game
-"""
+"""Picnic game"""
 
 import argparse
 

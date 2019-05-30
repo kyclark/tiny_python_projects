@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-02-06
-Purpose: Rock the Casbah
-"""
 
 import os
 import re
@@ -21,9 +16,8 @@ def main():
     state = args[0]
 
     if not re.search('^[.XO]{9}$', state):
-        print(
-            'State "{}" must be 9 characters of only ., X, O'.format(state),
-            file=sys.stderr)
+        print('State "{}" must be 9 characters of only ., X, O'.format(state),
+              file=sys.stderr)
         sys.exit(1)
 
     winning = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7],
@@ -73,4 +67,5 @@ def main():
 
 
 # --------------------------------------------------
-main()
+if __name__ == '__main__':
+    main()

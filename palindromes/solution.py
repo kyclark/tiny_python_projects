@@ -1,14 +1,8 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-29
-Purpose: Find palindromes in text
-"""
 
 import argparse
 import os
 import re
-import sys
 
 
 # --------------------------------------------------
@@ -43,7 +37,7 @@ def main():
         text = open(text).read()
 
     for line in text.splitlines():
-        for word in re.split('(\W+)', line.lower()):
+        for word in re.split(r'(\W+)', line.lower()):
             if len(word) >= min_length:
                 rev = ''.join(reversed(word))
                 if rev == word:

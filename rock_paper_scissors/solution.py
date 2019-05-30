@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-04-09
-Purpose: Play rock, paper, scissors
-"""
 
 import sys
 import random
@@ -68,4 +63,5 @@ def main():
 
 
 # --------------------------------------------------
-main()
+if __name__ == '__main__':
+    main()

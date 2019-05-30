@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : kyclark
-Date   : 2019-01-26
-Purpose: Two-player Tic-Tac-Toe
-"""
 
 import argparse
 import copy
@@ -18,19 +13,6 @@ def get_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------

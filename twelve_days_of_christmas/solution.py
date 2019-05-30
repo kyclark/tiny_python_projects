@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-03-19
-Purpose: Twelve Days of Christmas
-"""
 
 import argparse
 import sys
 from dire import die
+
 
 # --------------------------------------------------
 def get_args():

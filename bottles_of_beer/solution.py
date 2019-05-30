@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-03-01
-Purpose: Bottles of beer
-"""
 
 import argparse
 import sys
+from dire import die
 
 
 # --------------------------------------------------
@@ -16,28 +12,14 @@ def get_args():
         description='Bottles of beer song',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        '-n',
-        '--num_bottles',
-        metavar='INT',
-        type=int,
-        default=10,
-        help='How many bottles')
+    parser.add_argument('-n',
+                        '--num_bottles',
+                        metavar='INT',
+                        type=int,
+                        default=10,
+                        help='How many bottles')
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------

@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-06
-Purpose: Jump the Five
-"""
+"""Jump the Five"""
 
 import os
 import sys
@@ -11,6 +7,8 @@ import sys
 
 # --------------------------------------------------
 def main():
+    """Make a jazz noise here"""
+
     args = sys.argv[1:]
 
     if len(args) != 1:

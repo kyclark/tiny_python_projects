@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-23
-Purpose: Markov Chain
-"""
+"""Markov Chain"""
 
 import argparse
 import logging

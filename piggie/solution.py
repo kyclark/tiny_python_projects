@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
-"""
-Author : kyclark
-Date   : 2019-04-23
-Purpose: Write files to Pig Latin
-"""
+"""Convert text to Pig Latin"""
 
 import argparse
 import os
 import re
 import string
-import sys
 from dire import warn
 
 
@@ -21,16 +16,17 @@ def get_args():
         description='Convert to Pig Latin',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        'file', metavar='FILE', nargs='+', help='Input file(s)')
+    parser.add_argument('file',
+                        metavar='FILE',
+                        nargs='+',
+                        help='Input file(s)')
 
-    parser.add_argument(
-        '-o',
-        '--outdir',
-        help='Output directory',
-        metavar='str',
-        type=str,
-        default='out-yay')
+    parser.add_argument('-o',
+                        '--outdir',
+                        help='Output directory',
+                        metavar='str',
+                        type=str,
+                        default='out-yay')
 
     return parser.parse_args()
 
@@ -80,6 +76,7 @@ def pig(word):
             word = word + '-yay'
 
     return word
+
 
 # --------------------------------------------------
 if __name__ == '__main__':

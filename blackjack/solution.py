@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-03-15
-Purpose: Rock the Casbah
-"""
 
 import argparse
 import random
 import re
 import sys
 from itertools import product
+from dire import die
 
 
 # --------------------------------------------------
@@ -41,18 +37,6 @@ def get_args():
 
     return parser.parse_args()
 
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 # --------------------------------------------------
 def bail(msg):

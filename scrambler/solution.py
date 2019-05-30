@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-25
-Purpose: Scramble the letters of words, leaving first and last in place
-"""
 
 import argparse
 import os
@@ -45,6 +40,7 @@ def scramble(word):
         word = word[0] + ''.join(middle) + word[-1]
 
     return word
+
 
 # --------------------------------------------------
 def main():

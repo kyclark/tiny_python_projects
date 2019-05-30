@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-29
-Purpose: Movie Reader
-"""
 
 import argparse
 import os
@@ -19,9 +14,7 @@ def get_args():
         description='Movie Reader',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('text',
-                        metavar='str',
-                        help='Input text or file')
+    parser.add_argument('text', metavar='str', help='Input text or file')
 
     return parser.parse_args()
 
@@ -43,6 +36,7 @@ def main():
             sys.stdout.flush()
 
         print()
+
 
 # --------------------------------------------------
 if __name__ == '__main__':

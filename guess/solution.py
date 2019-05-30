@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Author:  Ken Youens-Clark <kyclark@gmail.com>
-Purpose: Guess-the-number game
-"""
 
 import argparse
 import random
