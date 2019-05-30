@@ -26,48 +26,32 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -o str, --outdir str  Output directory (default: out-yay)
-$ ./piggie.py inputs/nobody.txt -o out
-  1: nobody.txt
-Done, wrote 1 file to "out".
-$ cat out/nobody.txt
-I'm-yay obody-Nay o-Whay are-yay ou-yay
-Are-yay ou-yay -yay obody-Nay -yay oo-tay
-en-Thay eres-thay a-yay air-pay of-yay us-yay
-ont-Day ell-tay eyd-thay advertise-yay -yay ou-yay ow-knay
+[cholla@~/work/python/playful_python/piggie]$ ./piggie.py
+usage: piggie.py [-h] [-o str] FILE [FILE ...]
+piggie.py: error: the following arguments are required: FILE
+[cholla@~/work/python/playful_python/piggie]$ ./piggie.py -h
+usage: piggie.py [-h] [-o str] FILE [FILE ...]
 
-ow-Hay eary-dray -yay o-tay e-bay -yay omebody-Say
-ow-Hay ublic-pay -yay ike-lay a-yay og-Fray -yay
-o-Tay ell-tay one's-yay ame-nay -yay e-thay ivelong-lay une-Jay -yay
-o-Tay an-yay admiring-yay og-Bay
-$ ./piggie.py inputs/*.txt
-  1: gettysburg.txt
-  2: nobody.txt
-  3: usdeclar.txt
-Done, wrote 3 files to "out-yay".
+Convert to Pig Latin
+
+positional arguments:
+  FILE                  Input file(s)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o str, --outdir str  Output directory (default: out-yay)
+$ ./piggie.py ../inputs/sonnet-29.txt
+  1: sonnet-29.txt
+Done, wrote 1 file to "out-yay".
+$ head out-yay/sonnet-29.txt
+onnet-Say 29-yay
+illiam-Way akespeare-Shay
+
+en-Whay, in-yay isgrace-day ith-way ortune-fay and-yay en-may’s-yay eyes-yay,
+I-yay all-yay alone-yay eweep-bay y-may outcast-yay ate-stay,
+And-yay ouble-tray eaf-day eaven-hay ith-way y-may ootless-bay ies-cray,
+And-yay ook-lay upon-yay elf-mysay and-yay urse-cay y-may ate-fay,
+ishing-Way e-may ike-lay o-tay one-yay ore-may ich-ray in-yay ope-hay,
+eatured-Fay ike-lay im-hay, ike-lay im-hay ith-way iends-fray ossessed-pay,
+esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-scay,
 ````
-
-# Test Suite
-
-A passing test suite look like this:
-
-````
-$ make test
-pytest -v test.py
-============================= test session starts ==============================
-platform darwin -- Python 3.6.8, pytest-4.2.0, py-1.7.0, pluggy-0.8.1 -- /anaconda3/bin/python
-cachedir: .pytest_cache
-rootdir: /Users/kyclark/work/worked_examples/2019_spring_finals/grad/piggie, inifile:
-plugins: remotedata-0.3.1, openfiles-0.3.2, doctestplus-0.2.0, arraydiff-0.3
-collected 6 items
-
-test.py::test_usage PASSED                                               [ 16%]
-test.py::test_bad_input PASSED                                           [ 33%]
-test.py::test_nobody PASSED                                              [ 50%]
-test.py::test_gettysbury PASSED                                          [ 66%]
-test.py::test_decl PASSED                                                [ 83%]
-test.py::test_all PASSED                                                 [100%]
-
-=========================== 6 passed in 0.48 seconds ===========================
-````
-
-

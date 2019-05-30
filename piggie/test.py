@@ -8,6 +8,9 @@ from subprocess import getstatusoutput
 from shutil import rmtree
 
 prg = './piggie.py'
+nobody = '../inputs/nobody.txt'
+gettysburg = '../inputs/gettysburg.txt'
+decl = '../inputs/usdeclar.txt'
 
 
 # --------------------------------------------------
@@ -66,17 +69,17 @@ def run(file):
 
 # --------------------------------------------------
 def test_nobody():
-    run('inputs/nobody.txt')
+    run(nobody)
 
 
 # --------------------------------------------------
-def test_gettysbury():
-    run('inputs/gettysburg.txt')
+def test_gettysburg():
+    run(gettysburg)
 
 
 # --------------------------------------------------
 def test_decl():
-    run('inputs/usdeclar.txt')
+    run(decl)
 
 
 # --------------------------------------------------
@@ -87,7 +90,9 @@ def test_all():
         rmtree(out_dir)
 
     try:
-        rv, out = getstatusoutput('{} -o {} inputs/*'.format(prg, out_dir))
+        all_files = [gettysburg, nobody, decl]
+        rv, out = getstatusoutput('{} --outdir {} {}'.format(
+            prg, out_dir, ' '.join(all_files)))
 
         assert rv == 0
 
@@ -98,10 +103,10 @@ def test_all():
         assert os.path.isdir(out_dir)
 
         out_files = os.listdir(out_dir)
-        print(out_files)
         assert len(out_files) == 3
 
-        for basename in ['gettysburg.txt', 'usdeclar.txt']:
+        for file in all_files:
+            basename = os.path.basename(file)
             out_path = os.path.join(out_dir, basename)
             assert os.path.isfile(out_path)
 
