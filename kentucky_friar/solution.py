@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
+"""Kentucky Friar"""
 
 import argparse
 import os
 import re
-import sys
 
 
 # --------------------------------------------------
@@ -48,7 +48,7 @@ def main():
         text = open(text).read()
 
     for line in text.splitlines():
-        print(' '.join(map(fry, line.rstrip().split())))
+        print(''.join(map(fry, re.split(r'(\W+)', line.rstrip()))))
 
 
 # --------------------------------------------------

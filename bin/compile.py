@@ -83,7 +83,7 @@ def main():
         # fh.write('\n'.join(
         #     ['\\documentclass{article}', '\\begin{document}',
         #      '\\tableofcontents', '\\newpage', '']))
-        fh.write('\\tableofcontents\n\\newpage\n\n')
+        fh.write('\\setcounter{tocdepth}{1}\\tableofcontents\n\\newpage\n\n')
 
         top_readme = 'README.md'
         if os.path.isfile(top_readme):

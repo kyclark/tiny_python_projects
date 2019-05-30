@@ -18,6 +18,11 @@ optional arguments:
   -h, --help            show this help message and exit
   -i str [str ...], --inputs str [str ...]
                         Inputs (for testing) (default: None)
+$ cat help.txt
+<exclamation>! I need <noun>!
+<exclamation>! Not just <noun>!
+<exclamation>! You know I need <noun>!
+<exclamation>!
 $ ./mad_lib.py help.txt
 exclamation: Hey
 noun: tacos

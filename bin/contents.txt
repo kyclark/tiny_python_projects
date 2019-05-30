@@ -12,13 +12,16 @@ rhymer
 rock_paper_scissors
 abuse
 bacronym
+wod
 blackjack
 family_tree
 gematria
+histy
 guess
 kentucky_fryer
 mad_libs
 license_plates
+mad_libs
 markov_words
 piggie
 soundex_rhymer
@@ -31,3 +34,4 @@ hangman
 markov_chain
 morse
 rot13
+transpose

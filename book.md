@@ -1,4 +1,4 @@
-\tableofcontents
+\setcounter{tocdepth}{1}\tableofcontents
 \newpage
 
 # Playful Python
@@ -211,6 +211,55 @@ $ ./jump.py 555-1212
 000-9898
 $ ./jump.py 'Call 1-800-329-8044 today!'
 Call 9-255-781-2566 today!
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Jump the Five"""
+     3	
+     4	import argparse
+     5	import os
+     6	import sys
+     7	
+     8	
+     9	# --------------------------------------------------
+    10	def get_args():
+    11	    """Get command-line arguments"""
+    12	
+    13	    parser = argparse.ArgumentParser(
+    14	        description='Jump the Five',
+    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    16	
+    17	    parser.add_argument('text', metavar='str', help='Input text')
+    18	
+    19	
+    20	    return parser.parse_args()
+    21	
+    22	
+    23	# --------------------------------------------------
+    24	def main():
+    25	    """Make a jazz noise here"""
+    26	
+    27	    args = get_args()
+    28	    text = args.text
+    29	    jumper = {
+    30	        '1': '9', '2': '8', '3': '7', '4': '6',
+    31	        '5': '0', '6': '4', '7': '3', '8': '2',
+    32	        '9': '1', '0': '5'
+    33	    }
+    34	
+    35	    for char in text:
+    36	        print(jumper[char] if char in jumper else char, end='')
+    37	
+    38	    print()
+    39	
+    40	# --------------------------------------------------
+    41	if __name__ == '__main__':
+    42	    main()
 ````
 
 \newpage
@@ -1548,7 +1597,239 @@ FBI =
 
 \newpage
 
-# Chapter 15: Blackjack 
+# Chapter 15: Workout Of (the) Day (WOD)
+
+Write a Python program called `wod.py` that will create a Workout Of (the) Day (WOD) from a list of exercises provided in CSV format (default `wod.csv`). Accept a `-n|--num_exercises` argument (default 4) to determine the sample size from your exercise list. Also accept a `-e|--easy` flag to indicate that the reps should be cut in half. Finally accept a `-s|--seed` argument to pass to `random.seed` for testing purposes. You should use the `tabulate` module to format the output as expected.
+
+The input file should be comma-separated values with headers for "exercise" and "reps," e.g.:
+
+````
+$ tablify.py wod.csv
++---------------+--------+
+| exercise      | reps   |
+|---------------+--------|
+| Burpees       | 20-50  |
+| Situps        | 40-100 |
+| Pushups       | 25-75  |
+| Squats        | 20-50  |
+| Pullups       | 10-30  |
+| HSPU          | 5-20   |
+| Lunges        | 20-40  |
+| Plank         | 30-60  |
+| Jumprope      | 50-100 |
+| Jumping Jacks | 25-75  |
+| Crunches      | 20-30  |
+| Dips          | 10-30  |
++---------------+--------+
+````
+
+You should use the range of reps to choose a random integer value in that range.
+
+````
+$ ./wod.py -h
+usage: wod.py [-h] [-f str] [-s int] [-n int] [-e]
+
+Create Workout Of (the) Day (WOD)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f str, --file str    CSV input file of exercises (default: wod.csv)
+  -s int, --seed int    Random seed (default: None)
+  -n int, --num_exercises int
+                        Number of exercises (default: 4)
+  -e, --easy            Make it easy (default: False)
+$ ./wod.py
+Exercise      Reps
+----------  ------
+Crunches        26
+HSPU             9
+Squats          43
+Pushups         36
+$ ./wod.py -s 1
+Exercise         Reps
+-------------  ------
+Pushups            32
+Jumping Jacks      56
+Situps             88
+Pullups            24
+$ ./wod.py -s 1 -e
+Exercise         Reps
+-------------  ------
+Pushups            15
+Jumping Jacks      27
+Situps             44
+Pullups            12
+$ ./wod.py -f wod2.csv -n 5
+Exercise                Reps
+--------------------  ------
+Erstwhile Lunges           9
+Existential Earflaps      32
+Rock Squats               21
+Squatting Chinups         49
+Flapping Leg Raises       17
+````
+
+# Discussion
+
+It's recommended you use the `csv.DictReader` module to parse the CSV files. You will then need to split the "reps" fields like "20-50" into a low and high values that are coerced into integer values. For the purposes of this exercise, you can assume the CSV files you are given will have the correct headers and the fields will be correctly formatted. 
+
+You should use the `random` module to select a sample of exercises, e.g.:
+
+````
+>>> import random
+>>> random.sample(range(10), k=3)
+[1, 6, 4]
+>>> random.sample(range(10), k=3)
+[8, 5, 6]
+````
+
+So first focus on parsing the input CSV into something you can `sample`, like a list or a dictionary. I chose to create a data structure that is a list of tuples containing the name of the exercise, the low range, and the high range for the reps:
+
+````
+[('Burpees', 20, 50),
+ ('Situps', 40, 100),
+ ('Pushups', 25, 75),
+ ('Squats', 20, 50),
+ ('Pullups', 10, 30),
+ ('HSPU', 5, 20),
+ ('Lunges', 20, 40),
+ ('Plank', 30, 60),
+ ('Jumprope', 50, 100),
+ ('Jumping Jacks', 25, 75),
+ ('Crunches', 20, 30),
+ ('Dips', 10, 30)]
+````
+
+Then I can get a random rep value using `random.randint`, e.g.:
+
+````
+>>> random.randint(5, 10)
+6
+>>> random.randint(5, 10)
+8
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""
+     3	Author : Ken Youens-Clark <kyclark@gmail.com>
+     4	Date   : 2019-05-08
+     5	Purpose: Create Workout Of (the) Day (WOD)
+     6	"""
+     7	
+     8	import argparse
+     9	import csv
+    10	import os
+    11	import random
+    12	import sys
+    13	from tabulate import tabulate
+    14	
+    15	
+    16	# --------------------------------------------------
+    17	def get_args():
+    18	    """get command-line arguments"""
+    19	    parser = argparse.ArgumentParser(
+    20	        description='Create Workout Of (the) Day (WOD)',
+    21	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    22	
+    23	    parser.add_argument(
+    24	        '-f',
+    25	        '--file',
+    26	        help='CSV input file of exercises',
+    27	        metavar='str',
+    28	        type=str,
+    29	        default='wod.csv')
+    30	
+    31	    parser.add_argument(
+    32	        '-s',
+    33	        '--seed',
+    34	        help='Random seed',
+    35	        metavar='int',
+    36	        type=int,
+    37	        default=None)
+    38	
+    39	    parser.add_argument(
+    40	        '-n',
+    41	        '--num_exercises',
+    42	        help='Number of exercises',
+    43	        metavar='int',
+    44	        type=int,
+    45	        default=4)
+    46	
+    47	    parser.add_argument(
+    48	        '-e', '--easy', help='Make it easy', action='store_true')
+    49	
+    50	    return parser.parse_args()
+    51	
+    52	
+    53	# --------------------------------------------------
+    54	def warn(msg):
+    55	    """Print a message to STDERR"""
+    56	    print(msg, file=sys.stderr)
+    57	
+    58	
+    59	# --------------------------------------------------
+    60	def die(msg='Something bad happened'):
+    61	    """warn() and exit with error"""
+    62	    warn(msg)
+    63	    sys.exit(1)
+    64	
+    65	
+    66	# --------------------------------------------------
+    67	def read_csv(file):
+    68	    """Read the CSV input"""
+    69	
+    70	    if not os.path.isfile(file):
+    71	        die('"{}" is not a file'.format(file))
+    72	
+    73	    exercises = []
+    74	    with open(file) as csvfile:
+    75	        reader = csv.DictReader(csvfile, delimiter=',')
+    76	        required = ['exercise', 'reps']
+    77	
+    78	        if not all(map(lambda f: f in reader.fieldnames, required)):
+    79	            die('"{}" is missing required fields: {}'.format(
+    80	                file, ', '.join(required)))
+    81	
+    82	        for row in reader:
+    83	            name = row['exercise']
+    84	            low, high = row['reps'].split('-')
+    85	            exercises.append((name, int(low), int(high)))
+    86	
+    87	    return exercises
+    88	
+    89	
+    90	# --------------------------------------------------
+    91	def main():
+    92	    """Make a jazz noise here"""
+    93	
+    94	    args = get_args()
+    95	    random.seed(args.seed)
+    96	    exercises = read_csv(args.file)
+    97	    table = []
+    98	
+    99	    for name, low, high in random.sample(exercises, k=args.num_exercises):
+   100	        if args.easy:
+   101	            low = int(low / 2)
+   102	            high = int(high / 2)
+   103	
+   104	        table.append((name, '{}'.format(random.randint(low, high))))
+   105	
+   106	    print(tabulate(table, headers=('Exercise', 'Reps')))
+   107	
+   108	
+   109	# --------------------------------------------------
+   110	if __name__ == '__main__':
+   111	    main()
+````
+
+\newpage
+
+# Chapter 16: Blackjack 
 
 Write a Python program called `blackjack.py` that plays an abbreviated game of Blackjack. You will need to `import random` to get random cards from a deck you will construct, and so your program will need to accept a `-s|--seed` that will set `random.seed()` with the value that is passed in so that the test suite will work. The other arguments you will accept are two flags (Boolean values) of `-p|--player_hits` and `-d|--dealer_hits`. As usual, you will also have a `-h|--help` option for usage statement.
 
@@ -1696,7 +1977,7 @@ Player wins. You probably cheated.
 
 \newpage
 
-# Chapter 16: Family Tree
+# Chapter 17: Family Tree
 
 Write a program called `tree.py` that will take an input file as a single positional argument and produce a graph of the family tree described therein. The file can have only three kinds of statements:
 
@@ -1843,7 +2124,7 @@ Done, see output in "tudor.txt.gv".
 
 \newpage
 
-# Chapter 17: Gematria
+# Chapter 18: Gematria
 
 Write a Python program called `gematria.py` 
 
@@ -1951,7 +2232,182 @@ $ ./gematria.py ../inputs/fox.txt
 
 \newpage
 
-# Chapter 18: Guessing Game
+# Chapter 19: Histogram
+
+Write a Python program called `histy.py` that takes a single positional argument that may be plain text or the name of a file to read for the text. Count the frequency of each character (not spaces) and print a histogram of the data. By default, you should order the histogram by the characters but include `-f|--frequency_sort` option to sort by the frequency (in descending order). Also include a `-c|--character` option (default `|`) to represent a mark in the histogram, a `-m|--minimum` option (default `1`) to include a character in the output, a `-w|--width` option (default `70`) to limit the size of the histogram, and a `-i|--case_insensitive` flag to force all input to uppercase.
+
+````
+$ ./histy.py
+usage: histy.py [-h] [-c str] [-m int] [-w int] [-i] [-f] str
+histy.py: error: the following arguments are required: str
+$ ./histy.py -h
+usage: histy.py [-h] [-c str] [-m int] [-w int] [-i] [-f] str
+
+Histogrammer
+
+positional arguments:
+  str                   Input text or file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c str, --character str
+                        Character for marks (default: |)
+  -m int, --minimum int
+                        Minimum frequency to print (default: 1)
+  -w int, --width int   Maximum width of output (default: 70)
+  -i, --case_insensitive
+                        Case insensitive search (default: False)
+  -f, --frequency_sort  Sort by frequency (default: False)
+$ ./histy.py ../inputs/fox.txt
+T      1 |
+a      1 |
+b      1 |
+c      1 |
+d      1 |
+e      3 |||
+f      1 |
+g      1 |
+h      2 ||
+i      1 |
+j      1 |
+k      1 |
+l      1 |
+m      1 |
+n      1 |
+o      4 ||||
+p      1 |
+q      1 |
+r      2 ||
+s      1 |
+t      1 |
+u      2 ||
+v      1 |
+w      1 |
+x      1 |
+y      1 |
+z      1 |
+$ ./histy.py ../inputs/const.txt -fim 100 -w 50 -c '#'
+E   5107 ##################################################
+T   3751 ####################################
+O   2729 ##########################
+S   2676 ##########################
+A   2675 ##########################
+N   2630 #########################
+I   2433 #######################
+R   2206 #####################
+H   2029 ###################
+L   1490 ##############
+D   1230 ############
+C   1164 ###########
+F   1021 #########
+U    848 ########
+P    767 #######
+M    730 #######
+B    612 #####
+Y    504 ####
+V    460 ####
+G    444 ####
+W    375 ###
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Histogrammer"""
+     3	
+     4	import argparse
+     5	import os
+     6	import re
+     7	import sys
+     8	from collections import Counter
+     9	from dire import die
+    10	
+    11	
+    12	# --------------------------------------------------
+    13	def get_args():
+    14	    """get command-line arguments"""
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Histogrammer',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('text', metavar='str', help='Input text or file')
+    20	
+    21	    parser.add_argument('-c',
+    22	                        '--character',
+    23	                        help='Character for marks',
+    24	                        metavar='str',
+    25	                        type=str,
+    26	                        default='|')
+    27	
+    28	    parser.add_argument('-m',
+    29	                        '--minimum',
+    30	                        help='Minimum frequency to print',
+    31	                        metavar='int',
+    32	                        type=int,
+    33	                        default=1)
+    34	
+    35	    parser.add_argument('-w',
+    36	                        '--width',
+    37	                        help='Maximum width of output',
+    38	                        metavar='int',
+    39	                        type=int,
+    40	                        default=70)
+    41	
+    42	    parser.add_argument('-i',
+    43	                        '--case_insensitive',
+    44	                        help='Case insensitive search',
+    45	                        action='store_true')
+    46	
+    47	    parser.add_argument('-f',
+    48	                        '--frequency_sort',
+    49	                        help='Sort by frequency',
+    50	                        action='store_true')
+    51	
+    52	    return parser.parse_args()
+    53	
+    54	
+    55	# --------------------------------------------------
+    56	def main():
+    57	    """Make a jazz noise here"""
+    58	
+    59	    args = get_args()
+    60	    text = args.text
+    61	    char = args.character
+    62	    width = args.width
+    63	    min_val = args.minimum
+    64	
+    65	    if len(char) != 1:
+    66	        die('--character "{}" must be one character'.format(char))
+    67	
+    68	    if os.path.isfile(text): text = open(text).read()
+    69	    if args.case_insensitive: text = text.upper()
+    70	
+    71	    freqs = Counter(filter(lambda c: re.match(r'\w', c), list(text)))
+    72	    low = min(freqs.values())
+    73	    high = max(freqs.values())
+    74	    scale = high / width if high > width else 1
+    75	    items = map(lambda t: (t[1], t[0]),
+    76	                sorted([
+    77	                    (v, k) for k, v in freqs.items()
+    78	                ], reverse=True)) if args.frequency_sort else sorted(
+    79	                    freqs.items())
+    80	
+    81	    for c, num in items:
+    82	        if num < min_val: continue
+    83	        print('{} {:6} {}'.format(c, num, char * int(num / scale)))
+    84	
+    85	
+    86	# --------------------------------------------------
+    87	if __name__ == '__main__':
+    88	    main()
+````
+
+\newpage
+
+# Chapter 20: Guessing Game
 
 Write a Python program called `guess.py` that plays a guessing game for a number between a `-m|--min` and `-x|--max` value (default 1 and 50, respectively) with a limited number of `-g|--guesses` (default 5). Complain if either `--min` or `--guesses` is less than 1. Accept a `-s|--seed` for `random.seed`. If the user guesses something that is not a number, complain about it.
 
@@ -2111,7 +2567,7 @@ You should be able to handle this in your inifinite game loop.
 
 \newpage
 
-# Chapter 19: Kentucky Fryer
+# Chapter 21: Kentucky Fryer
 
 Write a Python program called `fryer.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
@@ -2208,7 +2664,129 @@ to go for a swing and maybe do some swimmin', too.
 
 \newpage
 
-# Chapter 21: License Plates
+# Chapter 22: Mad Libs
+
+Write a Python program called `mad_lib.py` that will read a file given as a positional argument and find all the placeholders noted in `<>`, e.g., `<verb>`, prompt the user for the part of speech being reuqested, e.g., a "verb", and then substitute that into the text of the file, finally printing out all the placeholders replaced by the user's inputs. By default, this is an interactive program that will use the `input` prompt to ask the user for their answers, but, for testing purposes, please add a `-i|--inputs` option so the test suite can pass in all the answers and bypass the `input` calls.
+
+````
+$ ./mad_lib.py
+usage: mad_lib.py [-h] [-i str [str ...]] FILE
+mad_lib.py: error: the following arguments are required: FILE
+$ ./mad_lib.py -h
+usage: mad_lib.py [-h] [-i str [str ...]] FILE
+
+Mad Libs
+
+positional arguments:
+  FILE                  Input file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i str [str ...], --inputs str [str ...]
+                        Inputs (for testing) (default: None)
+$ cat help.txt
+<exclamation>! I need <noun>!
+<exclamation>! Not just <noun>!
+<exclamation>! You know I need <noun>!
+<exclamation>!
+$ ./mad_lib.py help.txt
+exclamation: Hey
+noun: tacos
+exclamation: Oi
+noun: fish
+exclamation: Ouch
+noun: pie
+exclamation: Dang
+Hey! I need tacos!
+Oi! Not just fish!
+Ouch! You know I need pie!
+Dang!
+$ ./mad_lib.py romeo_juliet.txt -i cars Detroit oil pistons \
+> "stick shift" furious accelerate 42 foot hammer
+Two cars, both alike in dignity,
+In fair Detroit, where we lay our scene,
+From ancient oil break to new mutiny,
+Where civil blood makes civil hands unclean.
+From forth the fatal loins of these two foes
+A pair of star-cross'd pistons take their life;
+Whose misadventur'd piteous overthrows
+Doth with their stick shift bury their parents' strife.
+The fearful passage of their furious love,
+And the continuance of their parents' rage,
+Which, but their children's end, nought could accelerate,
+Is now the 42 hours' traffic of our stage;
+The which if you with patient foot attend,
+What here shall hammer, our toil shall strive to mend.
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Mad Libs"""
+     3	
+     4	import argparse
+     5	import os
+     6	import re
+     7	import sys
+     8	from dire import die
+     9	
+    10	
+    11	# --------------------------------------------------
+    12	def get_args():
+    13	    """Get command-line arguments"""
+    14	
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Mad Libs',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('file',
+    20	                        metavar='FILE',
+    21	                        type=argparse.FileType('r'),
+    22	                        help='Input file')
+    23	
+    24	    parser.add_argument('-i',
+    25	                        '--inputs',
+    26	                        help='Inputs (for testing)',
+    27	                        metavar='str',
+    28	                        type=str,
+    29	                        nargs='+',
+    30	                        required=False)
+    31	
+    32	    return parser.parse_args()
+    33	
+    34	
+    35	# --------------------------------------------------
+    36	def main():
+    37	    """Make a jazz noise here"""
+    38	
+    39	    args = get_args()
+    40	    inputs = args.inputs
+    41	    regex = re.compile('([<][^>]+[>])')
+    42	    text = args.file.read().rstrip()
+    43	    blanks = list(regex.finditer(text))
+    44	
+    45	    if not blanks: die('File "{}" has no placeholders'.format(args.file.name))
+    46	
+    47	    for blank in blanks:
+    48	        name = blank.group(1)
+    49	        answer = inputs.pop(0) if inputs else input('{}: '.format(
+    50	            name.replace('<', '').replace('>', '')))
+    51	        text = re.sub(name, answer, text, count=1)
+    52	
+    53	    print(text)
+    54	
+    55	
+    56	# --------------------------------------------------
+    57	if __name__ == '__main__':
+    58	    main()
+````
+
+\newpage
+
+# Chapter 23: License Plates
 
 Write a Python program called `license.py` that will create a regular expression for a license plate that accounts for characters and numbers which might be confused according to the following list:
 
@@ -2341,7 +2919,129 @@ In creating all the possible plates from your regular expression, you are making
 
 \newpage
 
-# Chapter 22: Markov Chains for Words
+# Chapter 24: Mad Libs
+
+Write a Python program called `mad_lib.py` that will read a file given as a positional argument and find all the placeholders noted in `<>`, e.g., `<verb>`, prompt the user for the part of speech being reuqested, e.g., a "verb", and then substitute that into the text of the file, finally printing out all the placeholders replaced by the user's inputs. By default, this is an interactive program that will use the `input` prompt to ask the user for their answers, but, for testing purposes, please add a `-i|--inputs` option so the test suite can pass in all the answers and bypass the `input` calls.
+
+````
+$ ./mad_lib.py
+usage: mad_lib.py [-h] [-i str [str ...]] FILE
+mad_lib.py: error: the following arguments are required: FILE
+$ ./mad_lib.py -h
+usage: mad_lib.py [-h] [-i str [str ...]] FILE
+
+Mad Libs
+
+positional arguments:
+  FILE                  Input file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i str [str ...], --inputs str [str ...]
+                        Inputs (for testing) (default: None)
+$ cat help.txt
+<exclamation>! I need <noun>!
+<exclamation>! Not just <noun>!
+<exclamation>! You know I need <noun>!
+<exclamation>!
+$ ./mad_lib.py help.txt
+exclamation: Hey
+noun: tacos
+exclamation: Oi
+noun: fish
+exclamation: Ouch
+noun: pie
+exclamation: Dang
+Hey! I need tacos!
+Oi! Not just fish!
+Ouch! You know I need pie!
+Dang!
+$ ./mad_lib.py romeo_juliet.txt -i cars Detroit oil pistons \
+> "stick shift" furious accelerate 42 foot hammer
+Two cars, both alike in dignity,
+In fair Detroit, where we lay our scene,
+From ancient oil break to new mutiny,
+Where civil blood makes civil hands unclean.
+From forth the fatal loins of these two foes
+A pair of star-cross'd pistons take their life;
+Whose misadventur'd piteous overthrows
+Doth with their stick shift bury their parents' strife.
+The fearful passage of their furious love,
+And the continuance of their parents' rage,
+Which, but their children's end, nought could accelerate,
+Is now the 42 hours' traffic of our stage;
+The which if you with patient foot attend,
+What here shall hammer, our toil shall strive to mend.
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Mad Libs"""
+     3	
+     4	import argparse
+     5	import os
+     6	import re
+     7	import sys
+     8	from dire import die
+     9	
+    10	
+    11	# --------------------------------------------------
+    12	def get_args():
+    13	    """Get command-line arguments"""
+    14	
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Mad Libs',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('file',
+    20	                        metavar='FILE',
+    21	                        type=argparse.FileType('r'),
+    22	                        help='Input file')
+    23	
+    24	    parser.add_argument('-i',
+    25	                        '--inputs',
+    26	                        help='Inputs (for testing)',
+    27	                        metavar='str',
+    28	                        type=str,
+    29	                        nargs='+',
+    30	                        required=False)
+    31	
+    32	    return parser.parse_args()
+    33	
+    34	
+    35	# --------------------------------------------------
+    36	def main():
+    37	    """Make a jazz noise here"""
+    38	
+    39	    args = get_args()
+    40	    inputs = args.inputs
+    41	    regex = re.compile('([<][^>]+[>])')
+    42	    text = args.file.read().rstrip()
+    43	    blanks = list(regex.finditer(text))
+    44	
+    45	    if not blanks: die('File "{}" has no placeholders'.format(args.file.name))
+    46	
+    47	    for blank in blanks:
+    48	        name = blank.group(1)
+    49	        answer = inputs.pop(0) if inputs else input('{}: '.format(
+    50	            name.replace('<', '').replace('>', '')))
+    51	        text = re.sub(name, answer, text, count=1)
+    52	
+    53	    print(text)
+    54	
+    55	
+    56	# --------------------------------------------------
+    57	if __name__ == '__main__':
+    58	    main()
+````
+
+\newpage
+
+# Chapter 25: Markov Chains for Words
 
 Write a Python program called `markov.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
@@ -2532,13 +3232,13 @@ $ ./markov.py ../inputs/const.txt -s 2 -k 3
 
 \newpage
 
-# Chapter 23: Pig Latin
+# Chapter 26: Pig Latin
 
 Write a Python program named `piggie.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
 if a file argument names a non-existent file, print a warning to STDERR and skip that file. If the output directory does not exist, create it.
 
-# Pig Latin Rules
+To create "Pig Latin":
 
 1. If the word begins with consonants, e.g., "k" or "ch", move them to the end of the word and append "ay" so that "mouse" becomes "ouse-may" and "chair" becomes "air-chay."
 2. If the word begins with a vowel, simple append "-yay" to the end, so "apple" is "apple-yay."
@@ -2680,7 +3380,7 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
 
 \newpage
 
-# Chapter 24: Soundex Rhymer
+# Chapter 27: Soundex Rhymer
 
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, it would be best to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part. The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons.
 
@@ -2781,7 +3481,7 @@ clowring
 
 \newpage
 
-# Chapter 25: Substring Guessing Game
+# Chapter 28: Substring Guessing Game
 
 Write a Python program called `sub.py` that plays a guessing game where you read a `-f|--file` input (default `/usr/share/dict/words`) and use a given `-k|--ksize` to find all the words grouped by their shared kmers. Remove any kmers where the number of words is fewer than `-m|--min_words`. Also accept a `-s|--seed` for `random.seed` for testing purposes. Prompt the user to guess a word for a randomly chosen kmer. If their guess is not present in the shared list, taunt them mercilessly. If their guess is present, affirm their worth and prompt to guess again. Allow them to use `!` to quit and `?` to be provided a hint (a word from the list). For both successful guesses and hints, remove the word from the shared list. When they have quit or exhausted the list, quit play. At the end of the game, report the number of found words.
 
@@ -2992,7 +3692,7 @@ Hey, you found 2 words! Not bad.
 
 \newpage
 
-# Chapter 26: Tic-Tac-Toe Outcome
+# Chapter 29: Tic-Tac-Toe Outcome
 
 Create a Python program called `outcome.py` that takes a given Tic-Tac-Toe state as it's only (positional) argument and reports if X or O has won or if there is no winner. The state should only contain the characters ".", "O", and "X", and must be exactly 9 characters long. If there is not exactly one argument, print a "usage" statement.
 
@@ -3087,7 +3787,7 @@ X has won
 
 \newpage
 
-# Chapter 27: Twelve Days of Christmas
+# Chapter 30: Twelve Days of Christmas
 
 Write a Python program called `twelve_days.py` that will generate the "Twelve Days of Christmas" song up to the `-n|--number_days` argument (default `12`), writing the resulting text to the `-o|--outfile` argument (default STDOUT).
 
@@ -3222,7 +3922,7 @@ $ wc -l out
 
 \newpage
 
-# Chapter 28: War
+# Chapter 31: War
 
 > The generation of random numbers is too important to be left to chance. -- Robert R. Coveyou
 
@@ -3415,7 +4115,7 @@ P1 12 P2 12: DRAW
 
 \newpage
 
-# Chapter 29: Anagram
+# Chapter 32: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -3572,7 +4272,7 @@ $ ./presto.py listen -n 2 | tail
 
 \newpage
 
-# Chapter 30: Hangman
+# Chapter 33: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -3792,7 +4492,7 @@ You lose, loser!  The word was "metromania."
 
 \newpage
 
-# Chapter 31: Markov Chain
+# Chapter 34: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -3999,7 +4699,7 @@ Advice and Consent of the United States.
 
 \newpage
 
-# Chapter 32: Morse Encoder/Decoder
+# Chapter 35: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -4217,7 +4917,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 33: ROT13 (Rotate 13)
+# Chapter 36: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -4378,6 +5078,219 @@ The quick brown fox jumps over the lazy dog.
     64	# --------------------------------------------------
     65	if __name__ == '__main__':
     66	    main()
+````
+
+\newpage
+
+# Chapter 37: Tranpose ABC Notation
+
+Write a Python program called `transpose.py` that will read a file in ABC notation (https://en.wikipedia.org/wiki/ABC_notation) and transpose the melody line up or down by a given `-s|--shift` argument. Like the `rot13` exercise, it might be helpful to think of the space of notes (`ABCDEFG`) as a list which you can roll through. For instance, if you have the note `c` and want to transpose up a (minor) third (`-s 3`), you would make the new note `e`; similarly if you have the note `F` and you go up a (major) third, you get `A`. You will not need to worry about the actual number of semitones that you are being asked to shift, as the previous example showed that we might be shifting by a major/minor/augmented/diminished/pure interval. The purpose of the exercise is simply to practice with lists.
+
+````
+$ ./transpose.py
+usage: transpose.py [-h] [-s int] FILE
+transpose.py: error: the following arguments are required: FILE
+$ ./transpose.py -h
+usage: transpose.py [-h] [-s int] FILE
+
+Tranpose ABC notation
+
+positional arguments:
+  FILE                 Input file
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -s int, --shift int  Interval to shift (default: 2)
+$ ./transpose.py foo
+"foo" is not a file
+$ ./transpose.py songs/legacy.abc -s 1
+--shift "1" must be between 2 and 8
+$ ./transpose.py songs/legacy.abc
+<score lang="ABC">
+X:1
+T:The Legacy Jig
+M:6/8
+L:1/8
+R:jig
+K:A
+AGA CBC | aga abc | AGA CBC | e2B BGE |
+AGA CBC | aga abc | baf feC |1 eCB BGE :|2 eCB BCe |:
+fgf feC | eCB BCe | fgf feC | aeC BCe |
+fgf feC | e2e efg | agf feC |1 eCB BCe :|2 eCB BGE |]
+</score>
+````
+
+A sample ABC song is given:
+
+````
+$ cat songs/legacy.abc
+<score lang="ABC">
+X:1
+T:The Legacy Jig
+M:6/8
+L:1/8
+R:jig
+K:G
+GFG BAB | gfg gab | GFG BAB | d2A AFD |
+GFG BAB | gfg gab | age edB |1 dBA AFD :|2 dBA ABd |:
+efe edB | dBA ABd | efe edB | gdB ABd |
+efe edB | d2d def | gfe edB |1 dBA ABd :|2 dBA AFD |]
+</score>
+````
+
+If you use `new_py.py` to create your new program with the `file` as a single positional argument, you can use this code to get the input file and check that it is, indeed, a file:
+
+````
+args = get_args()
+file = args.file
+
+if not os.path.isfile(file):
+    die('"{}" is not a file'.formate(file))
+````
+
+Now that you have a file, you can use a `for` loop to read it. Each line will still have a newline attached to the end, so you can use `rstrip()` to remove it:
+
+````
+for line in open(file):
+    line = line.rstrip()
+````
+
+If a line starts with `<` and ends with `>` (cf. `str.startswith` and `str.endswith`), you can just print the line as-is. If the line starts with `K:`, then you have the key signature and should transpose it, e.g., if you have `K:A` and you are shifting a fifth, you should print `K:E`. If you have a line that starts with any other single uppercase letter and a colon, just print the line as-is. Finally, if you have a line that doesn't match any of the above conditions, you have a line of melody that needs to be transposed.
+
+If you are unfamiliar with musical transposition, you may be a bit confused by the notion of a interval. A "second" equals a `--shift` of one note; that is, the distance from `A` to `B` is one note, but we call that a "second." Therefore, assume that the `--shift` argument is the name of the interval, e.g., `4` (a "fourth") is actually a move of three notes. That means the argument provided by the user should be in the range 2 to 8, inclusive, so complain if it is not. 
+
+Note that the transposition of a tune up a fourth is the same as down a fifth:
+
+````
+$ ./transpose.py songs/legacy.abc -s 4
+<score lang="ABC">
+X:1
+T:The Legacy Jig
+M:6/8
+L:1/8
+R:jig
+K:C
+CBC EDE | cbc cde | CBC EDE | g2D DBG |
+CBC EDE | cbc cde | dca agE |1 gED DBG :|2 gED DEg |:
+aba agE | gED DEg | aba agE | cgE DEg |
+aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
+</score>
+$ ./transpose.py songs/legacy.abc -s -5
+<score lang="ABC">
+X:1
+T:The Legacy Jig
+M:6/8
+L:1/8
+R:jig
+K:C
+CBC EDE | cbc cde | CBC EDE | g2D DBG |
+CBC EDE | cbc cde | dca agE |1 gED DBG :|2 gED DEg |:
+aba agE | gED DEg | aba agE | cgE DEg |
+aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
+</score>
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""
+     3	Author : Ken Youens-Clark <kyclark@gmail.com>
+     4	Date   : 2019-05-13
+     5	Purpose: Tranpose ABC notation
+     6	"""
+     7	
+     8	import argparse
+     9	import os
+    10	import re
+    11	import sys
+    12	
+    13	
+    14	# --------------------------------------------------
+    15	def get_args():
+    16	    """get command-line arguments"""
+    17	    parser = argparse.ArgumentParser(
+    18	        description='Tranpose ABC notation',
+    19	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    20	
+    21	    parser.add_argument('file', metavar='FILE', help='Input file')
+    22	
+    23	    parser.add_argument(
+    24	        '-s',
+    25	        '--shift',
+    26	        help='Interval to shift',
+    27	        metavar='int',
+    28	        type=int,
+    29	        default=2)
+    30	
+    31	    return parser.parse_args()
+    32	
+    33	
+    34	# --------------------------------------------------
+    35	def warn(msg):
+    36	    """Print a message to STDERR"""
+    37	    print(msg, file=sys.stderr)
+    38	
+    39	
+    40	# --------------------------------------------------
+    41	def die(msg='Something bad happened'):
+    42	    """warn() and exit with error"""
+    43	    warn(msg)
+    44	    sys.exit(1)
+    45	
+    46	
+    47	# --------------------------------------------------
+    48	def main():
+    49	    """Make a jazz noise here"""
+    50	    args = get_args()
+    51	    file = args.file
+    52	    shift = args.shift
+    53	    ucase = 'ABCDEFG'
+    54	    lcase = 'abcdefg'
+    55	    num_notes = 7
+    56	
+    57	    if not 1 < abs(shift) <= 8:
+    58	        die('--shift "{}" must be between 2 and 8'.format(shift))
+    59	
+    60	    if not os.path.isfile(file):
+    61	        die('"{}" is not a file'.format(file))
+    62	
+    63	    # account for interval where a 2nd (-s 2) is a move of one note
+    64	    shift = shift - 1 if shift > 0 else shift + 1
+    65	
+    66	    def transpose(note):
+    67	        if note in lcase:
+    68	            pos = lcase.index(note)
+    69	            tran = (pos + shift) % num_notes
+    70	            return lcase[tran]
+    71	        elif note in ucase:
+    72	            pos = ucase.index(note)
+    73	            tran = (pos + shift) % num_notes
+    74	            return ucase[tran]
+    75	        else:
+    76	            return note
+    77	
+    78	    for line in open(file):
+    79	        line = line.rstrip()
+    80	
+    81	        if line.startswith('K:'):
+    82	            key = line[2]
+    83	            print('K:' + transpose(key))
+    84	        elif (line.startswith('<') and line.endswith('>')) or re.match(
+    85	                '[A-Z]:\s?', line):
+    86	            print(line)
+    87	        else:
+    88	            for char in line.rstrip():
+    89	                print(transpose(char), end='')
+    90	
+    91	            print()
+    92	
+    93	
+    94	# --------------------------------------------------
+    95	if __name__ == '__main__':
+    96	    main()
 ````
 
 \newpage
