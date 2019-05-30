@@ -2,16 +2,16 @@
 
 > The generation of random numbers is too important to be left to chance. -- Robert R. Coveyou
 
-Create a Python program called "war.py" that plays the card game "War." The program will use the `random` module to shuffle a deck of cards, so your program will need to accept a `-s|--seed` argument (default: `None`) which you will use to call `random.seed`, if present.
+Create a Python program called `war.py` that plays the card game "War." The program will use the `random` module to shuffle a deck of cards, so your program will need to accept a `-s|--seed` argument (default: `None`) which you will use to call `random.seed`, if present.
  
 First you program will need to create a deck of cards. You will need to use the Unicode symbols for the suites ( ♥ ♠ ♣ ♦ ) [which won't display in the PDF, so consult the Markdown file] and combine those with the numbers 2-10 and the letters "J", "Q," "K," and "A." (hint: look at `itertools.product`). 
 
 ````
 >>> from itertools import product
->>> a = list('ABC')
->>> b = range(3)
+>>> a = list('AB')
+>>> b = range(2)
 >>> list(product(a, b))
-[('A', 0), ('A', 1), ('A', 2), ('B', 0), ('B', 1), ('B', 2), ('C', 0), ('C', 1), ('C', 2)]
+[('A', 0), ('A', 1), ('B', 0), ('B', 1)]
 ````
 
 **NB**: You must sort your deck and then use the `random.shuffle` method so that your cards will be in the correct order to pass the tests!

@@ -1,6 +1,11 @@
 # Soundex Rhymer
 
-Write a Python program called `rhymer.py` that uses the Soundex algorithm/module (https://en.wikipedia.org/wiki/Soundex, https://pypi.org/project/soundex/) to find words that rhyme with a given input word. When comparing words, it would be best to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part. The program should take an optional `-w|--wordlist` argument (default "/usr/share/dict/words") for the comparisons.
+Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, it would be best to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part. The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons.
+
+See also:
+
+* https://en.wikipedia.org/wiki/Soundex
+* https://pypi.org/project/soundex/)
 
 ````
 $ ./rhymer.py

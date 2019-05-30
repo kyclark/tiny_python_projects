@@ -131,7 +131,7 @@ optional arguments:
   -h, --help  show this help message and exit
 $ ./article.py bear
 a bear
-[cholla@~/work/python/playful_python/article]$ ./article.py octopus
+$ ./article.py octopus
 an octopus
 ````
 
@@ -195,57 +195,22 @@ If given no arguments, print a usage statement.
 
 ````
 $ ./jump.py
-Usage: jump.py NUMBER
+usage: jump.py [-h] str
+jump.py: error: the following arguments are required: str
+$ ./jump.py -h
+usage: jump.py [-h] str
+
+Jump the Five
+
+positional arguments:
+  str         Input text
+
+optional arguments:
+  -h, --help  show this help message and exit
 $ ./jump.py 555-1212
 000-9898
 $ ./jump.py 'Call 1-800-329-8044 today!'
 Call 9-255-781-2566 today!
-````
-
-\pagebreak
-
-# jump_the_five Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	"""Jump the Five"""
-     3	
-     4	import os
-     5	import sys
-     6	
-     7	
-     8	# --------------------------------------------------
-     9	def main():
-    10	    """Make a jazz noise here"""
-    11	
-    12	    args = sys.argv[1:]
-    13	
-    14	    if len(args) != 1:
-    15	        print('Usage: {} NUMBER'.format(os.path.basename(sys.argv[0])))
-    16	        sys.exit(1)
-    17	
-    18	    num = args[0]
-    19	    jumper = {
-    20	        '1': '9',
-    21	        '2': '8',
-    22	        '3': '7',
-    23	        '4': '6',
-    24	        '5': '0',
-    25	        '6': '4',
-    26	        '7': '3',
-    27	        '8': '2',
-    28	        '9': '1',
-    29	        '0': '5'
-    30	    }
-    31	
-    32	    for char in num:
-    33	        print(jumper[char] if char in jumper else char, end='')
-    34	    print()
-    35	
-    36	
-    37	# --------------------------------------------------
-    38	if __name__ == '__main__':
-    39	    main()
 ````
 
 \pagebreak
@@ -1375,13 +1340,6 @@ You foul, lecherous, infected, slanderous degenerate!
 You base, ruinous, slanderous, false liar!
 ````
 
-# Skills
-
-* Setting random seed from argument
-* Random selecting/sampling from a list
-* Iterating through a loop a defined number of times
-* Formatting string output
-
 \pagebreak
 
 # abuse Solution
@@ -1668,115 +1626,98 @@ Player wins. You probably cheated.
 
 ````
      1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import random
-     5	import re
-     6	import sys
-     7	from itertools import product
-     8	from dire import die
-     9	
+     2	"""Blackjack"""
+     3	
+     4	import argparse
+     5	import random
+     6	import re
+     7	import sys
+     8	from itertools import product
+     9	from dire import die
     10	
-    11	# --------------------------------------------------
-    12	def get_args():
-    13	    """get command-line arguments"""
-    14	    parser = argparse.ArgumentParser(
-    15	        description='Argparse Python script',
-    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    17	
-    18	    parser.add_argument(
-    19	        '-s',
-    20	        '--seed',
-    21	        help='Random seed',
-    22	        metavar='int',
-    23	        type=int,
-    24	        default=None)
+    11	
+    12	# --------------------------------------------------
+    13	def get_args():
+    14	    """get command-line arguments"""
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Argparse Python script',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('-s',
+    20	                        '--seed',
+    21	                        help='Random seed',
+    22	                        metavar='int',
+    23	                        type=int,
+    24	                        default=None)
     25	
-    26	    parser.add_argument(
-    27	        '-d',
-    28	        '--dealer_hits',
-    29	        help='Dealer hits',
-    30	        action='store_true')
-    31	
-    32	    parser.add_argument(
-    33	        '-p',
-    34	        '--player_hits',
-    35	        help='Player hits',
-    36	        action='store_true')
+    26	    parser.add_argument('-d',
+    27	                        '--dealer_hits',
+    28	                        help='Dealer hits',
+    29	                        action='store_true')
+    30	
+    31	    parser.add_argument('-p',
+    32	                        '--player_hits',
+    33	                        help='Player hits',
+    34	                        action='store_true')
+    35	
+    36	    return parser.parse_args()
     37	
-    38	    return parser.parse_args()
-    39	
-    40	
-    41	# --------------------------------------------------
-    42	def bail(msg):
-    43	    """print() and exit(0)"""
-    44	    print(msg)
-    45	    sys.exit(0)
-    46	
-    47	# --------------------------------------------------
-    48	def card_value(card):
-    49	    """card to numeric value"""
-    50	    val = card[1:]
-    51	    faces = {'A': 1, 'J': 10, 'Q': 10, 'K': 10}
-    52	    if val.isdigit():
-    53	        return int(val)
-    54	    elif val in faces:
-    55	        return faces[val]
-    56	    else:
-    57	        die('Unknown card value for "{}"'.format(card))
+    38	
+    39	# --------------------------------------------------
+    40	def bail(msg):
+    41	    """print() and exit(0)"""
+    42	    print(msg)
+    43	    sys.exit(0)
+    44	
+    45	
+    46	# --------------------------------------------------
+    47	def card_value(card):
+    48	    """card to numeric value"""
+    49	    val = card[1:]
+    50	    faces = {'A': 1, 'J': 10, 'Q': 10, 'K': 10}
+    51	    if val.isdigit():
+    52	        return int(val)
+    53	    elif val in faces:
+    54	        return faces[val]
+    55	    else:
+    56	        die('Unknown card value for "{}"'.format(card))
+    57	
     58	
-    59	
-    60	# --------------------------------------------------
-    61	def main():
-    62	    """Make a jazz noise here"""
-    63	    args = get_args()
-    64	
-    65	    random.seed(args.seed)
-    66	
-    67	    # seed = args.seed
-    68	    # if seed is not None:
-    69	    #     random.seed(seed)
-    70	
-    71	    suites = list('♥♠♣♦')
-    72	    values = list(range(2, 11)) + list('AJQK')
-    73	    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
-    74	    random.shuffle(cards)
+    59	# --------------------------------------------------
+    60	def main():
+    61	    """Make a jazz noise here"""
+    62	    args = get_args()
+    63	    random.seed(args.seed)
+    64	    suites = list('♥♠♣♦')
+    65	    values = list(range(2, 11)) + list('AJQK')
+    66	    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
+    67	    random.shuffle(cards)
+    68	
+    69	    p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
+    70	    player = [p1, p2]
+    71	    dealer = [d1, d2]
+    72	
+    73	    if args.player_hits: player.append(cards.pop())
+    74	    if args.dealer_hits: dealer.append(cards.pop())
     75	
-    76	    p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
-    77	    player = [p1, p2]
-    78	    dealer = [d1, d2]
-    79	
-    80	    if args.player_hits:
-    81	        player.append(cards.pop())
-    82	
-    83	    if args.dealer_hits:
-    84	        dealer.append(cards.pop())
-    85	
-    86	    player_hand = sum(map(card_value, player))
-    87	    dealer_hand = sum(map(card_value, dealer))
-    88	
-    89	    print('D [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
-    90	    print('P [{:2}]: {}'.format(player_hand, ' '.join(player)))
-    91	
-    92	    if player_hand > 21:
-    93	        bail('Player busts! You lose, loser!')
-    94	    elif dealer_hand > 21:
-    95	        bail('Dealer busts.')
-    96	    elif player_hand == 21:
-    97	        bail('Player wins. You probably cheated.')
-    98	    elif dealer_hand == 21:
-    99	        bail('Dealer wins!')
-   100	
-   101	    if dealer_hand < 18:
-   102	        print('Dealer should hit.')
-   103	
-   104	    if player_hand < 18:
-   105	        print('Player should hit.')
-   106	
-   107	
-   108	# --------------------------------------------------
-   109	if __name__ == '__main__':
-   110	    main()
+    76	    player_hand = sum(map(card_value, player))
+    77	    dealer_hand = sum(map(card_value, dealer))
+    78	
+    79	    print('D [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
+    80	    print('P [{:2}]: {}'.format(player_hand, ' '.join(player)))
+    81	
+    82	    if player_hand > 21: bail('Player busts! You lose, loser!')
+    83	    elif dealer_hand > 21: bail('Dealer busts.')
+    84	    elif player_hand == 21: bail('Player wins. You probably cheated.')
+    85	    elif dealer_hand == 21: bail('Dealer wins!')
+    86	
+    87	    if dealer_hand < 18: print('Dealer should hit.')
+    88	    if player_hand < 18: print('Player should hit.')
+    89	
+    90	
+    91	# --------------------------------------------------
+    92	if __name__ == '__main__':
+    93	    main()
 ````
 
 \pagebreak
@@ -2648,7 +2589,12 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
 
 # Soundex Rhymer
 
-Write a Python program called `rhymer.py` that uses the Soundex algorithm/module (https://en.wikipedia.org/wiki/Soundex, https://pypi.org/project/soundex/) to find words that rhyme with a given input word. When comparing words, it would be best to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part. The program should take an optional `-w|--wordlist` argument (default "/usr/share/dict/words") for the comparisons.
+Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, it would be best to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part. The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons.
+
+See also:
+
+* https://en.wikipedia.org/wiki/Soundex
+* https://pypi.org/project/soundex/)
 
 ````
 $ ./rhymer.py

@@ -42,10 +42,3 @@ You cullionly, lubbery, heedless, filthy lunatic!
 You foul, lecherous, infected, slanderous degenerate!
 You base, ruinous, slanderous, false liar!
 ````
-
-# Skills
-
-* Setting random seed from argument
-* Random selecting/sampling from a list
-* Iterating through a loop a defined number of times
-* Formatting string output
