@@ -10,9 +10,10 @@ prg = './jump.py'
 def test_usage():
     """usage"""
 
-    rv, out = getstatusoutput(prg)
-    assert rv == 1
-    assert out.lower().startswith('usage')
+    for flag in ['-h', '--help']:
+        rv, out = getstatusoutput('{} {}'.format(prg, flag))
+        assert rv == 0
+        assert out.lower().startswith('usage')
 
 
 # --------------------------------------------------
