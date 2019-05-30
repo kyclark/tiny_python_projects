@@ -2,6 +2,6 @@
 
 PRG="./friar.py"
 
-for FILE in tests/*; do
+for FILE in tests/*.txt; do
     $PRG $FILE > $FILE.out
 done
