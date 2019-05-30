@@ -20,21 +20,21 @@ def get_args():
 
     parser.add_argument('-c',
                         '--character',
-                        help='Character to represent',
+                        help='Character for marks',
                         metavar='str',
                         type=str,
                         default='|')
 
     parser.add_argument('-m',
                         '--minimum',
-                        help='Minimum value to print',
+                        help='Minimum frequency to print',
                         metavar='int',
                         type=int,
                         default=1)
 
     parser.add_argument('-w',
                         '--width',
-                        help='Width of output',
+                        help='Maximum width of output',
                         metavar='int',
                         type=int,
                         default=70)
@@ -55,6 +55,7 @@ def get_args():
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
     text = args.text
     char = args.character
@@ -64,28 +65,18 @@ def main():
     if len(char) != 1:
         die('--character "{}" must be one character'.format(char))
 
-    if os.path.isfile(text):
-        text = open(text).read()
-
-    if args.case_insensitive:
-        text = text.upper()
+    if os.path.isfile(text): text = open(text).read()
+    if args.case_insensitive: text = text.upper()
 
     freqs = Counter(filter(lambda c: re.match(r'\w', c), list(text)))
     low = min(freqs.values())
     high = max(freqs.values())
-
-    # scaling!
-
-    scale = 1
-    if high > width:
-        scale = high / width
-
-    items = []
-    if args.frequency_sort:
-        items = map(lambda t: (t[1], t[0]),
-                    sorted([(v, k) for k, v in freqs.items()], reverse=True))
-    else:
-        items = sorted(freqs.items())
+    scale = high / width if high > width else 1
+    items = map(lambda t: (t[1], t[0]),
+                sorted([
+                    (v, k) for k, v in freqs.items()
+                ], reverse=True)) if args.frequency_sort else sorted(
+                    freqs.items())
 
     for c, num in items:
         if num < min_val: continue

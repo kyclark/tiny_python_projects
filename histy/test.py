@@ -21,49 +21,44 @@ def test_usage():
 
 
 # --------------------------------------------------
-def run(n):
+def run(file, args, expected_out):
     """test"""
 
-    in_file = os.path.join('out', '{}.in'.format(n))
-    out_file = os.path.join('out', '{}.out'.format(n))
-    given = open(in_file).read().rstrip()
-    expected = open(out_file).read().rstrip()
-    cmd = '{} {}'.format(prg, given)
-    rv, out = getstatusoutput(cmd)
+    in_file = os.path.join('../inputs', '{}'.format(file))
+    expected = open(os.path.join('test-outs', expected_out)).read().rstrip()
+    rv, out = getstatusoutput('{} {} {}'.format(prg, args, in_file))
     assert rv == 0
-    assert expected == out
+    assert expected == out.rstrip()
 
 
 # --------------------------------------------------
 def test_01():
     """test"""
 
-    run('1')
+    run('fox.txt', '', 'fox.txt.1')
 
 
 # --------------------------------------------------
 def test_02():
     """test"""
 
-    run('2')
+    run('fox.txt', '-i', 'fox.txt.2')
 
 
 # --------------------------------------------------
 def test_03():
     """test"""
 
-    run('3')
-
+    run('fox.txt', "-c '!'", 'fox.txt.3')
 
 # --------------------------------------------------
 def test_04():
     """test"""
 
-    run('4')
-
+    run('sonnet-29.txt', "-m 2", 'sonnet-29.txt.1')
 
 # --------------------------------------------------
 def test_05():
     """test"""
 
-    run('5')
+    run('sonnet-29.txt', "-w 50 -m 2 -f -c '$'", 'sonnet-29.txt.2')

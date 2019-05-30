@@ -1,63 +1,77 @@
 # Histogram
 
-Write a Python program called `histy.py` that takes one or more integer values as positional argumements and creates a histogram of the values in their sorted order using the `-c|--character` (default "|") repeated by the number. Also accept a `-m|--minimum` option that is the minimum value to print a number as well as a `-s|--scale` option that will be used to scale the number of characters printed so that large numbers won't line wrap in your terminal.
+Write a Python program called `histy.py` that takes a single positional argument that may be plain text or the name of a file to read for the text. Count the frequency of each character (not spaces) and print a histogram of the data. By default, you should order the histogram by the characters but include `-f|--frequency_sort` option to sort by the frequency (in descending order). Also include a `-c|--character` option (default `|`) to represent a mark in the histogram, a `-m|--minimum` option (default `1`) to include a character in the output, a `-w|--width` option (default `70`) to limit the size of the histogram, and a `-i|--case_insensitive` flag to force all input to uppercase.
 
 ````
 $ ./histy.py
-usage: histy.py [-h] [-c str] [-m int] [-s int] int [int ...]
-histy.py: error: the following arguments are required: int
+usage: histy.py [-h] [-c str] [-m int] [-w int] [-i] [-f] str
+histy.py: error: the following arguments are required: str
 $ ./histy.py -h
-usage: histy.py [-h] [-c str] [-m int] [-s int] int [int ...]
+usage: histy.py [-h] [-c str] [-m int] [-w int] [-i] [-f] str
 
 Histogrammer
 
 positional arguments:
-  int                   Inputs
+  str                   Input text or file
 
 optional arguments:
   -h, --help            show this help message and exit
   -c str, --character str
-                        Character to represent (default: |)
+                        Character for marks (default: |)
   -m int, --minimum int
-                        Minimum value to print (default: 1)
-  -s int, --scale int   Scale inputs (default: 1)
-$ ./histy.py 3 1 2
-  1 |
-  2 ||
-  3 |||
-$ ./histy.py 300 100 200 -s 100
-100 |
-200 ||
-300 |||
-$ ./histy.py 300 100 200 -s 100 -c '#'
-100 #
-200 ##
-300 ###
-$ ./histy.py 300 100 200 -s 100 -c '#' -m 150
-200 ##
-300 ###
-````
-
-# Test Suite
-
-A passing test suite looks like this:
-
-````
-$ make test
-pytest -v test.py
-============================= test session starts ==============================
-platform darwin -- Python 3.6.8, pytest-4.2.0, py-1.7.0, pluggy-0.8.1 -- /anaconda3/bin/python
-cachedir: .pytest_cache
-rootdir: /Users/kyclark/work/worked_examples/2019_spring_finals/histogram_a, inifile:
-plugins: remotedata-0.3.1, openfiles-0.3.2, doctestplus-0.2.0, arraydiff-0.3
-collected 6 items
-
-test.py::test_usage PASSED                                               [ 16%]
-test.py::test_01 PASSED                                                  [ 33%]
-test.py::test_02 PASSED                                                  [ 50%]
-test.py::test_03 PASSED                                                  [ 66%]
-test.py::test_04 PASSED                                                  [ 83%]
-test.py::test_05 PASSED                                                  [100%]
-
-=========================== 6 passed in 0.43 seconds ===========================
+                        Minimum frequency to print (default: 1)
+  -w int, --width int   Maximum width of output (default: 70)
+  -i, --case_insensitive
+                        Case insensitive search (default: False)
+  -f, --frequency_sort  Sort by frequency (default: False)
+$ ./histy.py ../inputs/fox.txt
+T      1 |
+a      1 |
+b      1 |
+c      1 |
+d      1 |
+e      3 |||
+f      1 |
+g      1 |
+h      2 ||
+i      1 |
+j      1 |
+k      1 |
+l      1 |
+m      1 |
+n      1 |
+o      4 ||||
+p      1 |
+q      1 |
+r      2 ||
+s      1 |
+t      1 |
+u      2 ||
+v      1 |
+w      1 |
+x      1 |
+y      1 |
+z      1 |
+$ ./histy.py ../inputs/const.txt -fim 100 -w 50 -c '#'
+E   5107 ##################################################
+T   3751 ####################################
+O   2729 ##########################
+S   2676 ##########################
+A   2675 ##########################
+N   2630 #########################
+I   2433 #######################
+R   2206 #####################
+H   2029 ###################
+L   1490 ##############
+D   1230 ############
+C   1164 ###########
+F   1021 #########
+U    848 ########
+P    767 #######
+M    730 #######
+B    612 #####
+Y    504 ####
+V    460 ####
+G    444 ####
+W    375 ###
 ````
