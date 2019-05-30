@@ -4,7 +4,6 @@
 import argparse
 import os
 import re
-import sys
 from collections import Counter
 from dire import die
 
@@ -65,21 +64,22 @@ def main():
     if len(char) != 1:
         die('--character "{}" must be one character'.format(char))
 
-    if os.path.isfile(text): text = open(text).read()
-    if args.case_insensitive: text = text.upper()
+    if os.path.isfile(text):
+        text = open(text).read()
+    if args.case_insensitive:
+        text = text.upper()
 
     freqs = Counter(filter(lambda c: re.match(r'\w', c), list(text)))
-    low = min(freqs.values())
     high = max(freqs.values())
     scale = high / width if high > width else 1
     items = map(lambda t: (t[1], t[0]),
-                sorted([
-                    (v, k) for k, v in freqs.items()
-                ], reverse=True)) if args.frequency_sort else sorted(
-                    freqs.items())
+                sorted([(v, k) for k, v in freqs.items()],
+                       reverse=True)) if args.frequency_sort else sorted(
+                           freqs.items())
 
     for c, num in items:
-        if num < min_val: continue
+        if num < min_val:
+            continue
         print('{} {:6} {}'.format(c, num, char * int(num / scale)))
 
 

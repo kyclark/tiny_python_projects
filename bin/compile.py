@@ -21,16 +21,19 @@ def get_args():
         description='Compile my book',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    # parser.add_argument('positional',
-    #                     metavar='str',
-    #                     help='A positional argument')
-
     parser.add_argument('-i',
                         '--dir',
                         help='Input dir',
                         metavar='str',
                         type=str,
                         default=os.getcwd())
+
+    parser.add_argument('-f',
+                        '--outfile',
+                        help='Output filename',
+                        metavar='str',
+                        type=str,
+                        default='playful_python.pdf')
 
     parser.add_argument('-o',
                         '--outdir',
@@ -45,18 +48,6 @@ def get_args():
                         metavar='str',
                         type=str,
                         default=None)
-
-    # parser.add_argument('-i',
-    #                     '--int',
-    #                     help='A named integer argument',
-    #                     metavar='int',
-    #                     type=int,
-    #                     default=0)
-
-    # parser.add_argument('-f',
-    #                     '--flag',
-    #                     help='A boolean flag',
-    #                     action='store_true')
 
     return parser.parse_args()
 
@@ -80,9 +71,6 @@ def main():
     book_file = os.path.join(out_dir, 'book.md')
 
     with open(book_file, 'wt') as fh:
-        # fh.write('\n'.join(
-        #     ['\\documentclass{article}', '\\begin{document}',
-        #      '\\tableofcontents', '\\newpage', '']))
         fh.write('\\setcounter{tocdepth}{1}\\tableofcontents\n\\newpage\n\n')
 
         top_readme = 'README.md'
@@ -102,24 +90,25 @@ def main():
                 print('\tREADME')
                 chapter = 'Chapter {}: '.format(i)
                 text = open(readme).read()
-                text = re.sub('^#\s+', '# ' + chapter, text)
+                text = re.sub(r'^#\s+', '# ' + chapter, text)
                 fh.write(text + '\n\\newpage\n\n')
 
             solution = os.path.join(in_dir, dir_name, 'solution.py')
             if os.path.isfile(solution):
                 print('\tSOLUTION')
-                fh.write('## Solution\n\n'.format(dir_name))
+                fh.write('## Solution\n\n')
                 fh.write('````\n')
                 numbered = getoutput('cat -n {}'.format(solution))
                 fh.write(numbered)
                 fh.write('\n````\n')
                 fh.write('\n\\newpage\n\n')
 
-    cmd = 'pandoc {} --pdf-engine=xelatex -o book.pdf'
-    rv, out = getstatusoutput(cmd.format(book_file))
+    cmd = 'pandoc {} --pdf-engine=xelatex -o {}'
+    rv, out = getstatusoutput(cmd.format(book_file, args.outfile))
 
     if rv != 0:
         die('Error: {}'.format(out))
+
 
 # --------------------------------------------------
 if __name__ == '__main__':

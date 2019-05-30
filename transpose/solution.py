@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-13
-Purpose: Tranpose ABC notation
-"""
+"""Tranpose ABC notation"""
 
 import argparse
 import os
 import re
 import sys
+from dire import die
 
 
 # --------------------------------------------------
@@ -20,28 +17,14 @@ def get_args():
 
     parser.add_argument('file', metavar='FILE', help='Input file')
 
-    parser.add_argument(
-        '-s',
-        '--shift',
-        help='Interval to shift',
-        metavar='int',
-        type=int,
-        default=2)
+    parser.add_argument('-s',
+                        '--shift',
+                        help='Interval to shift',
+                        metavar='int',
+                        type=int,
+                        default=2)
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------

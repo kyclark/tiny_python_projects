@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
-"""
-Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 2019-05-08
-Purpose: Create Workout Of (the) Day (WOD)
-"""
+"""Create Workout Of (the) Day (WOD)"""
 
 import argparse
 import csv
 import os
 import random
-import sys
 from tabulate import tabulate
+from dire import die
 
 
 # --------------------------------------------------
@@ -20,47 +16,33 @@ def get_args():
         description='Create Workout Of (the) Day (WOD)',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument(
-        '-f',
-        '--file',
-        help='CSV input file of exercises',
-        metavar='str',
-        type=str,
-        default='wod.csv')
+    parser.add_argument('-f',
+                        '--file',
+                        help='CSV input file of exercises',
+                        metavar='str',
+                        type=str,
+                        default='wod.csv')
 
-    parser.add_argument(
-        '-s',
-        '--seed',
-        help='Random seed',
-        metavar='int',
-        type=int,
-        default=None)
+    parser.add_argument('-s',
+                        '--seed',
+                        help='Random seed',
+                        metavar='int',
+                        type=int,
+                        default=None)
 
-    parser.add_argument(
-        '-n',
-        '--num_exercises',
-        help='Number of exercises',
-        metavar='int',
-        type=int,
-        default=4)
+    parser.add_argument('-n',
+                        '--num_exercises',
+                        help='Number of exercises',
+                        metavar='int',
+                        type=int,
+                        default=4)
 
-    parser.add_argument(
-        '-e', '--easy', help='Make it easy', action='store_true')
+    parser.add_argument('-e',
+                        '--easy',
+                        help='Make it easy',
+                        action='store_true')
 
     return parser.parse_args()
-
-
-# --------------------------------------------------
-def warn(msg):
-    """Print a message to STDERR"""
-    print(msg, file=sys.stderr)
-
-
-# --------------------------------------------------
-def die(msg='Something bad happened'):
-    """warn() and exit with error"""
-    warn(msg)
-    sys.exit(1)
 
 
 # --------------------------------------------------

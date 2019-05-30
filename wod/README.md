@@ -70,7 +70,7 @@ Squatting Chinups         49
 Flapping Leg Raises       17
 ````
 
-# Discussion
+## Discussion
 
 It's recommended you use the `csv.DictReader` module to parse the CSV files. You will then need to split the "reps" fields like "20-50" into a low and high values that are coerced into integer values. For the purposes of this exercise, you can assume the CSV files you are given will have the correct headers and the fields will be correctly formatted. 
 

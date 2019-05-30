@@ -1669,7 +1669,7 @@ Squatting Chinups         49
 Flapping Leg Raises       17
 ````
 
-# Discussion
+## Discussion
 
 It's recommended you use the `csv.DictReader` module to parse the CSV files. You will then need to split the "reps" fields like "20-50" into a low and high values that are coerced into integer values. For the purposes of this exercise, you can assume the CSV files you are given will have the correct headers and the fields will be correctly formatted. 
 
@@ -1715,116 +1715,98 @@ Then I can get a random rep value using `random.randint`, e.g.:
 
 ````
      1	#!/usr/bin/env python3
-     2	"""
-     3	Author : Ken Youens-Clark <kyclark@gmail.com>
-     4	Date   : 2019-05-08
-     5	Purpose: Create Workout Of (the) Day (WOD)
-     6	"""
-     7	
-     8	import argparse
-     9	import csv
-    10	import os
-    11	import random
-    12	import sys
-    13	from tabulate import tabulate
-    14	
-    15	
-    16	# --------------------------------------------------
-    17	def get_args():
-    18	    """get command-line arguments"""
-    19	    parser = argparse.ArgumentParser(
-    20	        description='Create Workout Of (the) Day (WOD)',
-    21	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    22	
-    23	    parser.add_argument(
-    24	        '-f',
-    25	        '--file',
-    26	        help='CSV input file of exercises',
-    27	        metavar='str',
-    28	        type=str,
-    29	        default='wod.csv')
-    30	
-    31	    parser.add_argument(
-    32	        '-s',
-    33	        '--seed',
-    34	        help='Random seed',
-    35	        metavar='int',
-    36	        type=int,
-    37	        default=None)
-    38	
-    39	    parser.add_argument(
-    40	        '-n',
-    41	        '--num_exercises',
-    42	        help='Number of exercises',
-    43	        metavar='int',
-    44	        type=int,
-    45	        default=4)
+     2	"""Create Workout Of (the) Day (WOD)"""
+     3	
+     4	import argparse
+     5	import csv
+     6	import os
+     7	import random
+     8	from tabulate import tabulate
+     9	from dire import die
+    10	
+    11	
+    12	# --------------------------------------------------
+    13	def get_args():
+    14	    """get command-line arguments"""
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Create Workout Of (the) Day (WOD)',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('-f',
+    20	                        '--file',
+    21	                        help='CSV input file of exercises',
+    22	                        metavar='str',
+    23	                        type=str,
+    24	                        default='wod.csv')
+    25	
+    26	    parser.add_argument('-s',
+    27	                        '--seed',
+    28	                        help='Random seed',
+    29	                        metavar='int',
+    30	                        type=int,
+    31	                        default=None)
+    32	
+    33	    parser.add_argument('-n',
+    34	                        '--num_exercises',
+    35	                        help='Number of exercises',
+    36	                        metavar='int',
+    37	                        type=int,
+    38	                        default=4)
+    39	
+    40	    parser.add_argument('-e',
+    41	                        '--easy',
+    42	                        help='Make it easy',
+    43	                        action='store_true')
+    44	
+    45	    return parser.parse_args()
     46	
-    47	    parser.add_argument(
-    48	        '-e', '--easy', help='Make it easy', action='store_true')
-    49	
-    50	    return parser.parse_args()
+    47	
+    48	# --------------------------------------------------
+    49	def read_csv(file):
+    50	    """Read the CSV input"""
     51	
-    52	
-    53	# --------------------------------------------------
-    54	def warn(msg):
-    55	    """Print a message to STDERR"""
-    56	    print(msg, file=sys.stderr)
-    57	
-    58	
-    59	# --------------------------------------------------
-    60	def die(msg='Something bad happened'):
-    61	    """warn() and exit with error"""
-    62	    warn(msg)
-    63	    sys.exit(1)
-    64	
-    65	
-    66	# --------------------------------------------------
-    67	def read_csv(file):
-    68	    """Read the CSV input"""
-    69	
-    70	    if not os.path.isfile(file):
-    71	        die('"{}" is not a file'.format(file))
-    72	
-    73	    exercises = []
-    74	    with open(file) as csvfile:
-    75	        reader = csv.DictReader(csvfile, delimiter=',')
-    76	        required = ['exercise', 'reps']
-    77	
-    78	        if not all(map(lambda f: f in reader.fieldnames, required)):
-    79	            die('"{}" is missing required fields: {}'.format(
-    80	                file, ', '.join(required)))
-    81	
-    82	        for row in reader:
-    83	            name = row['exercise']
-    84	            low, high = row['reps'].split('-')
-    85	            exercises.append((name, int(low), int(high)))
-    86	
-    87	    return exercises
-    88	
+    52	    if not os.path.isfile(file):
+    53	        die('"{}" is not a file'.format(file))
+    54	
+    55	    exercises = []
+    56	    with open(file) as csvfile:
+    57	        reader = csv.DictReader(csvfile, delimiter=',')
+    58	        required = ['exercise', 'reps']
+    59	
+    60	        if not all(map(lambda f: f in reader.fieldnames, required)):
+    61	            die('"{}" is missing required fields: {}'.format(
+    62	                file, ', '.join(required)))
+    63	
+    64	        for row in reader:
+    65	            name = row['exercise']
+    66	            low, high = row['reps'].split('-')
+    67	            exercises.append((name, int(low), int(high)))
+    68	
+    69	    return exercises
+    70	
+    71	
+    72	# --------------------------------------------------
+    73	def main():
+    74	    """Make a jazz noise here"""
+    75	
+    76	    args = get_args()
+    77	    random.seed(args.seed)
+    78	    exercises = read_csv(args.file)
+    79	    table = []
+    80	
+    81	    for name, low, high in random.sample(exercises, k=args.num_exercises):
+    82	        if args.easy:
+    83	            low = int(low / 2)
+    84	            high = int(high / 2)
+    85	
+    86	        table.append((name, '{}'.format(random.randint(low, high))))
+    87	
+    88	    print(tabulate(table, headers=('Exercise', 'Reps')))
     89	
-    90	# --------------------------------------------------
-    91	def main():
-    92	    """Make a jazz noise here"""
-    93	
-    94	    args = get_args()
-    95	    random.seed(args.seed)
-    96	    exercises = read_csv(args.file)
-    97	    table = []
-    98	
-    99	    for name, low, high in random.sample(exercises, k=args.num_exercises):
-   100	        if args.easy:
-   101	            low = int(low / 2)
-   102	            high = int(high / 2)
-   103	
-   104	        table.append((name, '{}'.format(random.randint(low, high))))
-   105	
-   106	    print(tabulate(table, headers=('Exercise', 'Reps')))
-   107	
-   108	
-   109	# --------------------------------------------------
-   110	if __name__ == '__main__':
-   111	    main()
+    90	
+    91	# --------------------------------------------------
+    92	if __name__ == '__main__':
+    93	    main()
 ````
 
 \newpage
@@ -2321,82 +2303,82 @@ W    375 ###
      4	import argparse
      5	import os
      6	import re
-     7	import sys
-     8	from collections import Counter
-     9	from dire import die
+     7	from collections import Counter
+     8	from dire import die
+     9	
     10	
-    11	
-    12	# --------------------------------------------------
-    13	def get_args():
-    14	    """get command-line arguments"""
-    15	    parser = argparse.ArgumentParser(
-    16	        description='Histogrammer',
-    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    18	
-    19	    parser.add_argument('text', metavar='str', help='Input text or file')
-    20	
-    21	    parser.add_argument('-c',
-    22	                        '--character',
-    23	                        help='Character for marks',
-    24	                        metavar='str',
-    25	                        type=str,
-    26	                        default='|')
-    27	
-    28	    parser.add_argument('-m',
-    29	                        '--minimum',
-    30	                        help='Minimum frequency to print',
-    31	                        metavar='int',
-    32	                        type=int,
-    33	                        default=1)
-    34	
-    35	    parser.add_argument('-w',
-    36	                        '--width',
-    37	                        help='Maximum width of output',
-    38	                        metavar='int',
-    39	                        type=int,
-    40	                        default=70)
-    41	
-    42	    parser.add_argument('-i',
-    43	                        '--case_insensitive',
-    44	                        help='Case insensitive search',
-    45	                        action='store_true')
-    46	
-    47	    parser.add_argument('-f',
-    48	                        '--frequency_sort',
-    49	                        help='Sort by frequency',
-    50	                        action='store_true')
-    51	
-    52	    return parser.parse_args()
+    11	# --------------------------------------------------
+    12	def get_args():
+    13	    """get command-line arguments"""
+    14	    parser = argparse.ArgumentParser(
+    15	        description='Histogrammer',
+    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    17	
+    18	    parser.add_argument('text', metavar='str', help='Input text or file')
+    19	
+    20	    parser.add_argument('-c',
+    21	                        '--character',
+    22	                        help='Character for marks',
+    23	                        metavar='str',
+    24	                        type=str,
+    25	                        default='|')
+    26	
+    27	    parser.add_argument('-m',
+    28	                        '--minimum',
+    29	                        help='Minimum frequency to print',
+    30	                        metavar='int',
+    31	                        type=int,
+    32	                        default=1)
+    33	
+    34	    parser.add_argument('-w',
+    35	                        '--width',
+    36	                        help='Maximum width of output',
+    37	                        metavar='int',
+    38	                        type=int,
+    39	                        default=70)
+    40	
+    41	    parser.add_argument('-i',
+    42	                        '--case_insensitive',
+    43	                        help='Case insensitive search',
+    44	                        action='store_true')
+    45	
+    46	    parser.add_argument('-f',
+    47	                        '--frequency_sort',
+    48	                        help='Sort by frequency',
+    49	                        action='store_true')
+    50	
+    51	    return parser.parse_args()
+    52	
     53	
-    54	
-    55	# --------------------------------------------------
-    56	def main():
-    57	    """Make a jazz noise here"""
-    58	
-    59	    args = get_args()
-    60	    text = args.text
-    61	    char = args.character
-    62	    width = args.width
-    63	    min_val = args.minimum
-    64	
-    65	    if len(char) != 1:
-    66	        die('--character "{}" must be one character'.format(char))
-    67	
-    68	    if os.path.isfile(text): text = open(text).read()
-    69	    if args.case_insensitive: text = text.upper()
-    70	
-    71	    freqs = Counter(filter(lambda c: re.match(r'\w', c), list(text)))
-    72	    low = min(freqs.values())
+    54	# --------------------------------------------------
+    55	def main():
+    56	    """Make a jazz noise here"""
+    57	
+    58	    args = get_args()
+    59	    text = args.text
+    60	    char = args.character
+    61	    width = args.width
+    62	    min_val = args.minimum
+    63	
+    64	    if len(char) != 1:
+    65	        die('--character "{}" must be one character'.format(char))
+    66	
+    67	    if os.path.isfile(text):
+    68	        text = open(text).read()
+    69	    if args.case_insensitive:
+    70	        text = text.upper()
+    71	
+    72	    freqs = Counter(filter(lambda c: re.match(r'\w', c), list(text)))
     73	    high = max(freqs.values())
     74	    scale = high / width if high > width else 1
     75	    items = map(lambda t: (t[1], t[0]),
-    76	                sorted([
-    77	                    (v, k) for k, v in freqs.items()
-    78	                ], reverse=True)) if args.frequency_sort else sorted(
-    79	                    freqs.items())
-    80	
-    81	    for c, num in items:
-    82	        if num < min_val: continue
+    76	                sorted([(v, k) for k, v in freqs.items()],
+    77	                       reverse=True)) if args.frequency_sort else sorted(
+    78	                           freqs.items())
+    79	
+    80	    for c, num in items:
+    81	        if num < min_val:
+    82	            continue
     83	        print('{} {:6} {}'.format(c, num, char * int(num / scale)))
     84	
     85	
@@ -2567,16 +2549,16 @@ You should be able to handle this in your inifinite game loop.
 
 \newpage
 
-# Chapter 21: Kentucky Fryer
+# Chapter 21: Kentucky Friar
 
-Write a Python program called `fryer.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
+Write a Python program called `friar.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
 ````
-$ ./fryer.py
-usage: fryer.py [-h] str
-fryer.py: error: the following arguments are required: str
-$ ./fryer.py -h
-usage: fryer.py [-h] str
+$ ./friar.py
+usage: friar.py [-h] str
+friar.py: error: the following arguments are required: str
+$ ./friar.py -h
+usage: friar.py [-h] str
 
 Southern fry text
 
@@ -2585,17 +2567,17 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
-$ ./fryer.py you
+$ ./friar.py you
 y'all
-$ ./fryer.py Fishing
+$ ./friar.py Fishing
 Fishin'
-$ ./fryer.py string
+$ ./friar.py string
 string
 $ cat tests/input1.txt
 So I was fixing to ask him, "Do you want to go fishing?" I was dying
 to go for a swing and maybe do some swimming, too.
-$ ./fryer.py tests/input1.txt
-So I was fixin' to ask him, "Do y'all want to go fishing?" I was dyin'
+$ ./friar.py tests/input1.txt
+So I was fixin' to ask him, "Do y'all want to go fishin'?" I was dyin'
 to go for a swing and maybe do some swimmin', too.
 ````
 
@@ -2605,11 +2587,11 @@ to go for a swing and maybe do some swimmin', too.
 
 ````
      1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import os
-     5	import re
-     6	import sys
+     2	"""Kentucky Friar"""
+     3	
+     4	import argparse
+     5	import os
+     6	import re
      7	
      8	
      9	# --------------------------------------------------
@@ -2654,7 +2636,7 @@ to go for a swing and maybe do some swimmin', too.
     48	        text = open(text).read()
     49	
     50	    for line in text.splitlines():
-    51	        print(' '.join(map(fry, line.rstrip().split())))
+    51	        print(''.join(map(fry, re.split(r'(\W+)', line.rstrip()))))
     52	
     53	
     54	# --------------------------------------------------
@@ -5196,101 +5178,84 @@ aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
 
 ````
      1	#!/usr/bin/env python3
-     2	"""
-     3	Author : Ken Youens-Clark <kyclark@gmail.com>
-     4	Date   : 2019-05-13
-     5	Purpose: Tranpose ABC notation
-     6	"""
-     7	
-     8	import argparse
-     9	import os
-    10	import re
-    11	import sys
-    12	
-    13	
-    14	# --------------------------------------------------
-    15	def get_args():
-    16	    """get command-line arguments"""
-    17	    parser = argparse.ArgumentParser(
-    18	        description='Tranpose ABC notation',
-    19	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    20	
-    21	    parser.add_argument('file', metavar='FILE', help='Input file')
-    22	
-    23	    parser.add_argument(
-    24	        '-s',
-    25	        '--shift',
-    26	        help='Interval to shift',
-    27	        metavar='int',
-    28	        type=int,
-    29	        default=2)
-    30	
-    31	    return parser.parse_args()
-    32	
-    33	
-    34	# --------------------------------------------------
-    35	def warn(msg):
-    36	    """Print a message to STDERR"""
-    37	    print(msg, file=sys.stderr)
-    38	
+     2	"""Tranpose ABC notation"""
+     3	
+     4	import argparse
+     5	import os
+     6	import re
+     7	import sys
+     8	from dire import die
+     9	
+    10	
+    11	# --------------------------------------------------
+    12	def get_args():
+    13	    """get command-line arguments"""
+    14	    parser = argparse.ArgumentParser(
+    15	        description='Tranpose ABC notation',
+    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    17	
+    18	    parser.add_argument('file', metavar='FILE', help='Input file')
+    19	
+    20	    parser.add_argument('-s',
+    21	                        '--shift',
+    22	                        help='Interval to shift',
+    23	                        metavar='int',
+    24	                        type=int,
+    25	                        default=2)
+    26	
+    27	    return parser.parse_args()
+    28	
+    29	
+    30	# --------------------------------------------------
+    31	def main():
+    32	    """Make a jazz noise here"""
+    33	    args = get_args()
+    34	    file = args.file
+    35	    shift = args.shift
+    36	    ucase = 'ABCDEFG'
+    37	    lcase = 'abcdefg'
+    38	    num_notes = 7
     39	
-    40	# --------------------------------------------------
-    41	def die(msg='Something bad happened'):
-    42	    """warn() and exit with error"""
-    43	    warn(msg)
-    44	    sys.exit(1)
+    40	    if not 1 < abs(shift) <= 8:
+    41	        die('--shift "{}" must be between 2 and 8'.format(shift))
+    42	
+    43	    if not os.path.isfile(file):
+    44	        die('"{}" is not a file'.format(file))
     45	
-    46	
-    47	# --------------------------------------------------
-    48	def main():
-    49	    """Make a jazz noise here"""
-    50	    args = get_args()
-    51	    file = args.file
-    52	    shift = args.shift
-    53	    ucase = 'ABCDEFG'
-    54	    lcase = 'abcdefg'
-    55	    num_notes = 7
-    56	
-    57	    if not 1 < abs(shift) <= 8:
-    58	        die('--shift "{}" must be between 2 and 8'.format(shift))
-    59	
-    60	    if not os.path.isfile(file):
-    61	        die('"{}" is not a file'.format(file))
-    62	
-    63	    # account for interval where a 2nd (-s 2) is a move of one note
-    64	    shift = shift - 1 if shift > 0 else shift + 1
-    65	
-    66	    def transpose(note):
-    67	        if note in lcase:
-    68	            pos = lcase.index(note)
-    69	            tran = (pos + shift) % num_notes
-    70	            return lcase[tran]
-    71	        elif note in ucase:
-    72	            pos = ucase.index(note)
-    73	            tran = (pos + shift) % num_notes
-    74	            return ucase[tran]
-    75	        else:
-    76	            return note
-    77	
-    78	    for line in open(file):
-    79	        line = line.rstrip()
-    80	
-    81	        if line.startswith('K:'):
-    82	            key = line[2]
-    83	            print('K:' + transpose(key))
-    84	        elif (line.startswith('<') and line.endswith('>')) or re.match(
-    85	                '[A-Z]:\s?', line):
-    86	            print(line)
-    87	        else:
-    88	            for char in line.rstrip():
-    89	                print(transpose(char), end='')
-    90	
-    91	            print()
-    92	
-    93	
-    94	# --------------------------------------------------
-    95	if __name__ == '__main__':
-    96	    main()
+    46	    # account for interval where a 2nd (-s 2) is a move of one note
+    47	    shift = shift - 1 if shift > 0 else shift + 1
+    48	
+    49	    def transpose(note):
+    50	        if note in lcase:
+    51	            pos = lcase.index(note)
+    52	            tran = (pos + shift) % num_notes
+    53	            return lcase[tran]
+    54	        elif note in ucase:
+    55	            pos = ucase.index(note)
+    56	            tran = (pos + shift) % num_notes
+    57	            return ucase[tran]
+    58	        else:
+    59	            return note
+    60	
+    61	    for line in open(file):
+    62	        line = line.rstrip()
+    63	
+    64	        if line.startswith('K:'):
+    65	            key = line[2]
+    66	            print('K:' + transpose(key))
+    67	        elif (line.startswith('<') and line.endswith('>')) or re.match(
+    68	                '[A-Z]:\s?', line):
+    69	            print(line)
+    70	        else:
+    71	            for char in line.rstrip():
+    72	                print(transpose(char), end='')
+    73	
+    74	            print()
+    75	
+    76	
+    77	# --------------------------------------------------
+    78	if __name__ == '__main__':
+    79	    main()
 ````
 
 \newpage
