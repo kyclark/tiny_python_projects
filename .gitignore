@@ -5,3 +5,4 @@ __pycache__
 .cache
 .ipynb_checkpoints
 .DS_Store
+tex2pdf*
