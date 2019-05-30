@@ -1,7 +1,28 @@
 #!/usr/bin/env python3
+"""Rock, Paper, Scissors"""
 
-import sys
+import argparse
+import os
 import random
+import sys
+
+
+# --------------------------------------------------
+def get_args():
+    """Get command-line arguments"""
+
+    parser = argparse.ArgumentParser(
+        description='Rock, Paper, Scissors',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('-s',
+                        '--seed',
+                        help='Random seed',
+                        metavar='int',
+                        type=int,
+                        default=None)
+
+    return parser.parse_args()
 
 
 # --------------------------------------------------
@@ -32,9 +53,12 @@ def insult():
 
 # --------------------------------------------------
 def main():
-    """Play Rock Paper Scissors"""
-    valid = set('rps')
+    """Make a jazz noise here"""
 
+    args = get_args()
+    random.seed(args.seed)
+
+    valid = set('rps')
     beats = {'r': 's', 's': 'p', 'p': 'r'}
     display = {'r': 'Rock', 'p': 'Paper', 's': 'Scissors'}
 
