@@ -27,8 +27,6 @@ $ ./gashlycrumb.py z
 Z is for Zillah who drank too much gin.
 ````
 
-# Discussion
-
 If you are not familiar with the work of Edward Gorey, please stop and go read about him immediately, e.g. https://www.brainpickings.org/2011/01/19/edward-gorey-the-gashlycrumb-tinies/! 
 
 Write your own version of Gorey's text and pass in your version as the `--file`.

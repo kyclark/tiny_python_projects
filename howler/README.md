@@ -18,10 +18,8 @@ optional arguments:
   -h, --help            show this help message and exit
   -o str, --outfile str
                         Output filename (default: )
+$ ./howler.py 'One word: Plastics!'
+ONE WORD: PLASTICS!
+$ ./howler.py ../inputs/fox.txt
+THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 ````
-
-# Skills
-
-* Reading text from command line or a file
-* Transforming text
-* Write to a file or STDOUT

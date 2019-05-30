@@ -19,7 +19,7 @@ kentucky_fryer
 mad_libs
 markov_words
 piggie
-sound
+soundex_rhymer
 substring
 tictactoe
 twelve_days_of_christmas

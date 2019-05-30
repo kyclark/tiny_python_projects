@@ -8,7 +8,7 @@ Purpose: Compile my book
 import argparse
 import os
 import sys
-from subprocess import getstatusoutput
+from subprocess import getstatusoutput, getoutput
 from dire import die
 
 
@@ -92,8 +92,10 @@ def main():
                 print('\tSOLUTION')
                 fh.write('# {} Solution\n\n'.format(dir_name))
                 fh.write('````\n')
-                fh.write(open(solution).read())
-                fh.write('````\n')
+                #fh.write(open(solution).read())
+                numbered = getoutput('cat -n {}'.format(solution))
+                fh.write(numbered)
+                fh.write('\n````\n')
                 fh.write('\n\\pagebreak\n\n')
 
     cmd = 'pandoc {} --pdf-engine=xelatex -o book.pdf'
