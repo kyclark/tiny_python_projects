@@ -1,6 +1,6 @@
-# BACRONYM
+# Bacronym
 
-Write a Python program called `bacronym.py` that takes an string like "FBI" and retrofits some `-n|--number` (default 5) of acronyms by reading a `-w|--wordlist` argument (defualt "/usr/share/dict/words"), skipping over words to `-e|--exclude` (default "a, an, the") and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
+Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--number` (default `5`) of acronyms by reading a `-w|--wordlist` argument (defualt `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
 
 ````
 $ ./bacronym.py
@@ -30,10 +30,3 @@ FBI =
  - Foxily Blastomyces Inedited
  - Fastland Bouncingly Idiospasm
 ````
-
-# Skills
-
-* Using `argparse`
-* Reading words from a file into a list
-* Randomly selecting words from a list
-* Formatting string output

@@ -34,4 +34,4 @@ Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you
 
 # Author
 
-Ken Youens-Clark <kyclark@gmail.com>
+Ken Youens-Clark (BA, MS) is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz at the University of Arizona. He started programming at his first job out of college. He's work in the field of bioinformatics since 2001, and enjoys helping people to learn programming. When he's not working, he likes playing music, riding bikes, cooking, and being with his wife and children.

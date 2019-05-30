@@ -18,6 +18,6 @@ optional arguments:
   -h, --help  show this help message and exit
 $ ./article.py bear
 a bear
-[cholla@~/work/python/playful_python/article]$ ./article.py octopus
+$ ./article.py octopus
 an octopus
 ````

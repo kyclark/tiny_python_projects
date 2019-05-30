@@ -1,4 +1,471 @@
+# Playful Python
+
+I believe you can learn serious things through silly games. 
+
+I'd like to make this into a book or something, similar to the Python bioinformatics/data science (https://github.com/kyclark/practical_python_for_data_science) repo. I think you will learn best by *doing*, so I think I will write this as a loose collection of exercises that spell out the skills I aim to teach with each exercise. I will create descriptions for each exercise with examples of how the program should work along with a test suite. You will need to write the program that satisfies the test suite.
+
+I think I'm going to present this differently from other material in that I won't necessarily show you beforehand what you need to write a program. I'll describe what the program should do and provide some discussion about how to write it. I'll also create an appendix with short example of how to do things like read/write from/to a file, process all the files in a directory, extract k-mers from a string, etc. I'll provide some building blocks, but I want you to figure out how to put the pieces together!
+
+# new.py
+
+I provide a program in the `bin` directory called `new.py` that will help you stub out new Python programs using the fabulous `argparse` module to parse the command line arguments and options for your programs. I highly recommend you start every new program with this. For example, if the `README.md` says "Write a Python program called `abc.py` that ...", then you should do this:
+
+````
+$ new.py abc
+````
+
+This will create a new file called `abc.py` (that has been made executable with `chmod +x`, if your operating system supports that) that has example code for you to start writing your program. It's best to put `new.py` into your `$PATH` or alter your `$PATH` to include the directory where it's located. FWIW, I always create a `$HOME/.local/bin` that I add to my `$PATH` for programs like this.
+
+# How to Use
+
+First use the GitHub interface to "fork" this repository into your own account. Then do `git clone` of *your* repository to get a local copy. Inside that checkout, do:
+
+````
+git remote add upstream https://github.com/kyclark/playful_python.git 
+````
+
+so that you can do `git pull upstream master` to get updates. When you create new files, `git add/commit/push` them to *your* repository. (Please do not create pull requests on *my* repository -- unless, of course, you have suggestions for improving my repo!).
+
+This is a work in progress. If you see a directory contains a `README.md`, `solution.py`, `Makefile`, and `test.py`, then it's likely ready to be solved.
+
+# Structure
+
+Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you just randomly chose one and see how it goes. They vary quite a bit in difficulty, so maybe I'll just give them 1, 2, or 3 stars to indicate easy to hard. See OUTLINE.md for more.
+
+# Author
+
+Ken Youens-Clark (BA, MS) is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz at the University of Arizona. He started programming at his first job out of college. He's work in the field of bioinformatics since 2001, and enjoys helping people to learn programming. When he's not working, he likes playing music, riding bikes, cooking, and being with his wife and children.
+
+\pagebreak
+
+# Playful Python Outline
+
+I aim to have 40-50 programs complete with specs, examples, inputs, and test suites. They won't necessarily have a specific order, but they will be grouped into easiest/harder/hardest categories. As many programs use common ideas (e.g., regular expressions, graphs, infinite loops), there will be an appendix section with explanations of how to explore those ideas. 
+
+I have in mind a layout where each program gets four pages:
+
+        1        2               3        4
+    +--------+--------+      +--------+--------+
+    |        |        |      |        |        |
+    |        |        |      |        |        |
+    |        |        |      |        |        |
+    | illus/ | specs  |      |solution| notes  |
+    | info   |        |      |        |        |
+    |        |        |      |        |        |
+    |        |        |      |        |        |
+    +--------+--------+      +--------+--------+
+
+1. If a short program, perhaps an illustration; if longer, maybe some background or hints.
+2. The `README.md` information (specs, example output)
+3. The `solution.py` contents
+4. Annotation of the solution with comments on lines, sections
+
+# Programs
+
+> "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
+
+The goal is to get the reader to become a *writer* -- to try to solve the problems. One technique in teaching is to first present a problem without showing how to solve it. Once the student engages with the problem, they find they want and need the object of the lesson. Each program is intended to flex some programming technique or idea like playing with lists or contemplating regular expressions or using dictionaries. By using `argparse` for the programs, we also cover validation of user input.
+
+## Easiest
+
+* **article**: Select "a" or "an" depending on the given argument
+* **howler**: Uppercase input text so they YELL AT YOU LIKE "HOWLER" MESSAGES IN HARRY POTTER. (Could also be called "OWEN MEANY"?)
+* **jump_the_five**: Numeric encryption based on "The Wire."
+* **bottles_of_beer**: Produce the "Bottle of Beer on the Wall" song. Explores the basic idea of an algorithm and challenges the programmer to format strings.
+* **picnic**: Write the picnic game. Uses input, lists.
+* **apples_and_bananas**: Substitute vowels in text, e.g., "bananas" -> "bononos". While the concept is substitution of characters in a string which is actually trivial, it turns out there are many (at least 7) decent ways to accomplish this task!
+* **gashlycrumb**: Create a morbid lookup table from text. Naturual use of dictionaries.
+* **movie_reader**: Print text character-by-character with pauses like in the movies. How to read text by character, use STDOUT/flush, and pause the program.
+* **palindromes**: Find palindromes in text. Reading input, manipulation of strings.
+* **ransom_note**: Transform input text into "RaNSom cASe". Manipulation of text.
+* **rhymer**: Produce rhyming "words" from input text. 
+* **rock_paper_scissors**: Write Rock, Paper, Scissors game. Infinite loops, dictionaries.
+
+## Harder
+
+* **abuse**: Generate insults from lists of adjectives and nouns. Use of randomness, sampling, and lists.
+* **bacronym**: Retrofit words onto acronyms. Use of randomness and dictionaries.
+* **blackjack**: Play Blackjack (card game). Use of randomness, combinations, dictionaries.
+* **family_tree**: Use GraphViz to visualize a family tree from text. Parsing text, creating graph structures, creating visual output.
+* **gematria**: Calculate numeric values of words from characters. Manipulation of text, use of higher-order functions.
+* **guess**: Write a number-guessing game. Use of randomness, validation/coercion of inputs, use of exceptions.
+* **kentucky_fryer**: Turn text into Southern American English. Parsing, manipulation of text.
+* **mad_libs**: TBD
+* **markov_words**: Markov chain to generate words. Use of n-grams/k-mers, graphs, randomness, logging.
+* **piggie**: Encode text in Pig Latin. Use of regular expressions, text manipulation.
+* **sound**: Use Soundex to find rhyming words from a word list.
+* **substring**: Write a game to guess words sharing a common substring. Dictionaries, k-mers/n-grams.
+* **tictactoe**: Write a Tic-Tac-Toe game. Randomness, state.
+* **twelve_days_of_christmas**: Produce the "12 Days of Christmas" song. Algorihtms, loops.
+* **war**: Play the War card game. Combinations, randomness.
+
+## Hardest
+
+* **anagram**: Find anagrams of text. Combinations, permutations, dictionaries.
+* **hangman**: Write a Hangman (word/letter-guessing game). Randomness, game state, infinite loops, user input, validation.
+* **markov_chain**: Markov chain to generate text. N-grams at word level, parsing text, list manipulations.
+* **morse**: Write a Morse encoder/decoder. Dictionaries, text manipulation.
+* **rot13**: ROT13-encode input text. Lists, encryption.
+
+\pagebreak
+
 # Chapter 1
+
+# Article Selector
+
+Write a Python program called `article.py` that will select `a` or `an` for a given word depending on whether the word starts with a consonant or vowel, respectively.
+
+````
+$ ./article.py
+usage: article.py [-h] str
+article.py: error: the following arguments are required: str
+$ ./article.py -h
+usage: article.py [-h] str
+
+Article selector
+
+positional arguments:
+  str         Word
+
+optional arguments:
+  -h, --help  show this help message and exit
+$ ./article.py bear
+a bear
+[cholla@~/work/python/playful_python/article]$ ./article.py octopus
+an octopus
+````
+
+\pagebreak
+
+# article Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Article selector"""
+     3	
+     4	import argparse
+     5	import os
+     6	import sys
+     7	
+     8	
+     9	# --------------------------------------------------
+    10	def get_args():
+    11	    """Get command-line arguments"""
+    12	
+    13	    parser = argparse.ArgumentParser(
+    14	        description='Article selector',
+    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    16	
+    17	    parser.add_argument('word', metavar='str', help='Word')
+    18	
+    19	    return parser.parse_args()
+    20	
+    21	
+    22	# --------------------------------------------------
+    23	def main():
+    24	    """Make a jazz noise here"""
+    25	
+    26	    args = get_args()
+    27	    word = args.word
+    28	    article = 'an' if word[0].lower() in 'aeiou' else 'a'
+    29	
+    30	    print('{} {}'.format(article, word))
+    31	
+    32	# --------------------------------------------------
+    33	if __name__ == '__main__':
+    34	    main()
+````
+
+\pagebreak
+
+# Chapter 2
+
+# Jump the Five
+
+Write a program called `jump.py` that will encode any number using "jump-the-five" algorithm that selects as a replacement for a given number the number that is opposite the number on a US telephone pad if you jump over the 5. The numbers 5and 9 will exchange with each other. So, "1" jumps the 5 to become "9," "6" jumps the 5 to become "4," "5" becomes "0," etc.
+
+````
+   1  2  3
+   4  5  6
+   7  8  9
+   #  0  *
+````
+
+If given no arguments, print a usage statement.
+
+````
+$ ./jump.py
+Usage: jump.py NUMBER
+$ ./jump.py 555-1212
+000-9898
+$ ./jump.py 'Call 1-800-329-8044 today!'
+Call 9-255-781-2566 today!
+````
+
+\pagebreak
+
+# jump_the_five Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Jump the Five"""
+     3	
+     4	import os
+     5	import sys
+     6	
+     7	
+     8	# --------------------------------------------------
+     9	def main():
+    10	    """Make a jazz noise here"""
+    11	
+    12	    args = sys.argv[1:]
+    13	
+    14	    if len(args) != 1:
+    15	        print('Usage: {} NUMBER'.format(os.path.basename(sys.argv[0])))
+    16	        sys.exit(1)
+    17	
+    18	    num = args[0]
+    19	    jumper = {
+    20	        '1': '9',
+    21	        '2': '8',
+    22	        '3': '7',
+    23	        '4': '6',
+    24	        '5': '0',
+    25	        '6': '4',
+    26	        '7': '3',
+    27	        '8': '2',
+    28	        '9': '1',
+    29	        '0': '5'
+    30	    }
+    31	
+    32	    for char in num:
+    33	        print(jumper[char] if char in jumper else char, end='')
+    34	    print()
+    35	
+    36	
+    37	# --------------------------------------------------
+    38	if __name__ == '__main__':
+    39	    main()
+````
+
+\pagebreak
+
+# Chapter 3
+
+# Picnic
+
+Write a Python program called `picnic.py` that accepts one or more positional arguments as the items to bring on a picnic. In response, print "You are bringing ..." where "..." should be replaced according to the number of items where:
+
+1. If one item, just state, e.g., if `chips` then "You are bringing chips."
+2. If two items, put "and" in between, e.g., if `chips soda` then "You are bringing chips and soda."
+3. If three or more items, place commas between all the items INCLUDING BEFORE THE FINAL "and" BECAUSE WE USE THE OXFORD COMMA, e.g., if `chips soda cupcakes` then "You are bringing chips, soda, and cupcakes."
+
+````
+$ ./picnic.py
+usage: picnic.py [-h] str [str ...]
+picnic.py: error: the following arguments are required: str
+$ ./picnic.py -h
+usage: picnic.py [-h] str [str ...]
+
+Picnic game
+
+positional arguments:
+  str         Item(s) to bring
+
+optional arguments:
+  -h, --help  show this help message and exit
+$ ./picnic.py chips
+You are bringing chips.
+$ ./picnic.py "potato chips" salad
+You are bringing potato chips and salad.
+$ ./picnic.py "potato chips" salad soda cupcakes
+You are bringing potato chips, salad, soda, and cupcakes.
+````
+
+\pagebreak
+
+# picnic Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Picnic game"""
+     3	
+     4	import argparse
+     5	
+     6	
+     7	# --------------------------------------------------
+     8	def get_args():
+     9	    """Get command-line arguments"""
+    10	
+    11	    parser = argparse.ArgumentParser(
+    12	        description='Picnic game',
+    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    14	
+    15	    parser.add_argument('item',
+    16	                        metavar='str',
+    17	                        nargs='+',
+    18	                        help='Item(s) to bring')
+    19	
+    20	    return parser.parse_args()
+    21	
+    22	
+    23	# --------------------------------------------------
+    24	def main():
+    25	    """Make a jazz noise here"""
+    26	
+    27	    args = get_args()
+    28	    items = args.item
+    29	    num = len(items)
+    30	
+    31	    bringing = items[0] if num == 1 else ' and '.join(
+    32	        items) if num == 2 else ', '.join(items[:-1] + ['and ' + items[-1]])
+    33	
+    34	    print('You are bringing {}.'.format(bringing))
+    35	
+    36	
+    37	# --------------------------------------------------
+    38	if __name__ == '__main__':
+    39	    main()
+````
+
+\pagebreak
+
+# Chapter 4
+
+# Apples and Bananas
+
+Perhaps you remember the children's song "Apples and Bananas"?
+
+    I like to eat, eat, eat apples and bananas
+    I like to eat, eat, eat apples and bananas
+
+    I like to ate, ate, ate ay-ples and ba-nay-nays
+    I like to ate, ate, ate ay-ples and ba-nay-nays
+
+    I like to eat, eat, eat ee-ples and bee-nee-nees
+    I like to eat, eat, eat ee-ples and bee-nee-nees
+
+Write a Python program called `apples.py` that will turn all the vowels in some given text in a single positional argument into just one `-v|--vowel` (default `a`) like this song. It should complain if the `--vowel` argument isn't a single, lowercase vowel (hint, see `choices` in the `argparse` documentation). If the given text argument is a file, read the text from the file. Replace all vowels with the given vowel, both lower- and uppercase.
+
+````
+$ ./apples.py
+usage: apples.py [-h] [-v str] str
+apples.py: error: the following arguments are required: str
+$ ./apples.py -h
+usage: apples.py [-h] [-v str] str
+
+Apples and bananas
+
+positional arguments:
+  str                  Input text or file
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -v str, --vowel str  The only vowel allowed (default: a)
+$ ./apples.py -v x foo
+usage: apples.py [-h] [-v str] str
+apples.py: error: argument -v/--vowel: invalid choice: 'x' (choose from 'a', 'e', 'i', 'o', 'u')
+$ ./apples.py foo
+faa
+$ ./apples.py ../inputs/fox.txt
+Tha qaack brawn fax jamps avar tha lazy dag.
+````
+
+\pagebreak
+
+# apples_and_bananas Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	
+     3	import argparse
+     4	import os
+     5	import re
+     6	import sys
+     7	
+     8	
+     9	# --------------------------------------------------
+    10	def get_args():
+    11	    """get command-line arguments"""
+    12	    parser = argparse.ArgumentParser(
+    13	        description='Apples and bananas',
+    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    15	
+    16	    parser.add_argument('text', metavar='str', help='Input text or file')
+    17	
+    18	    parser.add_argument('-v',
+    19	                        '--vowel',
+    20	                        help='The vowel(s) allowed',
+    21	                        metavar='str',
+    22	                        type=str,
+    23	                        default='a',
+    24	                        choices=list('aeiou'))
+    25	
+    26	    return parser.parse_args()
+    27	
+    28	
+    29	# --------------------------------------------------
+    30	def main():
+    31	    """Make a jazz noise here"""
+    32	    args = get_args()
+    33	    text = args.text
+    34	    vowel = args.vowel
+    35	
+    36	    if os.path.isfile(text):
+    37	        text = open(text).read()
+    38	
+    39	    # Method 1: Iterate every character
+    40	    # new_text = []
+    41	    # for char in text:
+    42	    #     if char in 'aeiou':
+    43	    #         new_text.append(vowel)
+    44	    #     elif char in 'AEIOU':
+    45	    #         new_text.append(vowel.upper())
+    46	    #     else:
+    47	    #         new_text.append(char)
+    48	    # text = ''.join(new_text)
+    49	
+    50	    # Method 2: str.replace
+    51	    # for v in 'aeiou':
+    52	    #     text = text.replace(v, vowel).replace(v.upper(), vowel.upper())
+    53	
+    54	    # Method 3: Use a list comprehension
+    55	    # new_text = [
+    56	    #     vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
+    57	    #     for c in text
+    58	    # ]
+    59	    # text = ''.join(new_text)
+    60	
+    61	    # Method 4: Define a function, use list comprehension
+    62	    def new_char(c):
+    63	        return vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
+    64	
+    65	    # text = ''.join([new_char(c) for c in text])
+    66	
+    67	    # Method 5: Use a `map` to iterate with a `lambda`
+    68	    # text = ''.join(
+    69	    #     map(
+    70	    #         lambda c: vowel if c in 'aeiou' else vowel.upper()
+    71	    #         if c in 'AEIOU' else c, text))
+    72	
+    73	    # Method 6: `map` with the function
+    74	    text = ''.join(map(new_char, text))
+    75	
+    76	    # Method 7: Regular expressions
+    77	    # text = re.sub('[aeiou]', vowel, text)
+    78	    # text = re.sub('[AEIOU]', vowel.upper(), text)
+    79	
+    80	    print(text.rstrip())
+    81	
+    82	
+    83	# --------------------------------------------------
+    84	if __name__ == '__main__':
+    85	    main()
+````
+
+\pagebreak
+
+# Chapter 5
 
 # Howler
 
@@ -79,79 +546,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \pagebreak
 
-# Chapter 2
-
-# Jump the Five
-
-Write a program called `jump.py` that will encode any number using "jump-the-five" algorithm that selects as a replacement for a given number the number that is opposite the number on a US telephone pad if you jump over the 5. The numbers 5and 9 will exchange with each other. So, "1" jumps the 5 to become "9," "6" jumps the 5 to become "4," "5" becomes "0," etc.
-
-````
-   1  2  3
-   4  5  6
-   7  8  9
-   #  0  *
-````
-
-If given no arguments, print a usage statement.
-
-````
-$ ./jump.py
-Usage: jump.py NUMBER
-$ ./jump.py 555-1212
-000-9898
-$ ./jump.py 'Call 1-800-329-8044 today!'
-Call 9-255-781-2566 today!
-````
-
-\pagebreak
-
-# jump_the_five Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	"""Jump the Five"""
-     3	
-     4	import os
-     5	import sys
-     6	
-     7	
-     8	# --------------------------------------------------
-     9	def main():
-    10	    """Make a jazz noise here"""
-    11	
-    12	    args = sys.argv[1:]
-    13	
-    14	    if len(args) != 1:
-    15	        print('Usage: {} NUMBER'.format(os.path.basename(sys.argv[0])))
-    16	        sys.exit(1)
-    17	
-    18	    num = args[0]
-    19	    jumper = {
-    20	        '1': '9',
-    21	        '2': '8',
-    22	        '3': '7',
-    23	        '4': '6',
-    24	        '5': '0',
-    25	        '6': '4',
-    26	        '7': '3',
-    27	        '8': '2',
-    28	        '9': '1',
-    29	        '0': '5'
-    30	    }
-    31	
-    32	    for char in num:
-    33	        print(jumper[char] if char in jumper else char, end='')
-    34	    print()
-    35	
-    36	
-    37	# --------------------------------------------------
-    38	if __name__ == '__main__':
-    39	    main()
-````
-
-\pagebreak
-
-# Chapter 3
+# Chapter 6
 
 # Bottles of Beer Song
 
@@ -312,222 +707,7 @@ Take one down, pass it around,
 
 \pagebreak
 
-# Chapter 4
-
-# Picnic
-
-Write a Python program called `picnic.py` that accepts one or more positional arguments as the items to bring on a picnic. In response, print "You are bringing ..." where "..." should be replaced according to the number of items where:
-
-1. If one item, just state, e.g., if "chips" then "You are bringing chips."
-2. If two items, put "and" in between, e.g., if "chips soda" then "You are bringing chips and soda."
-3. If three or more items, place commas between all the items INCLUDING BEFORE THE FINAL "and" BECAUSE WE USE THE OXFORD COMMA, e.g., if "chips soda cupcakes" then "You are bringing chips, soda, and cupcakes."
-
-````
-$ ./picnic.py
-usage: picnic.py [-h] str [str ...]
-picnic.py: error: the following arguments are required: str
-$ ./picnic.py -h
-usage: picnic.py [-h] str [str ...]
-
-Picnic game
-
-positional arguments:
-  str         Item(s) to bring
-
-optional arguments:
-  -h, --help  show this help message and exit
-$ ./picnic.py chips
-You are bringing chips.
-$ ./picnic.py "potato chips" salad
-You are bringing potato chips and salad.
-$ ./picnic.py "potato chips" salad soda cupcakes
-You are bringing potato chips, salad, soda, and cupcakes.
-````
-
-\pagebreak
-
-# picnic Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	"""Picnic game"""
-     3	
-     4	import argparse
-     5	
-     6	
-     7	# --------------------------------------------------
-     8	def get_args():
-     9	    """Get command-line arguments"""
-    10	
-    11	    parser = argparse.ArgumentParser(
-    12	        description='Picnic game',
-    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    14	
-    15	    parser.add_argument('item',
-    16	                        metavar='str',
-    17	                        nargs='+',
-    18	                        help='Item(s) to bring')
-    19	
-    20	    return parser.parse_args()
-    21	
-    22	
-    23	# --------------------------------------------------
-    24	def main():
-    25	    """Make a jazz noise here"""
-    26	
-    27	    args = get_args()
-    28	    items = args.item
-    29	    num = len(items)
-    30	
-    31	    bringing = items[0] if num == 1 else ' and '.join(
-    32	        items) if num == 2 else ', '.join(items[:-1] + ['and ' + items[-1]])
-    33	
-    34	    print('You are bringing {}.'.format(bringing))
-    35	
-    36	
-    37	# --------------------------------------------------
-    38	if __name__ == '__main__':
-    39	    main()
-````
-
-\pagebreak
-
-# Chapter 5
-
-# Apples and Bananas
-
-Perhaps you remember the children's song "Apples and Bananas"?
-
-    I like to eat, eat, eat apples and bananas
-    I like to eat, eat, eat apples and bananas
-
-    I like to ate, ate, ate ay-ples and ba-nay-nays
-    I like to ate, ate, ate ay-ples and ba-nay-nays
-
-    I like to eat, eat, eat ee-ples and bee-nee-nees
-    I like to eat, eat, eat ee-ples and bee-nee-nees
-
-Write a Python program called `apples.py` that will turn all the vowels in some given text in a single positional argument into just one `-v|--vowel` (default "a") like this song. It should complain if the `--vowel` argument isn't a single, lowercase vowel (hint, see `choices` in the `argparse` documentation). If the given text argument is a file, read the text from the file. Replace all vowels with the given vowel, both lower- and uppercase.
-
-````
-$ ./apples.py
-usage: apples.py [-h] [-v str] str
-apples.py: error: the following arguments are required: str
-$ ./apples.py -h
-usage: apples.py [-h] [-v str] str
-
-Apples and bananas
-
-positional arguments:
-  str                  Input text or file
-
-optional arguments:
-  -h, --help           show this help message and exit
-  -v str, --vowel str  The only vowel allowed (default: a)
-$ ./apples.py -v x foo
-usage: apples.py [-h] [-v str] str
-apples.py: error: argument -v/--vowel: invalid choice: 'x' (choose from 'a', 'e', 'i', 'o', 'u')
-$ ./apples.py foo
-faa
-$ ./apples.py ../inputs/fox.txt
-Tha qaack brawn fax jamps avar tha lazy dag.
-````
-
-\pagebreak
-
-# apples_and_bananas Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import os
-     5	import re
-     6	import sys
-     7	
-     8	
-     9	# --------------------------------------------------
-    10	def get_args():
-    11	    """get command-line arguments"""
-    12	    parser = argparse.ArgumentParser(
-    13	        description='Apples and bananas',
-    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    15	
-    16	    parser.add_argument('text', metavar='str', help='Input text or file')
-    17	
-    18	    parser.add_argument('-v',
-    19	                        '--vowel',
-    20	                        help='The vowel(s) allowed',
-    21	                        metavar='str',
-    22	                        type=str,
-    23	                        default='a',
-    24	                        choices=list('aeiou'))
-    25	
-    26	    return parser.parse_args()
-    27	
-    28	
-    29	# --------------------------------------------------
-    30	def main():
-    31	    """Make a jazz noise here"""
-    32	    args = get_args()
-    33	    text = args.text
-    34	    vowel = args.vowel
-    35	
-    36	    if os.path.isfile(text):
-    37	        text = open(text).read()
-    38	
-    39	    # Method 1: Iterate every character
-    40	    # new_text = []
-    41	    # for char in text:
-    42	    #     if char in 'aeiou':
-    43	    #         new_text.append(vowel)
-    44	    #     elif char in 'AEIOU':
-    45	    #         new_text.append(vowel.upper())
-    46	    #     else:
-    47	    #         new_text.append(char)
-    48	    # text = ''.join(new_text)
-    49	
-    50	    # Method 2: str.replace
-    51	    # for v in 'aeiou':
-    52	    #     text = text.replace(v, vowel).replace(v.upper(), vowel.upper())
-    53	
-    54	    # Method 3: Use a list comprehension
-    55	    # new_text = [
-    56	    #     vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
-    57	    #     for c in text
-    58	    # ]
-    59	    # text = ''.join(new_text)
-    60	
-    61	    # Method 4: Define a function, use list comprehension
-    62	    def new_char(c):
-    63	        return vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
-    64	
-    65	    # text = ''.join([new_char(c) for c in text])
-    66	
-    67	    # Method 5: Use a `map` to iterate with a `lambda`
-    68	    # text = ''.join(
-    69	    #     map(
-    70	    #         lambda c: vowel if c in 'aeiou' else vowel.upper()
-    71	    #         if c in 'AEIOU' else c, text))
-    72	
-    73	    # Method 6: `map` with the function
-    74	    text = ''.join(map(new_char, text))
-    75	
-    76	    # Method 7: Regular expressions
-    77	    # text = re.sub('[aeiou]', vowel, text)
-    78	    # text = re.sub('[AEIOU]', vowel.upper(), text)
-    79	
-    80	    print(text.rstrip())
-    81	
-    82	
-    83	# --------------------------------------------------
-    84	if __name__ == '__main__':
-    85	    main()
-````
-
-\pagebreak
-
-# Chapter 6
+# Chapter 7
 
 # Gashlycrumb
 
@@ -636,7 +816,7 @@ Bye
 
 \pagebreak
 
-# Chapter 7
+# Chapter 8
 
 # Movie Reader
 
@@ -714,7 +894,7 @@ The quick brown fox jumps over the lazy dog.
 
 \pagebreak
 
-# Chapter 8
+# Chapter 9
 
 # Palindromes
 
@@ -816,7 +996,7 @@ tenet
 
 \pagebreak
 
-# Chapter 9
+# Chapter 10
 
 # Ransom
 
@@ -910,7 +1090,7 @@ the qUIck BROWN fOX JUmps ovEr ThE LAZY DOg.
 
 \pagebreak
 
-# Chapter 10
+# Chapter 11
 
 # Simple Rhymer
 
@@ -1005,7 +1185,7 @@ make
 
 \pagebreak
 
-# Chapter 11
+# Chapter 12
 
 # Rock, Paper, Scissors
 
@@ -1148,11 +1328,11 @@ Bye, you imbecilic fopdoodle!
 
 \pagebreak
 
-# Chapter 12
+# Chapter 13
 
 # Abuse
 
-Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default 3) by randomly combining some number of `-a|--adjectives` (default 2) with a noun (see below). Be sure your program accepts a `-s|--seed` argument to pass to `random.seed`.
+Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default `3`) by randomly combining some number of `-a|--adjectives` (default `2`) with a noun (see below). Be sure your program accepts a `-s|--seed` argument (defualt `None`) to pass to `random.seed`.
 
 Adjectives:
 
@@ -1164,7 +1344,6 @@ sodden-witted thin-faced toad-spotted unmannered vile wall-eyed
 
 Nouns:
 
-nouns = """
 Judas Satan ape ass barbermonger beggar block boy braggart butt
 carbuncle coward coxcomb cur dandy degenerate fiend fishmonger fool
 gull harpy jack jolthead knave liar lunatic maw milksop minion
@@ -1283,11 +1462,11 @@ You base, ruinous, slanderous, false liar!
 
 \pagebreak
 
-# Chapter 13
+# Chapter 14
 
-# BACRONYM
+# Bacronym
 
-Write a Python program called `bacronym.py` that takes an string like "FBI" and retrofits some `-n|--number` (default 5) of acronyms by reading a `-w|--wordlist` argument (defualt "/usr/share/dict/words"), skipping over words to `-e|--exclude` (default "a, an, the") and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
+Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--number` (default `5`) of acronyms by reading a `-w|--wordlist` argument (defualt `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
 
 ````
 $ ./bacronym.py
@@ -1317,13 +1496,6 @@ FBI =
  - Foxily Blastomyces Inedited
  - Fastland Bouncingly Idiospasm
 ````
-
-# Skills
-
-* Using `argparse`
-* Reading words from a file into a list
-* Randomly selecting words from a list
-* Formatting string output
 
 \pagebreak
 
@@ -1442,7 +1614,7 @@ FBI =
 
 \pagebreak
 
-# Chapter 14
+# Chapter 15
 
 # Blackjack 
 
@@ -1609,7 +1781,7 @@ Player wins. You probably cheated.
 
 \pagebreak
 
-# Chapter 15
+# Chapter 16
 
 # Family Tree
 
@@ -1758,7 +1930,7 @@ Done, see output in "tudor.txt.gv".
 
 \pagebreak
 
-# Chapter 16
+# Chapter 17
 
 # Gematria
 
@@ -1868,7 +2040,7 @@ $ ./gematria.py ../inputs/fox.txt
 
 \pagebreak
 
-# Chapter 17
+# Chapter 18
 
 # Guessing Game
 
@@ -2030,7 +2202,7 @@ You should be able to handle this in your inifinite game loop.
 
 \pagebreak
 
-# Chapter 18
+# Chapter 19
 
 # Kentucky Fryer
 
@@ -2129,7 +2301,7 @@ to go for a swing and maybe do some swimmin', too.
 
 \pagebreak
 
-# Chapter 20
+# Chapter 21
 
 # Markov Chains for Words
 
@@ -2322,7 +2494,7 @@ $ ./markov.py ../inputs/const.txt -s 2 -k 3
 
 \pagebreak
 
-# Chapter 21
+# Chapter 22
 
 # Pig Latin
 
@@ -2472,7 +2644,7 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
 
 \pagebreak
 
-# Chapter 22
+# Chapter 23
 
 # Soundex Rhymer
 
@@ -2570,7 +2742,7 @@ clowring
 
 \pagebreak
 
-# Chapter 23
+# Chapter 24
 
 # Substring Guessing Game
 
@@ -2783,7 +2955,7 @@ Hey, you found 2 words! Not bad.
 
 \pagebreak
 
-# Chapter 24
+# Chapter 25
 
 # Tic-Tac-Toe Outcome
 
@@ -2880,7 +3052,7 @@ X has won
 
 \pagebreak
 
-# Chapter 25
+# Chapter 26
 
 # Twelve Days of Christmas
 
@@ -3017,7 +3189,7 @@ $ wc -l out
 
 \pagebreak
 
-# Chapter 26
+# Chapter 27
 
 # War
 
@@ -3212,7 +3384,7 @@ P1 12 P2 12: DRAW
 
 \pagebreak
 
-# Chapter 27
+# Chapter 28
 
 # Anagram
 
@@ -3371,7 +3543,7 @@ $ ./presto.py listen -n 2 | tail
 
 \pagebreak
 
-# Chapter 28
+# Chapter 29
 
 # Hangman
 
@@ -3593,7 +3765,7 @@ You lose, loser!  The word was "metromania."
 
 \pagebreak
 
-# Chapter 29
+# Chapter 30
 
 # Markov Chain
 
@@ -3802,7 +3974,7 @@ Advice and Consent of the United States.
 
 \pagebreak
 
-# Chapter 30
+# Chapter 31
 
 # Morse Encoder/Decoder
 
@@ -4022,7 +4194,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \pagebreak
 
-# Chapter 31
+# Chapter 32
 
 # ROT13 (Rotate 13)
 

@@ -28,6 +28,7 @@ The goal is to get the reader to become a *writer* -- to try to solve the proble
 
 ## Easiest
 
+* **article**: Select "a" or "an" depending on the given argument
 * **howler**: Uppercase input text so they YELL AT YOU LIKE "HOWLER" MESSAGES IN HARRY POTTER. (Could also be called "OWEN MEANY"?)
 * **jump_the_five**: Numeric encryption based on "The Wire."
 * **bottles_of_beer**: Produce the "Bottle of Beer on the Wall" song. Explores the basic idea of an algorithm and challenges the programmer to format strings.

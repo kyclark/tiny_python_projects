@@ -1,6 +1,6 @@
 # Abuse
 
-Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default 3) by randomly combining some number of `-a|--adjectives` (default 2) with a noun (see below). Be sure your program accepts a `-s|--seed` argument to pass to `random.seed`.
+Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default `3`) by randomly combining some number of `-a|--adjectives` (default `2`) with a noun (see below). Be sure your program accepts a `-s|--seed` argument (defualt `None`) to pass to `random.seed`.
 
 Adjectives:
 
@@ -12,7 +12,6 @@ sodden-witted thin-faced toad-spotted unmannered vile wall-eyed
 
 Nouns:
 
-nouns = """
 Judas Satan ape ass barbermonger beggar block boy braggart butt
 carbuncle coward coxcomb cur dandy degenerate fiend fishmonger fool
 gull harpy jack jolthead knave liar lunatic maw milksop minion

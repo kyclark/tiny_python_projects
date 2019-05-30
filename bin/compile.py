@@ -77,7 +77,18 @@ def main():
         die('Bad --contents "{}"'.format(contents))
 
     book_file = os.path.join(out_dir, 'book.md')
+
     with open(book_file, 'wt') as fh:
+        top_readme = 'README.md'
+        if os.path.isfile(top_readme):
+            fh.write(open(top_readme).read())
+            fh.write('\n\\pagebreak\n\n')
+
+        outline = 'OUTLINE.md'
+        if os.path.isfile(outline):
+            fh.write(open(outline).read())
+            fh.write('\n\\pagebreak\n\n')
+
         for i, dir_name in enumerate(map(str.rstrip, open(contents)), 1):
             print('{:3}: {}'.format(i, dir_name))
             readme = os.path.join(in_dir, dir_name, 'README.md')
