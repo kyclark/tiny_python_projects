@@ -32,10 +32,10 @@ def get_args():
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
     out_file = args.outfile
     num_days = args.number_days
-
     out_fh = open(out_file, 'wt') if out_file else sys.stdout
 
     days = {
@@ -53,34 +53,23 @@ def main():
         1: 'a partridge in a pear tree',
     }
 
-    cardinal = {
-        12: 'twelfth',
-        11: 'eleven',
-        10: 'tenth',
-        9: 'ninth',
-        8: 'eighth',
-        7: 'seventh',
-        6: 'sixth',
-        5: 'fifth',
-        4: 'fourth',
-        3: 'third',
-        2: 'second',
-        1: 'first',
+    ordinal = {
+        12: 'twelfth', 11: 'eleven', 10: 'tenth',
+        9: 'ninth', 8: 'eighth', 7: 'seventh',
+        6: 'sixth', 5: 'fifth', 4: 'fourth',
+        3: 'third', 2: 'second', 1: 'first',
     }
 
     if not num_days in days:
         die('Cannot sing "{}" days'.format(num_days))
 
-    def ucfirst(s):
-        return s[0].upper() + s[1:]
-
     for i in range(1, num_days + 1):
         first = 'On the {} day of Christmas,\nMy true love gave to me,'
-        out_fh.write(first.format(cardinal[i]) + '\n')
+        out_fh.write(first.format(ordinal[i]) + '\n')
         for j in reversed(range(1, i + 1)):
             if j == 1:
                 if i == 1:
-                    out_fh.write('{}.\n'.format(ucfirst(days[j])))
+                    out_fh.write('{}.\n'.format(days[j].title()))
                 else:
                     out_fh.write('And {}.\n'.format(days[j]))
             else:

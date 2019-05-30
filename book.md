@@ -1009,7 +1009,28 @@ make
 
 # Rock, Paper, Scissors
 
-Write a Python program called `rps.py` that will play the ever-popular "Rock, Paper, Scissors" game.
+Write a Python program called `rps.py` that will play the ever-popular "Rock, Paper, Scissors" game. As often as possible, insult the player by combining an adjective and a noun from the following lists:
+
+Adjectives =
+truculent fatuous vainglorious fatuous petulant moribund jejune
+feckless antiquated rambunctious mundane misshapen glib dreary
+dopey devoid deleterious degrading clammy brazen indiscreet
+indecorous imbecilic dysfunctional dubious drunken disreputable
+dismal dim deficient deceitful damned daft contrary churlish
+catty banal asinine infantile lurid morbid repugnant unkempt
+vapid decrepit malevolent impertinent decrepit grotesque puerile
+
+Nouns =
+abydocomist bedswerver bespawler bobolyne cumberworld dalcop
+dew-beater dorbel drate-poke driggle-draggle fopdoodle fustylugs
+fustilarian gillie-wet-foot gnashgab gobermouch
+gowpenful-o’-anything klazomaniac leasing-monger loiter-sack
+lubberwort muck-spout mumblecrust quisby raggabrash rakefire
+roiderbanks saddle-goose scobberlotcher skelpie-limmer
+smell-feast smellfungus snoutband sorner stampcrab stymphalist
+tallowcatch triptaker wandought whiffle-whaffle yaldson zoilist
+
+The program should accept a `-s|--seed` to pass to `random`.
 
 ````
 $ ./rps.py
@@ -1033,72 +1054,96 @@ Bye, you imbecilic fopdoodle!
 
 ````
      1	#!/usr/bin/env python3
-     2	
-     3	import sys
-     4	import random
-     5	
-     6	
-     7	# --------------------------------------------------
-     8	def insult():
-     9	    adjective = """
-    10	    truculent fatuous vainglorious fatuous petulant moribund jejune
-    11	    feckless antiquated rambunctious mundane misshapen glib dreary
-    12	    dopey devoid deleterious degrading clammy brazen indiscreet
-    13	    indecorous imbecilic dysfunctional dubious drunken disreputable
-    14	    dismal dim deficient deceitful damned daft contrary churlish
-    15	    catty banal asinine infantile lurid morbid repugnant unkempt
-    16	    vapid decrepit malevolent impertinent decrepit grotesque puerile
-    17	    """.split()
-    18	
-    19	    noun = """
-    20	    abydocomist bedswerver bespawler bobolyne cumberworld dalcop
-    21	    dew-beater dorbel drate-poke driggle-draggle fopdoodle fustylugs
-    22	    fustilarian gillie-wet-foot gnashgab gobermouch
-    23	    gowpenful-o’-anything klazomaniac leasing-monger loiter-sack
-    24	    lubberwort muck-spout mumblecrust quisby raggabrash rakefire
-    25	    roiderbanks saddle-goose scobberlotcher skelpie-limmer
-    26	    smell-feast smellfungus snoutband sorner stampcrab stymphalist
-    27	    tallowcatch triptaker wandought whiffle-whaffle yaldson zoilist
-    28	    """.split()
-    29	
-    30	    return ' '.join([random.choice(adjective), random.choice(noun)])
-    31	
-    32	
-    33	# --------------------------------------------------
-    34	def main():
-    35	    """Play Rock Paper Scissors"""
-    36	    valid = set('rps')
-    37	
-    38	    beats = {'r': 's', 's': 'p', 'p': 'r'}
-    39	    display = {'r': 'Rock', 'p': 'Paper', 's': 'Scissors'}
-    40	
-    41	    while True:
-    42	        play = input('1-2-3-Go! [rps|q] ').lower()
-    43	
-    44	        if play.startswith('q'):
-    45	            print('Bye, you {}!'.format(insult()))
-    46	            sys.exit(0)
-    47	
-    48	        if play not in valid:
-    49	            print('You {}! Please choose from: {}.'.format(
-    50	                insult(), ', '.join(sorted(valid))))
-    51	            continue
+     2	"""Rock, Paper, Scissors"""
+     3	
+     4	import argparse
+     5	import os
+     6	import random
+     7	import sys
+     8	
+     9	
+    10	# --------------------------------------------------
+    11	def get_args():
+    12	    """Get command-line arguments"""
+    13	
+    14	    parser = argparse.ArgumentParser(
+    15	        description='Rock, Paper, Scissors',
+    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    17	
+    18	    parser.add_argument('-s',
+    19	                        '--seed',
+    20	                        help='Random seed',
+    21	                        metavar='int',
+    22	                        type=int,
+    23	                        default=None)
+    24	
+    25	    return parser.parse_args()
+    26	
+    27	
+    28	# --------------------------------------------------
+    29	def insult():
+    30	    adjective = """
+    31	    truculent fatuous vainglorious fatuous petulant moribund jejune
+    32	    feckless antiquated rambunctious mundane misshapen glib dreary
+    33	    dopey devoid deleterious degrading clammy brazen indiscreet
+    34	    indecorous imbecilic dysfunctional dubious drunken disreputable
+    35	    dismal dim deficient deceitful damned daft contrary churlish
+    36	    catty banal asinine infantile lurid morbid repugnant unkempt
+    37	    vapid decrepit malevolent impertinent decrepit grotesque puerile
+    38	    """.split()
+    39	
+    40	    noun = """
+    41	    abydocomist bedswerver bespawler bobolyne cumberworld dalcop
+    42	    dew-beater dorbel drate-poke driggle-draggle fopdoodle fustylugs
+    43	    fustilarian gillie-wet-foot gnashgab gobermouch
+    44	    gowpenful-o’-anything klazomaniac leasing-monger loiter-sack
+    45	    lubberwort muck-spout mumblecrust quisby raggabrash rakefire
+    46	    roiderbanks saddle-goose scobberlotcher skelpie-limmer
+    47	    smell-feast smellfungus snoutband sorner stampcrab stymphalist
+    48	    tallowcatch triptaker wandought whiffle-whaffle yaldson zoilist
+    49	    """.split()
+    50	
+    51	    return ' '.join([random.choice(adjective), random.choice(noun)])
     52	
-    53	        computer = random.choice(list(valid))
-    54	
-    55	        print('You: {}\nMe : {}'.format(display[play], display[computer]))
-    56	
-    57	        if beats[play] == computer:
-    58	            print('You win. You are a {}.'.format(insult()))
-    59	        elif beats[computer] == play:
-    60	            print('You lose, {}!'.format(insult()))
-    61	        else:
-    62	            print('Draw, you {}.'.format(insult()))
-    63	
+    53	
+    54	# --------------------------------------------------
+    55	def main():
+    56	    """Make a jazz noise here"""
+    57	
+    58	    args = get_args()
+    59	    random.seed(args.seed)
+    60	
+    61	    valid = set('rps')
+    62	    beats = {'r': 's', 's': 'p', 'p': 'r'}
+    63	    display = {'r': 'Rock', 'p': 'Paper', 's': 'Scissors'}
     64	
-    65	# --------------------------------------------------
-    66	if __name__ == '__main__':
-    67	    main()
+    65	    while True:
+    66	        play = input('1-2-3-Go! [rps|q] ').lower()
+    67	
+    68	        if play.startswith('q'):
+    69	            print('Bye, you {}!'.format(insult()))
+    70	            sys.exit(0)
+    71	
+    72	        if play not in valid:
+    73	            print('You {}! Please choose from: {}.'.format(
+    74	                insult(), ', '.join(sorted(valid))))
+    75	            continue
+    76	
+    77	        computer = random.choice(list(valid))
+    78	
+    79	        print('You: {}\nMe : {}'.format(display[play], display[computer]))
+    80	
+    81	        if beats[play] == computer:
+    82	            print('You win. You are a {}.'.format(insult()))
+    83	        elif beats[computer] == play:
+    84	            print('You lose, {}!'.format(insult()))
+    85	        else:
+    86	            print('Draw, you {}.'.format(insult()))
+    87	
+    88	
+    89	# --------------------------------------------------
+    90	if __name__ == '__main__':
+    91	    main()
 ````
 
 \pagebreak
@@ -2918,10 +2963,10 @@ $ wc -l out
     32	# --------------------------------------------------
     33	def main():
     34	    """Make a jazz noise here"""
-    35	    args = get_args()
-    36	    out_file = args.outfile
-    37	    num_days = args.number_days
-    38	
+    35	
+    36	    args = get_args()
+    37	    out_file = args.outfile
+    38	    num_days = args.number_days
     39	    out_fh = open(out_file, 'wt') if out_file else sys.stdout
     40	
     41	    days = {
@@ -2939,46 +2984,35 @@ $ wc -l out
     53	        1: 'a partridge in a pear tree',
     54	    }
     55	
-    56	    cardinal = {
-    57	        12: 'twelfth',
-    58	        11: 'eleven',
-    59	        10: 'tenth',
-    60	        9: 'ninth',
-    61	        8: 'eighth',
-    62	        7: 'seventh',
-    63	        6: 'sixth',
-    64	        5: 'fifth',
-    65	        4: 'fourth',
-    66	        3: 'third',
-    67	        2: 'second',
-    68	        1: 'first',
-    69	    }
-    70	
-    71	    if not num_days in days:
-    72	        die('Cannot sing "{}" days'.format(num_days))
-    73	
-    74	    def ucfirst(s):
-    75	        return s[0].upper() + s[1:]
-    76	
-    77	    for i in range(1, num_days + 1):
-    78	        first = 'On the {} day of Christmas,\nMy true love gave to me,'
-    79	        out_fh.write(first.format(cardinal[i]) + '\n')
-    80	        for j in reversed(range(1, i + 1)):
-    81	            if j == 1:
-    82	                if i == 1:
-    83	                    out_fh.write('{}.\n'.format(ucfirst(days[j])))
-    84	                else:
-    85	                    out_fh.write('And {}.\n'.format(days[j]))
-    86	            else:
-    87	                out_fh.write('{},\n'.format(days[j]))
-    88	
-    89	        if i < max(days.keys()):
-    90	            out_fh.write('\n')
-    91	
-    92	
-    93	# --------------------------------------------------
-    94	if __name__ == '__main__':
-    95	    main()
+    56	    ordinal = {
+    57	        12: 'twelfth', 11: 'eleven', 10: 'tenth',
+    58	        9: 'ninth', 8: 'eighth', 7: 'seventh',
+    59	        6: 'sixth', 5: 'fifth', 4: 'fourth',
+    60	        3: 'third', 2: 'second', 1: 'first',
+    61	    }
+    62	
+    63	    if not num_days in days:
+    64	        die('Cannot sing "{}" days'.format(num_days))
+    65	
+    66	    for i in range(1, num_days + 1):
+    67	        first = 'On the {} day of Christmas,\nMy true love gave to me,'
+    68	        out_fh.write(first.format(ordinal[i]) + '\n')
+    69	        for j in reversed(range(1, i + 1)):
+    70	            if j == 1:
+    71	                if i == 1:
+    72	                    out_fh.write('{}.\n'.format(days[j].title()))
+    73	                else:
+    74	                    out_fh.write('And {}.\n'.format(days[j]))
+    75	            else:
+    76	                out_fh.write('{},\n'.format(days[j]))
+    77	
+    78	        if i < max(days.keys()):
+    79	            out_fh.write('\n')
+    80	
+    81	
+    82	# --------------------------------------------------
+    83	if __name__ == '__main__':
+    84	    main()
 ````
 
 \pagebreak
