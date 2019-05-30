@@ -18,6 +18,7 @@ gematria
 guess
 kentucky_fryer
 mad_libs
+license_plates
 markov_words
 piggie
 soundex_rhymer

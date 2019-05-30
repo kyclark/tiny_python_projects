@@ -1,3 +1,6 @@
+\tableofcontents
+\newpage
+
 # Playful Python
 
 I believe you can learn serious things through silly games. 
@@ -6,7 +9,7 @@ I'd like to make this into a book or something, similar to the Python bioinforma
 
 I think I'm going to present this differently from other material in that I won't necessarily show you beforehand what you need to write a program. I'll describe what the program should do and provide some discussion about how to write it. I'll also create an appendix with short example of how to do things like read/write from/to a file, process all the files in a directory, extract k-mers from a string, etc. I'll provide some building blocks, but I want you to figure out how to put the pieces together!
 
-# new.py
+## new.py
 
 I provide a program in the `bin` directory called `new.py` that will help you stub out new Python programs using the fabulous `argparse` module to parse the command line arguments and options for your programs. I highly recommend you start every new program with this. For example, if the `README.md` says "Write a Python program called `abc.py` that ...", then you should do this:
 
@@ -16,7 +19,7 @@ $ new.py abc
 
 This will create a new file called `abc.py` (that has been made executable with `chmod +x`, if your operating system supports that) that has example code for you to start writing your program. It's best to put `new.py` into your `$PATH` or alter your `$PATH` to include the directory where it's located. FWIW, I always create a `$HOME/.local/bin` that I add to my `$PATH` for programs like this.
 
-# How to Use
+## How to Use
 
 First use the GitHub interface to "fork" this repository into your own account. Then do `git clone` of *your* repository to get a local copy. Inside that checkout, do:
 
@@ -28,17 +31,17 @@ so that you can do `git pull upstream master` to get updates. When you create ne
 
 This is a work in progress. If you see a directory contains a `README.md`, `solution.py`, `Makefile`, and `test.py`, then it's likely ready to be solved.
 
-# Structure
+## Structure
 
 Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you just randomly chose one and see how it goes. They vary quite a bit in difficulty, so maybe I'll just give them 1, 2, or 3 stars to indicate easy to hard. See OUTLINE.md for more.
 
-# Author
+## Author
 
 Ken Youens-Clark (BA, MS) is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz at the University of Arizona. He started programming at his first job out of college. He's work in the field of bioinformatics since 2001, and enjoys helping people to learn programming. When he's not working, he likes playing music, riding bikes, cooking, and being with his wife and children.
 
-\pagebreak
+\newpage
 
-# Playful Python Outline
+# Outline
 
 I aim to have 40-50 programs complete with specs, examples, inputs, and test suites. They won't necessarily have a specific order, but they will be grouped into easiest/harder/hardest categories. As many programs use common ideas (e.g., regular expressions, graphs, infinite loops), there will be an appendix section with explanations of how to explore those ideas. 
 
@@ -60,13 +63,13 @@ I have in mind a layout where each program gets four pages:
 3. The `solution.py` contents
 4. Annotation of the solution with comments on lines, sections
 
-# Programs
+## Programs
 
 > "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
 The goal is to get the reader to become a *writer* -- to try to solve the problems. One technique in teaching is to first present a problem without showing how to solve it. Once the student engages with the problem, they find they want and need the object of the lesson. Each program is intended to flex some programming technique or idea like playing with lists or contemplating regular expressions or using dictionaries. By using `argparse` for the programs, we also cover validation of user input.
 
-## Easiest
+### Easiest
 
 * **article**: Select "a" or "an" depending on the given argument
 * **howler**: Uppercase input text so they YELL AT YOU LIKE "HOWLER" MESSAGES IN HARRY POTTER. (Could also be called "OWEN MEANY"?)
@@ -81,7 +84,7 @@ The goal is to get the reader to become a *writer* -- to try to solve the proble
 * **rhymer**: Produce rhyming "words" from input text. 
 * **rock_paper_scissors**: Write Rock, Paper, Scissors game. Infinite loops, dictionaries.
 
-## Harder
+### Harder
 
 * **abuse**: Generate insults from lists of adjectives and nouns. Use of randomness, sampling, and lists.
 * **bacronym**: Retrofit words onto acronyms. Use of randomness and dictionaries.
@@ -98,8 +101,9 @@ The goal is to get the reader to become a *writer* -- to try to solve the proble
 * **tictactoe**: Write a Tic-Tac-Toe game. Randomness, state.
 * **twelve_days_of_christmas**: Produce the "12 Days of Christmas" song. Algorihtms, loops.
 * **war**: Play the War card game. Combinations, randomness.
+* **license_plates**: Explore how a regular expression engine works by creating alternate forms of license plates.
 
-## Hardest
+### Hardest
 
 * **anagram**: Find anagrams of text. Combinations, permutations, dictionaries.
 * **hangman**: Write a Hangman (word/letter-guessing game). Randomness, game state, infinite loops, user input, validation.
@@ -107,11 +111,9 @@ The goal is to get the reader to become a *writer* -- to try to solve the proble
 * **morse**: Write a Morse encoder/decoder. Dictionaries, text manipulation.
 * **rot13**: ROT13-encode input text. Lists, encryption.
 
-\pagebreak
+\newpage
 
-# Chapter 1
-
-# Article Selector
+# Chapter 1: Article Selector
 
 Write a Python program called `article.py` that will select `a` or `an` for a given word depending on whether the word starts with a consonant or vowel, respectively.
 
@@ -135,9 +137,9 @@ $ ./article.py octopus
 an octopus
 ````
 
-\pagebreak
+\newpage
 
-# article Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -176,11 +178,9 @@ an octopus
     34	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 2
-
-# Jump the Five
+# Chapter 2: Jump the Five
 
 Write a program called `jump.py` that will encode any number using "jump-the-five" algorithm that selects as a replacement for a given number the number that is opposite the number on a US telephone pad if you jump over the 5. The numbers 5and 9 will exchange with each other. So, "1" jumps the 5 to become "9," "6" jumps the 5 to become "4," "5" becomes "0," etc.
 
@@ -213,11 +213,9 @@ $ ./jump.py 'Call 1-800-329-8044 today!'
 Call 9-255-781-2566 today!
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 3
-
-# Picnic
+# Chapter 3: Picnic
 
 Write a Python program called `picnic.py` that accepts one or more positional arguments as the items to bring on a picnic. In response, print "You are bringing ..." where "..." should be replaced according to the number of items where:
 
@@ -247,9 +245,9 @@ $ ./picnic.py "potato chips" salad soda cupcakes
 You are bringing potato chips, salad, soda, and cupcakes.
 ````
 
-\pagebreak
+\newpage
 
-# picnic Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -293,11 +291,9 @@ You are bringing potato chips, salad, soda, and cupcakes.
     39	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 4
-
-# Apples and Bananas
+# Chapter 4: Apples and Bananas
 
 Perhaps you remember the children's song "Apples and Bananas"?
 
@@ -336,9 +332,9 @@ $ ./apples.py ../inputs/fox.txt
 Tha qaack brawn fax jamps avar tha lazy dag.
 ````
 
-\pagebreak
+\newpage
 
-# apples_and_bananas Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -428,11 +424,9 @@ Tha qaack brawn fax jamps avar tha lazy dag.
     85	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 5
-
-# Howler
+# Chapter 5: Howler
 
 Write a Python program `howler.py` that will uppercase all the text from the command line or from a file.
 
@@ -458,9 +452,9 @@ $ ./howler.py ../inputs/fox.txt
 THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 ````
 
-\pagebreak
+\newpage
 
-# howler Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -509,11 +503,9 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
     44	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 6
-
-# Bottles of Beer Song
+# Chapter 6: Bottles of Beer Song
 
 Write a Python program called `bottles.py` that takes a single option `-n|--num_bottles` which is an positive integer (default 10) and prints the "<N> bottles of beer on the wall song." If the `-n` argument is less than 1, die with "N (<N>) must be a positive integer". The program should also respond to `-h|--help` with a usage statement.
 
@@ -615,9 +607,9 @@ Take one down, pass it around,
 8 bottles of beer on the wall!
 ````
 
-\pagebreak
+\newpage
 
-# bottles_of_beer Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -670,11 +662,9 @@ Take one down, pass it around,
     48	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 7
-
-# Gashlycrumb
+# Chapter 7: Gashlycrumb
 
 Write a Python program called `gashlycrumb.py` that takes a letter of the alphabet as an argument and looks up the line in a `-f|--file` argument (default `gashlycrumb.txt`) and prints the line starting with that letter.
 
@@ -719,9 +709,9 @@ Please provide a letter [! to quit]: !
 Bye
 ````
 
-\pagebreak
+\newpage
 
-# gashlycrumb Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -779,11 +769,9 @@ Bye
     53	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 8
-
-# Movie Reader
+# Chapter 8: Movie Reader
 
 Write a Python program called `movie_reader.py` that takes a single positional argument that is a bit of text or the name of an input file. The output will be dynamic, so I cannot write a test for how the program should behave, nor can I include a bit of text that shows you how it should work. Your program should print the input text character-by-character and then pause .5 seconds for ending punctuation like `.`, `!` or `?`, .2 seconds for a pause like `,` `:`, or `;`, and .05 seconds for anything else.
 
@@ -807,9 +795,9 @@ $ ./movie_reader.py ../inputs/fox.txt
 The quick brown fox jumps over the lazy dog.
 ````
 
-\pagebreak
+\newpage
 
-# movie_reader Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -857,11 +845,9 @@ The quick brown fox jumps over the lazy dog.
     43	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 9
-
-# Palindromes
+# Chapter 9: Palindromes
 
 Write a Python program called `palindromic.py` that will find words that are palindromes in positional argument which is either a string or a file name.
 
@@ -903,9 +889,9 @@ stats
 tenet
 ````
 
-\pagebreak
+\newpage
 
-# palindromes Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -959,11 +945,9 @@ tenet
     49	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 10
-
-# Ransom
+# Chapter 10: Ransom
 
 Create a Python program called `ransom.py` that will randomly capitalize the letters in a given word or phrase. The input text may also name a file in which case the text should come from the file. The program should take a `-s|--seed` argument for the `random.seed` to control randomness for the test suite. It should also respond to `-h|--help` for usage.
 
@@ -990,9 +974,9 @@ $ ./ransom.py -s 2 'The quick brown fox jumps over the lazy dog.'
 the qUIck BROWN fOX JUmps ovEr ThE LAZY DOg.
 ````
 
-\pagebreak
+\newpage
 
-# ransom_note Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -1053,11 +1037,9 @@ the qUIck BROWN fOX JUmps ovEr ThE LAZY DOg.
     56	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 11
-
-# Simple Rhymer
+# Chapter 11: Simple Rhymer
 
 Write a Python program called `rhymer.py` that will create new words by removing the consonant(s) from the beginning of the word and then creating new words by prefixing the remainder with all the consonants and clusters that were not at the beginning. That is, prefix with all the consonants in the alphabet plus these clusters:
 
@@ -1093,9 +1075,9 @@ lake
 make
 ````
 
-\pagebreak
+\newpage
 
-# rhymer Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -1148,11 +1130,9 @@ make
     48	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 12
-
-# Rock, Paper, Scissors
+# Chapter 12: Rock, Paper, Scissors
 
 Write a Python program called `rps.py` that will play the ever-popular "Rock, Paper, Scissors" game. As often as possible, insult the player by combining an adjective and a noun from the following lists:
 
@@ -1193,9 +1173,9 @@ You win. You are a dismal gillie-wet-foot.
 Bye, you imbecilic fopdoodle!
 ````
 
-\pagebreak
+\newpage
 
-# rock_paper_scissors Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -1291,11 +1271,9 @@ Bye, you imbecilic fopdoodle!
     91	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 13
-
-# Abuse
+# Chapter 13: Abuse
 
 Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default `3`) by randomly combining some number of `-a|--adjectives` (default `2`) with a noun (see below). Be sure your program accepts a `-s|--seed` argument (defualt `None`) to pass to `random.seed`.
 
@@ -1340,9 +1318,9 @@ You foul, lecherous, infected, slanderous degenerate!
 You base, ruinous, slanderous, false liar!
 ````
 
-\pagebreak
+\newpage
 
-# abuse Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -1418,11 +1396,9 @@ You base, ruinous, slanderous, false liar!
     71	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 14
-
-# Bacronym
+# Chapter 14: Bacronym
 
 Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--number` (default `5`) of acronyms by reading a `-w|--wordlist` argument (defualt `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
 
@@ -1455,9 +1431,9 @@ FBI =
  - Fastland Bouncingly Idiospasm
 ````
 
-\pagebreak
+\newpage
 
-# bacronym Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -1570,11 +1546,9 @@ FBI =
    108	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 15
-
-# Blackjack 
+# Chapter 15: Blackjack 
 
 Write a Python program called `blackjack.py` that plays an abbreviated game of Blackjack. You will need to `import random` to get random cards from a deck you will construct, and so your program will need to accept a `-s|--seed` that will set `random.seed()` with the value that is passed in so that the test suite will work. The other arguments you will accept are two flags (Boolean values) of `-p|--player_hits` and `-d|--dealer_hits`. As usual, you will also have a `-h|--help` option for usage statement.
 
@@ -1620,9 +1594,9 @@ P [21]: ♣10 ♥8 ♠3
 Player wins. You probably cheated.
 ````
 
-\pagebreak
+\newpage
 
-# blackjack Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -1720,11 +1694,9 @@ Player wins. You probably cheated.
     93	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 16
-
-# Family Tree
+# Chapter 16: Family Tree
 
 Write a program called `tree.py` that will take an input file as a single positional argument and produce a graph of the family tree described therein. The file can have only three kinds of statements:
 
@@ -1765,9 +1737,9 @@ $ ./tree.py tudor.txt
 Done, see output in "tudor.txt.gv".
 ````
 
-\pagebreak
+\newpage
 
-# family_tree Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -1869,11 +1841,9 @@ Done, see output in "tudor.txt.gv".
     97	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 17
-
-# Gematria
+# Chapter 17: Gematria
 
 Write a Python program called `gematria.py` 
 
@@ -1928,9 +1898,9 @@ $ ./gematria.py ../inputs/fox.txt
 289 541 552 333 559 444 321 448 314
 ````
 
-\pagebreak
+\newpage
 
-# gematria Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -1979,11 +1949,9 @@ $ ./gematria.py ../inputs/fox.txt
     44	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 18
-
-# Guessing Game
+# Chapter 18: Guessing Game
 
 Write a Python program called `guess.py` that plays a guessing game for a number between a `-m|--min` and `-x|--max` value (default 1 and 50, respectively) with a limited number of `-g|--guesses` (default 5). Complain if either `--min` or `--guesses` is less than 1. Accept a `-s|--seed` for `random.seed`. If the user guesses something that is not a number, complain about it.
 
@@ -2016,9 +1984,9 @@ $ ./guess.py -s 1 -i 25 foo 12 6 9
 
 You should be able to handle this in your inifinite game loop.
 
-\pagebreak
+\newpage
 
-# guess Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -2141,11 +2109,9 @@ You should be able to handle this in your inifinite game loop.
    118	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 19
-
-# Kentucky Fryer
+# Chapter 19: Kentucky Fryer
 
 Write a Python program called `fryer.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
@@ -2177,9 +2143,9 @@ So I was fixin' to ask him, "Do y'all want to go fishing?" I was dyin'
 to go for a swing and maybe do some swimmin', too.
 ````
 
-\pagebreak
+\newpage
 
-# kentucky_fryer Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -2240,11 +2206,142 @@ to go for a swing and maybe do some swimmin', too.
     56	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 21
+# Chapter 21: License Plates
 
-# Markov Chains for Words
+Write a Python program called `license.py` that will create a regular expression for a license plate that accounts for characters and numbers which might be confused according to the following list:
+
+* 5 S
+* X K Y
+* 1 I
+* 3 E
+* 0 O Q
+* M N
+* U V W
+* 2 8
+
+Print the plate, the regular expression that would match that plate with all possible ambiguities, and then print all possible combinations of plates that includes the options along with the result of comparing the regular expression you created to the generated plate.
+
+````
+$ ./license.py
+usage: license.py [-h] PLATE
+license.py: error: the following arguments are required: PLATE
+$ ./license.py -h
+usage: license.py [-h] PLATE
+
+License plate regular expression
+
+positional arguments:
+  PLATE       License plate
+
+optional arguments:
+  -h, --help  show this help message and exit
+$ ./license.py ABC1234
+plate = "ABC1234"
+regex = "^ABC[1I][27][3E]4$"
+ABC1234 OK
+ABC12E4 OK
+ABC1734 OK
+ABC17E4 OK
+ABCI234 OK
+ABCI2E4 OK
+ABCI734 OK
+ABCI7E4 OK
+$ ./license.py 123456
+plate = "123456"
+regex = "^[1I][27][3E]4[5S]6$"
+123456 OK
+1234S6 OK
+12E456 OK
+12E4S6 OK
+173456 OK
+1734S6 OK
+17E456 OK
+17E4S6 OK
+I23456 OK
+I234S6 OK
+I2E456 OK
+I2E4S6 OK
+I73456 OK
+I734S6 OK
+I7E456 OK
+I7E4S6 OK
+````
+
+Owing to the vagaries of the typefaces chosen by different states as well as the wear of the plates themselves, it would seem to me that people might easily confuse certain letters and numbers on plates. In the above example, `ABC1234`, the number `1` might look like the letter `I`, so the plate could be `ABD1234` or `ABCI234`. Granted, most license plates follow a pattern of using only letters in some spots and numbers in others, e.g., 3 letters plus 4 numbers, but I want to focus on all possibilities in this problem both because it makes the problem a bit easier and also because it doesn't have to worry about how each state formats their plates. Additionally, I want to account for customized plates that do not follow any pattern and might use any combination of characters.
+
+I represented the above confusion table as a list of tuples. At first I though I might use a dictionary, but there is a problem when three characters are involved, e.g., `0`, `O`, and `Q`. I iterate through each character in the provided plate and decide if the character exists in any of the tuples. If so, I represent that position in the regular expression as a choice; if not, it is just the character. 
+
+If you think about a regular expression as a graph, it starts with the first character, e.g., `A` which must be followed by `B` which must be followed by `C` which must be followed by either a `1` or an `I` which must be followed by a `2` or a `7`, etc.
+
+                     1        2        3
+    A -> B -> C -> <   > -> <   > -> <   > -> 4
+                     I        7        E
+
+In creating all the possible plates from your regular expression, you are making concrete what the regular expression is, well, ... expressing. I find `itertools.product` to be just the ticket for creating all those possibilites, which must be sorted for the sake of the test.
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""License plate regular expression"""
+     3	
+     4	import argparse
+     5	import re
+     6	import sys
+     7	from itertools import product
+     8	
+     9	
+    10	# --------------------------------------------------
+    11	def get_args():
+    12	    """get command-line arguments"""
+    13	    parser = argparse.ArgumentParser(
+    14	        description='License plate regular expression',
+    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    16	
+    17	    parser.add_argument('plate', metavar='PLATE', help='License plate')
+    18	
+    19	    return parser.parse_args()
+    20	
+    21	
+    22	# --------------------------------------------------
+    23	def main():
+    24	    """Make a jazz noise here"""
+    25	    args = get_args()
+    26	    plate = args.plate
+    27	    mixups = [('5', 'S'), ('X', 'K', 'Y'), ('1', 'I'), ('3', 'E'),
+    28	              ('0', 'O', 'Q'), ('M', 'N'), ('U', 'V', 'W'), ('2', '7')]
+    29	
+    30	    chars = []
+    31	    for char in plate:
+    32	        group = list(filter(lambda t: char in t, mixups))
+    33	        if group:
+    34	            chars.append(group[0])
+    35	        else:
+    36	            chars.append((char, ))
+    37	
+    38	    regex = '^{}$'.format(''.join(
+    39	        map(lambda t: '[' + ''.join(t) + ']' if len(t) > 1 else t[0], chars)))
+    40	
+    41	    print('plate = "{}"'.format(plate))
+    42	    print('regex = "{}"'.format(regex))
+    43	
+    44	    for possible in sorted(product(*chars)):
+    45	        s = ''.join(possible)
+    46	        print(s, 'OK' if re.search(regex, s) else 'NO')
+    47	
+    48	
+    49	# --------------------------------------------------
+    50	if __name__ == '__main__':
+    51	    main()
+````
+
+\newpage
+
+# Chapter 22: Markov Chains for Words
 
 Write a Python program called `markov.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
@@ -2312,9 +2409,9 @@ $ ./markov.py ../inputs/const.txt -s 2 -k 3
  10: eipts
 ````
 
-\pagebreak
+\newpage
 
-# markov_words Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -2433,11 +2530,9 @@ $ ./markov.py ../inputs/const.txt -s 2 -k 3
    114	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 22
-
-# Pig Latin
+# Chapter 23: Pig Latin
 
 Write a Python program named `piggie.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
@@ -2493,9 +2588,9 @@ eatured-Fay ike-lay im-hay, ike-lay im-hay ith-way iends-fray ossessed-pay,
 esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-scay,
 ````
 
-\pagebreak
+\newpage
 
-# piggie Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -2583,11 +2678,9 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
     83	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 23
-
-# Soundex Rhymer
+# Chapter 24: Soundex Rhymer
 
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, it would be best to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part. The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons.
 
@@ -2625,9 +2718,9 @@ choromanic
 clowring
 ````
 
-\pagebreak
+\newpage
 
-# soundex_rhymer Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -2686,11 +2779,9 @@ clowring
     54	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 24
-
-# Substring Guessing Game
+# Chapter 25: Substring Guessing Game
 
 Write a Python program called `sub.py` that plays a guessing game where you read a `-f|--file` input (default `/usr/share/dict/words`) and use a given `-k|--ksize` to find all the words grouped by their shared kmers. Remove any kmers where the number of words is fewer than `-m|--min_words`. Also accept a `-s|--seed` for `random.seed` for testing purposes. Prompt the user to guess a word for a randomly chosen kmer. If their guess is not present in the shared list, taunt them mercilessly. If their guess is present, affirm their worth and prompt to guess again. Allow them to use `!` to quit and `?` to be provided a hint (a word from the list). For both successful guesses and hints, remove the word from the shared list. When they have quit or exhausted the list, quit play. At the end of the game, report the number of found words.
 
@@ -2721,9 +2812,9 @@ Quitter!
 Hey, you found 2 words! Not bad.
 ````
 
-\pagebreak
+\newpage
 
-# substring Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -2899,11 +2990,9 @@ Hey, you found 2 words! Not bad.
    171	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 25
-
-# Tic-Tac-Toe Outcome
+# Chapter 26: Tic-Tac-Toe Outcome
 
 Create a Python program called `outcome.py` that takes a given Tic-Tac-Toe state as it's only (positional) argument and reports if X or O has won or if there is no winner. The state should only contain the characters ".", "O", and "X", and must be exactly 9 characters long. If there is not exactly one argument, print a "usage" statement.
 
@@ -2918,9 +3007,9 @@ $ ./outcome.py ..X.OX..X
 X has won
 ````
 
-\pagebreak
+\newpage
 
-# tictactoe Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -2996,11 +3085,9 @@ X has won
     71	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 26
-
-# Twelve Days of Christmas
+# Chapter 27: Twelve Days of Christmas
 
 Write a Python program called `twelve_days.py` that will generate the "Twelve Days of Christmas" song up to the `-n|--number_days` argument (default `12`), writing the resulting text to the `-o|--outfile` argument (default STDOUT).
 
@@ -3042,9 +3129,9 @@ $ wc -l out
      113 out
 ````
 
-\pagebreak
+\newpage
 
-# twelve_days_of_christmas Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -3133,24 +3220,22 @@ $ wc -l out
     84	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 27
-
-# War
+# Chapter 28: War
 
 > The generation of random numbers is too important to be left to chance. -- Robert R. Coveyou
 
-Create a Python program called "war.py" that plays the card game "War." The program will use the `random` module to shuffle a deck of cards, so your program will need to accept a `-s|--seed` argument (default: `None`) which you will use to call `random.seed`, if present.
+Create a Python program called `war.py` that plays the card game "War." The program will use the `random` module to shuffle a deck of cards, so your program will need to accept a `-s|--seed` argument (default: `None`) which you will use to call `random.seed`, if present.
  
 First you program will need to create a deck of cards. You will need to use the Unicode symbols for the suites ( ♥ ♠ ♣ ♦ ) [which won't display in the PDF, so consult the Markdown file] and combine those with the numbers 2-10 and the letters "J", "Q," "K," and "A." (hint: look at `itertools.product`). 
 
 ````
 >>> from itertools import product
->>> a = list('ABC')
->>> b = range(3)
+>>> a = list('AB')
+>>> b = range(2)
 >>> list(product(a, b))
-[('A', 0), ('A', 1), ('A', 2), ('B', 0), ('B', 1), ('B', 2), ('C', 0), ('C', 1), ('C', 2)]
+[('A', 0), ('A', 1), ('B', 0), ('B', 1)]
 ````
 
 **NB**: You must sort your deck and then use the `random.shuffle` method so that your cards will be in the correct order to pass the tests!
@@ -3252,9 +3337,9 @@ $ ./war.py -s 10
 P1 12 P2 12: DRAW
 ````
 
-\pagebreak
+\newpage
 
-# war Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -3328,11 +3413,9 @@ P1 12 P2 12: DRAW
     69	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 28
-
-# Anagram
+# Chapter 29: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -3379,9 +3462,9 @@ $ ./presto.py listen -n 2 | tail
   91. tinsel
 ````
 
-\pagebreak
+\newpage
 
-# anagram Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -3487,11 +3570,9 @@ $ ./presto.py listen -n 2 | tail
    101	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 29
-
-# Hangman
+# Chapter 30: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -3555,9 +3636,9 @@ Your guess? ("?" for hint, "!" to quit) c
 You lose, loser!  The word was "metromania."
 ````
 
-\pagebreak
+\newpage
 
-# hangman Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -3709,11 +3790,9 @@ You lose, loser!  The word was "metromania."
    147	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 30
-
-# Markov Chain
+# Chapter 31: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -3781,9 +3860,9 @@ Consideration such Measures as he shall nominate, and by and with the
 Advice and Consent of the United States.
 ````
 
-\pagebreak
+\newpage
 
-# markov_chain Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -3918,11 +3997,9 @@ Advice and Consent of the United States.
    130	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 31
-
-# Morse Encoder/Decoder
+# Chapter 32: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -3951,9 +4028,9 @@ $ ./morse.py ../inputs/fox.txt
 THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 ````
 
-\pagebreak
+\newpage
 
-# morse Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -4138,11 +4215,9 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
    180	    main()
 ````
 
-\pagebreak
+\newpage
 
-# Chapter 32
-
-# ROT13 (Rotate 13)
+# Chapter 33: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -4232,9 +4307,9 @@ $ ./rot13.py -s 3 fox.txt | ./rot13.py -s -3 -
 The quick brown fox jumps over the lazy dog.
 ````
 
-\pagebreak
+\newpage
 
-# rot13 Solution
+## Solution
 
 ````
      1	#!/usr/bin/env python3
@@ -4305,5 +4380,5 @@ The quick brown fox jumps over the lazy dog.
     66	    main()
 ````
 
-\pagebreak
+\newpage
 

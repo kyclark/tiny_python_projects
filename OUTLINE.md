@@ -1,4 +1,4 @@
-# Playful Python Outline
+# Outline
 
 I aim to have 40-50 programs complete with specs, examples, inputs, and test suites. They won't necessarily have a specific order, but they will be grouped into easiest/harder/hardest categories. As many programs use common ideas (e.g., regular expressions, graphs, infinite loops), there will be an appendix section with explanations of how to explore those ideas. 
 
@@ -20,13 +20,13 @@ I have in mind a layout where each program gets four pages:
 3. The `solution.py` contents
 4. Annotation of the solution with comments on lines, sections
 
-# Programs
+## Programs
 
 > "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
 The goal is to get the reader to become a *writer* -- to try to solve the problems. One technique in teaching is to first present a problem without showing how to solve it. Once the student engages with the problem, they find they want and need the object of the lesson. Each program is intended to flex some programming technique or idea like playing with lists or contemplating regular expressions or using dictionaries. By using `argparse` for the programs, we also cover validation of user input.
 
-## Easiest
+### Easiest
 
 * **article**: Select "a" or "an" depending on the given argument
 * **howler**: Uppercase input text so they YELL AT YOU LIKE "HOWLER" MESSAGES IN HARRY POTTER. (Could also be called "OWEN MEANY"?)
@@ -41,7 +41,7 @@ The goal is to get the reader to become a *writer* -- to try to solve the proble
 * **rhymer**: Produce rhyming "words" from input text. 
 * **rock_paper_scissors**: Write Rock, Paper, Scissors game. Infinite loops, dictionaries.
 
-## Harder
+### Harder
 
 * **abuse**: Generate insults from lists of adjectives and nouns. Use of randomness, sampling, and lists.
 * **bacronym**: Retrofit words onto acronyms. Use of randomness and dictionaries.
@@ -58,8 +58,9 @@ The goal is to get the reader to become a *writer* -- to try to solve the proble
 * **tictactoe**: Write a Tic-Tac-Toe game. Randomness, state.
 * **twelve_days_of_christmas**: Produce the "12 Days of Christmas" song. Algorihtms, loops.
 * **war**: Play the War card game. Combinations, randomness.
+* **license_plates**: Explore how a regular expression engine works by creating alternate forms of license plates.
 
-## Hardest
+### Hardest
 
 * **anagram**: Find anagrams of text. Combinations, permutations, dictionaries.
 * **hangman**: Write a Hangman (word/letter-guessing game). Randomness, game state, infinite loops, user input, validation.

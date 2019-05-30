@@ -7,6 +7,7 @@ Purpose: Compile my book
 
 import argparse
 import os
+import re
 import sys
 from subprocess import getstatusoutput, getoutput
 from dire import die
@@ -79,35 +80,40 @@ def main():
     book_file = os.path.join(out_dir, 'book.md')
 
     with open(book_file, 'wt') as fh:
+        # fh.write('\n'.join(
+        #     ['\\documentclass{article}', '\\begin{document}',
+        #      '\\tableofcontents', '\\newpage', '']))
+        fh.write('\\tableofcontents\n\\newpage\n\n')
+
         top_readme = 'README.md'
         if os.path.isfile(top_readme):
             fh.write(open(top_readme).read())
-            fh.write('\n\\pagebreak\n\n')
+            fh.write('\n\\newpage\n\n')
 
         outline = 'OUTLINE.md'
         if os.path.isfile(outline):
             fh.write(open(outline).read())
-            fh.write('\n\\pagebreak\n\n')
+            fh.write('\n\\newpage\n\n')
 
         for i, dir_name in enumerate(map(str.rstrip, open(contents)), 1):
             print('{:3}: {}'.format(i, dir_name))
             readme = os.path.join(in_dir, dir_name, 'README.md')
             if os.path.isfile(readme):
                 print('\tREADME')
-                fh.write('# Chapter {}\n\n'.format(i))
-                fh.write(open(readme).read())
-                fh.write('\n\\pagebreak\n\n')
+                chapter = 'Chapter {}: '.format(i)
+                text = open(readme).read()
+                text = re.sub('^#\s+', '# ' + chapter, text)
+                fh.write(text + '\n\\newpage\n\n')
 
             solution = os.path.join(in_dir, dir_name, 'solution.py')
             if os.path.isfile(solution):
                 print('\tSOLUTION')
-                fh.write('# {} Solution\n\n'.format(dir_name))
+                fh.write('## Solution\n\n'.format(dir_name))
                 fh.write('````\n')
-                #fh.write(open(solution).read())
                 numbered = getoutput('cat -n {}'.format(solution))
                 fh.write(numbered)
                 fh.write('\n````\n')
-                fh.write('\n\\pagebreak\n\n')
+                fh.write('\n\\newpage\n\n')
 
     cmd = 'pandoc {} --pdf-engine=xelatex -o book.pdf'
     rv, out = getstatusoutput(cmd.format(book_file))
