@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""tests for fryer.py"""
+"""tests for friar.py"""
 
 import re
 import random
 from subprocess import getstatusoutput, getoutput
 
-prg = './fryer.py'
+prg = './friar.py'
 
 
 # --------------------------------------------------
@@ -22,7 +22,6 @@ def test_usage():
 def test_ing_words():
     """ing words"""
 
-    #tests = [("you", "y'all", "You", "Y'all")
     tests = [("hunting", "huntin'"), ("Fishing", "Fishin'")]
     for given, expected in tests:
         out = getoutput('{} {}'.format(prg, given))
