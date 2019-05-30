@@ -33,7 +33,7 @@ def main():
     out_file = args.outfile
 
     if os.path.isfile(text):
-        text = open(text).read()
+        text = open(text).read().strip()
 
     out_fh = open(out_file, 'wt') if out_file else sys.stdout
     out_fh.write(text.upper() + '\n')
