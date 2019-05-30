@@ -20,63 +20,10 @@ optional arguments:
   -h, --help            show this help message and exit
   -o str, --outfile str
                         Output filename (default: )
-````
-
-# Skills
-
-* Reading text from command line or a file
-* Transforming text
-* Write to a file or STDOUT
-
-\pagebreak
-
-# howler Solution
-
-````
-#!/usr/bin/env python3
-"""Howler"""
-
-import argparse
-import os
-import sys
-
-
-# --------------------------------------------------
-def get_args():
-    """get command-line arguments"""
-    parser = argparse.ArgumentParser(
-        description='Howler (upper-case input)',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('text', metavar='STR', help='Input string or file')
-
-    parser.add_argument('-o',
-                        '--outfile',
-                        help='Output filename',
-                        metavar='str',
-                        type=str,
-                        default='')
-
-    return parser.parse_args()
-
-
-# --------------------------------------------------
-def main():
-    """Make a jazz noise here"""
-    args = get_args()
-    text = args.text
-    out_file = args.outfile
-
-    if os.path.isfile(text):
-        text = open(text).read()
-
-    out_fh = open(out_file, 'wt') if out_file else sys.stdout
-    out_fh.write(text.upper() + '\n')
-
-
-# --------------------------------------------------
-if __name__ == '__main__':
-    main()
+$ ./howler.py 'One word: Plastics!'
+ONE WORD: PLASTICS!
+$ ./howler.py ../inputs/fox.txt
+THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 ````
 
 \pagebreak
@@ -95,8 +42,6 @@ Write a program called `jump.py` that will encode any number using "jump-the-fiv
 ````
 
 If given no arguments, print a usage statement.
-
-# Expected Behavior
 
 ````
 $ ./jump.py
@@ -790,8 +735,6 @@ if __name__ == '__main__':
 
 Create a Python program called `ransom.py` that will randomly capitalize the letters in a given word or phrase. The input text may also name a file in which case the text should come from the file. The program should take a `-s|--seed` argument for the `random.seed` to control randomness for the test suite. It should also respond to `-h|--help` for usage.
 
-# Expected Behavior
-
 ````
 $ ./ransom.py
 usage: ransom.py [-h] [-s int] str
@@ -1067,7 +1010,8 @@ def main():
 
 
 # --------------------------------------------------
-main()
+if __name__ == '__main__':
+    main()
 ````
 
 \pagebreak
@@ -2045,8 +1989,6 @@ if a file argument names a non-existent file, print a warning to STDERR and skip
 1. If the word begins with consonants, e.g., "k" or "ch", move them to the end of the word and append "ay" so that "mouse" becomes "ouse-may" and "chair" becomes "air-chay."
 2. If the word begins with a vowel, simple append "-yay" to the end, so "apple" is "apple-yay."
 
-# Expected Output
-
 ````
 $ ./piggie.py
 usage: piggie.py [-h] [-o str] FILE [FILE ...]
@@ -2189,6 +2131,33 @@ if __name__ == '__main__':
 # Substring Guessing Game
 
 Write a Python program called `sub.py` that plays a guessing game where you read a `-f|--file` input (default `/usr/share/dict/words`) and use a given `-k|--ksize` to find all the words grouped by their shared kmers. Remove any kmers where the number of words is fewer than `-m|--min_words`. Also accept a `-s|--seed` for `random.seed` for testing purposes. Prompt the user to guess a word for a randomly chosen kmer. If their guess is not present in the shared list, taunt them mercilessly. If their guess is present, affirm their worth and prompt to guess again. Allow them to use `!` to quit and `?` to be provided a hint (a word from the list). For both successful guesses and hints, remove the word from the shared list. When they have quit or exhausted the list, quit play. At the end of the game, report the number of found words.
+
+````
+$ ./sub.py -h
+usage: sub.py [-h] [-f str] [-s int] [-m int] [-k int]
+
+Find words sharing a substring
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -f str, --file str    Input file (default: /usr/share/dict/words)
+  -s int, --seed int    Random seed (default: None)
+  -m int, --min_words int
+                        Minimum number of words for a given kmer (default: 3)
+  -k int, --ksize int   Size of k (default: 4)
+$ ./sub.py
+Name a word that contains "slak" [!=quit, ?=hint] (10 left) slake
+Totes! "slake" is found!
+Name a word that contains "slak" [!=quit, ?=hint] (9 left) ?
+For instance, "breislakite"...
+Name a word that contains "slak" [!=quit, ?=hint] (8 left) unslakable
+Totes! "unslakable" is found!
+Name a word that contains "slak" [!=quit, ?=hint] (7 left) q
+What is wrong with you?
+Name a word that contains "slak" [!=quit, ?=hint] (7 left) !
+Quitter!
+Hey, you found 2 words! Not bad.
+````
 
 \pagebreak
 
@@ -2375,8 +2344,6 @@ if __name__ == '__main__':
 # Tic-Tac-Toe Outcome
 
 Create a Python program called `outcome.py` that takes a given Tic-Tac-Toe state as it's only (positional) argument and reports if X or O has won or if there is no winner. The state should only contain the characters ".", "O", and "X", and must be exactly 9 characters long. If there is not exactly one argument, print a "usage" statement.
-
-# Expected Behavior
 
 ````
 $ ./outcome.py
