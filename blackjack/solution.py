@@ -3,7 +3,6 @@
 
 import argparse
 import random
-import re
 import sys
 from itertools import product
 from dire import die
@@ -70,8 +69,10 @@ def main():
     player = [p1, p2]
     dealer = [d1, d2]
 
-    if args.player_hits: player.append(cards.pop())
-    if args.dealer_hits: dealer.append(cards.pop())
+    if args.player_hits:
+        player.append(cards.pop())
+    if args.dealer_hits:
+        dealer.append(cards.pop())
 
     player_hand = sum(map(card_value, player))
     dealer_hand = sum(map(card_value, dealer))
@@ -79,10 +80,14 @@ def main():
     print('D [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
     print('P [{:2}]: {}'.format(player_hand, ' '.join(player)))
 
-    if player_hand > 21: bail('Player busts! You lose, loser!')
-    elif dealer_hand > 21: bail('Dealer busts.')
-    elif player_hand == 21: bail('Player wins. You probably cheated.')
-    elif dealer_hand == 21: bail('Dealer wins!')
+    if player_hand > 21:
+        bail('Player busts! You lose, loser!')
+    elif dealer_hand > 21:
+        bail('Dealer busts.')
+    elif player_hand == 21:
+        bail('Player wins. You probably cheated.')
+    elif dealer_hand == 21:
+        bail('Dealer wins!')
 
     if dealer_hand < 18: print('Dealer should hit.')
     if player_hand < 18: print('Player should hit.')
