@@ -16,7 +16,7 @@ def get_args():
         description='Hamming chain',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('word', type=str, help='Starting word')
+    parser.add_argument('-s', '--start', type=str, help='Starting word', default='')
 
     parser.add_argument('-w',
                         '--wordlist',
@@ -39,7 +39,7 @@ def get_args():
                         help='Random seed',
                         default=20)
 
-    parser.add_argument('-s',
+    parser.add_argument('-S',
                         '--seed',
                         metavar='int',
                         type=int,
@@ -56,7 +56,7 @@ def dist(s1, s2):
     """Given two strings, return the Hamming distance (int)"""
 
     return abs(len(s1) - len(s2)) + sum(
-        map(lambda p: 0 if p[0] == p[1] else 1, zip(s1, s2)))
+        map(lambda p: 0 if p[0] == p[1] else 1, zip(s1.lower(), s2.lower())))
 
 
 # --------------------------------------------------
@@ -64,7 +64,7 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    start = args.word
+    start = args.start
     fh = args.wordlist
     distance = args.max_distance
 
@@ -77,13 +77,10 @@ def main():
 
     logging.debug('file = %s', fh.name)
 
-    words = list(
-        filter(lambda w: re.search(r"^[\w'-]+$", w),
-               re.split(r'(\W+)', fh.read())))
+    words = fh.read().splitlines()
 
-    # words = [
-    #     w for w in re.split('(\W+)', fh.read()) if re.search(r"^[\w'-]+$", w)
-    # ]
+    if not start:
+        start = random.choice(words)
 
     if not start in words:
         die('Unknown word "{}"'.format(start))
