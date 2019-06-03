@@ -5,7 +5,7 @@ import argparse
 import logging
 import random
 import re
-from dire import die
+from dire import die, warn
 
 
 # --------------------------------------------------
@@ -91,17 +91,18 @@ def main():
         test = filter(lambda w: low <= len(w) <= high, words)
         return filter(lambda w: dist(word, w) <= distance, test)
 
-    print('{} ->'.format(start))
-    prev = [start]
-    for i in range(1, args.iterations + 1):
-        close = list(filter(lambda w: w not in prev, find_close(prev[-1])))
+    chain = [start]
+    for _ in range(args.iterations - 1):
+        close = list(filter(lambda w: w not in chain, find_close(chain[-1])))
         if not close:
-            die('Failed to find more words!')
+            warn('Failed to find more words!')
+            break
 
         next_word = random.choice(close)
-        print('{:3}: {}'.format(i, next_word))
-        prev.append(next_word)
+        chain.append(next_word)
 
+    for i, link in enumerate(chain, start=1):
+        print('{:3}: {}'.format(i, link))
 
 # --------------------------------------------------
 if __name__ == '__main__':
