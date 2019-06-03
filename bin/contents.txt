@@ -21,7 +21,6 @@ guess
 kentucky_friar
 mad_libs
 license_plates
-mad_libs
 markov_words
 piggie
 soundex_rhymer
@@ -32,6 +31,7 @@ war
 anagram
 hangman
 markov_chain
+hamming_chain
 morse
 rot13
 transpose

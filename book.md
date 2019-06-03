@@ -1867,94 +1867,99 @@ Player wins. You probably cheated.
      3	
      4	import argparse
      5	import random
-     6	import re
-     7	import sys
-     8	from itertools import product
-     9	from dire import die
+     6	import sys
+     7	from itertools import product
+     8	from dire import die
+     9	
     10	
-    11	
-    12	# --------------------------------------------------
-    13	def get_args():
-    14	    """get command-line arguments"""
-    15	    parser = argparse.ArgumentParser(
-    16	        description='Argparse Python script',
-    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    18	
-    19	    parser.add_argument('-s',
-    20	                        '--seed',
-    21	                        help='Random seed',
-    22	                        metavar='int',
-    23	                        type=int,
-    24	                        default=None)
-    25	
-    26	    parser.add_argument('-d',
-    27	                        '--dealer_hits',
-    28	                        help='Dealer hits',
-    29	                        action='store_true')
-    30	
-    31	    parser.add_argument('-p',
-    32	                        '--player_hits',
-    33	                        help='Player hits',
-    34	                        action='store_true')
-    35	
-    36	    return parser.parse_args()
+    11	# --------------------------------------------------
+    12	def get_args():
+    13	    """get command-line arguments"""
+    14	    parser = argparse.ArgumentParser(
+    15	        description='Argparse Python script',
+    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    17	
+    18	    parser.add_argument('-s',
+    19	                        '--seed',
+    20	                        help='Random seed',
+    21	                        metavar='int',
+    22	                        type=int,
+    23	                        default=None)
+    24	
+    25	    parser.add_argument('-d',
+    26	                        '--dealer_hits',
+    27	                        help='Dealer hits',
+    28	                        action='store_true')
+    29	
+    30	    parser.add_argument('-p',
+    31	                        '--player_hits',
+    32	                        help='Player hits',
+    33	                        action='store_true')
+    34	
+    35	    return parser.parse_args()
+    36	
     37	
-    38	
-    39	# --------------------------------------------------
-    40	def bail(msg):
-    41	    """print() and exit(0)"""
-    42	    print(msg)
-    43	    sys.exit(0)
+    38	# --------------------------------------------------
+    39	def bail(msg):
+    40	    """print() and exit(0)"""
+    41	    print(msg)
+    42	    sys.exit(0)
+    43	
     44	
-    45	
-    46	# --------------------------------------------------
-    47	def card_value(card):
-    48	    """card to numeric value"""
-    49	    val = card[1:]
-    50	    faces = {'A': 1, 'J': 10, 'Q': 10, 'K': 10}
-    51	    if val.isdigit():
-    52	        return int(val)
-    53	    elif val in faces:
-    54	        return faces[val]
-    55	    else:
-    56	        die('Unknown card value for "{}"'.format(card))
+    45	# --------------------------------------------------
+    46	def card_value(card):
+    47	    """card to numeric value"""
+    48	    val = card[1:]
+    49	    faces = {'A': 1, 'J': 10, 'Q': 10, 'K': 10}
+    50	    if val.isdigit():
+    51	        return int(val)
+    52	    elif val in faces:
+    53	        return faces[val]
+    54	    else:
+    55	        die('Unknown card value for "{}"'.format(card))
+    56	
     57	
-    58	
-    59	# --------------------------------------------------
-    60	def main():
-    61	    """Make a jazz noise here"""
-    62	    args = get_args()
-    63	    random.seed(args.seed)
-    64	    suites = list('♥♠♣♦')
-    65	    values = list(range(2, 11)) + list('AJQK')
-    66	    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
-    67	    random.shuffle(cards)
-    68	
-    69	    p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
-    70	    player = [p1, p2]
-    71	    dealer = [d1, d2]
-    72	
-    73	    if args.player_hits: player.append(cards.pop())
-    74	    if args.dealer_hits: dealer.append(cards.pop())
-    75	
-    76	    player_hand = sum(map(card_value, player))
-    77	    dealer_hand = sum(map(card_value, dealer))
-    78	
-    79	    print('D [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
-    80	    print('P [{:2}]: {}'.format(player_hand, ' '.join(player)))
-    81	
-    82	    if player_hand > 21: bail('Player busts! You lose, loser!')
-    83	    elif dealer_hand > 21: bail('Dealer busts.')
-    84	    elif player_hand == 21: bail('Player wins. You probably cheated.')
-    85	    elif dealer_hand == 21: bail('Dealer wins!')
-    86	
-    87	    if dealer_hand < 18: print('Dealer should hit.')
-    88	    if player_hand < 18: print('Player should hit.')
-    89	
-    90	
-    91	# --------------------------------------------------
-    92	if __name__ == '__main__':
-    93	    main()
+    58	# --------------------------------------------------
+    59	def main():
+    60	    """Make a jazz noise here"""
+    61	    args = get_args()
+    62	    random.seed(args.seed)
+    63	    suites = list('♥♠♣♦')
+    64	    values = list(range(2, 11)) + list('AJQK')
+    65	    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
+    66	    random.shuffle(cards)
+    67	
+    68	    p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
+    69	    player = [p1, p2]
+    70	    dealer = [d1, d2]
+    71	
+    72	    if args.player_hits:
+    73	        player.append(cards.pop())
+    74	    if args.dealer_hits:
+    75	        dealer.append(cards.pop())
+    76	
+    77	    player_hand = sum(map(card_value, player))
+    78	    dealer_hand = sum(map(card_value, dealer))
+    79	
+    80	    print('D [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
+    81	    print('P [{:2}]: {}'.format(player_hand, ' '.join(player)))
+    82	
+    83	    if player_hand > 21:
+    84	        bail('Player busts! You lose, loser!')
+    85	    elif dealer_hand > 21:
+    86	        bail('Dealer busts.')
+    87	    elif player_hand == 21:
+    88	        bail('Player wins. You probably cheated.')
+    89	    elif dealer_hand == 21:
+    90	        bail('Dealer wins!')
+    91	
+    92	    if dealer_hand < 18: print('Dealer should hit.')
+    93	    if player_hand < 18: print('Player should hit.')
+    94	
+    95	
+    96	# --------------------------------------------------
+    97	if __name__ == '__main__':
+    98	    main()
 ````
 
 \newpage
@@ -2901,129 +2906,7 @@ In creating all the possible plates from your regular expression, you are making
 
 \newpage
 
-# Chapter 24: Mad Libs
-
-Write a Python program called `mad_lib.py` that will read a file given as a positional argument and find all the placeholders noted in `<>`, e.g., `<verb>`, prompt the user for the part of speech being reuqested, e.g., a "verb", and then substitute that into the text of the file, finally printing out all the placeholders replaced by the user's inputs. By default, this is an interactive program that will use the `input` prompt to ask the user for their answers, but, for testing purposes, please add a `-i|--inputs` option so the test suite can pass in all the answers and bypass the `input` calls.
-
-````
-$ ./mad_lib.py
-usage: mad_lib.py [-h] [-i str [str ...]] FILE
-mad_lib.py: error: the following arguments are required: FILE
-$ ./mad_lib.py -h
-usage: mad_lib.py [-h] [-i str [str ...]] FILE
-
-Mad Libs
-
-positional arguments:
-  FILE                  Input file
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -i str [str ...], --inputs str [str ...]
-                        Inputs (for testing) (default: None)
-$ cat help.txt
-<exclamation>! I need <noun>!
-<exclamation>! Not just <noun>!
-<exclamation>! You know I need <noun>!
-<exclamation>!
-$ ./mad_lib.py help.txt
-exclamation: Hey
-noun: tacos
-exclamation: Oi
-noun: fish
-exclamation: Ouch
-noun: pie
-exclamation: Dang
-Hey! I need tacos!
-Oi! Not just fish!
-Ouch! You know I need pie!
-Dang!
-$ ./mad_lib.py romeo_juliet.txt -i cars Detroit oil pistons \
-> "stick shift" furious accelerate 42 foot hammer
-Two cars, both alike in dignity,
-In fair Detroit, where we lay our scene,
-From ancient oil break to new mutiny,
-Where civil blood makes civil hands unclean.
-From forth the fatal loins of these two foes
-A pair of star-cross'd pistons take their life;
-Whose misadventur'd piteous overthrows
-Doth with their stick shift bury their parents' strife.
-The fearful passage of their furious love,
-And the continuance of their parents' rage,
-Which, but their children's end, nought could accelerate,
-Is now the 42 hours' traffic of our stage;
-The which if you with patient foot attend,
-What here shall hammer, our toil shall strive to mend.
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	"""Mad Libs"""
-     3	
-     4	import argparse
-     5	import os
-     6	import re
-     7	import sys
-     8	from dire import die
-     9	
-    10	
-    11	# --------------------------------------------------
-    12	def get_args():
-    13	    """Get command-line arguments"""
-    14	
-    15	    parser = argparse.ArgumentParser(
-    16	        description='Mad Libs',
-    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    18	
-    19	    parser.add_argument('file',
-    20	                        metavar='FILE',
-    21	                        type=argparse.FileType('r'),
-    22	                        help='Input file')
-    23	
-    24	    parser.add_argument('-i',
-    25	                        '--inputs',
-    26	                        help='Inputs (for testing)',
-    27	                        metavar='str',
-    28	                        type=str,
-    29	                        nargs='+',
-    30	                        required=False)
-    31	
-    32	    return parser.parse_args()
-    33	
-    34	
-    35	# --------------------------------------------------
-    36	def main():
-    37	    """Make a jazz noise here"""
-    38	
-    39	    args = get_args()
-    40	    inputs = args.inputs
-    41	    regex = re.compile('([<][^>]+[>])')
-    42	    text = args.file.read().rstrip()
-    43	    blanks = list(regex.finditer(text))
-    44	
-    45	    if not blanks: die('File "{}" has no placeholders'.format(args.file.name))
-    46	
-    47	    for blank in blanks:
-    48	        name = blank.group(1)
-    49	        answer = inputs.pop(0) if inputs else input('{}: '.format(
-    50	            name.replace('<', '').replace('>', '')))
-    51	        text = re.sub(name, answer, text, count=1)
-    52	
-    53	    print(text)
-    54	
-    55	
-    56	# --------------------------------------------------
-    57	if __name__ == '__main__':
-    58	    main()
-````
-
-\newpage
-
-# Chapter 25: Markov Chains for Words
+# Chapter 24: Markov Chains for Words
 
 Write a Python program called `markov.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
@@ -3214,7 +3097,7 @@ $ ./markov.py ../inputs/const.txt -s 2 -k 3
 
 \newpage
 
-# Chapter 26: Pig Latin
+# Chapter 25: Pig Latin
 
 Write a Python program named `piggie.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
@@ -3362,7 +3245,7 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
 
 \newpage
 
-# Chapter 27: Soundex Rhymer
+# Chapter 26: Soundex Rhymer
 
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, it would be best to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part. The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons.
 
@@ -3463,7 +3346,7 @@ clowring
 
 \newpage
 
-# Chapter 28: Substring Guessing Game
+# Chapter 27: Substring Guessing Game
 
 Write a Python program called `sub.py` that plays a guessing game where you read a `-f|--file` input (default `/usr/share/dict/words`) and use a given `-k|--ksize` to find all the words grouped by their shared kmers. Remove any kmers where the number of words is fewer than `-m|--min_words`. Also accept a `-s|--seed` for `random.seed` for testing purposes. Prompt the user to guess a word for a randomly chosen kmer. If their guess is not present in the shared list, taunt them mercilessly. If their guess is present, affirm their worth and prompt to guess again. Allow them to use `!` to quit and `?` to be provided a hint (a word from the list). For both successful guesses and hints, remove the word from the shared list. When they have quit or exhausted the list, quit play. At the end of the game, report the number of found words.
 
@@ -3674,7 +3557,7 @@ Hey, you found 2 words! Not bad.
 
 \newpage
 
-# Chapter 29: Tic-Tac-Toe Outcome
+# Chapter 28: Tic-Tac-Toe Outcome
 
 Create a Python program called `outcome.py` that takes a given Tic-Tac-Toe state as it's only (positional) argument and reports if X or O has won or if there is no winner. The state should only contain the characters ".", "O", and "X", and must be exactly 9 characters long. If there is not exactly one argument, print a "usage" statement.
 
@@ -3769,7 +3652,7 @@ X has won
 
 \newpage
 
-# Chapter 30: Twelve Days of Christmas
+# Chapter 29: Twelve Days of Christmas
 
 Write a Python program called `twelve_days.py` that will generate the "Twelve Days of Christmas" song up to the `-n|--number_days` argument (default `12`), writing the resulting text to the `-o|--outfile` argument (default STDOUT).
 
@@ -3904,7 +3787,7 @@ $ wc -l out
 
 \newpage
 
-# Chapter 31: War
+# Chapter 30: War
 
 > The generation of random numbers is too important to be left to chance. -- Robert R. Coveyou
 
@@ -4097,7 +3980,7 @@ P1 12 P2 12: DRAW
 
 \newpage
 
-# Chapter 32: Anagram
+# Chapter 31: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -4254,7 +4137,7 @@ $ ./presto.py listen -n 2 | tail
 
 \newpage
 
-# Chapter 33: Hangman
+# Chapter 32: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -4474,7 +4357,7 @@ You lose, loser!  The word was "metromania."
 
 \newpage
 
-# Chapter 34: Markov Chain
+# Chapter 33: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -4677,6 +4560,209 @@ Advice and Consent of the United States.
    128	# --------------------------------------------------
    129	if __name__ == '__main__':
    130	    main()
+````
+
+\newpage
+
+# Chapter 34: Hamming Chain
+
+Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
+
+If the given word is not found in the word list, exit with an error and message. While searching for the next word in the chain, be sure not to repeat any words previously found or you might just go in circles! If you fail to find any new words before the end of the iterations, exit with an error and message as such.
+
+````
+$ ./chain.py -h
+usage: chain.py [-h] [-s START] [-w FILE] [-d int] [-i int] [-S int] [-D]
+
+Hamming chain
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s START, --start START
+                        Starting word (default: )
+  -w FILE, --wordlist FILE
+                        File input (default: /usr/share/dict/words)
+  -d int, --max_distance int
+                        Maximum Hamming distance (default: 1)
+  -i int, --iterations int
+                        Random seed (default: 20)
+  -S int, --seed int    Random seed (default: None)
+  -D, --debug           Debug (default: False)
+$ ./chain.py -s foobar
+Unknown word "foobar"
+$ ./chain.py -s bike -S 1 -i 5
+  1: bike
+  2: bikh
+  3: Sikh
+  4: sith
+  5: sithe
+$ ./chain.py -s bike -S 1 -i 5 -d 2
+  1: bike
+  2: bit
+  3: net
+  4: yot
+  5: ye
+$ ./chain.py -S 1 -s bicycle
+Failed to find more words!
+  1: bicycle
+  2: bicycler
+$ ./chain.py -S 1 -s bicycle -d 2 -i 5
+  1: bicycle
+  2: bicyclic
+  3: bicyclism
+  4: dicyclist
+  5: bicyclist
+````
+
+Use the `uscities.txt` file to plan a trip!
+
+````
+$ ./chain.py -S 1 -w ../inputs/uscities.txt -s Clinton -d 3
+  1: Clinton
+  2: Flint
+  3: Fritz
+  4: Unity
+  5: Union
+  6: Mason
+  7: Oasis
+  8: Nash
+  9: Zag
+ 10: Guy
+ 11: Gaza
+ 12: Jay
+ 13: Ely
+ 14: Egan
+ 15: Aden
+ 16: Alta
+ 17: Ada
+ 18: Nyac
+ 19: Pyatt
+ 20: Plato
+$ ./chain.py -S 1 -w ../inputs/uscities.txt -s 'Calumet City' -d 4
+Failed to find more words!
+  1: Calumet City
+  2: Calumet Park
+  3: Palomar Park
+  4: Hanover Park
+  5: Langley Park
+  6: Stanley Park
+  7: Kearney Park
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Hamming chain"""
+     3	
+     4	import argparse
+     5	import logging
+     6	import random
+     7	import re
+     8	from dire import die, warn
+     9	
+    10	
+    11	# --------------------------------------------------
+    12	def get_args():
+    13	    """get command-line arguments"""
+    14	
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Hamming chain',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('-s', '--start', type=str, help='Starting word', default='')
+    20	
+    21	    parser.add_argument('-w',
+    22	                        '--wordlist',
+    23	                        metavar='FILE',
+    24	                        type=argparse.FileType('r'),
+    25	                        help='File input',
+    26	                        default='/usr/share/dict/words')
+    27	
+    28	    parser.add_argument('-d',
+    29	                        '--max_distance',
+    30	                        metavar='int',
+    31	                        type=int,
+    32	                        help='Maximum Hamming distance',
+    33	                        default=1)
+    34	
+    35	    parser.add_argument('-i',
+    36	                        '--iterations',
+    37	                        metavar='int',
+    38	                        type=int,
+    39	                        help='Random seed',
+    40	                        default=20)
+    41	
+    42	    parser.add_argument('-S',
+    43	                        '--seed',
+    44	                        metavar='int',
+    45	                        type=int,
+    46	                        help='Random seed',
+    47	                        default=None)
+    48	
+    49	    parser.add_argument('-D', '--debug', help='Debug', action='store_true')
+    50	
+    51	    return parser.parse_args()
+    52	
+    53	
+    54	# --------------------------------------------------
+    55	def dist(s1, s2):
+    56	    """Given two strings, return the Hamming distance (int)"""
+    57	
+    58	    return abs(len(s1) - len(s2)) + sum(
+    59	        map(lambda p: 0 if p[0] == p[1] else 1, zip(s1.lower(), s2.lower())))
+    60	
+    61	
+    62	# --------------------------------------------------
+    63	def main():
+    64	    """Make a jazz noise here"""
+    65	
+    66	    args = get_args()
+    67	    start = args.start
+    68	    fh = args.wordlist
+    69	    distance = args.max_distance
+    70	
+    71	    random.seed(args.seed)
+    72	
+    73	    logging.basicConfig(
+    74	        filename='.log',
+    75	        filemode='w',
+    76	        level=logging.DEBUG if args.debug else logging.CRITICAL)
+    77	
+    78	    logging.debug('file = %s', fh.name)
+    79	
+    80	    words = fh.read().splitlines()
+    81	
+    82	    if not start:
+    83	        start = random.choice(words)
+    84	
+    85	    if not start in words:
+    86	        die('Unknown word "{}"'.format(start))
+    87	
+    88	    def find_close(word):
+    89	        l = len(word)
+    90	        low, high = l - distance, l + distance
+    91	        test = filter(lambda w: low <= len(w) <= high, words)
+    92	        return filter(lambda w: dist(word, w) <= distance, test)
+    93	
+    94	    chain = [start]
+    95	    for _ in range(args.iterations - 1):
+    96	        close = list(filter(lambda w: w not in chain, find_close(chain[-1])))
+    97	        if not close:
+    98	            warn('Failed to find more words!')
+    99	            break
+   100	
+   101	        next_word = random.choice(close)
+   102	        chain.append(next_word)
+   103	
+   104	    for i, link in enumerate(chain, start=1):
+   105	        print('{:3}: {}'.format(i, link))
+   106	
+   107	# --------------------------------------------------
+   108	if __name__ == '__main__':
+   109	    main()
 ````
 
 \newpage
