@@ -1,4 +1,4 @@
-\setcounter{tocdepth}{1}\tableofcontents
+\setcounter{tocdepth}{2}\tableofcontents
 \newpage
 
 # Playful Python
@@ -146,37 +146,93 @@ an octopus
      2	"""Article selector"""
      3	
      4	import argparse
-     5	import os
-     6	import sys
-     7	
-     8	
-     9	# --------------------------------------------------
-    10	def get_args():
-    11	    """Get command-line arguments"""
-    12	
-    13	    parser = argparse.ArgumentParser(
-    14	        description='Article selector',
-    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+     5	
+     6	
+     7	# --------------------------------------------------
+     8	def get_args():
+     9	    """Get command-line arguments"""
+    10	
+    11	    parser = argparse.ArgumentParser(
+    12	        description='Article selector',
+    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    14	
+    15	    parser.add_argument('word', metavar='str', help='Word')
     16	
-    17	    parser.add_argument('word', metavar='str', help='Word')
+    17	    return parser.parse_args()
     18	
-    19	    return parser.parse_args()
-    20	
-    21	
-    22	# --------------------------------------------------
-    23	def main():
-    24	    """Make a jazz noise here"""
-    25	
-    26	    args = get_args()
-    27	    word = args.word
-    28	    article = 'an' if word[0].lower() in 'aeiou' else 'a'
+    19	
+    20	# --------------------------------------------------
+    21	def main():
+    22	    """Make a jazz noise here"""
+    23	
+    24	    args = get_args()
+    25	    word = args.word
+    26	    article = 'an' if word[0].lower() in 'aeiou' else 'a'
+    27	
+    28	    print('{} {}'.format(article, word))
     29	
-    30	    print('{} {}'.format(article, word))
-    31	
-    32	# --------------------------------------------------
-    33	if __name__ == '__main__':
-    34	    main()
+    30	# --------------------------------------------------
+    31	if __name__ == '__main__':
+    32	    main()
 ````
+
+\newpage
+
+## Discussion
+
+Cf Appendices: argparse, Truthiness
+
+As with all the solutions presented, this assumes you have stubbed the program with `new.py` and that you are using the `argparse` module. I suggest putting this logic into a separate function which here is called `get_args` and which I like to define first so that I can see right away when I'm reading the program what the program expects as input. On line 12, I set the `description` for the program that will be displayed with the help documentation. On line 15, I indicate that the program expects just one *positional* argument, no more, no less. Since it is a "word" that I expect, I called the argument `word` which is also how I will access the value on line 25. I use the `metavar` on line 15 to let the user know that this should be a string. 
+
+The `get_args` function will `return` the result of parsing the command line arguments which I put into the variable `args` on line 24. I can now access the `word` by call `args.word`. Note the lack of parentheses -- it's not `args.word()` -- as this is not a function call. Think of it like a slot where the value lives. 
+
+On line 26, we need to figure out whether the `article` should be `a` or `an`. We'll use a very simple rule that any word that has a first character that is a vowel should get `an` and otherwise we choose `a`. This obviously misses actual pronunciations like in American English we don't pronounce the "h" in "herb" and so actually say "an herb" whereas the British *do* pronounce the "h" and so would say "an herb". (Even more bizarre to me is that the British leave off the article entirely for the word "hospital" as in, "The Queen is in hospital!") Nor will we consider words where the initial `y` acts like a vowel.
+
+We can access the first character of the `word` with `word[0]` which looks the same as how we access the first element of a list. Strings are really list of characters, so this isn't so far-fetched, but we do have to remember that Python, like so many programming languages, starts numbering at `0`, so we often talked about the first element of a list as the "zeroth" element.
+
+To decided if the given word starts with a vowel, we ask if `word[0].lower() in  'aeiou'`. So, to unpack that, `word[0]` returns a one-character-long `str` type which has the method `.lower()` which we call using the parentheses. Without the parens, this would just be the *idea* of the function that returns a lowercased version of the string. Understand that the `word` remains unchanged. The function does not lowercase `word[0]`, it only *returns a lowercase version* of that character.
+
+The `X in Y` form is a way to ask if element `X` is in the collection `Y`:
+
+````
+>>> 'a' in 'abc'
+True
+>>> 'foo' in ['foo', 'bar']
+True
+>>> 3 in range(5)
+True
+>>> 10 in range(3)
+False
+````
+
+So we get the first character of `word` and ask if the lowercased version is in the list of characters `aeiou`. 
+
+The `if` *expression* is different from an `if` *statement*. An expression returns a value, and a statement does not. The `if` expression must have an `else`, but the `if` statement does not have this requirement.  The first value is returned if the predicate (the bit after the `if`) evaluates to `True` in a Boolean context (more on that later), otherwise the last value is returned:
+
+````
+>>> 'Hooray!' if True else 'Shucks!'
+'Hooray!'
+````
+
+The longer way to write this would have been:
+
+````
+article = ''
+if word[0].lower() in 'aeiou':
+    article = 'a'
+else:
+    article = 'an'
+````
+
+Or more succinctly:
+
+````
+article = 'an'
+if word[0].lower() in 'aeiou':
+    article = 'a'
+````
+
+
 
 \newpage
 
@@ -5343,6 +5399,498 @@ aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
     78	if __name__ == '__main__':
     79	    main()
 ````
+
+\newpage
+
+# Appendix 1: argparse
+
+The `argparse` module will interpret all the command-line arguments to your program. I suggest you use `argparse` for every command-line program you write so that you always have a standard way to get arguments and present help.
+
+## Types of arguments
+
+Command-line arguments come in a variety of flavors:
+
+* Positional: The order and number of the arguments is what determines their meaning. Some programs might expect, for instance, a file name as the first argument and an output directory as the second. 
+* Named options: Standard Unix format allows for a "short" name like `-f` (one dash and a single character) or a "long" name like `--file` (two dashes and a string of characters) followed by some value like a file name or a number. This allows for arguments to be provided in any order or not provided in which case the program can use a reasonable default value.
+* Flag: A "Boolean" value like "yes"/"no" or `True`/`False` usually indicated by something that looks like a named option but without a value, e.g., `-d` or `--debug` to turn on debugging. Typically the presence of the flag indicates a `True` value for the argument; therefore, it's absence would mean `False`, so `--debug` turns *on* debugging while no `--debug` flag means there should not no debugging.
+
+## Datatypes of values
+
+The `argparse` module can save you enormous amounts of time by forcing the user to provide arguments of a particular type. If you run `new.py`, all of the above types of arguments are present along with suggestions for how to get string or integer values:
+
+````
+# --------------------------------------------------
+def get_args():
+    """Get command-line arguments"""
+
+    parser = argparse.ArgumentParser(
+        description='Argparse Python script',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('positional',
+                        metavar='str',
+                        help='A positional argument')
+
+    parser.add_argument('-a',
+                        '--arg',
+                        help='A named string argument',
+                        metavar='str',
+                        type=str,
+                        default='')
+
+    parser.add_argument('-i',
+                        '--int',
+                        help='A named integer argument',
+                        metavar='int',
+                        type=int,
+                        default=0)
+
+    parser.add_argument('-f',
+                        '--flag',
+                        help='A boolean flag',
+                        action='store_true')
+
+    return parser.parse_args()
+````
+
+You should change the `description` to a short sentence describing your program. The `formatter_class` argument tells `argparse` to show the default values in the the standard help documentation. 
+
+The `positional` argument's definition indicates we expect exactly one positional argument. The `-a` argument's `type` must be a `str` while the `-i` option must be something that Python can convert to the `int` type (you can also use `float`). Both of these arguments have `default` values which means the user is not required to provide them. You could instead define them with `required=True` to force the user to provide values themselves.
+
+The `-f` flag notes that the `action` is to `store_true` which means the value's default with be `True` if the argument is present and `False` otherwise. 
+
+The `type` of the argument can be something much richer than simple Python types like strings or numbers. You can indicate that an argument must be a existing, readable file. Here is a simple implementation in Python of `cat -n`:
+
+````
+#!/usr/bin/env python3
+"""Python version of `cat -n`"""
+
+import argparse
+
+
+# --------------------------------------------------
+def get_args():
+    """Get command-line arguments"""
+
+    parser = argparse.ArgumentParser(
+        description='Argparse Python script',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('file',
+                        metavar='FILE',
+                        type=argparse.FileType('r'),
+                        help='Input file')
+
+    return parser.parse_args()
+
+
+# --------------------------------------------------
+def main():
+    """Make a jazz noise here"""
+
+    args = get_args()
+    fh = args.file
+
+    print('Reading "{}"'.format(fh.name))
+    for i, line in enumerate(fh):
+        print(i, line, end='')
+
+
+# --------------------------------------------------
+if __name__ == '__main__':
+    main()
+````
+
+The `type` of the input `file` argument is an *open file handle* which we can directly read line-by-line with a `for` loop! Because it's a file *handle* and not a file *name*, I chose to call the variable `fh` to help me remember what it is. You can access the file's name via `fh.name`. 
+
+````
+$ ./cat_n.py ../../inputs/the-bustle.txt
+Reading "../../inputs/the-bustle.txt"
+0 The bustle in a house
+1 The morning after death
+2 Is solemnest of industries
+3 Enacted upon earth,--
+4
+5 The sweeping up the heart,
+6 And putting love away
+7 We shall not want to use again
+8 Until eternity.
+````
+
+## Number of arguments
+
+If you want one positional argument, you can define them like so:
+
+````
+#!/usr/bin/env python3
+"""One positional argument"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='One positional argument',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('first', metavar='str', help='First argument')
+args = parser.parse_args()
+print('first =', args.first)
+````
+
+If the user provides anything other exactly one argument, they get a help message:
+
+````
+$ ./one_arg.py
+usage: one_arg.py [-h] str
+one_arg.py: error: the following arguments are required: str
+$ ./one_arg.py foo bar
+usage: one_arg.py [-h] str
+one_arg.py: error: unrecognized arguments: bar
+$ ./one_arg.py foo
+first = foo
+````
+
+If you want two different positional arguments:
+
+````
+#!/usr/bin/env python3
+"""Two positional arguments"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='Two positional arguments',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('first', metavar='str', help='First argument')
+
+parser.add_argument('second', metavar='int', help='Second argument')
+
+return parser.parse_args()
+
+print('first =', args.first)
+print('second =', args.second)
+````
+
+Again, the user must provide exactly this number of positional arguments:
+
+````
+$ ./two_args.py
+usage: two_args.py [-h] str str
+two_args.py: error: the following arguments are required: str, str
+$ ./two_args.py foo
+usage: two_args.py [-h] str str
+two_args.py: error: the following arguments are required: str
+$ ./two_args.py foo bar
+first = foo
+second = bar
+````
+
+You can also use the `nargs=N` option to specify some number of arguments. It only makes sense if the arguments are the same thing like two files:
+
+````
+#!/usr/bin/env python3
+"""nargs=2"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='nargs=2',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('files', metavar='FILE', nargs=2, help='Two files')
+
+args = parser.parse_args()
+
+file1, file2 = args.files
+print('file1 =', file1)
+print('file2 =', file2)
+````
+
+The help indicates we want two files:
+
+````
+$ ./nargs2.py foo
+usage: nargs2.py [-h] FILE FILE
+nargs2.py: error: the following arguments are required: FILE
+````
+
+And we can unpack the two file arguments and use them:
+
+````
+$ ./nargs2.py foo bar
+file1 = foo
+file2 = bar
+````
+
+If you want one or more of some argument, you can use `nargs='+'`:
+
+````
+$ cat nargs+.py
+#!/usr/bin/env python3
+"""nargs=+"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='nargs=+',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('files', metavar='FILE', nargs='+', help='Some files')
+
+args = parser.parse_args()
+files = args.files
+
+print('number = {}'.format(len(files)))
+print('files  = {}'.format(', '.join(files)))
+````
+
+Note that this will return a `list` -- even a single argument will become a `list` of one value:
+
+````
+$ ./nargs+.py
+usage: nargs+.py [-h] FILE [FILE ...]
+nargs+.py: error: the following arguments are required: FILE
+$ ./nargs+.py foo
+number = 1
+files  = foo
+$ ./nargs+.py foo bar
+number = 2
+files  = foo, bar
+````
+
+## Automatic help
+
+The `argparse` module reserves the `-h` and `--help` flags for generating help documentation. You do not need to add these nor are you allowed to use these flags for other purposes. Using the above definition, this is the help that `argparse` will generate:
+
+````
+$ ./foo.py
+usage: foo.py [-h] [-a str] [-i int] [-f] str
+foo.py: error: the following arguments are required: str
+[cholla@~/work/python/playful_python/article]$ ./foo.py -h
+usage: foo.py [-h] [-a str] [-i int] [-f] str
+
+Argparse Python script
+
+positional arguments:
+  str                A positional argument
+
+optional arguments:
+  -h, --help         show this help message and exit
+  -a str, --arg str  A named string argument (default: )
+  -i int, --int int  A named integer argument (default: 0)
+  -f, --flag         A boolean flag (default: False)
+````
+
+Notice how unhelpful a name like `positional` is? 
+
+## Getting the argument values
+
+The values for the arguments will be accessible through the "long" name you define and will have been coerced to the Python data type you indicated. If I change `main` to this:
+
+````
+# --------------------------------------------------
+def main():
+    """Make a jazz noise here"""
+
+    args = get_args()
+    str_arg = args.arg
+    int_arg = args.int
+    flag_arg = args.flag
+    pos_arg = args.positional
+
+    print('str_arg = "{}" ({})'.format(str_arg, type(str_arg)))
+    print('int_arg = "{}" ({})'.format(int_arg, type(int_arg)))
+    print('flag_arg = "{}" ({})'.format(flag_arg, type(flag_arg)))
+    print('positional = "{}" ({})'.format(pos_arg, type(pos_arg)))
+````
+
+And then run it:
+
+````
+$ ./foo.py -a foo -i 4 -f bar
+str_arg = "foo" (<class 'str'>)
+int_arg = "4" (<class 'int'>)
+flag_arg = "True" (<class 'bool'>)
+positional = "bar" (<class 'str'>)
+````
+
+Notice how we might think that `-f` takes the argument `bar`, but it is defined as a `flag` and the `argparse` knows that the program take
+
+````
+$ ./foo.py foo -a bar -i 4 -f
+str_arg = "bar" (<class 'str'>)
+int_arg = "4" (<class 'int'>)
+flag_arg = "True" (<class 'bool'>)
+positional = "foo" (<class 'str'>)
+````
+
+\newpage
+
+# Appendix 2: Truthiness: Boolean Evaluations
+
+While it would seem Python has an actual Boolean (Yes/No, True/False) type, this idea can be seriously abused in many odd and confusing ways. First off, there are actual `True` and `False` values:
+
+````
+>>> True == True
+True
+>>> False == False
+True
+````
+
+But they are equivalent to integers:
+
+````
+>>> True == 1
+True
+>>> False == 0
+True
+````
+
+Which means, oddly, that you can add them:
+
+````
+>>> True + True
+2
+>>> True + True + False
+2
+````
+
+Lots of things are `False`-ey when they are evaluated in a Boolean context. The `int` `0`, the `float` `0.0`, the empty string, an empty list, and the special value `None` are all considered `False`-ey:
+
+````
+>>> 'Hooray!' if 0 else 'Shucks!'
+'Shucks!'
+>>> 'Hooray!' if 0. else 'Shucks!'
+'Shucks!'
+>>> 'Hooray!' if [] else 'Shucks!'
+'Shucks!'
+>>> 'Hooray!' if '' else 'Shucks!'
+'Shucks!'
+>>> 'Hooray!' if None else 'Shucks!'
+'Shucks!'
+````
+
+But note:
+
+````
+>>> 'Hooray!' if 'None' else 'Shucks!'
+'Hooray!'
+````
+
+There are quotes around `'None'` so it's the literal string "None" and not the special value `None`, and, since this is not an empty string, it evaluates *in a Boolean context* to not-`False` which is basically `True`.
+
+This behavior can introduce extremely subtle logical bugs into your programs that the Python compiler and linters cannot uncover. Consider the `dict.get` method that will safely return the value for a given key in a dictionary, returning `None` if the key does not exist. Given this dictionary:
+
+````
+>>> d = {'foo': 0, 'bar': None}
+````
+
+If we access a key that doesn't exist, Python generates an exception that, if not caught in our code, would immediately crash the program:
+
+````
+>>> d['baz']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 'baz'
+````
+
+But we can use `d.get()` to do this safely:
+
+````
+>>> d.get('baz')
+````
+
+Hmm, that seems unhelpful! What did we get back?
+
+````
+>>> type(d.get('baz'))
+<class 'NoneType'>
+````
+
+Ah, we got `None`! 
+
+We could use an `or` to define a default value:
+
+````
+>>> d.get('baz') or 'NA'
+'NA'
+````
+
+It turns out the `get` method accepts a second, optional argument of the default value to return:
+
+````
+>>> d.get('baz', 'NA')
+'NA'
+````
+
+Great! So let's use that on the other values:
+
+````
+>>> d.get('foo', 'NA')
+0
+>>> d.get('bar', 'NA')
+````
+
+The call for `bar` was weird, but remember that we put an actual `None` as the value:
+
+````
+>>> type(d.get('bar', 'NA'))
+<class 'NoneType'>
+````
+
+OK, so we go back to this:
+
+````
+>>> d.get('bar') or 'NA'
+'NA'
+````
+
+Which seems to work, but notice this:
+
+````
+>>> d.get('foo') or 'NA'
+'NA'
+````
+
+The value for `foo` is actually `0` which evaluates to `False` given the Boolean evaluation of the `or`. If this were a measurement of some value like the amount of sodium in water, then the string `NA` would indicate that no value was recorded whereas `0` indicates that sodium was measured and none detected. If some sort of important analysis rested on our interpretation of the strings in a spreadsheet, we might inadvertently introduce missing values because of the way Python coerces various non-Boolean values into Boolean values.
+
+Perhaps a safer way to access these values would be:
+
+````
+>>> for key in ['foo', 'bar', 'baz']:
+...   val = d[key] if key in d else 'NA'
+...   val = 'NA' if val is None else val
+...   print(key, val)
+...
+foo 0
+bar NA
+baz NA
+````
+
+\newpage
+
+# Appendix 3: Markov Chains
+
+Read about Markov chains:
+
+* Claude Shannon's 1948 MS thesis, "A Mathematical Theory of Communication" (https://onlinelibrary.wiley.com/doi/abs/10.1002/j.1538-7305.1948.tb01338.x)
+* https://en.wikipedia.org/wiki/Markov_chain 
+* Chapter 3 of _The Practice of Programming_ by Brian Kernighan and Rob Pike where they discuss implementations in C, C++, Java, awk, and Perl
+* "Computer Recreations", A. K. Dewdney, Scientific American, 1989 (https://archive.org/details/ComputerRecreationsMarkovChainer)
+
+I'd like you to consider how a Markov chain creates a graph structure. Consult the three PDFs (generated by the `mk-graphs.sh` program) that visualize the graphs created by k-mer sizes of 1, 2, 3, and 4 when given this input:
+
+````
+$ cat words.txt
+maamselle
+mabi
+mabolo
+mac
+macaasim
+macabre
+````
+
+Notice that sometimes the branches terminate and sometimes you can find multiple paths through the graphs. As `k` grows, there are fewer options.
 
 \newpage
 

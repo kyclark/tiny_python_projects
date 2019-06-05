@@ -3,10 +3,15 @@
 
 import re
 import os
-import random
 from subprocess import getstatusoutput, getoutput
 
 prg = './article.py'
+consonant_words = [
+    'bear', 'cow', 'deer', 'frog', 'giraffe', 'horse', 'jackyl', 'kestrel',
+    'lion', 'marmot', 'nutria', 'porpoise', 'quark', 'rooster', 'sturgeon',
+    'turtle', 'vermin', 'walrus', 'xray', 'yoosy', 'zebra'
+]
+vowel_words = ['appaloosa', 'elephant', 'ingot', 'octopus', 'unicorn']
 
 
 # --------------------------------------------------
@@ -30,29 +35,33 @@ def test_usage():
 def test_01():
     """ bear -> a bear """
 
-    out = getoutput('{} bear'.format(prg))
-    assert out.strip() == 'a bear'
+    for word in consonant_words:
+        out = getoutput('{} {}'.format(prg, word))
+        assert out.strip() == 'a ' + word
 
 
 # --------------------------------------------------
 def test_02():
     """ Bear -> a Bear """
 
-    out = getoutput('{} Bear'.format(prg))
-    assert out.strip() == 'a Bear'
+    for word in consonant_words:
+        out = getoutput('{} {}'.format(prg, word.title()))
+        assert out.strip() == 'a ' + word.title()
 
 
 # --------------------------------------------------
 def test_03():
     """ octopus -> an octopus """
 
-    out = getoutput('{} octopus'.format(prg))
-    assert out.strip() == 'an octopus'
+    for word in vowel_words:
+        out = getoutput('{} {}'.format(prg, word))
+        assert out.strip() == 'an ' + word
 
 
 # --------------------------------------------------
 def test_04():
     """ Octopus -> an Octopus """
 
-    out = getoutput('{} Octopus'.format(prg))
-    assert out.strip() == 'an Octopus'
+    for word in vowel_words:
+        out = getoutput('{} {}'.format(prg, word.title()))
+        assert out.strip() == 'an ' + word.title()

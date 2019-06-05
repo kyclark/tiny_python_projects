@@ -1,3 +1,5 @@
+# argparse
+
 The `argparse` module will interpret all the command-line arguments to your program. I suggest you use `argparse` for every command-line program you write so that you always have a standard way to get arguments and present help.
 
 ## Types of arguments
@@ -96,6 +98,20 @@ if __name__ == '__main__':
 ````
 
 The `type` of the input `file` argument is an *open file handle* which we can directly read line-by-line with a `for` loop! Because it's a file *handle* and not a file *name*, I chose to call the variable `fh` to help me remember what it is. You can access the file's name via `fh.name`. 
+
+````
+$ ./cat_n.py ../../inputs/the-bustle.txt
+Reading "../../inputs/the-bustle.txt"
+0 The bustle in a house
+1 The morning after death
+2 Is solemnest of industries
+3 Enacted upon earth,--
+4
+5 The sweeping up the heart,
+6 And putting love away
+7 We shall not want to use again
+8 Until eternity.
+````
 
 ## Number of arguments
 

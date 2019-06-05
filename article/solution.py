@@ -2,8 +2,6 @@
 """Article selector"""
 
 import argparse
-import os
-import sys
 
 
 # --------------------------------------------------
