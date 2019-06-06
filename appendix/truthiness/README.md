@@ -1,4 +1,4 @@
-# Truthiness: Boolean Evaluations
+# Truthiness
 
 While it would seem Python has an actual Boolean (Yes/No, True/False) type, this idea can be seriously abused in many odd and confusing ways. First off, there are actual `True` and `False` values:
 
@@ -103,14 +103,14 @@ Great! So let's use that on the other values:
 >>> d.get('bar', 'NA')
 ````
 
-The call for `bar` was weird, but remember that we put an actual `None` as the value:
+The call for `bar` returned nothing because we put an actual `None` as the value:
 
 ````
 >>> type(d.get('bar', 'NA'))
 <class 'NoneType'>
 ````
 
-OK, so we go back to this:
+The key `bar` didn't fail because that key exists in the dictionary. The `dict.get` method only returns the second, default argument *if the key does not exist in the dictionary* which is entirely different from checking the *value* of the key in the dictionary. OK, so we go back to this:
 
 ````
 >>> d.get('bar') or 'NA'

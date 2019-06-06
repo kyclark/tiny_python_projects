@@ -8,7 +8,17 @@ On line 26, we need to figure out whether the `article` should be `a` or `an`. W
 
 We can access the first character of the `word` with `word[0]` which looks the same as how we access the first element of a list. Strings are really list of characters, so this isn't so far-fetched, but we do have to remember that Python, like so many programming languages, starts numbering at `0`, so we often talked about the first element of a list as the "zeroth" element.
 
-To decided if the given word starts with a vowel, we ask if `word[0].lower() in  'aeiou'`. So, to unpack that, `word[0]` returns a one-character-long `str` type which has the method `.lower()` which we call using the parentheses. Without the parens, this would just be the *idea* of the function that returns a lowercased version of the string. Understand that the `word` remains unchanged. The function does not lowercase `word[0]`, it only *returns a lowercase version* of that character.
+To decide if the given word starts with a vowel, we ask is `word[0].lower() in  'aeiou'`. So, to unpack that, `word[0]` returns a one-character-long `str` type which has the method `.lower()` which we call using the parentheses. Without the parens, this would just be the *idea* of the function that returns a lowercased version of the string. Understand that the `word` remains unchanged. The function does not lowercase `word[0]`, it only *returns a lowercase version* of that character.
+
+````
+>>> word = 'APPLE'
+>>> word
+'APPLE'
+>>> word[0].lower()
+'a'
+>>> word
+'APPLE'
+````
 
 The `X in Y` form is a way to ask if element `X` is in the collection `Y`:
 
@@ -23,9 +33,7 @@ True
 False
 ````
 
-So we get the first character of `word` and ask if the lowercased version is in the list of characters `aeiou`. 
-
-The `if` *expression* is different from an `if` *statement*. An expression returns a value, and a statement does not. The `if` expression must have an `else`, but the `if` statement does not have this requirement.  The first value is returned if the predicate (the bit after the `if`) evaluates to `True` in a Boolean context (more on that later), otherwise the last value is returned:
+The `if` *expression* is different from an `if` *statement*. An expression returns a value, and a statement does not. The `if` expression must have an `else`, but the `if` statement does not have this requirement.  The first value is returned if the predicate (the bit after the `if`) evaluates to `True` in a Boolean context (cf. "Truthiness"), otherwise the last value is returned:
 
 ````
 >>> 'Hooray!' if True else 'Shucks!'
