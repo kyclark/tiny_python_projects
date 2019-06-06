@@ -22,7 +22,6 @@ I have in mind a layout where each program gets four pages:
 
 ## Programs
 
-> "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
 The goal is to get the reader to become a *writer* -- to try to solve the problems. One technique in teaching is to first present a problem without showing how to solve it. Once the student engages with the problem, they find they want and need the object of the lesson. Each program is intended to flex some programming technique or idea like playing with lists or contemplating regular expressions or using dictionaries. By using `argparse` for the programs, we also cover validation of user input.
 

@@ -3,23 +3,13 @@
 
 # Playful Python
 
-I believe you can learn serious things through silly games. 
+> "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
-I'd like to make this into a book or something, similar to the Python bioinformatics/data science (https://github.com/kyclark/practical_python_for_data_science) repo. I think you will learn best by *doing*, so I think I will write this as a loose collection of exercises that spell out the skills I aim to teach with each exercise. I will create descriptions for each exercise with examples of how the program should work along with a test suite. You will need to write the program that satisfies the test suite.
+I believe you can learn serious things through silly games. I also think you will learn best by *doing*. This is a book of programming exercises. Each chapter includes a description of a program you should write with examples of how the program should work. Most importantly, each program includes with a test suite so that you know if your program is working well enough. 
 
-I think I'm going to present this differently from other material in that I won't necessarily show you beforehand what you need to write a program. I'll describe what the program should do and provide some discussion about how to write it. I'll also create an appendix with short example of how to do things like read/write from/to a file, process all the files in a directory, extract k-mers from a string, etc. I'll provide some building blocks, but I want you to figure out how to put the pieces together!
+I won't necessarily show you beforehand what you need to write a program. I'll describe what the program should do and provide some discussion about how to write it. I'll also create an appendix with short examples of how to do things like how to use `argparse`, how to read/write from/to a file, how to process all the files in a directory, how to extract k-mers from a string, etc. I'll provide some building blocks, but I want you to figure out how to put the pieces together.
 
-## new.py
-
-I provide a program in the `bin` directory called `new.py` that will help you stub out new Python programs using the fabulous `argparse` module to parse the command line arguments and options for your programs. I highly recommend you start every new program with this. For example, if the `README.md` says "Write a Python program called `abc.py` that ...", then you should do this:
-
-````
-$ new.py abc
-````
-
-This will create a new file called `abc.py` (that has been made executable with `chmod +x`, if your operating system supports that) that has example code for you to start writing your program. It's best to put `new.py` into your `$PATH` or alter your `$PATH` to include the directory where it's located. FWIW, I always create a `$HOME/.local/bin` that I add to my `$PATH` for programs like this.
-
-## How to Use
+## Forking GitHub repo
 
 First use the GitHub interface to "fork" this repository into your own account. Then do `git clone` of *your* repository to get a local copy. Inside that checkout, do:
 
@@ -27,17 +17,28 @@ First use the GitHub interface to "fork" this repository into your own account. 
 git remote add upstream https://github.com/kyclark/playful_python.git 
 ````
 
-so that you can do `git pull upstream master` to get updates. When you create new files, `git add/commit/push` them to *your* repository. (Please do not create pull requests on *my* repository -- unless, of course, you have suggestions for improving my repo!).
+This will allow you to `git pull upstream master` in order to get updates. When you create new files, `git add/commit/push` them to *your* repository. (Please do not create pull requests on *my* repository -- unless, of course, you have suggestions for improving my repo!).
 
-This is a work in progress. If you see a directory contains a `README.md`, `solution.py`, `Makefile`, and `test.py`, then it's likely ready to be solved.
 
-## Structure
+## new.py
 
-Right now, I'm not sure how I'll structure the exercises. I wouldn't mind if you just randomly chose one and see how it goes. They vary quite a bit in difficulty, so maybe I'll just give them 1, 2, or 3 stars to indicate easy to hard. See OUTLINE.md for more.
+I provide a program in the `bin` directory called `new.py` that will help you stub out new Python programs using the `argparse` module to parse the command line arguments and options for your programs. I recommend you start every new program with this program. For example, in the `article` directory the `README.md` wants you to create a program called `article.py`. You should go into the directory with `cd article` and then do:
+
+````
+$ new.py article
+````
+
+This will create a new file called `article.py` (that has been made executable with `chmod +x`, if your operating system supports that) that has example code for you to start writing your program. It's best to put `new.py` into your `$PATH` or alter your `$PATH` to include the directory where it's located. I usually create a `$HOME/.local/bin` that I add to my `$PATH` for programs like this.
+
+## Testing your programs
+
+Once you have stubbed out your new program, open it in your favorite editor and change the example arguments in `get_args` to suit the needs of your app, then add your code to `main` to accomplish the task described in the README. To run the test suite using `make`, you can type `make test` in the same directory as the `test.py` and `article.py` program. If your system does not have `make` or you just don't want to use it, type `pytest -v test.py`. 
+
+Your goal is to pass all the tests. The tests are written in an order designed to guide you in how break the problem down, e.g., often a test will ask you to alter one bit of text from the command line, and this it will ask you to read and alter the text from a file. I would suggest you solve the tests in order.
 
 ## Author
 
-Ken Youens-Clark (BA, MS) is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz at the University of Arizona. He started programming at his first job out of college. He's work in the field of bioinformatics since 2001, and enjoys helping people to learn programming. When he's not working, he likes playing music, riding bikes, cooking, and being with his wife and children.
+Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz at the University of Arizona. He started college as a music major at the University of North Texas but changed to English lit for his BA in 1995. He started programming at his first job out of college, working through several languages and companies before landing in bioinformatics in 2001. In 2019 he earned his MS in Biosystems Engineering, and enjoys helping people learn programming. When he's not working, he likes playing music, riding bikes, cooking, and being with his wife and children.
 
 \newpage
 
@@ -65,7 +66,6 @@ I have in mind a layout where each program gets four pages:
 
 ## Programs
 
-> "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
 The goal is to get the reader to become a *writer* -- to try to solve the problems. One technique in teaching is to first present a problem without showing how to solve it. Once the student engages with the problem, they find they want and need the object of the lesson. Each program is intended to flex some programming technique or idea like playing with lists or contemplating regular expressions or using dictionaries. By using `argparse` for the programs, we also cover validation of user input.
 
@@ -246,7 +246,7 @@ if word[0].lower() in 'aeiou':
 
 # Chapter 2: Jump the Five
 
-Write a program called `jump.py` that will encode any number using "jump-the-five" algorithm that selects as a replacement for a given number the number that is opposite the number on a US telephone pad if you jump over the 5. The numbers 5and 9 will exchange with each other. So, "1" jumps the 5 to become "9," "6" jumps the 5 to become "4," "5" becomes "0," etc.
+Write a program called `jump.py` that will encode any number using "jump-the-five" algorithm that selects as a replacement for a given number one that is opposite on a US telephone pad if you jump over the 5. The numbers 5 and 0 will exchange with each other. So, "1" jumps the 5 to become "9," "6" jumps the 5 to become "4," "5" becomes "0," etc.
 
 ````
    1  2  3
@@ -255,7 +255,7 @@ Write a program called `jump.py` that will encode any number using "jump-the-fiv
    #  0  *
 ````
 
-If given no arguments, print a usage statement.
+Print a usage statement for `-h|--help` or if there are no arguments.
 
 ````
 $ ./jump.py
@@ -277,6 +277,11 @@ $ ./jump.py 'Call 1-800-329-8044 today!'
 Call 9-255-781-2566 today!
 ````
 
+Hints: 
+
+* The numbers can occur anywhere in the text, so I recommend you think of how you can process the input character-by-character. 
+* To me, the most natural way to represent the subsitution table is in a `dict`.
+* Read the documentation on Python's `str` class to see what you can do with a string. For instance, there is a `replace` method. Could you use that?
 \newpage
 
 ## Solution
@@ -286,46 +291,69 @@ Call 9-255-781-2566 today!
      2	"""Jump the Five"""
      3	
      4	import argparse
-     5	import os
-     6	import sys
-     7	
-     8	
-     9	# --------------------------------------------------
-    10	def get_args():
-    11	    """Get command-line arguments"""
-    12	
-    13	    parser = argparse.ArgumentParser(
-    14	        description='Jump the Five',
-    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+     5	
+     6	
+     7	# --------------------------------------------------
+     8	def get_args():
+     9	    """Get command-line arguments"""
+    10	
+    11	    parser = argparse.ArgumentParser(
+    12	        description='Jump the Five',
+    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    14	
+    15	    parser.add_argument('text', metavar='str', help='Input text')
     16	
-    17	    parser.add_argument('text', metavar='str', help='Input text')
+    17	    return parser.parse_args()
     18	
     19	
-    20	    return parser.parse_args()
-    21	
-    22	
-    23	# --------------------------------------------------
-    24	def main():
-    25	    """Make a jazz noise here"""
-    26	
-    27	    args = get_args()
-    28	    text = args.text
-    29	    jumper = {
-    30	        '1': '9', '2': '8', '3': '7', '4': '6',
-    31	        '5': '0', '6': '4', '7': '3', '8': '2',
-    32	        '9': '1', '0': '5'
-    33	    }
+    20	# --------------------------------------------------
+    21	def main():
+    22	    """Make a jazz noise here"""
+    23	
+    24	    args = get_args()
+    25	    text = args.text
+    26	    jumper = {'1': '9', '2': '8', '3': '7', '4': '6', '5': '0',
+    27	              '6': '4', '7': '3', '8': '2', '9': '1', '0': '5'}
+    28	
+    29	    for char in text:
+    30	        print(jumper[char] if char in jumper else char, end='')
+    31	
+    32	    print()
+    33	
     34	
-    35	    for char in text:
-    36	        print(jumper[char] if char in jumper else char, end='')
-    37	
-    38	    print()
-    39	
-    40	# --------------------------------------------------
-    41	if __name__ == '__main__':
-    42	    main()
+    35	# --------------------------------------------------
+    36	if __name__ == '__main__':
+    37	    main()
 ````
 
+\newpage
+
+## Discussion
+
+On line 15, we indicate the one positional argument our program expects which is some `text` which we can retrieve on line 25. It may seem like overkill to use `argparse` for such a simple program, but it handles the validation of the correct number and type of arguments as well as the generation of help documentation, so it's well worth the effort. Later problems will require much more complex arguments, so it's good to get used to this now.
+
+I suggested you could represent the substitution table as a `dict` which is what I create on line 26. Each number `key` has it's substitute as the `value` in the `dict`. Since there are only 10 numbers to encode, this is probably the easiest way to write this. Note that the numbers are written with quotes around them. They are being stored as `str` values, not `int`. This is because we will be reading from a `str`. If we stored them as `int` keys and values, we would have to coerce the `str` types using the `int` function:
+
+````
+>>> type('4')
+<class 'str'>
+>>> type(4)
+<class 'int'>
+>>> type(int('4'))
+<class 'int'>
+````
+
+To process the `text` by individual character (`char`), we can do using a `for` loop on line 29. Like in the `article` solution, I decided to use an `if` *expression* where I look to see if the `char` is `in` the `jumper` dictionary. In the `article`, you saw we asked if a character was in the string `aeiou` (which can also be thought of as a `list` of characters). Here when we ask if a `char` (which is a string) is `in` a `dict`, Python looks to see if there is a key in the dictionary with that value. So if `char` is `'4'`, then we will print `jumper['4']` which is `'6'`. If the `char` is not in `jumper` (meaning it's not a digit), then we print `char`.
+
+Another way you could have solved this would be to use the `str.translate` method which needs a translation table that you can make with the `str.maketrans` method:
+
+````
+>>> s = 'Jenny = 867-5309'
+>>> s.translate(str.maketrans(jumper))
+'Jenny = 243-0751'
+````
+
+Note that you could *not* use `str.replace` to change each number in turn as you would first change `1` to `9` and then you'd get to the `9`s that were in the original string and the `9`s that you changed from `1`s and you'd change them back to `1`s!
 \newpage
 
 # Chapter 3: Picnic
