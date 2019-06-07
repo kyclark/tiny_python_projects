@@ -57,7 +57,7 @@ def all_strings(puzzle):
         col = [puzzle[row_num][col_num] for row_num in range(num_rows)]
         strings.append(''.join(col))
 
-    # Diagonals
+    # Diagonals Down
     for row_i in range(1, num_rows):
         diag = []
         col_num = 0
@@ -81,6 +81,33 @@ def all_strings(puzzle):
         if diag:
             strings.append(''.join(diag))
 
+    # Diagonals Up
+    for row_i in range(1, num_rows):
+        diag = []
+        col_num = 0
+        for row_j in range(row_i, num_rows - 1):
+            diag.append(puzzle[row_j][col_num])
+            col_num += 1
+            if col_num == num_cols:
+                break
+
+        if diag:
+            strings.append(''.join(diag))
+
+
+    for col_i in range(1, num_cols - 1):
+        diag = []
+
+        col_num = col_i
+        for row_num in range(1, num_rows - 1):
+            diag.append(puzzle[row_num][col_num])
+            col_num += 1
+            if col_num == num_cols:
+                break
+
+        if diag:
+            strings.append(''.join(diag))
+
     strings.extend([''.join(reversed(s)) for s in strings])
     return strings
 
@@ -95,7 +122,7 @@ def main():
     found = set()
 
     for word in words:
-        if filter(lambda s: word in s, strings):
+        if list(filter(lambda s: word in s, strings)):
             print('Found "{}"'.format(word))
             found.add(word)
 
