@@ -24,13 +24,13 @@ The format of the puzzle file will be a grid of letters followed by an empty lin
 $ cat puzzle1.txt
 RAPPLE
 AOAMAE
-EEARAB
+EELRAB
 TOLLAB
 
 APPLE
 TEAR
 BALLOT
-EAR
+ROLL
 EBB
 ````
 
@@ -41,14 +41,14 @@ $ ./word_search.py puzzle1.txt
 Found "APPLE"
 Found "TEAR"
 Found "BALLOT"
-Found "EAR"
+Found "ROLL"
 Found "EBB"
 Found all!
 $ ./word_search.py puzzle2.txt
 Found "APPLE"
 Found "TEAR"
 Found "BALLOT"
-Found "EAR"
+Found "ROLL"
 Found "EBB"
-Failed to find 2: ROLL, LEAP
+Failed to find 1: HORSE
 ````
