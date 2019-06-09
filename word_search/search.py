@@ -27,13 +27,19 @@ def read_puzzle(fh):
     puzzle, words = [], []
 
     read = 'puzzle'
+    cell = 0
     for line in map(str.rstrip, fh):
         if line == '':
             read = 'words'
             continue
 
         if read == 'puzzle':
-            puzzle.append(list(line))
+            row = []
+            for char in list(line):
+                cell += 1
+                row.append((char, cell))
+
+            puzzle.append(row)
         else:
             words.append(line.replace(' ', ''))
 
@@ -41,21 +47,21 @@ def read_puzzle(fh):
 
 
 # --------------------------------------------------
-def all_strings(puzzle):
-    """Find all strings in puzzle"""
+def all_combos(puzzle):
+    """Find all combos in puzzle"""
 
     num_rows = len(puzzle)
     num_cols = len(puzzle[0])
-    strings = []
+    combos = []
 
     # Horizontal
     for row in puzzle:
-        strings.append(''.join(row))
+        combos.append(row)
 
     # Vertical
     for col_num in range(num_cols):
         col = [puzzle[row_num][col_num] for row_num in range(num_rows)]
-        strings.append(''.join(col))
+        combos.append(col)
 
     # Diagonals Up
     for row_i in range(1, num_rows):
@@ -66,7 +72,7 @@ def all_strings(puzzle):
             col_num += 1
 
         if diag:
-            strings.append(''.join(diag))
+            combos.append(diag)
 
     for col_i in range(1, num_cols):
         diag = []
@@ -79,7 +85,7 @@ def all_strings(puzzle):
                 break
 
         if diag:
-            strings.append(''.join(diag))
+            combos.append(diag)
 
     # Diagonals Down
     for row_i in range(0, num_rows):
@@ -92,8 +98,7 @@ def all_strings(puzzle):
                 break
 
         if diag:
-            strings.append(''.join(diag))
-
+            combos.append(diag)
 
     for col_i in range(1, num_cols):
         diag = []
@@ -106,10 +111,10 @@ def all_strings(puzzle):
                 break
 
         if diag:
-            strings.append(''.join(diag))
+            combos.append(diag)
 
-    strings.extend([''.join(reversed(s)) for s in strings])
-    return strings
+    combos.extend([list(reversed(c)) for c in combos])
+    return combos
 
 
 # --------------------------------------------------
@@ -118,19 +123,35 @@ def main():
 
     args = get_args()
     puzzle, words = read_puzzle(args.file)
-    strings = all_strings(puzzle)
+    combos = all_combos(puzzle)
     found = set()
 
+    def fst(t):
+        return t[0]
+
+    def snd(t):
+        return t[1]
+
+    reveal = set()
     for word in words:
-        if list(filter(lambda s: word in s, strings)):
-            print('Found "{}"'.format(word))
-            found.add(word)
+        for combo in combos:
+            test = ''.join(map(fst, combo))
+            if word in test:
+                start = test.index(word)
+                end = start + len(word)
+                for cell in map(snd, combo[start:end]):
+                    reveal.add(cell)
+                found.add(word)
+
+    for row in puzzle:
+        cells = [c[0] if c[1] in reveal else '.' for c in row]
+        print(''.join(cells))
 
     missing = [w for w in words if not w in found]
     if missing:
-        print('Failed to find {}: {}'.format(len(missing), ', '.join(missing)))
-    else:
-        print('Found all!')
+        print('Failed to find:')
+        for i, word in enumerate(missing, 1):
+            print('{:3}: {}'.format(i, word))
 
 
 # --------------------------------------------------
