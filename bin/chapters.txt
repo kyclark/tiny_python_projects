@@ -35,3 +35,4 @@ hamming_chain
 morse
 rot13
 transpose
+word_search

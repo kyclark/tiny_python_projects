@@ -332,7 +332,7 @@ Hints:
 
 On line 15, we indicate the one positional argument our program expects which is some `text` which we can retrieve on line 25. It may seem like overkill to use `argparse` for such a simple program, but it handles the validation of the correct number and type of arguments as well as the generation of help documentation, so it's well worth the effort. Later problems will require much more complex arguments, so it's good to get used to this now.
 
-I suggested you could represent the substitution table as a `dict` which is what I create on line 26. Each number `key` has it's substitute as the `value` in the `dict`. Since there are only 10 numbers to encode, this is probably the easiest way to write this. Note that the numbers are written with quotes around them. They are being stored as `str` values, not `int`. This is because we will be reading from a `str`. If we stored them as `int` keys and values, we would have to coerce the `str` types using the `int` function:
+I suggested you could represent the substitution table as a `dict` which is what I create on line 26. Each number `key` has its substitute as the `value` in the `dict`. Since there are only 10 numbers to encode, this is probably the easiest way to write this. Note that the numbers are written with quotes around them. They are being stored as `str` values, not `int`. This is because we will be reading from a `str`. If we stored them as `int` keys and values, we would have to coerce the `str` types using the `int` function:
 
 ````
 >>> type('4')
@@ -343,7 +343,7 @@ I suggested you could represent the substitution table as a `dict` which is what
 <class 'int'>
 ````
 
-To process the `text` by individual character (`char`), we can do using a `for` loop on line 29. Like in the `article` solution, I decided to use an `if` *expression* where I look to see if the `char` is `in` the `jumper` dictionary. In the `article`, you saw we asked if a character was in the string `aeiou` (which can also be thought of as a `list` of characters). Here when we ask if a `char` (which is a string) is `in` a `dict`, Python looks to see if there is a key in the dictionary with that value. So if `char` is `'4'`, then we will print `jumper['4']` which is `'6'`. If the `char` is not in `jumper` (meaning it's not a digit), then we print `char`.
+To process the `text` by individual character (`char`), we can use a `for` loop on line 29. Like in the `article` solution, I decided to use an `if` *expression* where I look to see if the `char` is `in` the `jumper` dictionary. In the `article`, you saw we asked if a character was in the string `'aeiou'` (which can also be thought of as a `list` of characters). Here when we ask if a `char` (which is a string) is `in` a `dict`, Python looks to see if there is a key in the dictionary with that value. So if `char` is `'4'`, then we will print `jumper['4']` which is `'6'`. If the `char` is not in `jumper` (meaning it's not a digit), then we print `char`.
 
 Another way you could have solved this would be to use the `str.translate` method which needs a translation table that you can make with the `str.maketrans` method:
 
@@ -5434,6 +5434,229 @@ aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
     77	# --------------------------------------------------
     78	if __name__ == '__main__':
     79	    main()
+````
+
+\newpage
+
+# Chapter 38: Word Search
+
+Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
+
+````
+$ ./word_search.py
+usage: word_search.py [-h] FILE
+word_search.py: error: the following arguments are required: FILE
+$ ./word_search.py -h
+usage: word_search.py [-h] FILE
+
+Argparse Python script
+
+positional arguments:
+  FILE        The puzzle
+
+optional arguments:
+  -h, --help  show this help message and exit
+````
+
+The format of the puzzle file will be a grid of letters followed by an empty line followed by a list of words to find delimited by newlines, e.g.:
+
+````
+$ cat puzzle1.txt
+RAPPLE
+AOAMAE
+EELRAB
+TOLLAB
+
+APPLE
+TEAR
+BALLOT
+ROLL
+EBB
+````
+
+The program should search for each word and note if they are found. At the end, either report `Found all!` if all words were found or `Failed to find N: ` followed by a comma-separated list of words not found.
+
+````
+$ ./word_search.py puzzle1.txt
+Found "APPLE"
+Found "TEAR"
+Found "BALLOT"
+Found "ROLL"
+Found "EBB"
+Found all!
+$ ./word_search.py puzzle2.txt
+Found "APPLE"
+Found "TEAR"
+Found "BALLOT"
+Found "ROLL"
+Found "EBB"
+Failed to find 1: HORSE
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Word Search"""
+     3	
+     4	import argparse
+     5	
+     6	
+     7	# --------------------------------------------------
+     8	def get_args():
+     9	    """Get command-line arguments"""
+    10	
+    11	    parser = argparse.ArgumentParser(
+    12	        description='Argparse Python script',
+    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    14	
+    15	    parser.add_argument('file',
+    16	                        metavar='FILE',
+    17	                        type=argparse.FileType('r'),
+    18	                        help='The puzzle')
+    19	
+    20	    return parser.parse_args()
+    21	
+    22	
+    23	# --------------------------------------------------
+    24	def read_puzzle(fh):
+    25	    """Read the puzzle file"""
+    26	
+    27	    puzzle, words = [], []
+    28	
+    29	    read = 'puzzle'
+    30	    cell = 0
+    31	    for line in map(str.rstrip, fh):
+    32	        if line == '':
+    33	            read = 'words'
+    34	            continue
+    35	
+    36	        if read == 'puzzle':
+    37	            row = []
+    38	            for char in list(line):
+    39	                cell += 1
+    40	                row.append((char, cell))
+    41	
+    42	            puzzle.append(row)
+    43	        else:
+    44	            words.append(line.replace(' ', ''))
+    45	
+    46	    return puzzle, words
+    47	
+    48	
+    49	# --------------------------------------------------
+    50	def all_combos(puzzle):
+    51	    """Find all combos in puzzle"""
+    52	
+    53	    num_rows = len(puzzle)
+    54	    num_cols = len(puzzle[0])
+    55	    combos = []
+    56	
+    57	    # Horizontal
+    58	    for row in puzzle:
+    59	        combos.append(row)
+    60	
+    61	    # Vertical
+    62	    for col_num in range(num_cols):
+    63	        col = [puzzle[row_num][col_num] for row_num in range(num_rows)]
+    64	        combos.append(col)
+    65	
+    66	    # Diagonals Up
+    67	    for row_i in range(1, num_rows):
+    68	        diag = []
+    69	        col_num = 0
+    70	        for row_j in range(row_i, -1, -1):
+    71	            diag.append(puzzle[row_j][col_num])
+    72	            col_num += 1
+    73	
+    74	        if diag:
+    75	            combos.append(diag)
+    76	
+    77	    for col_i in range(1, num_cols):
+    78	        diag = []
+    79	
+    80	        col_num = col_i
+    81	        for row_num in range(num_rows - 1, -1, -1):
+    82	            diag.append(puzzle[row_num][col_num])
+    83	            col_num += 1
+    84	            if col_num == num_cols:
+    85	                break
+    86	
+    87	        if diag:
+    88	            combos.append(diag)
+    89	
+    90	    # Diagonals Down
+    91	    for row_i in range(0, num_rows):
+    92	        diag = []
+    93	        col_num = 0
+    94	        for row_j in range(row_i, num_rows):
+    95	            diag.append(puzzle[row_j][col_num])
+    96	            col_num += 1
+    97	            if col_num == num_cols:
+    98	                break
+    99	
+   100	        if diag:
+   101	            combos.append(diag)
+   102	
+   103	    for col_i in range(1, num_cols):
+   104	        diag = []
+   105	
+   106	        col_num = col_i
+   107	        for row_num in range(0, num_rows):
+   108	            diag.append(puzzle[row_num][col_num])
+   109	            col_num += 1
+   110	            if col_num == num_cols:
+   111	                break
+   112	
+   113	        if diag:
+   114	            combos.append(diag)
+   115	
+   116	    combos.extend([list(reversed(c)) for c in combos])
+   117	    return combos
+   118	
+   119	
+   120	# --------------------------------------------------
+   121	def main():
+   122	    """Make a jazz noise here"""
+   123	
+   124	    args = get_args()
+   125	    puzzle, words = read_puzzle(args.file)
+   126	    combos = all_combos(puzzle)
+   127	    found = set()
+   128	
+   129	    def fst(t):
+   130	        return t[0]
+   131	
+   132	    def snd(t):
+   133	        return t[1]
+   134	
+   135	    reveal = set()
+   136	    for word in words:
+   137	        for combo in combos:
+   138	            test = ''.join(map(fst, combo))
+   139	            if word in test:
+   140	                start = test.index(word)
+   141	                end = start + len(word)
+   142	                for cell in map(snd, combo[start:end]):
+   143	                    reveal.add(cell)
+   144	                found.add(word)
+   145	
+   146	    for row in puzzle:
+   147	        cells = [c[0] if c[1] in reveal else '.' for c in row]
+   148	        print(''.join(cells))
+   149	
+   150	    missing = [w for w in words if not w in found]
+   151	    if missing:
+   152	        print('Failed to find:')
+   153	        for i, word in enumerate(missing, 1):
+   154	            print('{:3}: {}'.format(i, word))
+   155	
+   156	
+   157	# --------------------------------------------------
+   158	if __name__ == '__main__':
+   159	    main()
 ````
 
 \newpage

@@ -1,6 +1,6 @@
 # Word Search
 
-Write a Python program called `word_search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
+Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 
 ````
 $ ./word_search.py
