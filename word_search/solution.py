@@ -2,6 +2,7 @@
 """Word Search"""
 
 import argparse
+from dire import die
 
 
 # --------------------------------------------------
@@ -9,7 +10,7 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Argparse Python script',
+        description='Word search',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('file',
@@ -25,9 +26,8 @@ def read_puzzle(fh):
     """Read the puzzle file"""
 
     puzzle, words = [], []
-
-    read = 'puzzle'
     cell = 0
+    read = 'puzzle'
     for line in map(str.rstrip, fh):
         if line == '':
             read = 'words'
@@ -52,6 +52,10 @@ def all_combos(puzzle):
 
     num_rows = len(puzzle)
     num_cols = len(puzzle[0])
+
+    if not all([len(row) == num_cols for row in puzzle]):
+        die('Uneven number of columns')
+
     combos = []
 
     # Horizontal
@@ -64,7 +68,7 @@ def all_combos(puzzle):
         combos.append(col)
 
     # Diagonals Up
-    for row_i in range(1, num_rows):
+    for row_i in range(0, num_rows):
         diag = []
         col_num = 0
         for row_j in range(row_i, -1, -1):
@@ -100,7 +104,7 @@ def all_combos(puzzle):
         if diag:
             combos.append(diag)
 
-    for col_i in range(1, num_cols):
+    for col_i in range(0, num_cols):
         diag = []
 
         col_num = col_i
@@ -118,6 +122,19 @@ def all_combos(puzzle):
 
 
 # --------------------------------------------------
+def fst(t):
+    """Return first element of a tuple"""
+
+    return t[0]
+
+
+# --------------------------------------------------
+def snd(t):
+    """Return second element of a tuple"""
+    return t[1]
+
+
+# --------------------------------------------------
 def main():
     """Make a jazz noise here"""
 
@@ -125,13 +142,6 @@ def main():
     puzzle, words = read_puzzle(args.file)
     combos = all_combos(puzzle)
     found = set()
-
-    def fst(t):
-        return t[0]
-
-    def snd(t):
-        return t[1]
-
     reveal = set()
     for word in words:
         for combo in combos:
@@ -142,6 +152,7 @@ def main():
                 for cell in map(snd, combo[start:end]):
                     reveal.add(cell)
                 found.add(word)
+                break
 
     for row in puzzle:
         cells = [c[0] if c[1] in reveal else '.' for c in row]

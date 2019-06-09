@@ -4,15 +4,18 @@
 import re
 import os
 import random
+import string
 from subprocess import getstatusoutput
 
 prg = './search.py'
+
 
 # --------------------------------------------------
 def test_exists():
     """exists"""
 
     assert os.path.isfile(prg)
+
 
 # --------------------------------------------------
 def test_usage():
@@ -25,12 +28,30 @@ def test_usage():
 
 
 # --------------------------------------------------
+def random_string():
+    """generate a random filename"""
+
+    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=5))
+
+
+# --------------------------------------------------
+def test_bad_file():
+    """bad file"""
+
+    bad = random_string()
+    rv, out = getstatusoutput('{} {}'.format(prg, bad))
+    assert rv != 0
+    assert re.search("No such file or directory: '{}'".format(bad), out)
+
+
+# --------------------------------------------------
 def test_puzzle01():
     """forward horizontal"""
 
     rv, out = getstatusoutput('{} puzzle01.txt'.format(prg))
     assert rv == 0
     assert out.strip() == '.BC.'
+
 
 # --------------------------------------------------
 def test_puzzle02():
@@ -39,6 +60,7 @@ def test_puzzle02():
     rv, out = getstatusoutput('{} puzzle02.txt'.format(prg))
     assert rv == 0
     assert out.strip() == 'AB.'
+
 
 # --------------------------------------------------
 def test_puzzle03():
@@ -57,6 +79,7 @@ def test_puzzle04():
     assert rv == 0
     assert out.strip() == '..C\n..F\n..I'
 
+
 # --------------------------------------------------
 def test_puzzle05():
     """forward diagonal down"""
@@ -64,6 +87,7 @@ def test_puzzle05():
     rv, out = getstatusoutput('{} puzzle05.txt'.format(prg))
     assert rv == 0
     assert out.strip() == 'A..\n.E.\n..I'
+
 
 # --------------------------------------------------
 def test_puzzle06():
@@ -73,6 +97,7 @@ def test_puzzle06():
     assert rv == 0
     assert out.strip() == '...\nD..\n.H.'
 
+
 # --------------------------------------------------
 def test_puzzle07():
     """backward diagonal down"""
@@ -80,6 +105,7 @@ def test_puzzle07():
     rv, out = getstatusoutput('{} puzzle07.txt'.format(prg))
     assert rv == 0
     assert out.strip() == '.B.\n..F\n...'
+
 
 # --------------------------------------------------
 def test_puzzle08():
@@ -89,6 +115,7 @@ def test_puzzle08():
     assert rv == 0
     assert out.strip() == '..C\n.E.\n...'
 
+
 # --------------------------------------------------
 def test_puzzle09():
     """backward diagonal up"""
@@ -96,6 +123,7 @@ def test_puzzle09():
     rv, out = getstatusoutput('{} puzzle09.txt'.format(prg))
     assert rv == 0
     assert out.strip() == '...\n..F\n.H.'
+
 
 # --------------------------------------------------
 def test_ice_cream():
@@ -119,6 +147,7 @@ DAORYKCORU.C..
     rv, out = getstatusoutput('{} ice_cream.txt'.format(prg))
     assert rv == 0
     assert out.strip() == expected
+
 
 # --------------------------------------------------
 def test_shapes():
