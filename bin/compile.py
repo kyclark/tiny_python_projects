@@ -119,7 +119,7 @@ def main():
 
             solution_md = os.path.join(in_dir, dir_name, 'discussion.md')
             if os.path.isfile(solution_md):
-                print('\tDISCUSSION MD')
+                print('\tDISCUSSION')
                 fh.write('## Discussion\n\n')
                 fh.write(open(solution_md).read())
                 fh.write('\n\\newpage\n\n')

@@ -1,6 +1,6 @@
 As usual, I start with my `get_args` first to define what the program expects. Most important is a `file` which is not required since it has a `default` value of the `wod.csv` file, so I make it an optional named argument. I use the `type=argparse.FileType('r')` so I can offload the validation of the argument to `argparse`. The `--seed` and `--num_exercises` options must to be `type=int`, and the `--easy` option is a `True`/`False` flag.
 
-## Reading the WOD file
+### Reading the WOD file
 
 Since I know I will return a `list` of exercises and low/high ranges, I first set `exercises = []`. I recommended you use the `csv.DictReader` module to parse the CSV files into a list of dictionaries that represent each rows values merged with the column names in the first row. If the file looks like this:
 
@@ -25,7 +25,7 @@ On line 55-58, I iterate the rows, `split` the `reps` values like `20-50` into a
 
 For the purposes of this exercise, you can assume the CSV files you are given will have the correct headers and the reps can be safely converted. 
 
-## Choosing the exercises
+### Choosing the exercises
 
 Before I use the `random` module, I need to be sure to set the `random.seed` with any input from the user. The output will be formatted using the `tabulate` module which wants the data as a single `list` of rows to format, so I first create a `table` to hold the chosen exercises and reps. Then I get the workout options and reps from the file (line 69) which looks like this:
 
@@ -63,6 +63,6 @@ The sampling returns a `list` from `exercises` which holds tuples with three val
 8
 ````
 
-## Printing the table
+### Printing the table
 
 Then I can `append` to the `table` a new tuple containing the `name` of the exercise and a `randint` (random integer) selected from the range given by `low` and `high`. Finally I can `print` the result of having the `tabulate` module create a text table using the given `headers`. You can explore the documentation of the `tabulate` module to discover the many options the module has.

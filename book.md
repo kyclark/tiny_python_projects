@@ -1691,7 +1691,7 @@ FBI =
 
 # Chapter 15: Workout Of (the) Day (WOD)
 
-Write a Python program called `wod.py` that will create a Workout Of (the) Day (WOD) from a list of exercises provided in CSV format (default `wod.csv`). Accept a `-n|--num_exercises` argument (default 4) to determine the sample size from your exercise list. Also accept a `-e|--easy` flag to indicate that the reps should be cut in half. Finally accept a `-s|--seed` argument to pass to `random.seed` for testing purposes. You should use the `tabulate` module to format the output as expected.
+Write a Python program called `wod.py` that will create a Workout Of (the) Day (WOD) from a list of exercises provided in CSV format (default `wod.csv`). Accept a `-n|--num_exercises` argument (default `4`) to determine the sample size from your exercise list. Also accept a `-e|--easy` flag to indicate that the reps should be cut in half. Finally accept a `-s|--seed` argument to pass to `random.seed` for testing purposes. You should use the `tabulate` module to format the output as expected.
 
 The input file should be comma-separated values with headers for "exercise" and "reps," e.g.:
 
@@ -1761,45 +1761,11 @@ Squatting Chinups         49
 Flapping Leg Raises       17
 ````
 
-## Discussion
+Hints:
 
-It's recommended you use the `csv.DictReader` module to parse the CSV files. You will then need to split the "reps" fields like "20-50" into a low and high values that are coerced into integer values. For the purposes of this exercise, you can assume the CSV files you are given will have the correct headers and the fields will be correctly formatted. 
-
-You should use the `random` module to select a sample of exercises, e.g.:
-
-````
->>> import random
->>> random.sample(range(10), k=3)
-[1, 6, 4]
->>> random.sample(range(10), k=3)
-[8, 5, 6]
-````
-
-So first focus on parsing the input CSV into something you can `sample`, like a list or a dictionary. I chose to create a data structure that is a list of tuples containing the name of the exercise, the low range, and the high range for the reps:
-
-````
-[('Burpees', 20, 50),
- ('Situps', 40, 100),
- ('Pushups', 25, 75),
- ('Squats', 20, 50),
- ('Pullups', 10, 30),
- ('HSPU', 5, 20),
- ('Lunges', 20, 40),
- ('Plank', 30, 60),
- ('Jumprope', 50, 100),
- ('Jumping Jacks', 25, 75),
- ('Crunches', 20, 30),
- ('Dips', 10, 30)]
-````
-
-Then I can get a random rep value using `random.randint`, e.g.:
-
-````
->>> random.randint(5, 10)
-6
->>> random.randint(5, 10)
-8
-````
+* Use the `csv` module's `DictReader` to read the input CSV files
+* Break the `reps` field on the `-` character, coerce the low/high values to `int` values, and then use the `random` module to choose a random integer in that range. Also see if the `random` module can help you sample some exercises.
+* Read the docs on the `tabulate` module to figure out to get it to print your data
 
 \newpage
 
@@ -1820,86 +1786,150 @@ Then I can get a random rep value using `random.randint`, e.g.:
     12	# --------------------------------------------------
     13	def get_args():
     14	    """get command-line arguments"""
-    15	    parser = argparse.ArgumentParser(
-    16	        description='Create Workout Of (the) Day (WOD)',
-    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    18	
-    19	    parser.add_argument('-f',
-    20	                        '--file',
-    21	                        help='CSV input file of exercises',
-    22	                        metavar='str',
-    23	                        type=str,
-    24	                        default='wod.csv')
-    25	
-    26	    parser.add_argument('-s',
-    27	                        '--seed',
-    28	                        help='Random seed',
-    29	                        metavar='int',
-    30	                        type=int,
-    31	                        default=None)
-    32	
-    33	    parser.add_argument('-n',
-    34	                        '--num_exercises',
-    35	                        help='Number of exercises',
-    36	                        metavar='int',
-    37	                        type=int,
-    38	                        default=4)
-    39	
-    40	    parser.add_argument('-e',
-    41	                        '--easy',
-    42	                        help='Make it easy',
-    43	                        action='store_true')
-    44	
-    45	    return parser.parse_args()
-    46	
+    15	
+    16	    parser = argparse.ArgumentParser(
+    17	        description='Create Workout Of (the) Day (WOD)',
+    18	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    19	
+    20	    parser.add_argument('-f',
+    21	                        '--file',
+    22	                        help='CSV input file of exercises',
+    23	                        metavar='str',
+    24	                        type=argparse.FileType('r'),
+    25	                        default='wod.csv')
+    26	
+    27	    parser.add_argument('-s',
+    28	                        '--seed',
+    29	                        help='Random seed',
+    30	                        metavar='int',
+    31	                        type=int,
+    32	                        default=None)
+    33	
+    34	    parser.add_argument('-n',
+    35	                        '--num_exercises',
+    36	                        help='Number of exercises',
+    37	                        metavar='int',
+    38	                        type=int,
+    39	                        default=4)
+    40	
+    41	    parser.add_argument('-e',
+    42	                        '--easy',
+    43	                        help='Make it easy',
+    44	                        action='store_true')
+    45	
+    46	    return parser.parse_args()
     47	
-    48	# --------------------------------------------------
-    49	def read_csv(file):
-    50	    """Read the CSV input"""
-    51	
-    52	    if not os.path.isfile(file):
-    53	        die('"{}" is not a file'.format(file))
+    48	
+    49	# --------------------------------------------------
+    50	def read_csv(fh):
+    51	    """Read the CSV input"""
+    52	
+    53	    exercises = []
     54	
-    55	    exercises = []
-    56	    with open(file) as csvfile:
-    57	        reader = csv.DictReader(csvfile, delimiter=',')
-    58	        required = ['exercise', 'reps']
+    55	    for row in csv.DictReader(fh, delimiter=','):
+    56	        name = row['exercise']
+    57	        low, high = row['reps'].split('-')
+    58	        exercises.append((name, int(low), int(high)))
     59	
-    60	        if not all(map(lambda f: f in reader.fieldnames, required)):
-    61	            die('"{}" is missing required fields: {}'.format(
-    62	                file, ', '.join(required)))
-    63	
-    64	        for row in reader:
-    65	            name = row['exercise']
-    66	            low, high = row['reps'].split('-')
-    67	            exercises.append((name, int(low), int(high)))
-    68	
-    69	    return exercises
-    70	
+    60	    return exercises
+    61	
+    62	
+    63	# --------------------------------------------------
+    64	def main():
+    65	    """Make a jazz noise here"""
+    66	
+    67	    args = get_args()
+    68	    random.seed(args.seed)
+    69	    exercises = read_csv(args.file)
+    70	    table = []
     71	
-    72	# --------------------------------------------------
-    73	def main():
-    74	    """Make a jazz noise here"""
-    75	
-    76	    args = get_args()
-    77	    random.seed(args.seed)
-    78	    exercises = read_csv(args.file)
-    79	    table = []
+    72	    for name, low, high in random.sample(exercises, k=args.num_exercises):
+    73	        if args.easy:
+    74	            low = int(low / 2)
+    75	            high = int(high / 2)
+    76	
+    77	        table.append((name, random.randint(low, high)))
+    78	
+    79	    print(tabulate(table, headers=('Exercise', 'Reps')))
     80	
-    81	    for name, low, high in random.sample(exercises, k=args.num_exercises):
-    82	        if args.easy:
-    83	            low = int(low / 2)
-    84	            high = int(high / 2)
-    85	
-    86	        table.append((name, '{}'.format(random.randint(low, high))))
-    87	
-    88	    print(tabulate(table, headers=('Exercise', 'Reps')))
-    89	
-    90	
-    91	# --------------------------------------------------
-    92	if __name__ == '__main__':
-    93	    main()
+    81	
+    82	# --------------------------------------------------
+    83	if __name__ == '__main__':
+    84	    main()
 ````
+
+\newpage
+
+## Discussion
+
+As usual, I start with my `get_args` first to define what the program expects. Most important is a `file` which is not required since it has a `default` value of the `wod.csv` file, so I make it an optional named argument. I use the `type=argparse.FileType('r')` so I can offload the validation of the argument to `argparse`. The `--seed` and `--num_exercises` options must to be `type=int`, and the `--easy` option is a `True`/`False` flag.
+
+### Reading the WOD file
+
+Since I know I will return a `list` of exercises and low/high ranges, I first set `exercises = []`. I recommended you use the `csv.DictReader` module to parse the CSV files into a list of dictionaries that represent each rows values merged with the column names in the first row. If the file looks like this:
+
+````
+$ head -3 wod.csv
+exercise,reps
+Burpees,20-50
+Situps,40-100
+````
+
+You can read it like so:
+
+````
+>>> import csv
+>>> fh = open('wod.csv')
+>>> rows = list(csv.DictReader(fh, delimiter=','))
+>>> rows[0]
+OrderedDict([('exercise', 'Burpees'), ('reps', '20-50')])
+````
+
+On line 55-58, I iterate the rows, `split` the `reps` values like `20-50` into a `low` and `high` values, coerce them into `int` values. I want to `return` a `list` of tuples containing the exercise name along with the minimum and maximum reps.
+
+For the purposes of this exercise, you can assume the CSV files you are given will have the correct headers and the reps can be safely converted. 
+
+### Choosing the exercises
+
+Before I use the `random` module, I need to be sure to set the `random.seed` with any input from the user. The output will be formatted using the `tabulate` module which wants the data as a single `list` of rows to format, so I first create a `table` to hold the chosen exercises and reps. Then I get the workout options and reps from the file (line 69) which looks like this:
+
+````
+>>> from pprint import pprint as pp
+>>> pp(exercises)
+[('Burpees', 20, 50),
+ ('Situps', 40, 100),
+ ('Pushups', 25, 75),
+ ('Squats', 20, 50),
+ ('Pullups', 10, 30),
+ ('HSPU', 5, 20),
+ ('Lunges', 20, 40),
+ ('Plank', 30, 60),
+ ('Jumprope', 50, 100),
+ ('Jumping Jacks', 25, 75),
+ ('Crunches', 20, 30),
+ ('Dips', 10, 30)]
+````
+
+and can then then use `random.sample` to select some `k` number given by the user from the `exercises`:
+
+````
+>>> import random
+>>> random.sample(exercises, 3)
+[('Dips', 10, 30), ('Jumprope', 50, 100), ('Lunges', 20, 40)]
+````
+
+The sampling returns a `list` from `exercises` which holds tuples with three values each, so I can iterate over those tuples and unpack them all on line 72. If `args.easy` is `True`, then I halve the `low` and `high` values. 
+
+````
+>>> random.randint(5, 10)
+6
+>>> random.randint(5, 10)
+8
+````
+
+### Printing the table
+
+Then I can `append` to the `table` a new tuple containing the `name` of the exercise and a `randint` (random integer) selected from the range given by `low` and `high`. Finally I can `print` the result of having the `tabulate` module create a text table using the given `headers`. You can explore the documentation of the `tabulate` module to discover the many options the module has.
 
 \newpage
 
@@ -5443,13 +5473,13 @@ aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 
 ````
-$ ./word_search.py
-usage: word_search.py [-h] FILE
-word_search.py: error: the following arguments are required: FILE
-$ ./word_search.py -h
-usage: word_search.py [-h] FILE
+$ ./search.py
+usage: search.py [-h] FILE
+search.py: error: the following arguments are required: FILE
+$ ./search.py -h
+usage: search.py [-h] FILE
 
-Argparse Python script
+Word search
 
 positional arguments:
   FILE        The puzzle
@@ -5458,39 +5488,89 @@ optional arguments:
   -h, --help  show this help message and exit
 ````
 
+If given a non-existent file, it should complain and exit with a non-zero status:
+
+````
+$ ./search.py lkdfak
+usage: search.py [-h] FILE
+search.py: error: argument FILE: can't open 'lkdfak': [Errno 2] No such file or directory: 'lkdfak'
+````
+
 The format of the puzzle file will be a grid of letters followed by an empty line followed by a list of words to find delimited by newlines, e.g.:
 
 ````
-$ cat puzzle1.txt
-RAPPLE
-AOAMAE
-EELRAB
-TOLLAB
+$ cat puzzle06.txt
+ABC
+DEF
+GHI
 
-APPLE
-TEAR
-BALLOT
-ROLL
-EBB
+DH
 ````
 
-The program should search for each word and note if they are found. At the end, either report `Found all!` if all words were found or `Failed to find N: ` followed by a comma-separated list of words not found.
+If the input grid is uneven, the program should error out:
 
 ````
-$ ./word_search.py puzzle1.txt
-Found "APPLE"
-Found "TEAR"
-Found "BALLOT"
-Found "ROLL"
-Found "EBB"
-Found all!
-$ ./word_search.py puzzle2.txt
-Found "APPLE"
-Found "TEAR"
-Found "BALLOT"
-Found "ROLL"
-Found "EBB"
-Failed to find 1: HORSE
+$ cat bad_grid.txt
+ABC
+DEFG
+HIJ
+
+XYZ
+$ ./search.py bad_grid.txt
+Uneven number of columns
+````
+
+The output should be the input puzzle with only the letters showing for the words that are found replacing all the other letters with `.` (a period):
+
+````
+$ ./search.py puzzle06.txt
+...
+D..
+.H.
+$ cat ice_cream.txt
+YMTRLCHOCOLATE
+ASKCARTESOOMET
+PYVANILLASNOTE
+MKDETDEACFANAA
+CATNLINNAOCOOE
+OKPOAAGODKEAET
+ECULNCAEFOPLRN
+DOTAEENORYWEEE
+OCBOAWYOTTEOIE
+COIEAAARTSAOAR
+RNTTCRALETNIAG
+EEGDUFOSNIOVLT
+DAORYKCORUACGT
+AEETUNOCOCTPES
+
+COTTON CANDY
+MAPLE WALNUT
+PECAN
+BANANA
+TIGER TAIL
+MOOSE TRACKS
+COCONUT
+ROCKY ROAD
+GREEN TEA
+FUDGE
+REESES
+CHOCOLATE
+VANILLA
+$ ./search.py ice_cream.txt
+.....CHOCOLATE
+.SKCARTESOOM..
+.YVANILLA.N...
+M.D.T..A..A..A
+.A.N.IN...C..E
+..P.AAG...E..T
+...LNC.E..P.RN
+...AE.N.R..E.E
+..B..W.O.TE..E
+......A.TSA..R
+.......LET.I.G
+.EGDUF.SN.O.L.
+DAORYKCORU.C..
+...TUNOCOCT...
 ````
 
 \newpage
@@ -5502,32 +5582,32 @@ Failed to find 1: HORSE
      2	"""Word Search"""
      3	
      4	import argparse
-     5	
+     5	from dire import die
      6	
-     7	# --------------------------------------------------
-     8	def get_args():
-     9	    """Get command-line arguments"""
-    10	
-    11	    parser = argparse.ArgumentParser(
-    12	        description='Argparse Python script',
-    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    14	
-    15	    parser.add_argument('file',
-    16	                        metavar='FILE',
-    17	                        type=argparse.FileType('r'),
-    18	                        help='The puzzle')
-    19	
-    20	    return parser.parse_args()
-    21	
+     7	
+     8	# --------------------------------------------------
+     9	def get_args():
+    10	    """Get command-line arguments"""
+    11	
+    12	    parser = argparse.ArgumentParser(
+    13	        description='Word search',
+    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    15	
+    16	    parser.add_argument('file',
+    17	                        metavar='FILE',
+    18	                        type=argparse.FileType('r'),
+    19	                        help='The puzzle')
+    20	
+    21	    return parser.parse_args()
     22	
-    23	# --------------------------------------------------
-    24	def read_puzzle(fh):
-    25	    """Read the puzzle file"""
-    26	
-    27	    puzzle, words = [], []
-    28	
-    29	    read = 'puzzle'
-    30	    cell = 0
+    23	
+    24	# --------------------------------------------------
+    25	def read_puzzle(fh):
+    26	    """Read the puzzle file"""
+    27	
+    28	    puzzle, words = [], []
+    29	    cell = 0
+    30	    read = 'puzzle'
     31	    for line in map(str.rstrip, fh):
     32	        if line == '':
     33	            read = 'words'
@@ -5552,112 +5632,212 @@ Failed to find 1: HORSE
     52	
     53	    num_rows = len(puzzle)
     54	    num_cols = len(puzzle[0])
-    55	    combos = []
-    56	
-    57	    # Horizontal
-    58	    for row in puzzle:
-    59	        combos.append(row)
+    55	
+    56	    if not all([len(row) == num_cols for row in puzzle]):
+    57	        die('Uneven number of columns')
+    58	
+    59	    combos = []
     60	
-    61	    # Vertical
-    62	    for col_num in range(num_cols):
-    63	        col = [puzzle[row_num][col_num] for row_num in range(num_rows)]
-    64	        combos.append(col)
-    65	
-    66	    # Diagonals Up
-    67	    for row_i in range(1, num_rows):
-    68	        diag = []
-    69	        col_num = 0
-    70	        for row_j in range(row_i, -1, -1):
-    71	            diag.append(puzzle[row_j][col_num])
-    72	            col_num += 1
-    73	
-    74	        if diag:
-    75	            combos.append(diag)
-    76	
-    77	    for col_i in range(1, num_cols):
-    78	        diag = []
-    79	
-    80	        col_num = col_i
-    81	        for row_num in range(num_rows - 1, -1, -1):
-    82	            diag.append(puzzle[row_num][col_num])
-    83	            col_num += 1
-    84	            if col_num == num_cols:
-    85	                break
-    86	
-    87	        if diag:
-    88	            combos.append(diag)
-    89	
-    90	    # Diagonals Down
-    91	    for row_i in range(0, num_rows):
-    92	        diag = []
-    93	        col_num = 0
-    94	        for row_j in range(row_i, num_rows):
-    95	            diag.append(puzzle[row_j][col_num])
-    96	            col_num += 1
-    97	            if col_num == num_cols:
-    98	                break
-    99	
-   100	        if diag:
-   101	            combos.append(diag)
-   102	
-   103	    for col_i in range(1, num_cols):
-   104	        diag = []
-   105	
-   106	        col_num = col_i
-   107	        for row_num in range(0, num_rows):
-   108	            diag.append(puzzle[row_num][col_num])
-   109	            col_num += 1
-   110	            if col_num == num_cols:
-   111	                break
-   112	
-   113	        if diag:
-   114	            combos.append(diag)
-   115	
-   116	    combos.extend([list(reversed(c)) for c in combos])
-   117	    return combos
-   118	
+    61	    # Horizontal
+    62	    for row in puzzle:
+    63	        combos.append(row)
+    64	
+    65	    # Vertical
+    66	    for col_num in range(num_cols):
+    67	        col = [puzzle[row_num][col_num] for row_num in range(num_rows)]
+    68	        combos.append(col)
+    69	
+    70	    # Diagonals Up
+    71	    for row_i in range(0, num_rows):
+    72	        diag = []
+    73	        col_num = 0
+    74	        for row_j in range(row_i, -1, -1):
+    75	            diag.append(puzzle[row_j][col_num])
+    76	            col_num += 1
+    77	
+    78	        if diag:
+    79	            combos.append(diag)
+    80	
+    81	    for col_i in range(1, num_cols):
+    82	        diag = []
+    83	
+    84	        col_num = col_i
+    85	        for row_num in range(num_rows - 1, -1, -1):
+    86	            diag.append(puzzle[row_num][col_num])
+    87	            col_num += 1
+    88	            if col_num == num_cols:
+    89	                break
+    90	
+    91	        if diag:
+    92	            combos.append(diag)
+    93	
+    94	    # Diagonals Down
+    95	    for row_i in range(0, num_rows):
+    96	        diag = []
+    97	        col_num = 0
+    98	        for row_j in range(row_i, num_rows):
+    99	            diag.append(puzzle[row_j][col_num])
+   100	            col_num += 1
+   101	            if col_num == num_cols:
+   102	                break
+   103	
+   104	        if diag:
+   105	            combos.append(diag)
+   106	
+   107	    for col_i in range(0, num_cols):
+   108	        diag = []
+   109	
+   110	        col_num = col_i
+   111	        for row_num in range(0, num_rows):
+   112	            diag.append(puzzle[row_num][col_num])
+   113	            col_num += 1
+   114	            if col_num == num_cols:
+   115	                break
+   116	
+   117	        if diag:
+   118	            combos.append(diag)
    119	
-   120	# --------------------------------------------------
-   121	def main():
-   122	    """Make a jazz noise here"""
+   120	    combos.extend([list(reversed(c)) for c in combos])
+   121	    return combos
+   122	
    123	
-   124	    args = get_args()
-   125	    puzzle, words = read_puzzle(args.file)
-   126	    combos = all_combos(puzzle)
-   127	    found = set()
-   128	
-   129	    def fst(t):
-   130	        return t[0]
-   131	
-   132	    def snd(t):
-   133	        return t[1]
-   134	
-   135	    reveal = set()
-   136	    for word in words:
-   137	        for combo in combos:
-   138	            test = ''.join(map(fst, combo))
-   139	            if word in test:
-   140	                start = test.index(word)
-   141	                end = start + len(word)
-   142	                for cell in map(snd, combo[start:end]):
-   143	                    reveal.add(cell)
-   144	                found.add(word)
-   145	
-   146	    for row in puzzle:
-   147	        cells = [c[0] if c[1] in reveal else '.' for c in row]
-   148	        print(''.join(cells))
-   149	
-   150	    missing = [w for w in words if not w in found]
-   151	    if missing:
-   152	        print('Failed to find:')
-   153	        for i, word in enumerate(missing, 1):
-   154	            print('{:3}: {}'.format(i, word))
-   155	
+   124	# --------------------------------------------------
+   125	def fst(t):
+   126	    """Return first element of a tuple"""
+   127	
+   128	    return t[0]
+   129	
+   130	
+   131	# --------------------------------------------------
+   132	def snd(t):
+   133	    """Return second element of a tuple"""
+   134	    return t[1]
+   135	
+   136	
+   137	# --------------------------------------------------
+   138	def main():
+   139	    """Make a jazz noise here"""
+   140	
+   141	    args = get_args()
+   142	    puzzle, words = read_puzzle(args.file)
+   143	    combos = all_combos(puzzle)
+   144	    found = set()
+   145	    reveal = set()
+   146	    for word in words:
+   147	        for combo in combos:
+   148	            test = ''.join(map(fst, combo))
+   149	            if word in test:
+   150	                start = test.index(word)
+   151	                end = start + len(word)
+   152	                for cell in map(snd, combo[start:end]):
+   153	                    reveal.add(cell)
+   154	                found.add(word)
+   155	                break
    156	
-   157	# --------------------------------------------------
-   158	if __name__ == '__main__':
-   159	    main()
+   157	    for row in puzzle:
+   158	        cells = [c[0] if c[1] in reveal else '.' for c in row]
+   159	        print(''.join(cells))
+   160	
+   161	    missing = [w for w in words if not w in found]
+   162	    if missing:
+   163	        print('Failed to find:')
+   164	        for i, word in enumerate(missing, 1):
+   165	            print('{:3}: {}'.format(i, word))
+   166	
+   167	
+   168	# --------------------------------------------------
+   169	if __name__ == '__main__':
+   170	    main()
 ````
+
+\newpage
+
+## Discussion
+
+The only argument to the program is a single positional `file` which I chose to define with `type=argparse.FileType('r')` on line 17 to save me the trouble of testing for a file though you could test yourself and will pass the test as long as your error message includes `No such file or directory: '{}'` for the given file.
+
+### Reading the puzzle input
+
+I chose to define a few additional functions while keeping most of the programs logic in the `main`. The first is `read_puzzle` that reads the file given by the user. As noted in the README, this file has the puzzle grid, an empty line, and then the list of words to search, so I define `read_puzzle` to accept the file (`fh`) as an argument and return two lists that represent the `puzzle` and `words` (line 28). 
+
+There list of `words` is really most naturally represented as a `list` of `str` elements, but the `puzzle` is a bit more complicated. After working through a couple of solutions, I decided I would number all the characters in the grid in order to know which ones to reveal at the end and which ones to replace with a period, so I define a `cell` variable initialized to `0` to keep count of the characters. 
+
+Here is my mental model of the puzzle:
+
+	Puzzle			          Model
+			 		  Col 0   Col 1   Col 2
+	A B C	    Row	0 (A, 1)  (B, 2)  (C, 3)
+	D E F       Row 1 (D, 4)  (E, 5)  (F, 6)
+	G H I		Row 2 (G, 7)  (H, 8)  (I, 9)
+
+Lastly, I need to know if I'm reading the first part of the file with the puzzle or the latter part with the words, so I define a `read` variable initialized to `'puzzle'` on line 30.
+
+I start reading with `for line in` the file, but I want to chop off the trailing whitespace so I `map(str.rstrip, fh)`. Remember not to include parens `()` on `str.rstrip` as we want to *reference* the function not *call* it. The first operation in the loop is to check for an empty string (`''`, because we remove the newlines). If we find that, then we note the switch to reading the `'words'` and use `continue` to skip to the next iteration of the loop. 
+
+If I'm reading the puzzle part of the file. then I want to read each character (line 38), increment the `cell` counter, then create a new tuple with the character and it's cell number, appending this to the `row`, a list to hold all the new tuples. The `row` then gets appended to the `puzzle` list that will eventually be a `list` of rows, each of which is a `list` of tuples representing `(char, cell)`. 
+
+If we get to line 44, we must be reading the latter part of the file, so the `line` is actually a word that I will `append` to the `words` list. Before doing that, however, I will `replace` any space (`' '`) with the empty string (`''`) so as to remove spaces (cf. the `ice_cream.txt` input). Finally I `return puzzle, words` which is actually returning a tuple created by the comma `,` and which I immediately unpack on line 124.
+
+### Finding all the strings
+
+I always try to make a function fit into about 50 lines of code.  While my `read_puzzle` fits into 22 lines, the other function, `all_combos` is considerable longer. I couldn't find a way to shorten it, so I at least try to keep the idea fully contained to one function that, once it works, I no longer need to consider. The idea of this function is to find all the strings possible by reading each row, column, and diagonal both forward and backward. To do this, I first figure out how many rows and columns are present by checking the length (`len`) of the `puzzle` itself (the number of rows) and the length of the first row (the number of character in the first row). I double-check on line 56 that `all` of the the rows have the same `len` as the first one, using the `die` function from the `dire` module to print a message to STDERR and then `sys.exit(1)` to indicate a failure.
+
+The `all_combos` will return a `list` of the characters and their cells, so I define `combos` on line 59 as an empty list (`[]`). Reading the rows is easiest on lines 61-62 as we just copy each `row` into `combo`. Reading the columns is done by moving from column `0` to the last column using the `range(num_cols)` (remembering the last number is not included which is important because if there are 10 columns then we need to move from column `0` to column `9`). I can then extract each column position from each row in the puzzle by indexing `puzzle[row_num][col_num]` and appending those to the `combos`.
+
+The diagonals are the trickiest. I chose to go up (lower-left to upper-right) first. I start in the top-left corner, row `0` and column `0`. For each row, I'm going to move diagonally upwards (toward the top of the grid) which is actually counting *down* from the row I'm on, so I actually need to move `row_i` *up* and then `row_j` *down*. (I use `i` for "integer" and then `j` because "j" comes after "i". This is a typical naming convention. If I needed a third counter, I'd move to `k`.) I count `row_j` *down* by using `range(row_i, -1, -1)` (where the first `-1` is so I can count all the way to `0` and the second indicates the step should go down by one), I need to move the `col_num` over by `1`. If I successfully read a diagonal, I append that to the `combos`. 
+
+The next block starts at the bottommost row of the and moves across the columns and is very similar to how I read the columns. Then moving into reading the diagonals in a downward (upper-left to bottom-right) fashion, I modified the other two blocks to handle the specifics. Finally at the end of the function (line 120), I want to `extend` the `combos` list by adding a `reversed` version of each combo. It's necessary to coerce `list(reversed(c))` otherwise we'd end up with references to `reversed` *objects*. 
+
+### Solving the puzzle
+
+Once we've read the puzzle and found all the possible strings both forwards and backwards, we can then look for each of the words in each of the strings. In my `main`, I want to use sets to note all the words that are `found` as well as the cell numbers to `reveal`. Because I'll be reading lists of tuples where the character is in the first position and the cell number in the second, I define two functions `fst` and `snd` (stolen from Haskell) that I can use in `map` expressions. I iterate `for word in words` (line 146) and `for combo in combos` to check all combinations. Recall that the `combo` is a list of tuples:
+
+````
+>>> combo = [('X', 1), ('F', 2), ('O', 3), ('O', 4)]
+````
+
+so I can build a string from the characters in the `fst` position of the tuples by mapping them to `fst`:
+
+````
+>>> list(map(fst, combo))
+['X', 'F', 'O', 'O']
+````
+
+and joining them on an empty string:
+
+````
+>>> test = ''.join(map(fst, combo))
+>>> test
+'XFOO'
+````
+
+Then I check if the `word` is in the `test` string:
+
+````
+>>> word='FOO'
+>>> word in test
+True
+````
+
+If it is, then I can find where it starts with the `str.index` function:
+
+````
+>>> start = test.index(word)
+>>> start
+1
+````
+
+I know then end is:
+
+````
+>>> end = start + len(word)
+>>> end
+4
+````
+
+I can use that information to iterate over the elements in the `combo` to extract the cell numbers which are in the `snd` position of the tuple because ultimately what I need to print is the original puzzle grid with the cells showing the hidden words and all the others masked. I can extract a list slice using `combo[start:end]`, `map` those elements through `snd` to get the `cell` and `add` those to the `reveal` set. I can also note that I `found` the `word`.
+
+At line 157, I start the work of printing the revealed puzzle, iterating over the original rows in the puzzle and over each cell in the row. If the cell number is in the `reveal` set, I chose the character (in the first position of the tuple); otherwise I use a period (`.`). Finally I note any missing words by looking to see if any of the original words were not in the `found` set.
 
 \newpage
 

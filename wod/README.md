@@ -71,6 +71,7 @@ Flapping Leg Raises       17
 ````
 
 Hints:
+
 * Use the `csv` module's `DictReader` to read the input CSV files
-* Break the `reps` field on the `-` character, coerce the low/high values to `int` values, and then use the `random` module to choose a random integer in that range.
+* Break the `reps` field on the `-` character, coerce the low/high values to `int` values, and then use the `random` module to choose a random integer in that range. Also see if the `random` module can help you sample some exercises.
 * Read the docs on the `tabulate` module to figure out to get it to print your data
