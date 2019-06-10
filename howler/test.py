@@ -26,6 +26,13 @@ def out_flag():
 
 
 # --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
+
+
+# --------------------------------------------------
 def test_usage():
     """usage"""
 

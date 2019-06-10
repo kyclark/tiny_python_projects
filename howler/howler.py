@@ -9,11 +9,12 @@ import sys
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Howler (upper-case input)',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('text', metavar='STR', help='Input string or file')
+    parser.add_argument('text', metavar='str', help='Input string or file')
 
     parser.add_argument('-o',
                         '--outfile',
@@ -33,10 +34,11 @@ def main():
     out_file = args.outfile
 
     if os.path.isfile(text):
-        text = open(text).read().strip()
+        text = open(text).read().rstrip()
 
     out_fh = open(out_file, 'wt') if out_file else sys.stdout
-    out_fh.write(text.upper() + '\n')
+    print(text.upper(), file=out_fh)
+    out_fh.close()
 
 
 # --------------------------------------------------
