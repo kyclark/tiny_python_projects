@@ -434,7 +434,159 @@ You are bringing potato chips, salad, soda, and cupcakes.
 
 \newpage
 
-# Chapter 4: Apples and Bananas
+## Discussion
+
+This program can accept a variable number of arguments which are all the same thing, so the most appropriate way to represent this with `argparse` is shown on lines 15-19 where we define an `item` agument with `nargs='+'` where `nargs` is the *number of arguments* and `'+'` means *one or more*. Remember, even if the user provides only one argument, you will still get a `list` with just one element.
+
+We put the `items` into a variable on line 28. Note that I call it by the plural `items` because it's probably going to be more than one. Also, I call the variable something informative, not just `args` or something too generic. Lastly, I need to decide how to format the items. As in the article selector, I'm using an `if` *expression* rather than an `if` *statement that would look like this:
+
+````
+bringing = ''
+if num == 1:
+    bringing = items[0]
+elif num == 2:
+    bringing = ' and '.join(items)
+else:
+    bringing = ', '.join(items[:-1] + [ 'and ' + items[-1]]) 
+````
+
+But I chose to condense this down into a double `if` expression with the following form:
+
+````
+bringing = one_item if num == 1 else two_items if num == 2 else three_items
+````
+
+Finally to `print` the output, I'm using a format string where the `{}` indicates a placeholder for some value like so:
+
+````
+>>> 'I spy something {}!'.format('blue')
+'I spy something blue!'
+````
+
+You can also put names inside the `{}` and pass in key/value pairs in any order:
+
+````
+>>> 'Give {person} the {thing}!'.format(thing='bread', person='Maggie')
+'Give Maggie the bread!'
+````
+
+Depending on your version of Python, you may be able to use *f-strings*:
+
+````
+>>> color = 'blue'
+>>> f'I spy something {color}!'
+'I spy something blue!'
+````
+\newpage
+
+# Chapter 4: Howler
+
+Write a Python program `howler.py` that will uppercase all the text from the command line or from a file.
+
+````
+$ ./howler.py
+usage: howler.py [-h] [-o str] STR
+howler.py: error: the following arguments are required: STR
+$ ./howler.py -h
+usage: howler.py [-h] [-o str] STR
+
+Howler (upper-case input)
+
+positional arguments:
+  STR                   Input string or file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o str, --outfile str
+                        Output filename (default: )
+$ ./howler.py 'One word: Plastics!'
+ONE WORD: PLASTICS!
+$ ./howler.py ../inputs/fox.txt
+THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Howler"""
+     3	
+     4	import argparse
+     5	import os
+     6	import sys
+     7	
+     8	
+     9	# --------------------------------------------------
+    10	def get_args():
+    11	    """get command-line arguments"""
+    12	
+    13	    parser = argparse.ArgumentParser(
+    14	        description='Howler (upper-case input)',
+    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    16	
+    17	    parser.add_argument('text', metavar='str', help='Input string or file')
+    18	
+    19	    parser.add_argument('-o',
+    20	                        '--outfile',
+    21	                        help='Output filename',
+    22	                        metavar='str',
+    23	                        type=str,
+    24	                        default='')
+    25	
+    26	    return parser.parse_args()
+    27	
+    28	
+    29	# --------------------------------------------------
+    30	def main():
+    31	    """Make a jazz noise here"""
+    32	    args = get_args()
+    33	    text = args.text
+    34	    out_file = args.outfile
+    35	
+    36	    if os.path.isfile(text):
+    37	        text = open(text).read().rstrip()
+    38	
+    39	    out_fh = open(out_file, 'wt') if out_file else sys.stdout
+    40	    print(text.upper(), file=out_fh)
+    41	    out_fh.close()
+    42	
+    43	
+    44	# --------------------------------------------------
+    45	if __name__ == '__main__':
+    46	    main()
+````
+
+\newpage
+
+## Discussion
+
+Cf. Truthiness, File Handles
+
+This is a deceptively simple program that demonstrates a couple of very important elements of file input and output. The `text` input might be a plain string that you should uppercase or it might be the name of a file. This pattern will come up repeatedly in this book, so commit these lines to memory:
+
+````
+if os.path.isfile(text):
+    text = open(text).read().rstrip()
+````
+
+The first line looks on the file system to see if there is a file with the name in `text`. If that returns `True`, then we can safely `open(file)` to get a *file handle* which has a *method* called `read` which will return *all the contents* of the file. This is usually safe, but be careful if you write a program that could potentially read gigantic files. For instance, in bioinformatics we regularly deal with files with sizes in the 10s to 100s of gigabytes!
+
+The result of `open(file).read()` is a `str` which itself has a *method* called `rstrip` that will return a copy of the string *stripped* of the whitespace off the *right* side of the string. The longer way to write the above would be:
+
+````
+if os.path.isfile(text):
+    fh = open(text)
+    text = fh.read()
+    text = text.rstrip()
+````
+
+On line 39, we decide where to put the output of our program. The `if` expression will open `out_file` for writing text if `out_file` has been defined. The default value for `out_file` is the empty string which is effectively `False` when evaluated in a Boolean content. Unless the user provides a value, the output file handle `out_fh` will be `sys.stdout`. T
+
+\newpage
+
+# Chapter 5: Apples and Bananas
 
 Perhaps you remember the children's song "Apples and Bananas"?
 
@@ -563,85 +715,6 @@ Tha qaack brawn fax jamps avar tha lazy dag.
     83	# --------------------------------------------------
     84	if __name__ == '__main__':
     85	    main()
-````
-
-\newpage
-
-# Chapter 5: Howler
-
-Write a Python program `howler.py` that will uppercase all the text from the command line or from a file.
-
-````
-$ ./howler.py
-usage: howler.py [-h] [-o str] STR
-howler.py: error: the following arguments are required: STR
-$ ./howler.py -h
-usage: howler.py [-h] [-o str] STR
-
-Howler (upper-case input)
-
-positional arguments:
-  STR                   Input string or file
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -o str, --outfile str
-                        Output filename (default: )
-$ ./howler.py 'One word: Plastics!'
-ONE WORD: PLASTICS!
-$ ./howler.py ../inputs/fox.txt
-THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	"""Howler"""
-     3	
-     4	import argparse
-     5	import os
-     6	import sys
-     7	
-     8	
-     9	# --------------------------------------------------
-    10	def get_args():
-    11	    """get command-line arguments"""
-    12	    parser = argparse.ArgumentParser(
-    13	        description='Howler (upper-case input)',
-    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    15	
-    16	    parser.add_argument('text', metavar='STR', help='Input string or file')
-    17	
-    18	    parser.add_argument('-o',
-    19	                        '--outfile',
-    20	                        help='Output filename',
-    21	                        metavar='str',
-    22	                        type=str,
-    23	                        default='')
-    24	
-    25	    return parser.parse_args()
-    26	
-    27	
-    28	# --------------------------------------------------
-    29	def main():
-    30	    """Make a jazz noise here"""
-    31	    args = get_args()
-    32	    text = args.text
-    33	    out_file = args.outfile
-    34	
-    35	    if os.path.isfile(text):
-    36	        text = open(text).read().strip()
-    37	
-    38	    out_fh = open(out_file, 'wt') if out_file else sys.stdout
-    39	    out_fh.write(text.upper() + '\n')
-    40	
-    41	
-    42	# --------------------------------------------------
-    43	if __name__ == '__main__':
-    44	    main()
 ````
 
 \newpage
@@ -6308,7 +6381,99 @@ baz NA
 
 \newpage
 
-# Appendix 3: Markov Chains
+# Appendix 3: File Handles
+
+A file's name is a string like `'nobody.txt'`. To read or write the contents of the file, you need a *file handle* which you can get from `open`. Think of a file name as the address of your house. It's where your house can be found, but I can't know what's in your house unless I go there and open the door. That's what `open` does -- it finds the file's bits on disk and opens the door to read or write the file.
+
+## File Modes
+
+By default, a file is opened in *read* mode which means that it can't be altered. Also, the default is to open for reading *text*.  The only required argument to `open` is the file name, but a second optional argument is a combination of characters to explain how to open the file. From the documentation for `open`:
+
+````
+========= ===============================================================
+Character Meaning
+--------- ---------------------------------------------------------------
+'r'       open for reading (default)
+'w'       open for writing, truncating the file first
+'x'       create a new file and open it for writing
+'a'       open for writing, appending to the end of the file if it exists
+'b'       binary mode
+'t'       text mode (default)
+'+'       open a disk file for updating (reading and writing)
+'U'       universal newline mode (deprecated)
+========= ===============================================================
+````
+
+So if you do:
+
+````
+fh = open('out.txt')
+````
+
+It's the same as doing:
+
+````
+fh = open('out.txt', 'wt')
+````
+
+Where the combination of `wt` means `write text`. We can also read and write raw bits in `binary`, e.g., if you wanted to read the bit values of the pixels in an image.
+
+I always make a distinction in the variable names for the `file` or `filename` and the *file handle* which I usually call `fh` if there's just one or maybe `in_fh` and `out_fh` if there is one for reading and one for writing, etc.
+
+## STDIN, STDOUT, STDERR
+
+Unix has three standard files or channels called *standard in*, *standard out*, and *standard error* which are normally written as STDIN, STDOUT, and STDERR. When you `print`, the default is that the text goes to STDOUT which you see in your terminal or REPL.
+
+The `print` function takes some optional keyword arguments, one of which is `file` which has the default value of `sys.stdout`. If you wish to `print` to *standard error* (STDERR), you can use the `sys.stderr` file:
+
+````
+print('This is an error!', file=sys.stderr)
+````
+
+Note that you *do not* have to `open` these two special file handles. They are always available to you. 
+
+If you wish to write to a file on disc, you can `open` a file for writing and pass that:
+
+````
+print('This is an error!', file=open('error.txt', 'wt'))
+````
+
+Note that if each time you `open` a file for writing, you overwrite any existing data. If you wanted to `print` repeatedly in a program, you would either need to `open` in append mode:
+
+````
+print('This is an error!', file=open('error.txt', 'at'))
+print('This is an also error!', file=open('error.txt', 'at'))
+````
+
+Or, better yet, `open` the file at the beginning of the program, `print` as often as you like, and then `close` the file:
+
+````
+fh = open('out.txt', 'wt')
+print('Writing some text.', file=fh)
+print('Adding more text.', file=fh)
+fh.close()
+````
+
+Or use the `write` method of the file handle:
+
+````
+fh = open('out.txt', 'wt')
+fh.write('Writing some text.\n')
+fh.write('Adding more text.\n')
+fh.close()
+````
+
+Note that `print` automatically adds a newline to the end of the text whereas `write` does not so you need to add it yourself.
+
+You can only *read* from STDIN. Again, you do not need to `open` it as it is always available. Treat it exactly like a file handle you've opened for reading, e.g., to read lines from STDIN until you recieve EOF (end of file):
+
+````
+for line in sys.stdin:
+````
+
+\newpage
+
+# Appendix 4: Markov Chains
 
 Read about Markov chains:
 
