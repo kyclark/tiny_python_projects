@@ -12,6 +12,7 @@ from dire import die
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Create Workout Of (the) Day (WOD)',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -20,7 +21,7 @@ def get_args():
                         '--file',
                         help='CSV input file of exercises',
                         metavar='str',
-                        type=str,
+                        type=argparse.FileType('r'),
                         default='wod.csv')
 
     parser.add_argument('-s',
@@ -46,25 +47,15 @@ def get_args():
 
 
 # --------------------------------------------------
-def read_csv(file):
+def read_csv(fh):
     """Read the CSV input"""
 
-    if not os.path.isfile(file):
-        die('"{}" is not a file'.format(file))
-
     exercises = []
-    with open(file) as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=',')
-        required = ['exercise', 'reps']
 
-        if not all(map(lambda f: f in reader.fieldnames, required)):
-            die('"{}" is missing required fields: {}'.format(
-                file, ', '.join(required)))
-
-        for row in reader:
-            name = row['exercise']
-            low, high = row['reps'].split('-')
-            exercises.append((name, int(low), int(high)))
+    for row in csv.DictReader(fh, delimiter=','):
+        name = row['exercise']
+        low, high = row['reps'].split('-')
+        exercises.append((name, int(low), int(high)))
 
     return exercises
 
@@ -83,7 +74,7 @@ def main():
             low = int(low / 2)
             high = int(high / 2)
 
-        table.append((name, '{}'.format(random.randint(low, high))))
+        table.append((name, random.randint(low, high)))
 
     print(tabulate(table, headers=('Exercise', 'Reps')))
 

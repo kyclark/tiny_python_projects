@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 """tests for wod.py"""
 
-import re
 import os
 import random
 from subprocess import getstatusoutput
 
 prg = './wod.py'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
@@ -21,6 +27,8 @@ def test_usage():
 
 # --------------------------------------------------
 def test_runs01():
+    """Runs OK"""
+
     expected = """
 Exercise         Reps
 -------------  ------
@@ -38,6 +46,8 @@ Pullups            24
 
 # --------------------------------------------------
 def test_runs02():
+    """Runs OK"""
+
     expected = """
 Exercise         Reps
 -------------  ------
@@ -57,6 +67,8 @@ Pullups            12
 
 # --------------------------------------------------
 def test_runs03():
+    """Runs OK"""
+
     expected = """
 Exercise      Reps
 ----------  ------
@@ -77,8 +89,11 @@ Plank           43
     assert rv == 0
     assert out.strip() == expected.strip()
 
+
 # --------------------------------------------------
 def test_runs04():
+    """Runs OK"""
+
     expected = """
 Exercise                  Reps
 ----------------------  ------
