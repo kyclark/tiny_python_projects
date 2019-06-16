@@ -109,7 +109,7 @@ def main():
 
             solution_py = os.path.join(in_dir, dir_name, 'solution.py')
             if os.path.isfile(solution_py):
-                print('\tSOLUTION PY')
+                print('\tSOLUTION')
                 fh.write('## Solution\n\n')
                 fh.write('````\n')
                 numbered = getoutput('cat -n {}'.format(solution_py))

@@ -254,6 +254,39 @@ number = 2
 files  = foo, bar
 ````
 
+## Choices
+
+Sometimes you want to limit the values of an argument. You can pass in a `list` of valid values to the `choices` option. 
+
+````
+$ cat appendix/argparse/choices.py
+#!/usr/bin/env python3
+"""Choices"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='Choices',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('color', metavar='str', help='Color', choices=['red', 'yellow', 'blue'])
+
+args = parser.parse_args()
+
+print('color =', args.color)
+````
+
+Any value not present in the list will be rejected and the user will be shown the valid choices:
+
+````
+$ ./choices.py
+usage: choices.py [-h] str
+choices.py: error: the following arguments are required: str
+$ ./choices.py purple
+usage: choices.py [-h] str
+choices.py: error: argument str: invalid choice: 'purple' (choose from 'red', 'yellow', 'blue')
+````
+
 ## Automatic help
 
 The `argparse` module reserves the `-h` and `--help` flags for generating help documentation. You do not need to add these nor are you allowed to use these flags for other purposes. Using the above definition, this is the help that `argparse` will generate:

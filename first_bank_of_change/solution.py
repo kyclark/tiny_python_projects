@@ -11,7 +11,7 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Coin combos for value',
+        description='First Bank of Change',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('value', metavar='int', type=int, help='Sum')
@@ -19,7 +19,7 @@ def get_args():
     args = parser.parse_args()
 
     if not 0 < args.value <= 100:
-        parser.error('value "{}" must be > 1 and <= 100'.format(args.value))
+        parser.error('value "{}" must be > 0 and <= 100'.format(args.value))
 
     return args
 

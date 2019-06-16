@@ -1,38 +1,44 @@
 # First Bank of Change
 
-Write a Python program that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100.
+Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100.
 
 ````
-$ ./combos.py
-usage: combos.py [-h] int
-combos.py: error: the following arguments are required: int
-$ ./combos.py -h
-usage: combos.py [-h] int
+$ ./fboc.py
+usage: fboc.py [-h] int
+fboc.py: error: the following arguments are required: int
+$ ./fboc.py -h
+usage: fboc.py [-h] int
 
-Coin combos for value
+First Bank of Change
 
 positional arguments:
   int         Sum
 
 optional arguments:
   -h, --help  show this help message and exit
-$ ./combos.py 1
+$ ./fboc.py 0
+usage: fboc.py [-h] int
+fboc.py: error: value "0" must be > 0 and <= 100
+$ ./fboc.py 124
+usage: fboc.py [-h] int
+fboc.py: error: value "124" must be > 0 and <= 100
+$ ./fboc.py 1
 If you give me 1 cent, I can give you:
   1: 1 penny
-$ ./combos.py 4
+$ ./fboc.py 4
 If you give me 4 cents, I can give you:
   1: 4 pennies
-$ ./combos.py 6
+$ ./fboc.py 6
 If you give me 6 cents, I can give you:
   1: 6 pennies
   2: 1 nickel, 1 penny
-$ ./combos.py 13
+$ ./fboc.py 13
 If you give me 13 cents, I can give you:
   1: 13 pennies
   2: 1 dime, 3 pennies
   3: 1 nickel, 8 pennies
   4: 2 nickels, 3 pennies
-$ ./combos.py 27
+$ ./fboc.py 27
 If you give me 27 cents, I can give you:
   1: 27 pennies
   2: 1 quarter, 2 pennies
