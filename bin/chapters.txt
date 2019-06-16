@@ -30,6 +30,7 @@ twelve_days_of_christmas
 war
 anagram
 hangman
+first_bank_of_change
 markov_chain
 hamming_chain
 morse

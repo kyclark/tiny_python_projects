@@ -4572,7 +4572,148 @@ You lose, loser!  The word was "metromania."
 
 \newpage
 
-# Chapter 33: Markov Chain
+# Chapter 33: First Bank of Change
+
+Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100.
+
+````
+$ ./fboc.py
+usage: fboc.py [-h] int
+fboc.py: error: the following arguments are required: int
+$ ./fboc.py -h
+usage: fboc.py [-h] int
+
+First Bank of Change
+
+positional arguments:
+  int         Sum
+
+optional arguments:
+  -h, --help  show this help message and exit
+$ ./fboc.py 0
+usage: fboc.py [-h] int
+fboc.py: error: value "0" must be > 0 and <= 100
+$ ./fboc.py 124
+usage: fboc.py [-h] int
+fboc.py: error: value "124" must be > 0 and <= 100
+$ ./fboc.py 1
+If you give me 1 cent, I can give you:
+  1: 1 penny
+$ ./fboc.py 4
+If you give me 4 cents, I can give you:
+  1: 4 pennies
+$ ./fboc.py 6
+If you give me 6 cents, I can give you:
+  1: 6 pennies
+  2: 1 nickel, 1 penny
+$ ./fboc.py 13
+If you give me 13 cents, I can give you:
+  1: 13 pennies
+  2: 1 dime, 3 pennies
+  3: 1 nickel, 8 pennies
+  4: 2 nickels, 3 pennies
+$ ./fboc.py 27
+If you give me 27 cents, I can give you:
+  1: 27 pennies
+  2: 1 quarter, 2 pennies
+  3: 1 dime, 17 pennies
+  4: 2 dimes, 7 pennies
+  5: 1 nickel, 22 pennies
+  6: 1 dime, 1 nickel, 12 pennies
+  7: 2 dimes, 1 nickel, 2 pennies
+  8: 2 nickels, 17 pennies
+  9: 1 dime, 2 nickels, 7 pennies
+ 10: 3 nickels, 12 pennies
+ 11: 1 dime, 3 nickels, 2 pennies
+ 12: 4 nickels, 7 pennies
+ 13: 5 nickels, 2 pennies
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Coin combos for value"""
+     3	
+     4	import argparse
+     5	from itertools import product
+     6	from functools import partial
+     7	
+     8	
+     9	# --------------------------------------------------
+    10	def get_args():
+    11	    """Get command-line arguments"""
+    12	
+    13	    parser = argparse.ArgumentParser(
+    14	        description='First Bank of Change',
+    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    16	
+    17	    parser.add_argument('value', metavar='int', type=int, help='Sum')
+    18	
+    19	    args = parser.parse_args()
+    20	
+    21	    if not 0 < args.value <= 100:
+    22	        parser.error('value "{}" must be > 0 and <= 100'.format(args.value))
+    23	
+    24	    return args
+    25	
+    26	
+    27	# --------------------------------------------------
+    28	def main():
+    29	    """Make a jazz noise here"""
+    30	
+    31	    args = get_args()
+    32	    value = args.value
+    33	    nickels = range((value // 5) + 1)
+    34	    dimes = range((value // 10) + 1)
+    35	    quarters = range((value // 25) + 1)
+    36	    fig = partial(figure, value)
+    37	    combos = [c for c in map(fig, product(nickels, dimes, quarters)) if c]
+    38	
+    39	    print('If you give me {} cent{}, I can give you:'.format(
+    40	        value, '' if value == 1 else 's'))
+    41	
+    42	    for i, combo in enumerate(combos, 1):
+    43	        print('{:3}: {}'.format(i, fmt_combo(combo)))
+    44	
+    45	
+    46	# --------------------------------------------------
+    47	def fmt_combo(combo):
+    48	    """English version of combo"""
+    49	
+    50	    out = []
+    51	    for coin, val in zip(('quarter', 'dime', 'nickel', 'penny'), combo):
+    52	        if val:
+    53	            plural = 'pennies' if coin == 'penny' else coin + 's'
+    54	            out.append('{} {}'.format(val, coin if val == 1 else plural))
+    55	
+    56	    return ', '.join(out)
+    57	
+    58	
+    59	# --------------------------------------------------
+    60	def figure(value, coins):
+    61	    """
+    62	    If there is a valid combo of 'coins' in 'value',
+    63	    return a tuple of ints for (quarters, dimes, nickels, pennies)
+    64	    """
+    65	
+    66	    nickels, dimes, quarters = coins
+    67	    big_coins = (5 * nickels) + (10 * dimes) + (25 * quarters)
+    68	
+    69	    if big_coins <= value:
+    70	        return (quarters, dimes, nickels, value - big_coins)
+    71	
+    72	
+    73	# --------------------------------------------------
+    74	if __name__ == '__main__':
+    75	    main()
+````
+
+\newpage
+
+# Chapter 34: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -4779,7 +4920,7 @@ Advice and Consent of the United States.
 
 \newpage
 
-# Chapter 34: Hamming Chain
+# Chapter 35: Hamming Chain
 
 Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
 
@@ -4982,7 +5123,7 @@ Failed to find more words!
 
 \newpage
 
-# Chapter 35: Morse Encoder/Decoder
+# Chapter 36: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -5200,7 +5341,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 36: ROT13 (Rotate 13)
+# Chapter 37: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -5365,7 +5506,7 @@ The quick brown fox jumps over the lazy dog.
 
 \newpage
 
-# Chapter 37: Tranpose ABC Notation
+# Chapter 38: Tranpose ABC Notation
 
 Write a Python program called `transpose.py` that will read a file in ABC notation (https://en.wikipedia.org/wiki/ABC_notation) and transpose the melody line up or down by a given `-s|--shift` argument. Like the `rot13` exercise, it might be helpful to think of the space of notes (`ABCDEFG`) as a list which you can roll through. For instance, if you have the note `c` and want to transpose up a (minor) third (`-s 3`), you would make the new note `e`; similarly if you have the note `F` and you go up a (major) third, you get `A`. You will not need to worry about the actual number of semitones that you are being asked to shift, as the previous example showed that we might be shifting by a major/minor/augmented/diminished/pure interval. The purpose of the exercise is simply to practice with lists.
 
@@ -5561,7 +5702,7 @@ aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
 
 \newpage
 
-# Chapter 38: Word Search
+# Chapter 39: Word Search
 
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 
@@ -6188,6 +6329,39 @@ files  = foo
 $ ./nargs+.py foo bar
 number = 2
 files  = foo, bar
+````
+
+## Choices
+
+Sometimes you want to limit the values of an argument. You can pass in a `list` of valid values to the `choices` option. 
+
+````
+$ cat appendix/argparse/choices.py
+#!/usr/bin/env python3
+"""Choices"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='Choices',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('color', metavar='str', help='Color', choices=['red', 'yellow', 'blue'])
+
+args = parser.parse_args()
+
+print('color =', args.color)
+````
+
+Any value not present in the list will be rejected and the user will be shown the valid choices:
+
+````
+$ ./choices.py
+usage: choices.py [-h] str
+choices.py: error: the following arguments are required: str
+$ ./choices.py purple
+usage: choices.py [-h] str
+choices.py: error: argument str: invalid choice: 'purple' (choose from 'red', 'yellow', 'blue')
 ````
 
 ## Automatic help
