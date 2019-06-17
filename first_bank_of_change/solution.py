@@ -64,7 +64,7 @@ def figure(value, coins):
     """
 
     nickels, dimes, quarters = coins
-    big_coins = (5 * nickels) + (10 * dimes) + (25 * quarters)
+    big_coins = sum([5 * nickels, 10 * dimes, 25 * quarters])
 
     if big_coins <= value:
         return (quarters, dimes, nickels, value - big_coins)

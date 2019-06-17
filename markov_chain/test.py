@@ -36,6 +36,7 @@ def test_runs01():
     expected = open('test-outs/const.seed3.width70.len500').read()
     assert out.rstrip() == expected.rstrip()
 
+
 # --------------------------------------------------
 def test_runs02():
     """runs"""
@@ -45,6 +46,7 @@ def test_runs02():
     expected = open('test-outs/const.seed4.width50.len300').read()
     assert out.rstrip() == expected.rstrip()
 
+
 # --------------------------------------------------
 def test_runs03():
     """runs"""
@@ -53,6 +55,7 @@ def test_runs03():
     out = getoutput(args.format(prg, const))
     expected = open('test-outs/const.seed4.width50.len300.words3').read()
     assert out.rstrip() == expected.rstrip()
+
 
 # --------------------------------------------------
 def test_runs04():
