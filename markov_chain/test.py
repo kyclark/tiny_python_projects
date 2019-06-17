@@ -41,9 +41,9 @@ def test_runs01():
 def test_runs02():
     """runs"""
 
-    args = '{} --seed 4 --length 300 --text_width 50 {}'
+    args = '{} --seed 4 --length 300 --text_width 50 -n 1 {}'
     out = getoutput(args.format(prg, const))
-    expected = open('test-outs/const.seed4.width50.len300').read()
+    expected = open('test-outs/const.seed4.width50.len300.words1').read()
     assert out.rstrip() == expected.rstrip()
 
 

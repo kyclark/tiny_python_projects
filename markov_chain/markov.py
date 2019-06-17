@@ -4,7 +4,6 @@
 import argparse
 import logging
 import random
-import string
 import textwrap
 from pprint import pformat as pf
 from collections import defaultdict
@@ -67,35 +66,34 @@ def main():
     args = get_args()
     char_max = args.length
     random.seed(args.seed)
+    num_words = args.num_words
 
     logging.basicConfig(
         filename='.log',
         filemode='w',
         level=logging.DEBUG if args.debug else logging.CRITICAL)
 
-    training = read_training(args.training, args.num_words)
+    training = read_training(args.training, num_words)
     logging.debug('training = %s', pf(training))
 
     # Find a word starting with a capital letter
     words = list(
         random.choice(
-            list(
-                filter(lambda w: w[0][0] in string.ascii_uppercase,
-                       training.keys()))))
+            list(filter(lambda t: t[0][0].isupper(), training.keys()))))
 
     logging.debug('starting with "%s"', words)
     logging.debug(training[tuple(words)])
 
     while True:
         # get last two words
-        prev = tuple(words[-2:])
+        prev = tuple(words[-1 * num_words:])
 
         # bail if dead end
         if not prev in training:
             break
 
         new_word = random.choice(training[prev])
-        logging.debug('chose = "{}" from {}'.format(new_word, training[prev]))
+        logging.debug('chose "{}" from {}'.format(new_word, training[prev]))
         words.append(new_word)
 
         # try to find ending punctuation if we've hit wanted char count
