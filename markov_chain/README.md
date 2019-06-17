@@ -47,21 +47,24 @@ optional arguments:
   -w int, --text_width int
                         Max number of characters per line (default: 70)
   -d, --debug           Debug to ".log" (default: False)
-$ ./markov.py ../inputs/const.txt
-Discoveries; To constitute Tribunals inferior to the seat of the
-Senate and House of Representatives shall have been committed, which
-district shall have the Qualifications requisite for Electors of the
-sixth Year, so that one third may be imposed on such Importation, not
-exceeding three on the Journal. Neither House, during the Time of
-Adjournment, he may require it. No Bill of Attainder or ex post facto
-Law shall be established by Law: but the Party convicted shall
-nevertheless be liable and subject to their Consideration such
-Measures as he shall nominate, and by and with the Advice and Consent
-of the government of the United States under this Constitution, or,
-on the List the said Office, the same State claiming Lands under
-Grants of different States; between Citizens of each shall constitute
-a Quorum to do Business; but a smaller number may adjourn from day to
-day, and may be included within this Union, according to their
-Consideration such Measures as he shall nominate, and by and with the
-Advice and Consent of the United States.
+$ ./markov.py ../inputs/const.txt -s 1
+States, shall have no Vote, unless they shall meet in their respective
+Numbers, which shall abridge the privileges or immunities of citizens
+of the Militia to execute the Laws thereof, escaping into another,
+shall, in the land and naval Forces; To provide for the loss or
+emancipation of any slave; but all such Laws shall be bound thereby,
+any Thing in the case wherein neither a President or Vice President
+and Vice-President, or hold any office, civil or military, under the
+United States; he may adjourn them to such Time as he shall have
+failed to qualify, then the Vice-President chosen for the purpose
+shall consist of a term to which the United States of America.
+$ ./markov.py -s 2 ../inputs/dickinson.txt -w 30 -l 100
+His knowledge to unfold On
+what concerns our mutual mind,
+The literature of old; What
+interested scholars most, What
+competitions ran When Plato
+was a living girl, And
+Beatrice wore The gown that
+Dante deified.
 ````

@@ -3,12 +3,10 @@
 
 import argparse
 import logging
-import os
 import random
 import string
-import sys
 import textwrap
-from pprint import pprint as pp
+from pprint import pformat as pf
 from collections import defaultdict
 
 
@@ -67,10 +65,7 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    num_words = args.num_words
     char_max = args.length
-    text_width = args.text_width
-
     random.seed(args.seed)
 
     logging.basicConfig(
@@ -78,42 +73,53 @@ def main():
         filemode='w',
         level=logging.DEBUG if args.debug else logging.CRITICAL)
 
+    training = read_training(args.training, args.num_words)
+    logging.debug('training = %s', pf(training))
+
+    # Find a word starting with a capital letter
+    words = list(
+        random.choice(
+            list(
+                filter(lambda w: w[0][0] in string.ascii_uppercase,
+                       training.keys()))))
+
+    logging.debug('starting with "%s"', words)
+    logging.debug(training[tuple(words)])
+
+    while True:
+        # get last two words
+        prev = tuple(words[-2:])
+
+        # bail if dead end
+        if not prev in training:
+            break
+
+        new_word = random.choice(training[prev])
+        logging.debug('chose = "{}" from {}'.format(new_word, training[prev]))
+        words.append(new_word)
+
+        # try to find ending punctuation if we've hit wanted char count
+        char_count = sum(map(len, words)) + len(words)
+        if char_count >= char_max and new_word[-1] in '.!?':
+            break
+
+    print('\n'.join(textwrap.wrap(' '.join(words), width=args.text_width)))
+    logging.debug('Finished')
+
+
+# --------------------------------------------------
+def read_training(fhs, num_words):
+    """Read training files, return dict of chains"""
+
     all_words = defaultdict(list)
-    for fh in args.training:
+    for fh in fhs:
         words = fh.read().split()
 
         for i in range(0, len(words) - num_words):
             l = words[i:i + num_words + 1]
             all_words[tuple(l[:-1])].append(l[-1])
 
-    logging.debug('all words = {}'.format(all_words))
-
-    words = []
-    while not prev:
-        start = random.choice(
-            list(
-                filter(lambda w: w[0][0] in string.ascii_uppercase,
-                       all_words.keys())))
-        if all_words[start]:
-            prev = start
-            words = list(start)
-
-    logging.debug('Starting with "{}"'.format(prev))
-
-    while True:
-        prev = tuple([words[-2], words[-1]])
-        if not prev in all_words:
-            break
-        new_word = random.choice(all_words[prev])
-        logging.debug('chose = "{}" from {}'.format(new_word, all_words[prev]))
-        words.append(new_word)
-        char_count = sum(map(len, words)) + len(words)
-        if char_count >= char_max and new_word[-1] in '.!?':
-            break
-
-    print('\n'.join(textwrap.wrap(' '.join(words), width=text_width)))
-    logging.debug('Finished')
-    print()
+    return all_words
 
 
 # --------------------------------------------------
