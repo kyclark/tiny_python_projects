@@ -7,6 +7,7 @@ import os
 import random
 import string
 import sys
+import textwrap
 from pprint import pprint as pp
 from collections import defaultdict
 
@@ -87,7 +88,7 @@ def main():
 
     logging.debug('all words = {}'.format(all_words))
 
-    prev = ''
+    words = []
     while not prev:
         start = random.choice(
             list(
@@ -95,32 +96,22 @@ def main():
                        all_words.keys())))
         if all_words[start]:
             prev = start
+            words = list(start)
 
     logging.debug('Starting with "{}"'.format(prev))
 
-    p = ' '.join(prev)
-    char_count = len(p)
-    print(p, end=' ')
-    line_width = char_count
-
     while True:
-        if not prev in all_words: break
-
+        prev = tuple([words[-2], words[-1]])
+        if not prev in all_words:
+            break
         new_word = random.choice(all_words[prev])
-        new_len = len(new_word) + 1
         logging.debug('chose = "{}" from {}'.format(new_word, all_words[prev]))
+        words.append(new_word)
+        char_count = sum(map(len, words)) + len(words)
+        if char_count >= char_max and new_word[-1] in '.!?':
+            break
 
-        if line_width + new_len > text_width:
-            print()
-            line_width = new_len
-        else:
-            line_width += new_len
-
-        char_count += new_len
-        print(new_word, end=' ')
-        if char_count >= char_max and new_word[-1] in '.!?': break
-        prev = prev[1:] + (new_word, )
-
+    print('\n'.join(textwrap.wrap(' '.join(words), width=text_width)))
     logging.debug('Finished')
     print()
 
