@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
+"""Apples and Bananas"""
 
 import argparse
 import os
 import re
-import sys
 
 
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Apples and bananas',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -29,6 +30,7 @@ def get_args():
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
     text = args.text
     vowel = args.vowel
@@ -51,29 +53,33 @@ def main():
     # for v in 'aeiou':
     #     text = text.replace(v, vowel).replace(v.upper(), vowel.upper())
 
-    # Method 3: Use a list comprehension
+    # Method 3: str.translate
+    # trans = str.maketrans('aeiouAEIOU', vowel * 5 + vowel.upper() * 5)
+    # text = text.translate(trans)
+
+    # Method 4: Use a list comprehension
     # new_text = [
     #     vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
     #     for c in text
     # ]
     # text = ''.join(new_text)
 
-    # Method 4: Define a function, use list comprehension
+    # Method 5: Define a function, use list comprehension
     def new_char(c):
         return vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
 
     # text = ''.join([new_char(c) for c in text])
 
-    # Method 5: Use a `map` to iterate with a `lambda`
+    # Method 6: Use a `map` to iterate with a `lambda`
     # text = ''.join(
     #     map(
     #         lambda c: vowel if c in 'aeiou' else vowel.upper()
     #         if c in 'AEIOU' else c, text))
 
-    # Method 6: `map` with the function
+    # Method 7: `map` with the function
     text = ''.join(map(new_char, text))
 
-    # Method 7: Regular expressions
+    # Method 8: Regular expressions
     # text = re.sub('[aeiou]', vowel, text)
     # text = re.sub('[AEIOU]', vowel.upper(), text)
 
