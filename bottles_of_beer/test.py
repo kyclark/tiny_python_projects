@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 """tests for bottles.py"""
 
+import os
 import re
 import random
 import hashlib
-from subprocess import getstatusoutput, getoutput
+from subprocess import getstatusoutput
 
 prg = './bottles.py'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
@@ -20,7 +28,36 @@ def test_usage():
 
 
 # --------------------------------------------------
+def test_bad_int():
+    """Bad integer value"""
+
+    rv, out = getstatusoutput('{} -n -1'.format(prg))
+    assert rv != 0
+    assert re.search(r'--num_bottles \(-1\) must > 0', out)
+
+
+# --------------------------------------------------
+def test_float():
+    """float value"""
+
+    rv, out = getstatusoutput('{} -n 2.1'.format(prg))
+    assert rv != 0
+    assert re.search(r"invalid int value: '2.1'", out)
+
+
+# --------------------------------------------------
+def test_str():
+    """str value"""
+
+    rv, out = getstatusoutput('{} -n lsdfkl'.format(prg))
+    assert rv != 0
+    assert re.search(r"invalid int value: 'lsdfkl'", out)
+
+
+# --------------------------------------------------
 def test_one():
+    """One bottle of beer"""
+
     expected = ('1 bottle of beer on the wall,\n'
                 '1 bottle of beer,\n'
                 'Take one down, pass it around,\n'
@@ -33,6 +70,8 @@ def test_one():
 
 # --------------------------------------------------
 def test_two():
+    """Two bottles of beer"""
+
     expected = ('2 bottles of beer on the wall,\n'
                 '2 bottles of beer,\n'
                 'Take one down, pass it around,\n'
@@ -49,6 +88,8 @@ def test_two():
 
 # --------------------------------------------------
 def test_random():
+    """Random number"""
+
     sums = dict(
         map(lambda x: x.split('\t'),
             open('sums.txt').read().splitlines()))

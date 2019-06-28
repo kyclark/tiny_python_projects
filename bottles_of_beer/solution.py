@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
+"""Bottle of beer song"""
 
 import argparse
-import sys
-from dire import die
 
 
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Bottles of beer song',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -19,28 +19,33 @@ def get_args():
                         default=10,
                         help='How many bottles')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if args.num_bottles < 1:
+        parser.error('--num_bottles ({}) must > 0'.format(args.num_bottles))
+
+    return args
 
 
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
-    num_bottles = args.num_bottles
+    tmpl = '\n'.join([
+        '{} bottle{} of beer on the wall,',
+        '{} bottle{} of beer,',
+        'Take one down, pass it around,',
+        '{} bottle{} of beer on the wall!',
+    ])
 
-    if num_bottles < 1:
-        die('N ({}) must be a positive integer'.format(num_bottles))
-
-    line1 = '{} bottle{} of beer on the wall'
-    line2 = '{} bottle{} of beer'
-    line3 = 'Take one down, pass it around'
-    tmpl = ',\n'.join([line1, line2, line3, line1 + '!'])
-
-    for n in reversed(range(1, num_bottles + 1)):
-        s1 = '' if n == 1 else 's'
-        s2 = '' if n - 1 == 1 else 's'
-        print(tmpl.format(n, s1, n, s1, n - 1, s2))
-        if n > 1: print()
+    for bottle in reversed(range(1, args.num_bottles + 1)):
+        next_bottle = bottle - 1
+        s1 = '' if bottle == 1 else 's'
+        s2 = '' if next_bottle == 1 else 's'
+        print(tmpl.format(bottle, s1, bottle, s1, next_bottle, s2))
+        if bottle > 1:
+            print()
 
 
 # --------------------------------------------------

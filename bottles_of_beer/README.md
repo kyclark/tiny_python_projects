@@ -1,68 +1,6 @@
 # Bottles of Beer Song
 
-Write a Python program called `bottles.py` that takes a single option `-n|--num_bottles` which is an positive integer (default 10) and prints the "<N> bottles of beer on the wall song." If the `-n` argument is less than 1, die with "N (<N>) must be a positive integer". The program should also respond to `-h|--help` with a usage statement.
-
-I'd encourage you to think about the program as a formal algorithm. Read the introduction to Jeff Erickson's book _Algorithms_ available here:
-
-* http://jeffe.cs.illinois.edu/teaching/algorithms/#book
-* http://jeffe.cs.illinois.edu/teaching/algorithms/book/00-intro.pdf
-
-
-You are going to need to count down, so you'll need to consider how to do that. First, let's examine a list and see how it can be sorted and reversed. We've already used the `sorted` *function*, but we haven't really talked about the `list` class's `sort` *method*. Note that the former does not mutate the list itself:
-
-````
->>> a = ['foo', 'bar', 'baz']
->>> sorted(a)
-['bar', 'baz', 'foo']
->>> a
-['foo', 'bar', 'baz']
-````
-
-But the `sort` method does:
-
-````
->>> a.sort()
->>> a
-['bar', 'baz', 'foo']
-````
-
-Also, note what is returned by `sort`:
-
-````
->>> type(a.sort())
-<type 'NoneType'>
-````
-
-So if you did this, you'd destroy your data:
-
-````
->>> a = a.sort()
->>> a
-````
-
-As with `sort`/`sorted`, so it goes with `reverse`/`reversed`. The past participle version *returns a new copy of the data without affecting the original* and is therefore the safest bet to use:
-
-````
->>> a = ['foo', 'bar', 'baz']
->>> a
-['foo', 'bar', 'baz']
->>> reversed(a)
-<listreverseiterator object at 0x10f0d61d0>
->>> list(reversed(a))
-['baz', 'bar', 'foo']
->>> a
-['foo', 'bar', 'baz']
-````
-
-Compare with:
-
-````
->>> a.reverse()
->>> a
-['baz', 'bar', 'foo']
-````
-
-Given that and your knowledge of how `range` works, can you figure out how to count down, say, from 10 to 1?
+Write a Python program called `bottles.py` that takes a single option `-n|--num_bottles` which is an positive integer (default `10`) and prints the "<N> bottles of beer on the wall song." The program should also respond to `-h|--help` with a usage statement:
 
 ````
 $ ./bottles.py -h
@@ -73,15 +11,30 @@ Bottles of beer song
 optional arguments:
   -h, --help            show this help message and exit
   -n INT, --num_bottles INT
-$ ./bottles.py --help
+````
+
+If the `-n` argument is not an integer value, print an error message and stop the program:
+
+````
+$ ./bottles.py -n foo
 usage: bottles.py [-h] [-n INT]
+bottles.py: error: argument -n/--num_bottles: invalid int value: 'foo'
+$ ./bottles.py -n 2.4
+usage: bottles.py [-h] [-n INT]
+bottles.py: error: argument -n/--num_bottles: invalid int value: '2.4'
+````
 
-Bottles of beer song
+If the `-n` argument is less than 1, die with '--num_bottles (<N>) must be > 0'. 
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -n INT, --num_bottles INT
-                        How many bottles (default: 10)
+````
+$ ./bottles.py -n -1
+usage: bottles.py [-h] [-n INT]
+bottles.py: error: --num_bottles (-1) must > 0
+````
+
+If the argument is good, then print the appropriate number of verses:
+
+````					
 $ ./bottles.py -n 1
 1 bottle of beer on the wall,
 1 bottle of beer,
@@ -99,3 +52,59 @@ Take one down, pass it around,
 Take one down, pass it around,
 8 bottles of beer on the wall!
 ````
+
+Hints:
+
+* Start with `new.py` and add a named *option* with `-n` for the "short" flag and `--num_bottles` for the "long" flag name. Be sure to choose `int` for the `type`. Note that the `metavar` is just for displaying to the user and has no effect on validation the arguments `type`.
+* Look into `parser.error` for how to get `argparse` to printing an error message along with the usage and halt the program.
+* Be sure to make the "bottle" into the proper singular or plural depending on the number in the phrase, e.g., "1 bottle" or "0 bottles."
+* Either run your program or do `make test` after *every single change to your program* to ensure that it compiles and is getting closer to passing the tests. Do not change three things and then run it. Make one change, then run or test it.
+* If you use `make test`, it runs `pytest -xv test.py` where the `-x` flag tells `pytest` to stop after the first test failure. The tests are written in a order to help you complete the program. For instance, the first test just ensures that the program exists. The next one that you have some sort of handling of `--help` which would probably indicate that you're using `argparse` and so have defined your arguments. 
+* Just try to pass each test in order. Focus on just one thing at a time. Create the program. Add the help. Handle bad arguments. Print just one verse. Print two verses. Etc.
+* Read the next section on how to count down.
+
+## Counting down
+
+You are going to need to count down, so you'll need to consider how to do that. You can use `range` to get a list of integers from some a "start" (default `0`, inclusive) to an "stop" (not inclusive). The `range` function is "lazy" in that it won't actually generate the list until you ask for the numbers, so I could create a `range` generator for an absurdly large number like `range(10**1000)` and the REPL returns immediately. Try it! To force *see* the list of numbers, I can coerce it into a `list`:
+
+````
+>>> list(range(10))
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+````
+
+OK, so maybe you were expecting the numbers 1-10? Welcome to "computer science" where we often starting counting at `0` and are quite often "off-by-one." To count 1 to 10, I have to do this:
+
+````
+>>> list(range(1, 11))
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+````
+
+Cool, cool, but we actually need to count *down*. You saw that this function works differently depending on whether you give it one argument (`10`) or two (`1, 11`). It also will do something different if you give it a third argument that represents the "step" of the numbers. So, to list every other number:
+
+````
+>>> list(range(1, 11, 2))
+[1, 3, 5, 7, 9]
+````
+
+And to count *down*, reverse the start and stop and use `-1` for the step:
+
+````
+>>> list(range(11, 1, -1))
+[11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+````
+
+Wait, what? OK, the start number is inclusive and the stop is not. Try again:
+
+````
+>>> list(range(10, 0, -1))
+[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+````
+
+There's a slightly easier way to get that list by using the `reversed` function:
+
+````
+>>> list(reversed(range(1, 11)))
+[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+````
+
+
