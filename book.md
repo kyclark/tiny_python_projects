@@ -1,7 +1,12 @@
 \setcounter{tocdepth}{2}\tableofcontents
 \newpage
 
-# Playful Python
+---
+title: "Playful Python: Learning the language through games and puzzles"
+author: Ken Youens-Clark
+...
+
+# Introduction
 
 > "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
@@ -56,6 +61,10 @@ Your goal is to pass all the tests. The tests are written in an order designed t
 ## Author
 
 Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz at the University of Arizona. He started college as a music major at the University of North Texas but changed to English lit for his BA in 1995. He started programming at his first job out of college, working through several languages and companies before landing in bioinformatics in 2001. In 2019 he earned his MS in Biosystems Engineering, and enjoys helping people learn programming. When he's not working, he likes playing music, riding bikes, cooking, and being with his wife and children.
+
+## Copyright
+
+© Ken Youens-Clark 2019
 
 \newpage
 
@@ -134,6 +143,8 @@ The goal is to get the reader to become a *writer* -- to try to solve the proble
 
 Write a Python program called `article.py` that will select `a` or `an` for a given word depending on whether the word starts with a consonant or vowel, respectively.
 
+When run with no arguments or the `-h|--help` flags, it should print a usage statement:
+
 ````
 $ ./article.py
 usage: article.py [-h] str
@@ -148,11 +159,29 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+````
+
+When run with a single positional argument, it should print the correct article and the given argument. 
+
+````
 $ ./article.py bear
 a bear
-$ ./article.py octopus
-an octopus
+$ ./article.py Octopus
+an Octopus
 ````
+
+The tests will only give you words that start with an actual alphabetic character, so you won't have to detect numbers or punctuation or other weird stuff. Still, how might you extend the program to ensure that given argument only starts with one of the 26 characters of the English alphabest?
+
+Hints:
+
+* Start your program with `new.py` and fill in the `get_args` with a single position argument called `word`.
+* You can get the first character of the word by indexing it like a list, `word[0]`.
+* Unless you want to check both upper- and lowercase letters, you can use either the `str.lower` or `str.upper` method to force the input to one case for checking if the first character is a vowel or consonant.
+* There are fewer vowels (five, if you recall), so it's probably easier to check if the first character is one of those.
+* You can use the `x in y` syntax to see if the element `x` is `in` the collection `y` where "collection" here is a `list`.
+* For the purposes of `x in y`, a string (`str`) is a `list` of characters, so you could ask if a character is in a string.
+* Use the `print` function to print out the article joined to the argument. Put a single space in between.
+* Run `make test` (or `pytest -xv test.py`) *after every change to your program*to ensure your program compiles and is on the right track. 
 
 \newpage
 
@@ -197,8 +226,6 @@ an octopus
 
 ## Discussion
 
-Cf Appendices: argparse, Truthiness
-
 As with all the solutions presented, this assumes you have stubbed the program with `new.py` and that you are using the `argparse` module. I suggest putting this logic into a separate function which here is called `get_args` and which I like to define first so that I can see right away when I'm reading the program what the program expects as input. On line 12, I set the `description` for the program that will be displayed with the help documentation. On line 15, I indicate that the program expects just one *positional* argument, no more, no less. Since it is a "word" that I expect, I called the argument `word` which is also how I will access the value on line 25. I use the `metavar` on line 15 to let the user know that this should be a string. 
 
 The `get_args` function will `return` the result of parsing the command line arguments which I put into the variable `args` on line 24. I can now access the `word` by call `args.word`. Note the lack of parentheses -- it's not `args.word()` -- as this is not a function call. Think of it like a slot where the value lives. 
@@ -219,7 +246,7 @@ To decide if the given word starts with a vowel, we ask is `word[0].lower() in  
 'APPLE'
 ````
 
-The `X in Y` form is a way to ask if element `X` is in the collection `Y`:
+The `x in y` form is a way to ask if element `x` is in the collection `y`:
 
 ````
 >>> 'a' in 'abc'
@@ -232,7 +259,7 @@ True
 False
 ````
 
-The `if` *expression* is different from an `if` *statement*. An expression returns a value, and a statement does not. The `if` expression must have an `else`, but the `if` statement does not have this requirement.  The first value is returned if the predicate (the bit after the `if`) evaluates to `True` in a Boolean context (cf. "Truthiness"), otherwise the last value is returned:
+The `if` *expression* (also called a "ternary" expression) is different from an `if` *statement*. An *expression* returns a value, and a statement does not. The `if` expression must have an `else`, but the `if` statement does not have this requirement.  The first value is returned if the predicate (the bit after the `if`) evaluates to `True` in a Boolean context (cf. "Truthiness"), otherwise the last value is returned:
 
 ````
 >>> 'Hooray!' if True else 'Shucks!'
@@ -257,7 +284,7 @@ if word[0].lower() in 'aeiou':
     article = 'a'
 ````
 
-
+Cf. appendices: argparse, Truthiness
 
 \newpage
 
@@ -288,6 +315,11 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+````
+
+Your program should replace numbers *anywhere* in the input string:
+
+````  
 $ ./jump.py 555-1212
 000-9898
 $ ./jump.py 'Call 1-800-329-8044 today!'
@@ -360,7 +392,7 @@ I suggested you could represent the substitution table as a `dict` which is what
 <class 'int'>
 ````
 
-To process the `text` by individual character (`char`), we can use a `for` loop on line 29. Like in the `article` solution, I decided to use an `if` *expression* where I look to see if the `char` is `in` the `jumper` dictionary. In the `article`, you saw we asked if a character was in the string `'aeiou'` (which can also be thought of as a `list` of characters). Here when we ask if a `char` (which is a string) is `in` a `dict`, Python looks to see if there is a key in the dictionary with that value. So if `char` is `'4'`, then we will print `jumper['4']` which is `'6'`. If the `char` is not in `jumper` (meaning it's not a digit), then we print `char`.
+To process the `text` by individual character (`char`), we can use a `for` loop on line 29. Like in the `article` solution, I decided to use an `if` *expression* where I look to see if the `char` is `in` the `jumper` dictionary. In the `article`, you saw we asked if a character was in the string `'aeiou'` (which can also be thought of as a `list` of characters). Here when we ask if a `char` (which is a string) is `in` a `dict`, Python looks to see if there is a **key** in the dictionary with that value. So if `char` is `'4'`, then we will print `jumper['4']` which is `'6'`. If the `char` is not in `jumper` (meaning it's not a digit), then we print `char`.
 
 Another way you could have solved this would be to use the `str.translate` method which needs a translation table that you can make with the `str.maketrans` method:
 
@@ -1094,69 +1126,7 @@ But I find that fairly hard to read.
 
 # Chapter 6: Bottles of Beer Song
 
-Write a Python program called `bottles.py` that takes a single option `-n|--num_bottles` which is an positive integer (default 10) and prints the "<N> bottles of beer on the wall song." If the `-n` argument is less than 1, die with "N (<N>) must be a positive integer". The program should also respond to `-h|--help` with a usage statement.
-
-I'd encourage you to think about the program as a formal algorithm. Read the introduction to Jeff Erickson's book _Algorithms_ available here:
-
-* http://jeffe.cs.illinois.edu/teaching/algorithms/#book
-* http://jeffe.cs.illinois.edu/teaching/algorithms/book/00-intro.pdf
-
-
-You are going to need to count down, so you'll need to consider how to do that. First, let's examine a list and see how it can be sorted and reversed. We've already used the `sorted` *function*, but we haven't really talked about the `list` class's `sort` *method*. Note that the former does not mutate the list itself:
-
-````
->>> a = ['foo', 'bar', 'baz']
->>> sorted(a)
-['bar', 'baz', 'foo']
->>> a
-['foo', 'bar', 'baz']
-````
-
-But the `sort` method does:
-
-````
->>> a.sort()
->>> a
-['bar', 'baz', 'foo']
-````
-
-Also, note what is returned by `sort`:
-
-````
->>> type(a.sort())
-<type 'NoneType'>
-````
-
-So if you did this, you'd destroy your data:
-
-````
->>> a = a.sort()
->>> a
-````
-
-As with `sort`/`sorted`, so it goes with `reverse`/`reversed`. The past participle version *returns a new copy of the data without affecting the original* and is therefore the safest bet to use:
-
-````
->>> a = ['foo', 'bar', 'baz']
->>> a
-['foo', 'bar', 'baz']
->>> reversed(a)
-<listreverseiterator object at 0x10f0d61d0>
->>> list(reversed(a))
-['baz', 'bar', 'foo']
->>> a
-['foo', 'bar', 'baz']
-````
-
-Compare with:
-
-````
->>> a.reverse()
->>> a
-['baz', 'bar', 'foo']
-````
-
-Given that and your knowledge of how `range` works, can you figure out how to count down, say, from 10 to 1?
+Write a Python program called `bottles.py` that takes a single option `-n|--num` which is an positive integer (default `10`) and prints the "<N> bottles of beer on the wall song." The program should also respond to `-h|--help` with a usage statement:
 
 ````
 $ ./bottles.py -h
@@ -1165,17 +1135,32 @@ usage: bottles.py [-h] [-n INT]
 Bottles of beer song
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -n INT, --num_bottles INT
-$ ./bottles.py --help
+  -h, --help         show this help message and exit
+  -n INT, --num INT  How many bottles (default: 10)
+````
+
+If the `--num` argument is not an integer value, print an error message and stop the program:
+
+````
+$ ./bottles.py -n foo
 usage: bottles.py [-h] [-n INT]
+bottles.py: error: argument -n/--num: invalid int value: 'foo'
+$ ./bottles.py -n 2.4
+usage: bottles.py [-h] [-n INT]
+bottles.py: error: argument -n/--num: invalid int value: '2.4'
+````
 
-Bottles of beer song
+If the `-n` argument is less than 1, die with '--num (<N>) must be > 0'. 
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -n INT, --num_bottles INT
-                        How many bottles (default: 10)
+````
+$ ./bottles.py -n -1
+usage: bottles.py [-h] [-n INT]
+bottles.py: error: --num (-1) must > 0
+````
+
+If the argument is good, then print the appropriate number of verses:
+
+````					
 $ ./bottles.py -n 1
 1 bottle of beer on the wall,
 1 bottle of beer,
@@ -1194,61 +1179,77 @@ Take one down, pass it around,
 8 bottles of beer on the wall!
 ````
 
+Hints:
+
+* Start with `new.py` and add a named *option* with `-n` for the "short" flag and `--num_bottles` for the "long" flag name. Be sure to choose `int` for the `type`. Note that the `metavar` is just for displaying to the user and has no effect on validation the arguments `type`.
+* Look into `parser.error` for how to get `argparse` to printing an error message along with the usage and halt the program.
+* Be sure to make the "bottle" into the proper singular or plural depending on the number in the phrase, e.g., "1 bottle" or "0 bottles."
+* Either run your program or do `make test` after *every single change to your program* to ensure that it compiles and is getting closer to passing the tests. Do not change three things and then run it. Make one change, then run or test it.
+* If you use `make test`, it runs `pytest -xv test.py` where the `-x` flag tells `pytest` to stop after the first test failure. The tests are written in a order to help you complete the program. For instance, the first test just ensures that the program exists. The next one that you have some sort of handling of `--help` which would probably indicate that you're using `argparse` and so have defined your arguments. 
+* Just try to pass each test in order. Focus on just one thing at a time. Create the program. Add the help. Handle bad arguments. Print just one verse. Print two verses. Etc.
+* Read the next section on how to count down.
+
+## Counting down
+
+You are going to need to count down, so you'll need to consider how to do that. You can use `range` to get a list of integers from some a "start" (default `0`, inclusive) to an "stop" (not inclusive). The `range` function is "lazy" in that it won't actually generate the list until you ask for the numbers, so I could create a `range` generator for an absurdly large number like `range(10**1000)` and the REPL returns immediately. Try it! To force *see* the list of numbers, I can coerce it into a `list`:
+
+````
+>>> list(range(10))
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+````
+
+OK, so maybe you were expecting the numbers 1-10? Welcome to "computer science" where we often starting counting at `0` and are quite often "off-by-one." To count 1 to 10, I have to do this:
+
+````
+>>> list(range(1, 11))
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+````
+
+Cool, cool, but we actually need to count *down*. You saw that this function works differently depending on whether you give it one argument (`10`) or two (`1, 11`). It also will do something different if you give it a third argument that represents the "step" of the numbers. So, to list every other number:
+
+````
+>>> list(range(1, 11, 2))
+[1, 3, 5, 7, 9]
+````
+
+And to count *down*, reverse the start and stop and use `-1` for the step:
+
+````
+>>> list(range(11, 1, -1))
+[11, 10, 9, 8, 7, 6, 5, 4, 3, 2]
+````
+
+Wait, what? OK, the start number is inclusive and the stop is not. Try again:
+
+````
+>>> list(range(10, 0, -1))
+[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+````
+
+There's a slightly easier way to get that list by using the `reversed` function:
+
+````
+>>> list(reversed(range(1, 11)))
+[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+````
+
+
+
 \newpage
 
-## Solution
+## Discussion
+
+If you used `new.py` and `argparse` to get started, then about 1/4 of the program is done for you. If you define an argument with the appropriate "short" (a dash plus one character) and "long" names (two dashes and a longer bit) with `type=int` and `default=10`, then `argparse` will do loads of hard work to ensure the user provides you with the correct input. We can't easily tell `argparse` that the number has to be a *positive* integer without defining a new "type", but it's fairly painless to add a check and use `parser.error` to both print an error message plus the usage and halt the execution of the program.
+
+Earlier programs have the last line of `get_args` as:
 
 ````
-     1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import sys
-     5	from dire import die
-     6	
-     7	
-     8	# --------------------------------------------------
-     9	def get_args():
-    10	    """get command-line arguments"""
-    11	    parser = argparse.ArgumentParser(
-    12	        description='Bottles of beer song',
-    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    14	
-    15	    parser.add_argument('-n',
-    16	                        '--num_bottles',
-    17	                        metavar='INT',
-    18	                        type=int,
-    19	                        default=10,
-    20	                        help='How many bottles')
-    21	
-    22	    return parser.parse_args()
-    23	
-    24	
-    25	# --------------------------------------------------
-    26	def main():
-    27	    """Make a jazz noise here"""
-    28	    args = get_args()
-    29	    num_bottles = args.num_bottles
-    30	
-    31	    if num_bottles < 1:
-    32	        die('N ({}) must be a positive integer'.format(num_bottles))
-    33	
-    34	    line1 = '{} bottle{} of beer on the wall'
-    35	    line2 = '{} bottle{} of beer'
-    36	    line3 = 'Take one down, pass it around'
-    37	    tmpl = ',\n'.join([line1, line2, line3, line1 + '!'])
-    38	
-    39	    for n in reversed(range(1, num_bottles + 1)):
-    40	        s1 = '' if n == 1 else 's'
-    41	        s2 = '' if n - 1 == 1 else 's'
-    42	        print(tmpl.format(n, s1, n, s1, n - 1, s2))
-    43	        if n > 1: print()
-    44	
-    45	
-    46	# --------------------------------------------------
-    47	if __name__ == '__main__':
-    48	    main()
+return parser.parse_args()
 ````
 
+But here we capture the arguments inside `get_args` and add a bit of validation. If `args.num_bottles` is less than one, we call `parser.error` with the message we want to tell the user. We don't have to tell the program to stop executing as `argparse` will exit immediately. Even better is that it will indicate a non-zero exit value to the operating system to indicate there was some sort of error. If you ever start writing command-line programs that chain together to make workflows, this is a way for one program to indicate failure and halt the entire process until the error has been fixed!
+
+Once you get to the line `args = get_args()` in `main`, a great deal of hard work has already occurred to get and validate the input from the user. From here, I decided to create a template for the song putting `{}` in the spots that change from verse to verse. Then I use the `reversed(range(...))` bit we discussed before to count down, with a `for` loop, using the current number `bottle` and `next_bottle` to print out the verse noting the presence or absence of the `s` where appropriate.
 \newpage
 
 # Chapter 7: Gashlycrumb

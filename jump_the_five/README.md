@@ -25,6 +25,11 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+````
+
+Your program should replace numbers *anywhere* in the input string:
+
+````  
 $ ./jump.py 555-1212
 000-9898
 $ ./jump.py 'Call 1-800-329-8044 today!'

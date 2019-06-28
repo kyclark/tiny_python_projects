@@ -1,4 +1,9 @@
-# Playful Python
+---
+title: "Playful Python: Learning the language through games and puzzles"
+author: Ken Youens-Clark
+...
+
+# Introduction
 
 > "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
@@ -53,3 +58,7 @@ Your goal is to pass all the tests. The tests are written in an order designed t
 ## Author
 
 Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz at the University of Arizona. He started college as a music major at the University of North Texas but changed to English lit for his BA in 1995. He started programming at his first job out of college, working through several languages and companies before landing in bioinformatics in 2001. In 2019 he earned his MS in Biosystems Engineering, and enjoys helping people learn programming. When he's not working, he likes playing music, riding bikes, cooking, and being with his wife and children.
+
+## Copyright
+
+© Ken Youens-Clark 2019

@@ -1,6 +1,6 @@
 # Bottles of Beer Song
 
-Write a Python program called `bottles.py` that takes a single option `-n|--num_bottles` which is an positive integer (default `10`) and prints the "<N> bottles of beer on the wall song." The program should also respond to `-h|--help` with a usage statement:
+Write a Python program called `bottles.py` that takes a single option `-n|--num` which is an positive integer (default `10`) and prints the "<N> bottles of beer on the wall song." The program should also respond to `-h|--help` with a usage statement:
 
 ````
 $ ./bottles.py -h
@@ -9,27 +9,27 @@ usage: bottles.py [-h] [-n INT]
 Bottles of beer song
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -n INT, --num_bottles INT
+  -h, --help         show this help message and exit
+  -n INT, --num INT  How many bottles (default: 10)
 ````
 
-If the `-n` argument is not an integer value, print an error message and stop the program:
+If the `--num` argument is not an integer value, print an error message and stop the program:
 
 ````
 $ ./bottles.py -n foo
 usage: bottles.py [-h] [-n INT]
-bottles.py: error: argument -n/--num_bottles: invalid int value: 'foo'
+bottles.py: error: argument -n/--num: invalid int value: 'foo'
 $ ./bottles.py -n 2.4
 usage: bottles.py [-h] [-n INT]
-bottles.py: error: argument -n/--num_bottles: invalid int value: '2.4'
+bottles.py: error: argument -n/--num: invalid int value: '2.4'
 ````
 
-If the `-n` argument is less than 1, die with '--num_bottles (<N>) must be > 0'. 
+If the `-n` argument is less than 1, die with '--num (<N>) must be > 0'. 
 
 ````
 $ ./bottles.py -n -1
 usage: bottles.py [-h] [-n INT]
-bottles.py: error: --num_bottles (-1) must > 0
+bottles.py: error: --num (-1) must > 0
 ````
 
 If the argument is good, then print the appropriate number of verses:

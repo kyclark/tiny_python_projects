@@ -33,14 +33,14 @@ def test_bad_int():
 
     rv, out = getstatusoutput('{} -n -1'.format(prg))
     assert rv != 0
-    assert re.search(r'--num_bottles \(-1\) must > 0', out)
+    assert re.search(r'--num \(-1\) must > 0', out)
 
 
 # --------------------------------------------------
 def test_float():
     """float value"""
 
-    rv, out = getstatusoutput('{} -n 2.1'.format(prg))
+    rv, out = getstatusoutput('{} --num 2.1'.format(prg))
     assert rv != 0
     assert re.search(r"invalid int value: '2.1'", out)
 
@@ -63,7 +63,7 @@ def test_one():
                 'Take one down, pass it around,\n'
                 '0 bottles of beer on the wall!')
 
-    rv, out = getstatusoutput('{} -n 1'.format(prg))
+    rv, out = getstatusoutput('{} --num 1'.format(prg))
     assert rv == 0
     assert out == expected
 
@@ -95,7 +95,7 @@ def test_random():
             open('sums.txt').read().splitlines()))
 
     for n in random.choices(list(sums.keys()), k=10):
-        flag = '-n' if random.choice([0, 1]) == 1 else '--num_bottles'
+        flag = '-n' if random.choice([0, 1]) == 1 else '--num'
         rv, out = getstatusoutput('{} {} {}'.format(prg, flag, n))
         out += '\n'  # because the last newline is removed
         assert rv == 0

@@ -1,5 +1,3 @@
-Cf Appendices: argparse, Truthiness
-
 As with all the solutions presented, this assumes you have stubbed the program with `new.py` and that you are using the `argparse` module. I suggest putting this logic into a separate function which here is called `get_args` and which I like to define first so that I can see right away when I'm reading the program what the program expects as input. On line 12, I set the `description` for the program that will be displayed with the help documentation. On line 15, I indicate that the program expects just one *positional* argument, no more, no less. Since it is a "word" that I expect, I called the argument `word` which is also how I will access the value on line 25. I use the `metavar` on line 15 to let the user know that this should be a string. 
 
 The `get_args` function will `return` the result of parsing the command line arguments which I put into the variable `args` on line 24. I can now access the `word` by call `args.word`. Note the lack of parentheses -- it's not `args.word()` -- as this is not a function call. Think of it like a slot where the value lives. 
@@ -20,7 +18,7 @@ To decide if the given word starts with a vowel, we ask is `word[0].lower() in  
 'APPLE'
 ````
 
-The `X in Y` form is a way to ask if element `X` is in the collection `Y`:
+The `x in y` form is a way to ask if element `x` is in the collection `y`:
 
 ````
 >>> 'a' in 'abc'
@@ -33,7 +31,7 @@ True
 False
 ````
 
-The `if` *expression* is different from an `if` *statement*. An expression returns a value, and a statement does not. The `if` expression must have an `else`, but the `if` statement does not have this requirement.  The first value is returned if the predicate (the bit after the `if`) evaluates to `True` in a Boolean context (cf. "Truthiness"), otherwise the last value is returned:
+The `if` *expression* (also called a "ternary" expression) is different from an `if` *statement*. An *expression* returns a value, and a statement does not. The `if` expression must have an `else`, but the `if` statement does not have this requirement.  The first value is returned if the predicate (the bit after the `if`) evaluates to `True` in a Boolean context (cf. "Truthiness"), otherwise the last value is returned:
 
 ````
 >>> 'Hooray!' if True else 'Shucks!'
@@ -58,4 +56,4 @@ if word[0].lower() in 'aeiou':
     article = 'a'
 ````
 
-
+Cf. appendices: argparse, Truthiness

@@ -97,7 +97,7 @@ def main():
             fh.write(open(outline).read())
             fh.write('\n\\newpage\n\n')
 
-        for i, dir_name in enumerate(map(str.rstrip, open(chapters)), 1):
+        for i, dir_name in enumerate(map(str.rstrip, filter(lambda s: s[0] != '#', open(chapters))), 1):
             print('Chapter {}: {}'.format(i, dir_name))
             readme = os.path.join(in_dir, dir_name, 'README.md')
             if os.path.isfile(readme):
