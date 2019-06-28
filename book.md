@@ -3122,7 +3122,259 @@ You should be able to handle this in your inifinite game loop.
 
 \newpage
 
-# Chapter 21: Kentucky Friar
+# Chapter 21: Mommy's Little (Crossword) Helper
+
+Write a Python program called `helper.py` that finds all words matching a given `-p|--pattern` such as one might use to complete a crossword puzzle to find words matching from a given `-w|--wordlist` (default `/usr/share/dict/words`). E.g., all 5-letter words with a "t" as the second character and ending in "ed". I could do this on the command line like so:
+
+````
+$ grep '^.t' /usr/share/dict/words | grep 'ed$' | awk 'length($0) == 5'
+steed
+````
+
+Here is how a program could look:
+
+````
+$ ./helper.py
+usage: helper.py [-h] [-w str] str
+helper.py: error: the following arguments are required: str
+$ ./helper.py -h
+usage: helper.py [-h] [-w str] str
+
+Crossword helper
+
+positional arguments:
+  str                   The pattern to search
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -w str, --wordlist str
+                        Wordlist to search (default: /usr/share/dict/words)
+````
+
+We'll use an underscore (`_`) to indicate a blank and supply any known letters, e.g., the example above would be `_t_ed`:
+
+````
+$ ./helper.py _t_ed
+  1: steed
+````
+
+Or 6-letter words beginning with "ex" and ending in "s":
+
+````
+$ ./helper.py ex___s
+  1: excess
+  2: excuss
+  3: exitus
+  4: exodos
+  5: exodus
+  6: exomis
+````
+
+## Hints
+
+* If you know about regular expressions, that is a natural way to solve this problem. See how elegantly you can solve the problem. 
+* Even if you do know how to solve use regexes, try solving without them.
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Crossword helper"""
+     3	
+     4	import argparse
+     5	import os
+     6	import re
+     7	import sys
+     8	from typing import List, TextIO
+     9	
+    10	
+    11	# --------------------------------------------------
+    12	def get_args() -> argparse.Namespace:
+    13	    """Get command-line arguments"""
+    14	
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Crossword helper',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('pattern', metavar='str', help='The pattern to search')
+    20	
+    21	    parser.add_argument('-w',
+    22	                        '--wordlist',
+    23	                        help='Wordlist to search',
+    24	                        metavar='str',
+    25	                        type=argparse.FileType('r'),
+    26	                        default='/usr/share/dict/words')
+    27	
+    28	    return parser.parse_args()
+    29	
+    30	
+    31	# --------------------------------------------------
+    32	def regex_solution(pattern: str, wordlist: TextIO) -> List[str]:
+    33	    """Using regular expressions"""
+    34	
+    35	    regex = r'\b{}\b'.format(pattern.replace('_', '.'))
+    36	    return re.findall(regex, wordlist.read())
+    37	
+    38	
+    39	# --------------------------------------------------
+    40	def manual_solution(pattern: str, wordlist: TextIO) -> List[str]:
+    41	    """Not using regular expressions"""
+    42	
+    43	    letters = [t for t in enumerate(pattern) if t[1] != '_']
+    44	    #letters = filter(lambda t: t[1] != '_', enumerate(pattern))
+    45	    wanted_len = len(pattern)
+    46	    words = []
+    47	
+    48	    for word in wordlist.read().split():
+    49	        if len(word) == wanted_len and all(
+    50	            [word[i] == char for i, char in letters]):
+    51	            words.append(word)
+    52	
+    53	    return words
+    54	
+    55	
+    56	# --------------------------------------------------
+    57	def main():
+    58	    """Make a jazz noise here"""
+    59	
+    60	    args = get_args()
+    61	    words = regex_solution(args.pattern, args.wordlist)
+    62	    #words = manual_solution(args.pattern, args.wordlist)
+    63	
+    64	    if words:
+    65	        for i, word in enumerate(words, start=1):
+    66	            print('{:3}: {}'.format(i, word))
+    67	    else:
+    68	        print('Found no words matching "{}".'.format(args.pattern))
+    69	
+    70	
+    71	# --------------------------------------------------
+    72	if __name__ == '__main__':
+    73	    main()
+````
+
+\newpage
+
+## Discussion
+
+I rely on `argparse` so very much, and this example is no different. I define a `pattern` as a positional argument and a the `--wordlist` option as a readable file type that has a reasonable default. With this definition, I can safely `read()` the word list argument to get the entire contents of the file. I decided to show two ways to solve the problem, both of which take the `pattern` (a `str`) and the `wordlist` as an open file handle (`TextIO`).
+
+## Regular Expressions
+
+The `regex_solution` could be one line, but I wrote it in two for readability. The `pattern` uses underscores (`_`) to indicate a character. In regular expressions, the `.` is how we represent one of any character, so we can use `str.replace` to change those:
+
+````
+>>> pattern = '_t_ed'
+>>> pattern.replace('_', '.')
+'.t.ed'
+````
+
+I could have chosen to use `wordlist.read().split()` to get a list of each word (`List[str]`) and then used a pattern that anchors the above to the beginning (`^`) and end (`$`) of each word:
+
+````
+>>> regex = '^{}$'.format(pattern.replace('_', '.'))
+>>> regex
+'^.t.ed$'
+````
+
+So that I could apply this to each word individually:
+
+````
+>>> import re
+>>> wordlist = open('/usr/share/dict/words')
+>>> [w for w in wordlist.read().split() if re.search(regex, w)]
+['steed']
+````
+
+That works just fine, but I chose instead to use the "word boundary" metacharacter `\b` to anchor the pattern to the beginning and end of each word so that I could `read()` the entire file as a stream. Note that it's important to enclose this pattern in a "raw" string with `r''` so that the `\b` is interpreted correctly. The `re.findall` method will return every match of the given pattern in a body of text.
+
+````
+>>> wordlist = open('/usr/share/dict/words')
+>>> regex = r'\b{}\b'.format(pattern.replace('_', '.'))
+>>> re.findall(regex, wordlist.read())
+['steed']
+````
+
+If I needed to get each `match` object, maybe to use the position of the match or whatnot, I would not use `re.findall`, but for this purpose it was exactly the right function. 
+
+## Manual Matching
+
+Trying to solve this without regular expressions can give you a real appreciation for exactly how much time regular expressions can save us. For my manual solution, I thought I would use two criteria to find matching words:
+
+1. The length of a word matches the length of the pattern
+2. The word has characters matching in the same positions as in the pattern
+
+For the second point, I thought a list of tuples show the position of each character that is not an underscore would be perfect. We can use `enumerate` on any list to give us position and value of each element. Note that I only need to use `list` here to force the REPL to evaluate the generator. 
+
+````
+>>> pattern = '_t_ed'
+>>> list(enumerate(pattern))
+[(0, '_'), (1, 't'), (2, '_'), (3, 'e'), (4, 'd')]
+````
+
+You don't need to use `list` in your code unless you will need to iterate the generated list more than once. This is because generators are lazy, hence they won't generate their values unless forced, and they can only be iterated once:
+
+````
+>>> g = enumerate(pattern)
+>>> list(g)
+[(0, '_'), (1, 't'), (2, '_'), (3, 'e'), (4, 'd')]
+>>> list(g)
+[]
+````
+
+I only care about the positions of the characters that are *not* underscores, so I can `filter` out the underscores. One limitation to the `lambda` is that is cannot unpack the tuple, so I use `t` to remind me of the type and use `[1]` to indicate the second part of the tuple which is the character. The `filter` will only allow those list elements to pass through for which the predicate (`lambda`) returns something "truthy."
+
+````
+>>> list(filter(lambda t: t[1] != '_', enumerate(pattern)))
+[(1, 't'), (3, 'e'), (4, 'd')]
+````
+
+If you don't care for `filter`, the same idea can be done with a list comprehension:
+
+````
+>>> [t for t in enumerate(pattern) if t[1] != '_']
+[(1, 't'), (3, 'e'), (4, 'd')]
+````
+
+One of the nicer things about this syntax is that you *can* unpack the tuple (but we need to return the tuple all the same):
+
+````
+>>> [(i, char) for i, char in enumerate(pattern) if char != '_']
+[(1, 't'), (3, 'e'), (4, 'd')]
+````
+
+For this solution, I do want to look at each word individually, so I call `for word in wordlist.read().split()` and then check first for the length. The second condition is a little trickier and worth exploring. I decided to use the `all` function to find if *all* the characters in the `pattern` are the same in the `word`. Here I use the list comprehension syntax to unpack the list of tuples in `letters` to get their positions (`i`) and characters (`char`) and check if the `word` at that position matches the character (`word[i] == char`):
+
+````
+>>> word = 'steed'
+>>> [word[i] == char for i, char in letters]
+[True, True, True]
+>>> word = 'steer'
+>>> [word[i] == char for i, char in letters]
+[True, True, False]
+````
+
+And then `all` will reduce it to a single value:
+
+````
+>>> word = 'steed'
+>>> all([word[i] == char for i, char in letters])
+True
+>>> word = 'steer'
+>>> all([word[i] == char for i, char in letters])
+False
+````
+
+If both conditions are `True` (same length, all characters the same), then I `append` the `word` to the list of `words` I finally `return` from the function.
+
+## Summary
+
+All that is left is to check if any words matched. If so, we print them out, numbered and nicely aligned; otherwise, we let the user know that no matches were found. I hope you tried solving this problem with and without regular expressions as there is much to learn by each method.
+\newpage
+
+# Chapter 22: Kentucky Friar
 
 Write a Python program called `friar.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
@@ -3219,7 +3471,7 @@ to go for a swing and maybe do some swimmin', too.
 
 \newpage
 
-# Chapter 22: Mad Libs
+# Chapter 23: Mad Libs
 
 Write a Python program called `mad_lib.py` that will read a file given as a positional argument and find all the placeholders noted in `<>`, e.g., `<verb>`, prompt the user for the part of speech being reuqested, e.g., a "verb", and then substitute that into the text of the file, finally printing out all the placeholders replaced by the user's inputs. By default, this is an interactive program that will use the `input` prompt to ask the user for their answers, but, for testing purposes, please add a `-i|--inputs` option so the test suite can pass in all the answers and bypass the `input` calls.
 
@@ -3341,7 +3593,7 @@ What here shall hammer, our toil shall strive to mend.
 
 \newpage
 
-# Chapter 23: License Plates
+# Chapter 24: License Plates
 
 Write a Python program called `license.py` that will create a regular expression for a license plate that accounts for characters and numbers which might be confused according to the following list:
 
@@ -3474,7 +3726,7 @@ In creating all the possible plates from your regular expression, you are making
 
 \newpage
 
-# Chapter 24: Markov Chains for Words
+# Chapter 25: Markov Chains for Words
 
 Write a Python program called `markov.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
@@ -3540,6 +3792,17 @@ $ ./markov.py ../inputs/const.txt -s 2 -k 3
   8: nmentyone
   9: effereof
  10: eipts
+$ ./markov.py -k 2 ../inputs/1945-boys.txt
+  1: baronaler
+  2: lip
+  3: oselli
+  4: ard
+  5: vicharley
+  6: melli
+  7: denry
+  8: jerictomank
+  9: rick
+ 10: larvichaell
 ````
 
 \newpage
@@ -3641,31 +3904,32 @@ $ ./markov.py ../inputs/const.txt -s 2 -k 3
     92	            kmer = random.choice(kmers)
     93	            if not kmer in starts and chains[kmer] and re.search(
     94	                    '[aeiou]', kmer):
-    95	                starts.add(kmer)
-    96	                word = kmer
-    97	
-    98	        length = random.choice(range(k + 2, args.max_word))
-    99	        logging.debug('Make a word {} long starting with "{}"'.format(
-   100	            length, word))
-   101	        while len(word) < length:
-   102	            if not chains[kmer]: break
-   103	            char = random.choice(list(chains[kmer]))
-   104	            logging.debug('char = "{}"'.format(char))
-   105	            word += char
-   106	            kmer = kmer[1:] + char
-   107	
-   108	        logging.debug('word = "{}"'.format(word))
-   109	        print('{:3}: {}'.format(i, word))
-   110	
+    95	                if k > 1:
+    96	                    starts.add(kmer)
+    97	                word = kmer
+    98	
+    99	        length = random.choice(range(k + 2, args.max_word))
+   100	        logging.debug('Make a word {} long starting with "{}"'.format(
+   101	            length, word))
+   102	        while len(word) < length:
+   103	            if not chains[kmer]: break
+   104	            char = random.choice(list(chains[kmer]))
+   105	            logging.debug('char = "{}"'.format(char))
+   106	            word += char
+   107	            kmer = kmer[1:] + char
+   108	
+   109	        logging.debug('word = "{}"'.format(word))
+   110	        print('{:3}: {}'.format(i, word))
    111	
-   112	# --------------------------------------------------
-   113	if __name__ == '__main__':
-   114	    main()
+   112	
+   113	# --------------------------------------------------
+   114	if __name__ == '__main__':
+   115	    main()
 ````
 
 \newpage
 
-# Chapter 25: Pig Latin
+# Chapter 26: Pig Latin
 
 Write a Python program named `piggie.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
@@ -3813,7 +4077,7 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
 
 \newpage
 
-# Chapter 26: Soundex Rhymer
+# Chapter 27: Soundex Rhymer
 
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, it would be best to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part. The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons.
 
@@ -3914,7 +4178,7 @@ clowring
 
 \newpage
 
-# Chapter 27: Substring Guessing Game
+# Chapter 28: Substring Guessing Game
 
 Write a Python program called `sub.py` that plays a guessing game where you read a `-f|--file` input (default `/usr/share/dict/words`) and use a given `-k|--ksize` to find all the words grouped by their shared kmers. Remove any kmers where the number of words is fewer than `-m|--min_words`. Also accept a `-s|--seed` for `random.seed` for testing purposes. Prompt the user to guess a word for a randomly chosen kmer. If their guess is not present in the shared list, taunt them mercilessly. If their guess is present, affirm their worth and prompt to guess again. Allow them to use `!` to quit and `?` to be provided a hint (a word from the list). For both successful guesses and hints, remove the word from the shared list. When they have quit or exhausted the list, quit play. At the end of the game, report the number of found words.
 
@@ -4125,7 +4389,7 @@ Hey, you found 2 words! Not bad.
 
 \newpage
 
-# Chapter 28: Tic-Tac-Toe Outcome
+# Chapter 29: Tic-Tac-Toe Outcome
 
 Create a Python program called `outcome.py` that takes a given Tic-Tac-Toe state as it's only (positional) argument and reports if X or O has won or if there is no winner. The state should only contain the characters ".", "O", and "X", and must be exactly 9 characters long. If there is not exactly one argument, print a "usage" statement.
 
@@ -4220,7 +4484,7 @@ X has won
 
 \newpage
 
-# Chapter 29: Twelve Days of Christmas
+# Chapter 30: Twelve Days of Christmas
 
 Write a Python program called `twelve_days.py` that will generate the "Twelve Days of Christmas" song up to the `-n|--number_days` argument (default `12`), writing the resulting text to the `-o|--outfile` argument (default STDOUT).
 
@@ -4355,7 +4619,7 @@ $ wc -l out
 
 \newpage
 
-# Chapter 30: War
+# Chapter 31: War
 
 > The generation of random numbers is too important to be left to chance. -- Robert R. Coveyou
 
@@ -4548,7 +4812,7 @@ P1 12 P2 12: DRAW
 
 \newpage
 
-# Chapter 31: Anagram
+# Chapter 32: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -4705,7 +4969,7 @@ $ ./presto.py listen -n 2 | tail
 
 \newpage
 
-# Chapter 32: Hangman
+# Chapter 33: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -4925,7 +5189,7 @@ You lose, loser!  The word was "metromania."
 
 \newpage
 
-# Chapter 33: First Bank of Change
+# Chapter 34: First Bank of Change
 
 Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100.
 
@@ -5157,7 +5421,7 @@ The `plural` version of each name is made by adding `s` except for `penny`, so l
 Finally lines 39-43 are left to formatting the report to the user, being sure to provide feedback that includes the original `value` ("If you give me ...") and an enumerated list of all the possible ways we could make change. The test suite does not bother to check the order in which you return the combinations, only that the correct number are present and they are in the correct format.
 \newpage
 
-# Chapter 34: Markov Chain
+# Chapter 35: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -5418,7 +5682,7 @@ But there will be spaces in between each word, so I account for them by adding o
 At this point, the `words` list needs to be turned into text. It would be ugly to just `print` out one long string, so I use the `textwrap.wrap` to break up the long string into lines that are no longer than the given `text_width`. That function returns a list of lines that need to be joined on newlines to print.
 \newpage
 
-# Chapter 35: Hamming Chain
+# Chapter 36: Hamming Chain
 
 Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
 
@@ -5621,7 +5885,7 @@ Failed to find more words!
 
 \newpage
 
-# Chapter 36: Morse Encoder/Decoder
+# Chapter 37: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -5839,7 +6103,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 37: ROT13 (Rotate 13)
+# Chapter 38: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -6004,7 +6268,7 @@ The quick brown fox jumps over the lazy dog.
 
 \newpage
 
-# Chapter 38: Tranpose ABC Notation
+# Chapter 39: Tranpose ABC Notation
 
 Write a Python program called `transpose.py` that will read a file in ABC notation (https://en.wikipedia.org/wiki/ABC_notation) and transpose the melody line up or down by a given `-s|--shift` argument. Like the `rot13` exercise, it might be helpful to think of the space of notes (`ABCDEFG`) as a list which you can roll through. For instance, if you have the note `c` and want to transpose up a (minor) third (`-s 3`), you would make the new note `e`; similarly if you have the note `F` and you go up a (major) third, you get `A`. You will not need to worry about the actual number of semitones that you are being asked to shift, as the previous example showed that we might be shifting by a major/minor/augmented/diminished/pure interval. The purpose of the exercise is simply to practice with lists.
 
@@ -6200,7 +6464,7 @@ aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
 
 \newpage
 
-# Chapter 39: Word Search
+# Chapter 40: Word Search
 
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 

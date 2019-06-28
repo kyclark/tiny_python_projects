@@ -18,6 +18,7 @@ family_tree
 gematria
 histy
 guess
+mommys_little_helper
 kentucky_friar
 mad_libs
 license_plates
