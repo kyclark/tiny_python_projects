@@ -9,7 +9,7 @@ from typing import List, TextIO
 
 
 # --------------------------------------------------
-def get_args():
+def get_args() -> argparse.Namespace:
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
@@ -47,7 +47,7 @@ def manual_solution(pattern: str, wordlist: TextIO) -> List[str]:
 
     for word in wordlist.read().split():
         if len(word) == wanted_len and all(
-            [True if word[i] == char else False for i, char in letters]):
+            [word[i] == char for i, char in letters]):
             words.append(word)
 
     return words

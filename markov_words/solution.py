@@ -92,7 +92,8 @@ def main():
             kmer = random.choice(kmers)
             if not kmer in starts and chains[kmer] and re.search(
                     '[aeiou]', kmer):
-                starts.add(kmer)
+                if k > 1:
+                    starts.add(kmer)
                 word = kmer
 
         length = random.choice(range(k + 2, args.max_word))

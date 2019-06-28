@@ -64,4 +64,15 @@ $ ./markov.py ../inputs/const.txt -s 2 -k 3
   8: nmentyone
   9: effereof
  10: eipts
+$ ./markov.py -k 2 ../inputs/1945-boys.txt
+  1: baronaler
+  2: lip
+  3: oselli
+  4: ard
+  5: vicharley
+  6: melli
+  7: denry
+  8: jerictomank
+  9: rick
+ 10: larvichaell
 ````

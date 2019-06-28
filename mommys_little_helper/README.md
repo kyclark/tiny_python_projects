@@ -45,3 +45,8 @@ $ ./helper.py ex___s
   5: exodus
   6: exomis
 ````
+
+## Hints
+
+* If you know about regular expressions, that is a natural way to solve this problem. See how elegantly you can solve the problem. 
+* Even if you do know how to solve use regexes, try solving without them.
