@@ -4080,21 +4080,15 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
 
 # Chapter 27: Soundex Rhymer
 
-Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, it would be best to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part. The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons.
+Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, you sometimes want to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part, so the program should have an optional flag `-s|--stem` to indicate that the given word and the words you compare should both be trimmed to the "stem". The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons and should respond, as always, to `-h|--help` for usage.
 
-See also:
-
-* https://en.wikipedia.org/wiki/Soundex
-* https://pypi.org/project/soundex/)
+For more background on the Soundex algorithm, I recommend the Wikipedia page and the PyPi module documentation for `soundex`.
 
 ````
-$ ./rhymer.py
-usage: rhymer.py [-h] [-w str] str
-rhymer.py: error: the following arguments are required: str
-[cholla@~/work/python/playful_python/soundex-rhymer]$ ./rhymer.py -h
-usage: rhymer.py [-h] [-w str] str
+$ ./rhymer.py -h
+usage: rhymer.py [-h] [-w str] [-s] str
 
-Use Soundex to find rhyming words
+Find rhyming words using the Soundex
 
 positional arguments:
   str                   Word
@@ -4103,78 +4097,204 @@ optional arguments:
   -h, --help            show this help message and exit
   -w str, --wordlist str
                         Wordlist (default: /usr/share/dict/words)
-$ ./rhymer.py orange | head
-boring
-borning
-boronic
-borrowing
-chloranemic
-chlorinize
-chlorinous
-chorionic
-choromanic
-clowring
+  -s, --stem            Stem the word (remove starting consonants (default:
+                        False)
 ````
 
+With my words list, I can find 37 words that rhyme with "listen" and 161 words that rhyme with the "isten" part:
+
+````
+$ ./rhymer.py listen | wc -l
+      37
+$ ./rhymer.py -s listen | wc -l
+     161
+````
+
+I can verify that "glisten" only turns up when stemming is on:	   
+
+````
+$ ./rhymer.py listen | grep glisten
+$ ./rhymer.py -s listen | grep glisten
+glisten
+````
+
+Here is a sample of the words that my version finds:
+
+````
+$ ./rhymer.py listen | head -3
+lackeydom
+lactam
+lactation
+````
+
+This program could be useful in creating custom input for the Gashlycrumb program.
+
+Hints:
+
+* You need to be sure that the given `word` actually has a vowel. 
+* If you are going to remove consonants from the beginning of a string, it might be easiest to find a regular expression to find things that are not vowels (because there are fewer of them to list).
+* Another way to remove leading consonants would be to manually find the position of the first vowel in the string and then use a list slice on the given word to take the substring from that position to the end
+* I suggest you use the `soundex` module 
+
+## Testing the stemmer
+
+I found the stemming part somewhat challenging, especially as I explored three different methods. I added the following test inside my `rhymer.py`:
+
+````
+def test_stemmer():
+    """test stemmer"""
+
+    assert stemmer('listen', True) == 'isten'
+    assert stemmer('listen', False) == 'listen'
+    assert stemmer('chair', True) == 'air'
+    assert stemmer('chair', False) == 'chair'
+    assert stemmer('apple', True) == 'apple'
+    assert stemmer('apple', False) == 'apple'
+    assert stemmer('xxxxxx', True) == 'xxxxxx'
+    assert stemmer('xxxxxx', False) == 'xxxxxx'
+
+    assert stemmer('LISTEN', True) == 'ISTEN'
+    assert stemmer('LISTEN', False) == 'LISTEN'
+    assert stemmer('CHAIR', True) == 'AIR'
+    assert stemmer('CHAIR', False) == 'CHAIR'
+    assert stemmer('APPLE', True) == 'APPLE'
+    assert stemmer('APPLE', False) == 'APPLE'
+    assert stemmer('XXXXXX', True) == 'XXXXXX'
+    assert stemmer('XXXXXX', False) == 'XXXXXX'
+````
+
+And them I modified `make test` to include `rhymer.py` in the list of files to test. The `pytest` module looks for any function name that starts with `test_` and runs them. The `assert` will halt execution of the program if the test fails.
+
+Some of the words in my system dictionary don't have vowels, so some of methods that assumed the presence of a vowel failed. Writing a test just for this one function really helped me find errors in my code.
 \newpage
 
 ## Solution
 
 ````
      1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import re
-     5	import soundex
+     2	"""Find rhyming words using the Soundex"""
+     3	
+     4	import argparse
+     5	import re
      6	import string
-     7	import sys
+     7	import soundex
      8	
      9	
     10	# --------------------------------------------------
     11	def get_args():
     12	    """get command-line arguments"""
-    13	    parser = argparse.ArgumentParser(
-    14	        description='Use Soundex to find rhyming words',
-    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    16	
-    17	    parser.add_argument('word', metavar='str', help='Word')
-    18	
-    19	    parser.add_argument('-w',
-    20	                        '--wordlist',
-    21	                        metavar='str',
-    22	                        help='Wordlist',
-    23	                        default='/usr/share/dict/words')
-    24	
-    25	    return parser.parse_args()
-    26	
-    27	
-    28	# --------------------------------------------------
-    29	def main():
-    30	    """Make a jazz noise here"""
-    31	    args = get_args()
-    32	    word = args.word
-    33	    wordlist = args.wordlist
-    34	
-    35	    stem = word
-    36	    consonants = [c for c in string.ascii_lowercase if c not in 'aeiou']
-    37	    regex = re.compile('^[' + ''.join(consonants) + ']+(.+)')
+    13	
+    14	    parser = argparse.ArgumentParser(
+    15	        description='Find rhyming words using the Soundex',
+    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    17	
+    18	    parser.add_argument('word', metavar='str', help='Word')
+    19	
+    20	    parser.add_argument('-w',
+    21	                        '--wordlist',
+    22	                        metavar='str',
+    23	                        help='Wordlist',
+    24	                        default='/usr/share/dict/words')
+    25	
+    26	    parser.add_argument('-s',
+    27	                        '--stem',
+    28	                        help='Stem the word (remove starting consonants',
+    29	                        action='store_true')
+    30	
+    31	    args = parser.parse_args()
+    32	
+    33	    if not any([c in 'aeiouy' for c in args.word]):
+    34	        msg = 'word "{}" must contain at least one vowel'
+    35	        parser.error(msg.format(args.word))
+    36	
+    37	    return args
     38	
-    39	    def stemmer(word):
-    40	        match = regex.search(word)
-    41	        return match.group(1) if match else word
-    42	
-    43	    sndx = soundex.Soundex()
-    44	    cmp = sndx.soundex(stemmer(word))
-    45	
-    46	    for line in open(wordlist):
-    47	        for w in line.split():
-    48	            if w != word and sndx.soundex(stemmer(w)) == cmp:
-    49	                print(w)
-    50	
-    51	
-    52	# --------------------------------------------------
-    53	if __name__ == '__main__':
-    54	    main()
+    39	
+    40	# --------------------------------------------------
+    41	def stemmer(s: str, stem: bool) -> str:
+    42	    """Use regular expressions"""
+    43	
+    44	    if stem:
+    45	        match = re.search(r'^[^aeiou]+([aeiou].*)', s, re.IGNORECASE)
+    46	        return match.group(1) if match else s
+    47	    return s
+    48	
+    49	
+    50	# --------------------------------------------------
+    51	# def stemmer(s: str, stem: bool) -> str:
+    52	#     """Manually `find` first vowel"""
+    53	
+    54	#     if stem:
+    55	#         positions = list(
+    56	#             filter(lambda p: p >= 0, [s.lower().find(v) for v in 'aeiou']))
+    57	#         if positions:
+    58	#             first = min(positions)
+    59	#             return s[first:] if first else s
+    60	#     return s
+    61	
+    62	# --------------------------------------------------
+    63	# def stemmer(s: str, stem: bool) -> str:
+    64	#     """Manually find first vowel with generator/next"""
+    65	
+    66	#     if stem:
+    67	#         first = next(
+    68	#             (t[0] for t in enumerate(s) if t[1].lower() in 'aeiou'), False)
+    69	#         return s[first:] if first else s
+    70	#     return s
+    71	
+    72	
+    73	# --------------------------------------------------
+    74	def test_stemmer():
+    75	    """test stemmer"""
+    76	
+    77	    assert stemmer('listen', True) == 'isten'
+    78	    assert stemmer('listen', False) == 'listen'
+    79	    assert stemmer('chair', True) == 'air'
+    80	    assert stemmer('chair', False) == 'chair'
+    81	    assert stemmer('apple', True) == 'apple'
+    82	    assert stemmer('apple', False) == 'apple'
+    83	    assert stemmer('xxxxxx', True) == 'xxxxxx'
+    84	    assert stemmer('xxxxxx', False) == 'xxxxxx'
+    85	
+    86	    assert stemmer('LISTEN', True) == 'ISTEN'
+    87	    assert stemmer('LISTEN', False) == 'LISTEN'
+    88	    assert stemmer('CHAIR', True) == 'AIR'
+    89	    assert stemmer('CHAIR', False) == 'CHAIR'
+    90	    assert stemmer('APPLE', True) == 'APPLE'
+    91	    assert stemmer('APPLE', False) == 'APPLE'
+    92	    assert stemmer('XXXXXX', True) == 'XXXXXX'
+    93	    assert stemmer('XXXXXX', False) == 'XXXXXX'
+    94	
+    95	
+    96	# --------------------------------------------------
+    97	def main():
+    98	    """Make a jazz noise here"""
+    99	
+   100	    args = get_args()
+   101	    given = args.word
+   102	    wordlist = args.wordlist
+   103	    stem = args.stem
+   104	    sndx = soundex.Soundex()
+   105	    wanted = sndx.soundex(stemmer(given, stem))
+   106	
+   107	    # for word in open(wordlist).read().split():
+   108	    #     if given != word and sndx.soundex(stemmer(word, stem)) == wanted:
+   109	    #         print(word)
+   110	
+   111	    # print('\n'.join(
+   112	    #     filter(
+   113	    #         lambda w: given != w and sndx.soundex(stemmer(w, stem)) == wanted,
+   114	    #         open(wordlist).read().split())))
+   115	
+   116	    print('\n'.join([
+   117	        word for word in open(wordlist).read().split()
+   118	        if given != word and sndx.soundex(stemmer(word, stem)) == wanted
+   119	    ]))
+   120	
+   121	
+   122	# --------------------------------------------------
+   123	if __name__ == '__main__':
+   124	    main()
 ````
 
 \newpage
