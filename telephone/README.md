@@ -44,7 +44,7 @@ Thakqkrck&brow- fo[ jumps#oWe,*L/C lxdy dogos
 
 For what it's worth, this is how DNA changes over time. The machinery to copy DNA makes mistakes, and mutations randomly occur. Many times the change is in a part of the DNA that doesn't affect the organism or is a "synonymous" change that doesn't end up affecting the function of the DNA. Our example will only change characters to other characters, what are called "point mutations" or "single nucleotide variations" (SNV) or "single nucleotide polymorphisms" (SNP) in biology. We could write a version that would also randomly delete or insert new characters which are called them "in-dels" (insertion-deletions) in biology.
 
-Mutations (that don't result in the demise of the organism) occur at a fairly standard rate, so counting the number of point mutations (AKA ) between a conserved region of any two organisms, we can estimate how long ago they diverged from a common ancestor!
+Mutations (that don't result in the demise of the organism) occur at a fairly standard rate, so counting the number of mutations between a conserved region of any two organisms can allow an estimate of how long ago they diverged from a common ancestor!
 
 We can revisit the output of this program later by using the Hamming distance to find how many changes we'd need to make to the output to regain the input.
 
