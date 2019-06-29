@@ -1472,6 +1472,66 @@ There's a slightly easier way to get that list by using the `reversed` function:
 
 \newpage
 
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Bottle of beer song"""
+     3	
+     4	import argparse
+     5	
+     6	
+     7	# --------------------------------------------------
+     8	def get_args():
+     9	    """get command-line arguments"""
+    10	
+    11	    parser = argparse.ArgumentParser(
+    12	        description='Bottles of beer song',
+    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    14	
+    15	    parser.add_argument('-n',
+    16	                        '--num',
+    17	                        metavar='INT',
+    18	                        type=int,
+    19	                        default=10,
+    20	                        help='How many bottles')
+    21	
+    22	    args = parser.parse_args()
+    23	
+    24	    if args.num < 1:
+    25	        parser.error('--num ({}) must > 0'.format(args.num))
+    26	
+    27	    return args
+    28	
+    29	
+    30	# --------------------------------------------------
+    31	def main():
+    32	    """Make a jazz noise here"""
+    33	
+    34	    args = get_args()
+    35	    tmpl = '\n'.join([
+    36	        '{} bottle{} of beer on the wall,',
+    37	        '{} bottle{} of beer,',
+    38	        'Take one down, pass it around,',
+    39	        '{} bottle{} of beer on the wall!',
+    40	    ])
+    41	
+    42	    for bottle in reversed(range(1, args.num + 1)):
+    43	        next_bottle = bottle - 1
+    44	        s1 = '' if bottle == 1 else 's'
+    45	        s2 = '' if next_bottle == 1 else 's'
+    46	        print(tmpl.format(bottle, s1, bottle, s1, next_bottle, s2))
+    47	        if bottle > 1:
+    48	            print()
+    49	
+    50	
+    51	# --------------------------------------------------
+    52	if __name__ == '__main__':
+    53	    main()
+````
+
+\newpage
+
 ## Discussion
 
 If you used `new.py` and `argparse` to get started, then about 1/4 of the program is done for you. If you define an argument with the appropriate "short" (a dash plus one character) and "long" names (two dashes and a longer bit) with `type=int` and `default=10`, then `argparse` will do loads of hard work to ensure the user provides you with the correct input. We can't easily tell `argparse` that the number has to be a *positive* integer without defining a new "type", but it's fairly painless to add a check and use `parser.error` to both print an error message plus the usage and halt the execution of the program.
