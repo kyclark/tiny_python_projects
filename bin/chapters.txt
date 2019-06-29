@@ -3,6 +3,7 @@ jump_the_five
 picnic
 howler
 apples_and_bananas
+telephone
 bottles_of_beer
 gashlycrumb
 movie_reader
