@@ -85,7 +85,14 @@ def main():
     book_file = os.path.join(out_dir, 'book.md')
 
     with open(book_file, 'wt') as fh:
-        fh.write('\\setcounter{tocdepth}{2}\\tableofcontents\n\\newpage\n\n')
+        #fh.write('\\setcounter{tocdepth}{2}\\tableofcontents\n\\newpage\n\n')
+
+        title = 'TITLE.md'
+        if os.path.isfile(title):
+            fh.write(open(title).read())
+            fh.write('\n\n\\newpage\n\n')
+
+        fh.write('\\setcounter{tocdepth}{2}\\tableofcontents\n\n')
 
         top_readme = 'README.md'
         if os.path.isfile(top_readme):

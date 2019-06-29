@@ -76,3 +76,10 @@ So to put it together, we overwrite the existing `text` so as to accumulate the 
 >>> text
 'The vuick brown fox jumps over the lazy dog.'
 ````
+
+## Mutations in DNA
+
+For what it's worth, this is (sort of) how DNA changes over time. The machinery to copy DNA makes mistakes, and mutations randomly occur. Many times the change has no deleterious affect on the organism. Our example only changes characters to other characters, what are called "point mutations" or "single nucleotide variations" (SNV) or "single nucleotide polymorphisms" (SNP) in biology, but we could write a version that would also randomly delete or insert new characters which are called them "in-dels" (insertion-deletions) in biology.
+
+Mutations (that don't result in the demise of the organism) occur at a fairly standard rate, so counting the number of mutations between a conserved region of any two organisms can allow an estimate of how long ago they diverged from a common ancestor! We can revisit the output of this program later by using the Hamming distance to find how many changes we'd need to make to the output to regain the input.
+

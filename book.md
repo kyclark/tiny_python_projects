@@ -1,10 +1,14 @@
-\setcounter{tocdepth}{2}\tableofcontents
-\newpage
-
 ---
 title: "Playful Python: Learning the language through games and puzzles"
 author: Ken Youens-Clark
 ...
+
+![The Playful Python](./images/playful.png)
+
+
+\newpage
+
+\setcounter{tocdepth}{2}\tableofcontents
 
 # Introduction
 
@@ -46,7 +50,7 @@ $ echo $PATH
 
 Probably each directory is separated by a colon (`:`). *The order of the directories matters!* For instance, it's common to have more than one version of Python installed. When you type `python` on the command line, the directories in your `$PATH` are searched in order, and the first `python` found is the one that is used (and it's probably Python version 2!)
 
-You could execute `new.py` by giving the full path to the program, e.g., `$HOME/work/playful_python/bin/new.py`, but that's really tedious. It's best to put `new.py` into one of the directories that is already in your `$PATH` like maybe `/usr/local/bin`. The problem is that you probably need administrator privileges to write to most of the directories that are in your `$PATH.`. If you are working on your laptop, this is probably not a problem, but if you are on a shared system, you probably won't be able to copy the program into your `$PATH` directories. 
+You could execute `new.py` by giving the full path to the program, e.g., `$HOME/work/playful_python/bin/new.py`, but that's really tedious. It's best to put `new.py` into one of the directories that is already in your `$PATH` like maybe `/usr/local/bin`. The problem is that you probably need administrator privileges to write to most of the directories that are in your `$PATH`. If you are working on your laptop, this is probably not a problem, but if you are on a shared system, you probably won't be able to copy the program into your `$PATH` directories. 
 
 An alternative is to alter your `$PATH` to include the directory where `new.py` is located. E.g., if `new.py` is in `$HOME/work/playful_python/bin/`, then add this directory to your `$PATH` -- probably by editing  `.bashrc` or `.bash_profile` located in your `$HOME` directory (if you use `bash`). See the documentation for your shell of choice to understand how to edit and persist your `$PATH`.
 
@@ -1126,9 +1130,9 @@ But I find that fairly hard to read.
 
 # Chapter 6: Telephone
 
-Perhaps you remember the game of "Telephone" where a message is secretly passed through a series of intermediaries and then the result at the end of the chain is compared with how it started? This is like that, only we're going to take some`text` (from the command line or a file) and mutate it by some percentage `-m|--mutations` (a number between 0 and 1, default `0.1` or 10%) and then print out the resulting text.
+Perhaps you remember the game of "Telephone" where a message is secretly passed through a series of intermediaries and then the result at the end of the chain is compared with how it started? This is like that, only we're going to take some `text` (from the command line or a file) and mutate it by some percentage `-m|--mutations` (a number between 0 and 1, default `0.1` or 10%) and then print out the resulting text.
 
-Each mutation to the text should be chosen using the `random` module, so your program will also need to accept a `-s|--seed` option to pass to the `random.seed` function for testing purposes. Print the resulting text after making the appropriate number of mutations.
+Each mutation to the text should be chosen using the `random` module, so your program will also need to accept a `-s|--seed` option (default `None`) to pass to the `random.seed` function for testing purposes. Print the resulting text after making the appropriate number of mutations.
 
 ````
 $ ./telephone.py
@@ -1166,20 +1170,10 @@ $ ./telephone.py -s 1 -m .5 ../inputs/fox.txt
 Thakqkrck&brow- fo[ jumps#oWe,*L/C lxdy dogos
 ````
 
-## Mutations in DNA
+Hints:
 
-For what it's worth, this is how DNA changes over time. The machinery to copy DNA makes mistakes, and mutations randomly occur. Many times the change is in a part of the DNA that doesn't affect the organism or is a "synonymous" change that doesn't end up affecting the function of the DNA. Our example will only change characters to other characters, what are called "point mutations" or "single nucleotide variations" (SNV) or "single nucleotide polymorphisms" (SNP) in biology. We could write a version that would also randomly delete or insert new characters which are called them "in-dels" (insertion-deletions) in biology.
-
-Mutations (that don't result in the demise of the organism) occur at a fairly standard rate, so counting the number of point mutations (AKA ) between a conserved region of any two organisms, we can estimate how long ago they diverged from a common ancestor!
-
-We can revisit the output of this program later by using the Hamming distance to find how many changes we'd need to make to the output to regain the input.
-
-## Hints
-
-To create a combined error/usage statement for the `--mutations` error, look at `parser.error` in `argparse`.
-
-To select a character position to change, I suggest using `random.choice` and a `range` from length of the incoming text. With that, you'll need to alter the character at that position, but you'll find that strings in Python are *immutable*. For instance, if I wanted to change "candle" into "handle":
-
+* To create a combined error/usage statement for the `--mutations` error, look at `parser.error` in `argparse`.
+* To select a character position to change, I suggest using `random.choice` and a `range` from length of the incoming text. With that, you'll need to alter the character at that position, but you'll find that strings in Python are *immutable*. For instance, if I wanted to change "candle" into "handle":
 ````
 >>> s = 'candle'
 >>> s[0] = 'h'
@@ -1187,11 +1181,8 @@ Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 TypeError: 'str' object does not support item assignment
 ````
-
-So, I need to create a *new string* that has `h` joined to the rest of the string `s` after the zeroth position. How could you do that?
-
-For the replacement value, you should use `random.choice` from the union of the `string` class's `ascii_letters` and `punctuation`:
-
+* So, I need to create a *new string* that has `h` joined to the rest of the string `s` after the zeroth position. How could you do that?
+* For the replacement value, you should use `random.choice` from the union of the `string` class's `ascii_letters` and `punctuation`:
 ````
 >>> import string
 >>> string.ascii_letters
@@ -1199,6 +1190,7 @@ For the replacement value, you should use `random.choice` from the union of the 
 >>> string.punctuation
 '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
 ````
+
 \newpage
 
 ## Solution
@@ -1274,6 +1266,96 @@ For the replacement value, you should use `random.choice` from the union of the 
     68	if __name__ == '__main__':
     69	    main()
 ````
+
+\newpage
+
+## Discussion
+
+The number of mutations will be proportional to the length of the text
+
+````
+>>> text = 'The quick brown fox jumps over the lazy dog.'
+>>> len_text = len(text)
+>>> len_text
+44
+````
+
+Since we chose the `--mutations` to be a `float` between 0 and 1, we can multiply that by the length to get the number of mutations to introduce. Since that number will likely be another `float` and we can introduce a partial number of mutations, we can use `int` to truncate the number to an integer value.
+
+````
+>>> mutations = .1
+>>> int(mutations * len_text)
+4
+````
+
+So we can use that number in a `for` loop with `range(4)` to modify four characters. To choose a character in the text to modify, I suggested to use `random.choice`:
+
+````
+>>> import random
+>>> random.choice(range(len_text))
+1
+>>> random.choice(range(len_text))
+22
+````
+
+If you assign that to a value like `i` (for "integer" and/or "index", it's pretty common to use `i` for this kind of value), then you could get the character at that position:
+
+````
+>>> i = random.choice(range(len_text))
+>>> i
+4
+>>> text[i]
+'q'
+````
+
+Now we saw earlier that we can't just change the `text`:
+
+````
+>>> text[i] = 'x'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'str' object does not support item assignment
+````
+
+So we're going to have to create a *new* string using the text before and after `i` which we can get with string slices using `text[start:stop]`. If you leave out "start", Python starts at `0` (the beginning of the string), and if you leave out "stop" then it goes to the end, so `text[:]` is a copy of the entire string.
+
+The bit before `i` is:
+
+````
+>>> text[:i]
+'The '
+````
+
+And after `i` (skipping `i` itself, of course):
+
+````
+>>> text[i+1:]
+'uick brown fox jumps over the lazy dog.'
+````
+
+There are many ways to join strings together into new strings, and the `+` operator is perhaps the simplest. So now we need some new character to insert in the middle which we can get with `random.choice` again, this time choosing from all the letters of the alphabet plus punctuation:
+
+````
+>>> import string
+>>> alpha = string.ascii_letters + string.punctuation
+>>> random.choice(alpha)
+'n'
+````
+
+So to put it together, we overwrite the existing `text` so as to accumulate the changes over the iterations:
+
+````
+>>> text = text[:i] + random.choice(alpha) + text[i+1:]
+>>> text
+'The vuick brown fox jumps over the lazy dog.'
+````
+
+## Mutations in DNA
+
+For what it's worth, this is (sort of) how DNA changes over time. The machinery to copy DNA makes mistakes, and mutations randomly occur. Many times the change has no deleterious affect on the organism. Our example only changes characters to other characters, what are called "point mutations" or "single nucleotide variations" (SNV) or "single nucleotide polymorphisms" (SNP) in biology, but we could write a version that would also randomly delete or insert new characters which are called them "in-dels" (insertion-deletions) in biology.
+
+Mutations (that don't result in the demise of the organism) occur at a fairly standard rate, so counting the number of mutations between a conserved region of any two organisms can allow an estimate of how long ago they diverged from a common ancestor! We can revisit the output of this program later by using the Hamming distance to find how many changes we'd need to make to the output to regain the input.
+
 
 \newpage
 
