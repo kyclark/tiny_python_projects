@@ -4168,134 +4168,100 @@ And them I modified `make test` to include `rhymer.py` in the list of files to t
 Some of the words in my system dictionary don't have vowels, so some of methods that assumed the presence of a vowel failed. Writing a test just for this one function really helped me find errors in my code.
 \newpage
 
-## Solution
+## Discussion
+
+The first thing to check is that the given word contains a vowel which is simple enough if you use regular expressions. We'll include "y" for this purpose:
 
 ````
-     1	#!/usr/bin/env python3
-     2	"""Find rhyming words using the Soundex"""
-     3	
-     4	import argparse
-     5	import re
-     6	import string
-     7	import soundex
-     8	
-     9	
-    10	# --------------------------------------------------
-    11	def get_args():
-    12	    """get command-line arguments"""
-    13	
-    14	    parser = argparse.ArgumentParser(
-    15	        description='Find rhyming words using the Soundex',
-    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    17	
-    18	    parser.add_argument('word', metavar='str', help='Word')
-    19	
-    20	    parser.add_argument('-w',
-    21	                        '--wordlist',
-    22	                        metavar='str',
-    23	                        help='Wordlist',
-    24	                        default='/usr/share/dict/words')
-    25	
-    26	    parser.add_argument('-s',
-    27	                        '--stem',
-    28	                        help='Stem the word (remove starting consonants',
-    29	                        action='store_true')
-    30	
-    31	    args = parser.parse_args()
-    32	
-    33	    if not any([c in 'aeiouy' for c in args.word]):
-    34	        msg = 'word "{}" must contain at least one vowel'
-    35	        parser.error(msg.format(args.word))
-    36	
-    37	    return args
-    38	
-    39	
-    40	# --------------------------------------------------
-    41	def stemmer(s: str, stem: bool) -> str:
-    42	    """Use regular expressions"""
-    43	
-    44	    if stem:
-    45	        match = re.search(r'^[^aeiou]+([aeiou].*)', s, re.IGNORECASE)
-    46	        return match.group(1) if match else s
-    47	    return s
-    48	
-    49	
-    50	# --------------------------------------------------
-    51	# def stemmer(s: str, stem: bool) -> str:
-    52	#     """Manually `find` first vowel"""
-    53	
-    54	#     if stem:
-    55	#         positions = list(
-    56	#             filter(lambda p: p >= 0, [s.lower().find(v) for v in 'aeiou']))
-    57	#         if positions:
-    58	#             first = min(positions)
-    59	#             return s[first:] if first else s
-    60	#     return s
-    61	
-    62	# --------------------------------------------------
-    63	# def stemmer(s: str, stem: bool) -> str:
-    64	#     """Manually find first vowel with generator/next"""
-    65	
-    66	#     if stem:
-    67	#         first = next(
-    68	#             (t[0] for t in enumerate(s) if t[1].lower() in 'aeiou'), False)
-    69	#         return s[first:] if first else s
-    70	#     return s
-    71	
-    72	
-    73	# --------------------------------------------------
-    74	def test_stemmer():
-    75	    """test stemmer"""
-    76	
-    77	    assert stemmer('listen', True) == 'isten'
-    78	    assert stemmer('listen', False) == 'listen'
-    79	    assert stemmer('chair', True) == 'air'
-    80	    assert stemmer('chair', False) == 'chair'
-    81	    assert stemmer('apple', True) == 'apple'
-    82	    assert stemmer('apple', False) == 'apple'
-    83	    assert stemmer('xxxxxx', True) == 'xxxxxx'
-    84	    assert stemmer('xxxxxx', False) == 'xxxxxx'
-    85	
-    86	    assert stemmer('LISTEN', True) == 'ISTEN'
-    87	    assert stemmer('LISTEN', False) == 'LISTEN'
-    88	    assert stemmer('CHAIR', True) == 'AIR'
-    89	    assert stemmer('CHAIR', False) == 'CHAIR'
-    90	    assert stemmer('APPLE', True) == 'APPLE'
-    91	    assert stemmer('APPLE', False) == 'APPLE'
-    92	    assert stemmer('XXXXXX', True) == 'XXXXXX'
-    93	    assert stemmer('XXXXXX', False) == 'XXXXXX'
-    94	
-    95	
-    96	# --------------------------------------------------
-    97	def main():
-    98	    """Make a jazz noise here"""
-    99	
-   100	    args = get_args()
-   101	    given = args.word
-   102	    wordlist = args.wordlist
-   103	    stem = args.stem
-   104	    sndx = soundex.Soundex()
-   105	    wanted = sndx.soundex(stemmer(given, stem))
-   106	
-   107	    # for word in open(wordlist).read().split():
-   108	    #     if given != word and sndx.soundex(stemmer(word, stem)) == wanted:
-   109	    #         print(word)
-   110	
-   111	    # print('\n'.join(
-   112	    #     filter(
-   113	    #         lambda w: given != w and sndx.soundex(stemmer(w, stem)) == wanted,
-   114	    #         open(wordlist).read().split())))
-   115	
-   116	    print('\n'.join([
-   117	        word for word in open(wordlist).read().split()
-   118	        if given != word and sndx.soundex(stemmer(word, stem)) == wanted
-   119	    ]))
-   120	
-   121	
-   122	# --------------------------------------------------
-   123	if __name__ == '__main__':
-   124	    main()
+>>> re.search('[aeiouy]', 'YYZ', re.IGNORECASE) or 'Fail'
+<re.Match object; span=(0, 1), match='Y'>
+>>> re.search('[aeiouy]', 'bbbb', re.IGNORECASE) or 'Fail'
+'Fail'
 ````
+
+Another way that doesn't use a regex could use a list comprehension to iterate over character in the given word to see if it is `in` the `list` of vowels 'aeiouy':
+
+````
+>>> [c in 'aeiouy' for c in 'CAT'.lower()]
+[False, True, False]
+````
+
+You can then ask if `any` of these tests are true:
+
+````
+>>> any([c in 'aeiouy' for c in 'CAT'.lower()])
+True
+>>> any([c in 'aeiouy' for c in 'BCD'.lower()])
+False
+````
+
+By far the regex version is simpler, but it's always interesting to think about other ways to accomplish a task. Anyway, if the given `word` does not have a vowel, I throw a `parser.error`.
+
+## Using Soundex
+
+The `soundex` module has you create a `Soundex` object and then call a `soundex` function, which all seems a bit repetitive. Still, it gives us a way to get a Soundex value for a given word:
+
+````
+>>> from soundex import Soundex
+>>> sndx = Soundex()
+>>> sndx.soundex('paper')
+'p16'
+````
+
+The problem is that sometimes we want the stemmed version of the word:
+
+````
+>>> sndx.soundex('aper')
+'a16'
+````
+
+So I wrote a `stemmer` function that does (or does not) stem the word using the value of the `--stem` option which I defined in `argparse` as a Boolean value. I tried to find a way to remove leading consonants both with and without regular expressions. The regex version builds a somewhat complicated regex. Let's start with how to match something at the start of a string that is *not* a vowel (again, because there are only 5 to list):
+
+````
+>>> import re
+>>> re.search(r'^[^aeiou]+', 'chair')
+<re.Match object; span=(0, 2), match='ch'>
+````
+
+So we saw earlier that `[aeiou]` is the character class that matches vowels, so we can *negate* the class with `^` **inside** the character class. It's a bit confusing because there is also a `^` at the beginning of the `r''` (raw) string that anchors the expression to the beginning of the string.
+
+OK, so that find the non-vowels leading the word, but we want the bit afterwards. It seems like we could just write something like this:
+
+````
+>>> re.search(r'^[^aeiou]+(.+)$', 'chr')
+<re.Match object; span=(0, 3), match='chr'>
+````
+
+Which seems to say "one or more non-vowels followed by one or more of anything" and it looks to work, but look further:
+
+````
+>>> re.search(r'^[^aeiou]+(.+)$', 'chr').groups()
+('r',)
+````
+
+It finds the last `r`. We need to specify that after the non-vowels there needs to be at least one vowel:
+
+````
+>>> re.search(r'^[^aeiou]+([aeiou].*)', 'chr')
+````
+
+And now it works:
+
+````
+>>> re.search(r'^[^aeiou]+([aeiou].*)', 'chr')
+>>> re.search(r'^[^aeiou]+([aeiou].*)', 'car')
+<re.Match object; span=(0, 3), match='car'>
+>>> re.search(r'^[^aeiou]+([aeiou].*)', 'car').groups()
+('ar',)
+````
+
+So the `stemmer` works by first looking to see if we should even attempt to `stem`. If so, it attempts to match the regular expression. If that succeeds, then it returns the match. The `else` for everything is to return the original string `s`.
+
+The two other versions of `stemmer` rely on some things I'll discuss later.
+
+As stated in the intro, it was most helpful to me to add the `test_stemmer` function to ensure that all my versions of the `stemmer` function actually had the same behavior.
+
+Once I have the `stemmer` function, I can apply it to the given `word` and every word in the `--wordlist` and then call the ``
 
 \newpage
 
