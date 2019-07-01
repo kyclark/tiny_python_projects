@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""tests for markov.py"""
+"""tests for gibberish.py"""
 
 import os
 import re
@@ -7,7 +7,7 @@ import random
 import string
 from subprocess import getstatusoutput, getoutput
 
-prg = './markov.py'
+prg = './gibberish.py'
 const = '../inputs/const.txt'
 dickinson = '../inputs/dickinson.txt'
 

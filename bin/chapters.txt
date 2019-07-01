@@ -23,7 +23,7 @@ mommys_little_helper
 kentucky_friar
 mad_libs
 license_plates
-markov_words
+gibberish
 piggie
 soundex_rhymer
 substring

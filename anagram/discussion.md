@@ -129,7 +129,7 @@ True
 
 ## Selecting words to compare
 
-My first implementation of this program was quite naive and yet worked fine for find all other single words that were anagrams. Everything came crashing down when I attempted to find combinations. I suddenly realized the number of 2-word combinations I needed to check (that 55 *billion* I mentioned before). As it happened, I then rewatched "The Imitation Game" about Alan Turing and the creation of his machine ("Christopher") to crack the Enigma code which has a possible 150 million million possible states. He was unable to build a machine that could churn through that many possibilities in the 18 hours or so per day they had to find the right combination, so they had to find a way to cut down the number of combinations they attempted. Similarly, I realized I only needed to look at combinations of words whose lengths sum to the length of the given word; hency my decision to store `words` using the word length as the key and then as a `set` of words that length. 
+My first implementation of this program was quite naive and yet worked fine for find all other single words that were anagrams. Everything came crashing down when I attempted to find combinations. I suddenly realized the number of 2-word combinations I needed to check (that 55 *billion* I mentioned before). As it happened, I then rewatched "The Imitation Game" about Alan Turing and the creation of his machine ("Christopher") to crack the Enigma code which has a possible 150 million million possible states. He was unable to build a machine that could churn through that many possibilities in the 18 hours or so per day they had to find the right combination, so they had to find a way to cut down the number of combinations they attempted. Similarly, I realized I only needed to look at combinations of words whose lengths sum to the length of the given word; hence my decision to store `words` using the word length as the key and then as a `set` of words that length. 
 
 Next I needed to find all combinations of numbers that add up to that number. Let's consider we are using "listen" as the `text`:
 
@@ -216,7 +216,7 @@ Let's take the first combo:
 ````
 >>> keys = key_combos[0]
 >>> keys
-(1, 3)
+(3, 3)
 ````
 
 And pretend we have a very small `words` list:

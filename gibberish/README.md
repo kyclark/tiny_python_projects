@@ -1,6 +1,6 @@
-# Markov Chains for Words
+# Gibberish Generator
 
-Write a Python program called `markov.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
+Write a Python program called `gibberish.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
 ````
 a = l, b, m
@@ -21,11 +21,11 @@ Chose the best words and create definitions for them:
 * urchenev: fungal growth found under cobblestones
 
 ````
-$ ./markov.py
-usage: markov.py [-h] [-n int] [-k int] [-m int] [-s int] [-d] FILE [FILE ...]
-markov.py: error: the following arguments are required: FILE
-$ ./markov.py -h
-usage: markov.py [-h] [-n int] [-k int] [-m int] [-s int] [-d] FILE [FILE ...]
+$ ./gibberish.py
+usage: gibberish.py [-h] [-n int] [-k int] [-m int] [-s int] [-d] FILE [FILE ...]
+gibberish.py: error: the following arguments are required: FILE
+$ ./gibberish.py -h
+usage: gibberish.py [-h] [-n int] [-k int] [-m int] [-s int] [-d] FILE [FILE ...]
 
 Markov chain for characters/words
 
@@ -42,7 +42,7 @@ optional arguments:
                         Max word length (default: 12)
   -s int, --seed int    Random seed (default: None)
   -d, --debug           Debug to ".log" (default: False)
-$ ./markov.py /usr/share/dict/words -s 1
+$ ./gibberish.py /usr/share/dict/words -s 1
   1: oveli
   2: uming
   3: uylatiteda
@@ -53,7 +53,7 @@ $ ./markov.py /usr/share/dict/words -s 1
   8: eyhopy
   9: auretrab
  10: ozogralach
-$ ./markov.py ../inputs/const.txt -s 2 -k 3
+$ ./gibberish.py ../inputs/const.txt -s 2 -k 3
   1: romot
   2: leasonsusp
   3: gdoned
@@ -64,7 +64,7 @@ $ ./markov.py ../inputs/const.txt -s 2 -k 3
   8: nmentyone
   9: effereof
  10: eipts
-$ ./markov.py -k 2 ../inputs/1945-boys.txt
+$ ./gibberish.py -k 2 ../inputs/1945-boys.txt
   1: baronaler
   2: lip
   3: oselli
