@@ -2,13 +2,12 @@
 """Lookup tables"""
 
 import argparse
-import os
-from dire import die
 
 
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Gashlycrumb',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -19,28 +18,29 @@ def get_args():
                         '--file',
                         help='Input file',
                         metavar='str',
-                        type=str,
+                        type=argparse.FileType('r'),
                         default='gashlycrumb.txt')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if len(args.letter) != 1:
+        parser.error('"{}" is not 1 character.'.format(args.letter))
+
+    return args
 
 
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
     letter = args.letter.upper()
-    file = args.file
 
-    if not os.path.isfile(file):
-        die('--file "{}" is not a file.'.format(file))
+    # lookup = {}
+    # for line in args.file:
+    #     lookup[line[0]] = line.rstrip()
 
-    if len(letter) != 1:
-        die('"{}" is not 1 character.'.format(letter))
-
-    lookup = {}
-    for line in open(file):
-        lookup[line[0]] = line.rstrip()
+    lookup = {line[0]: line.rstrip() for line in args.file}
 
     if letter in lookup:
         print(lookup[letter])
