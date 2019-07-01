@@ -33,6 +33,7 @@ war
 anagram
 hangman
 first_bank_of_change
+runny_babbit
 markov_chain
 hamming_chain
 morse

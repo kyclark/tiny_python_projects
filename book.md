@@ -6190,7 +6190,278 @@ The `plural` version of each name is made by adding `s` except for `penny`, so l
 Finally lines 39-43 are left to formatting the report to the user, being sure to provide feedback that includes the original `value` ("If you give me ...") and an enumerated list of all the possible ways we could make change. The test suite does not bother to check the order in which you return the combinations, only that the correct number are present and they are in the correct format.
 \newpage
 
-# Chapter 36: Markov Chain
+# Chapter 36: Runny Babbit
+
+Are you familiar with Spoonerisms where the initial consonant sounds of two words are switched? According to Wikipedia, they get their name from William Archibald Spooner who did this often. The author Shel Silverstein wrote a wonderful book called _Runny Babbit_ ("bunny rabbit") based on this. So, let's write a Python program called `runny_babbit.py` that will read some text or an input file given as a single positional argument and finds neighboring words with initial consonant sounds to swap. As we'll need to look at pairs of words and in such as way that it will make it difficult to remember the original formatting of the text, let's also take a `-w|--width` (default `70`) to format the output text to a maximum width.
+
+As usual, the program should show usage with no arguments or for `-h|--help`:
+
+````
+$ ./runny_babbit.py
+usage: runny_babbit.py [-h] [-w int] str
+runny_babbit.py: error: the following arguments are required: str
+$ ./runny_babbit.py -h
+usage: runny_babbit.py [-h] [-w int] str
+
+Introduce Spoonerisms
+
+positional arguments:
+  str                  Input text or file
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -w int, --width int  Output text width (default: 70)
+````
+
+It should handle text from the command line:
+
+````
+$ ./runny_babbit.py 'the bunny rabbit'
+the runny babbit
+````
+
+Or a named file:
+
+````
+$ cat input1.txt
+The bunny rabbit is cute.
+$ ./runny_babbit.py input1.txt
+The runny babbit is cute.
+````
+
+We'll use a set of "stop" words to prevent the switching of sounds when one of the words is in the following list:
+
+before behind between beyond but by concerning despite down
+during following for from into like near plus since that the
+through throughout to towards which with within without
+
+Hints: 
+
+* You'll need to consider all the words in the input as pairs, like `[(0, 1), (1, 2)]` up to `n` (number of words) etc. How can you create such a list where instead of `0` and `1` you have the actual words, e.g., `[('The', 'bunny'), ('bunny', 'rabbit')]`?
+* There are several exercises where we try to break words into initial consonant sounds and whatever else that follows. Can you reuse code from elsewhere? I'd recommend using regular expressions!
+* Be sure you don't use a word more than once in a swap. E.g., in the phrase "the brown, wooden box", we'd skip "the" and consider the other two pairs of words `('brown', 'wooden')` and `('wooden', 'box')`. If we swap the first pair to make `('wown', 'brooden')`, we would not want to consider the next pair because 'wooden' has already been used. 
+* Use the `textwrap` module to handle the formatting of the ouput text to a maximum `--width`
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Spoonerisms"""
+     3	
+     4	import argparse
+     5	import os
+     6	import re
+     7	import string
+     8	import textwrap
+     9	
+    10	
+    11	# --------------------------------------------------
+    12	def get_args():
+    13	    """Get command-line arguments"""
+    14	
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Introduce Spoonerisms',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('text',
+    20	                        metavar='str',
+    21	                        help='Input text or file')
+    22	
+    23	    parser.add_argument('-w',
+    24	                        '--width',
+    25	                        help='Output text width',
+    26	                        metavar='int',
+    27	                        type=int,
+    28	                        default=70)
+    29	
+    30	    args = parser.parse_args()
+    31	
+    32	    if os.path.isfile(args.text):
+    33	        args.text = open(args.text).read()
+    34	
+    35	    return args
+    36	
+    37	
+    38	# --------------------------------------------------
+    39	def main():
+    40	    """Make a jazz noise here"""
+    41	
+    42	    args = get_args()
+    43	    text = args.text
+    44	    words = text.split()
+    45	    pairs = []
+    46	
+    47	    for k in range(len(words) - 1):
+    48	        pairs.append((words[k], words[k+1]))
+    49	
+    50	    vowels = 'aeiouAEIOU'
+    51	    consonants = ''.join([c for c in string.ascii_letters if c not in vowels])
+    52	    regex = re.compile('^([' + consonants + ']+)([' + vowels + '].*)')
+    53	    stop = set('before behind between beyond but by concerning'
+    54	               'despite down during following for from into like near'
+    55	               'plus since that the through throughout to towards'
+    56	               'which with within without'.split())
+    57	    skip = set()
+    58	
+    59	    for i, pair in enumerate(pairs):
+    60	        w1, w2 = pair
+    61	        if set([w1.lower(), w2.lower()]).intersection(stop):
+    62	            continue
+    63	
+    64	        i1, i2 = i, i + 1
+    65	        if i1 in skip or i2 in skip:
+    66	            continue
+    67	
+    68	        m1 = regex.search(w1)
+    69	        m2 = regex.search(w2)
+    70	        if m1 and m2:
+    71	            prefix1, suffix1 = m1.groups()
+    72	            prefix2, suffix2 = m2.groups()
+    73	            words[i1] = prefix2 + suffix1
+    74	            words[i2] = prefix1 + suffix2
+    75	            skip.add(i1)
+    76	            skip.add(i2)
+    77	
+    78	    print('\n'.join(textwrap.wrap(' '.join(words), width=args.width)))
+    79	
+    80	# --------------------------------------------------
+    81	if __name__ == '__main__':
+    82	    main()
+````
+
+\newpage
+
+## Discussion
+
+![Also definitely not copyright infringement.](images/runny_babbit.png)
+
+For this exercise, I thought I might move the logic to read an optionally named input *file* into the `get_args` function so that by the time I call `args = get_args()` the `args.text` really is just whatever "text" I need to consider, regardless if the source was the command line or a file. If I'm using `input1.txt`, then I essentially have this:
+
+````
+>>> text = open('input1.txt').read()
+>>> text
+'The bunny rabbit is cute.\n'
+````
+
+I need all the pairs of words, so that means I first need all the "words" which I'll get by naively using `str.split` (that is, I won't worry about punctation and such):
+
+````
+>>> words = text.split()
+>>> words
+['The', 'bunny', 'rabbit', 'is', 'cute.']
+````
+
+Now I need all *pairs* of words which I can get by going from the zeroth word to the second to last word:
+
+````
+>>> pairs = []
+>>> for k in range(len(words) - 1):
+...     pairs.append((words[k], words[k+1]))
+...
+>>> pairs
+[('The', 'bunny'), ('bunny', 'rabbit'), ('rabbit', 'is'), ('is', 'cute.')
+````
+
+I need to find all the pairs where both words start with some consonant sounds and where neither of them is in my stop list, which I'll create like so:
+
+````
+>>> stop = set('before behind between beyond but by concerning'
+...            'despite down during following for from into like near'
+...            'plus since that the through throughout to towards'
+...            'which with within without'.split())
+````
+
+How will I find words that start with consonants? I can easily list all the vowels:
+
+````
+>>> vowels = 'aeiouAEIOU'
+````
+
+And then create the complement from `string.ascii_lowercase`:
+
+````
+>>> import string
+>>> consonants = ''.join([c for c in string.ascii_letters if c not in vowels])
+>>> consonants
+'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ'
+````
+
+And then build a regular expression that looks for the start of a string `^` followed by a character class of all the `consonants` followed by the character class of `vowels` maybe followed by something else. I'll use parentheses `()` to capture both parts:
+
+````
+>>> import re
+>>> regex = re.compile('^([' + consonants + ']+)([' + vowels + '].*)')
+>>> regex.search('chair')
+<re.Match object; span=(0, 5), match='chair'>
+>>> regex.search('chair').groups()
+('ch', 'air')
+````
+
+Now I can iterate over the `pairs`. First I check if the either of the words is in the `stop` set by using the `set.intersection` function. For the first pair `('The', 'bunny')` we see there is an intersection:
+
+````
+>>> w1 = 'The'
+>>> w2 = 'bunny'
+>>> set([w1.lower(), w2.lower()]).intersection(stop)
+{'the'}
+````
+
+For the next pair, there is not:
+
+````
+>>> w1 = 'bunny'
+>>> w2 = 'rabbit'
+>>> set([w1.lower(), w2.lower()]).intersection(stop)
+set()
+````
+
+The next check in my code is whether I've previously determined that I need to skip these words, so I have to know their positions in the original list. I decided to use `enumerate` over the `words` to get the number of the pair which will equal the position of the first word of each tuple in the original list of `words`. 
+
+Next I need to see if *both* words match my regular expression:
+
+````
+>>> m1 = regex.search(w1)
+>>> m2 = regex.search(w2)
+>>> m1
+<re.Match object; span=(0, 5), match='bunny'>
+>>> m2
+<re.Match object; span=(0, 6), match='rabbit'>
+````
+
+They do! So I can use their `groups` to get the parts of each word to swap:
+
+````
+>>> m1.groups()
+('b', 'unny')
+>>> m2.groups()
+('r', 'abbit')
+>>> prefix1, suffix1 = m1.groups()
+>>> prefix2, suffix2 = m2.groups()
+````
+
+This is the 2nd pair, so `i` would be equal to `1` in the actual code. I can use this to go mutate the `words` at positions `i` and `i + 1`:
+
+````
+>>> i = 1
+>>> words[i] = prefix2 + suffix1
+>>> words[i + 1] = prefix1 + suffix2
+>>> words
+['The', 'runny', 'babbit', 'is', 'cute.']
+````
+
+I need to be sure to add those positions to the `skip` set I created for the check that I discussed just above.
+
+Finally we need to `print` the `words` back out, joining them on a blank and using `textwrap.wrap` with the `--width` argument to make it pretty:
+
+````
+>>> import textwrap
+>>> print('\n'.join(textwrap.wrap(' '.join(words), width=70)))
+The runny babbit is cute.
+````
+\newpage
+
+# Chapter 37: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -6451,7 +6722,7 @@ But there will be spaces in between each word, so I account for them by adding o
 At this point, the `words` list needs to be turned into text. It would be ugly to just `print` out one long string, so I use the `textwrap.wrap` to break up the long string into lines that are no longer than the given `text_width`. That function returns a list of lines that need to be joined on newlines to print.
 \newpage
 
-# Chapter 37: Hamming Chain
+# Chapter 38: Hamming Chain
 
 Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
 
@@ -6654,7 +6925,7 @@ Failed to find more words!
 
 \newpage
 
-# Chapter 38: Morse Encoder/Decoder
+# Chapter 39: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -6872,7 +7143,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 39: ROT13 (Rotate 13)
+# Chapter 40: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -7037,7 +7308,7 @@ The quick brown fox jumps over the lazy dog.
 
 \newpage
 
-# Chapter 40: Tranpose ABC Notation
+# Chapter 41: Tranpose ABC Notation
 
 Write a Python program called `transpose.py` that will read a file in ABC notation (https://en.wikipedia.org/wiki/ABC_notation) and transpose the melody line up or down by a given `-s|--shift` argument. Like the `rot13` exercise, it might be helpful to think of the space of notes (`ABCDEFG`) as a list which you can roll through. For instance, if you have the note `c` and want to transpose up a (minor) third (`-s 3`), you would make the new note `e`; similarly if you have the note `F` and you go up a (major) third, you get `A`. You will not need to worry about the actual number of semitones that you are being asked to shift, as the previous example showed that we might be shifting by a major/minor/augmented/diminished/pure interval. The purpose of the exercise is simply to practice with lists.
 
@@ -7233,7 +7504,7 @@ aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
 
 \newpage
 
-# Chapter 41: Word Search
+# Chapter 42: Word Search
 
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 
