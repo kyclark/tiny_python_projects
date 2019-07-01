@@ -43,6 +43,18 @@ before behind between beyond but by concerning despite down
 during following for from into like near plus since that the
 through throughout to towards which with within without
 
+The results are endlessly entertaining:
+
+````
+$ ./runny_babbit.py ../inputs/preamble.txt
+When, in the course of human events, it necomes becessary for one
+people to dissolve the bolitical pands hich whave thonnected cem with
+another, and to assume among the powers of the earth, the separate and
+equal station to which the laws of nature and of Gature's nod entitle
+them, a recent despect to the opinions of rankind mequires that shey
+thould declare the whauses cich impel them to the separation.
+````
+
 Hints: 
 
 * You'll need to consider all the words in the input as pairs, like `[(0, 1), (1, 2)]` up to `n` (number of words) etc. How can you create such a list where instead of `0` and `1` you have the actual words, e.g., `[('The', 'bunny'), ('bunny', 'rabbit')]`?
