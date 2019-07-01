@@ -294,6 +294,8 @@ Cf. appendices: argparse, Truthiness
 
 # Chapter 2: Jump the Five
 
+!["When I get up, nothing gets me down." - D. L. Roth](images/jump.png)
+
 Write a program called `jump.py` that will encode any number using "jump-the-five" algorithm that selects as a replacement for a given number one that is opposite on a US telephone pad if you jump over the 5. The numbers 5 and 0 will exchange with each other. So, "1" jumps the 5 to become "9," "6" jumps the 5 to become "4," "5" becomes "0," etc.
 
 ````
@@ -335,6 +337,7 @@ Hints:
 * The numbers can occur anywhere in the text, so I recommend you think of how you can process the input character-by-character. 
 * To me, the most natural way to represent the subsitution table is in a `dict`.
 * Read the documentation on Python's `str` class to see what you can do with a string. For instance, there is a `replace` method. Could you use that?
+
 \newpage
 
 ## Solution
@@ -1538,6 +1541,8 @@ There's a slightly easier way to get that list by using the `reversed` function:
 
 ## Discussion
 
+!["To alcohol! The cause of, and solution to, all of life's problems." - H. Simpson](images/beer.png)
+
 If you used `new.py` and `argparse` to get started, then about 1/4 of the program is done for you. If you define an argument with the appropriate "short" (a dash plus one character) and "long" names (two dashes and a longer bit) with `type=int` and `default=10`, then `argparse` will do loads of hard work to ensure the user provides you with the correct input. We can't easily tell `argparse` that the number has to be a *positive* integer without defining a new "type", but it's fairly painless to add a check and use `parser.error` to both print an error message plus the usage and halt the execution of the program.
 
 Earlier programs have the last line of `get_args` as:
@@ -1549,6 +1554,7 @@ return parser.parse_args()
 But here we capture the arguments inside `get_args` and add a bit of validation. If `args.num_bottles` is less than one, we call `parser.error` with the message we want to tell the user. We don't have to tell the program to stop executing as `argparse` will exit immediately. Even better is that it will indicate a non-zero exit value to the operating system to indicate there was some sort of error. If you ever start writing command-line programs that chain together to make workflows, this is a way for one program to indicate failure and halt the entire process until the error has been fixed!
 
 Once you get to the line `args = get_args()` in `main`, a great deal of hard work has already occurred to get and validate the input from the user. From here, I decided to create a template for the song putting `{}` in the spots that change from verse to verse. Then I use the `reversed(range(...))` bit we discussed before to count down, with a `for` loop, using the current number `bottle` and `next_bottle` to print out the verse noting the presence or absence of the `s` where appropriate.
+
 \newpage
 
 # Chapter 8: Gashlycrumb
@@ -1659,6 +1665,8 @@ Bye
 \newpage
 
 # Chapter 9: Movie Reader
+
+![Matt Damon in The Martian (no, really).](images/astro_reader.png)
 
 Write a Python program called `movie_reader.py` that takes a single positional argument that is a bit of text or the name of an input file. The output will be dynamic, so I cannot write a test for how the program should behave, nor can I include a bit of text that shows you how it should work. Your program should print the input text character-by-character and then pause .5 seconds for ending punctuation like `.`, `!` or `?`, .2 seconds for a pause like `,` `:`, or `;`, and .05 seconds for anything else.
 

@@ -1,5 +1,7 @@
 # Jump the Five
 
+!["When I get up, nothing gets me down." - D. L. Roth](images/jump.png)
+
 Write a program called `jump.py` that will encode any number using "jump-the-five" algorithm that selects as a replacement for a given number one that is opposite on a US telephone pad if you jump over the 5. The numbers 5 and 0 will exchange with each other. So, "1" jumps the 5 to become "9," "6" jumps the 5 to become "4," "5" becomes "0," etc.
 
 ````

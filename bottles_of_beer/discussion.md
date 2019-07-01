@@ -1,3 +1,5 @@
+!["To alcohol! The cause of, and solution to, all of life's problems." - H. Simpson](images/beer.png)
+
 If you used `new.py` and `argparse` to get started, then about 1/4 of the program is done for you. If you define an argument with the appropriate "short" (a dash plus one character) and "long" names (two dashes and a longer bit) with `type=int` and `default=10`, then `argparse` will do loads of hard work to ensure the user provides you with the correct input. We can't easily tell `argparse` that the number has to be a *positive* integer without defining a new "type", but it's fairly painless to add a check and use `parser.error` to both print an error message plus the usage and halt the execution of the program.
 
 Earlier programs have the last line of `get_args` as:
