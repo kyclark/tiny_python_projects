@@ -24,13 +24,13 @@ def fry(word):
     Drop the 'g' from '-ing' words, change "you" to "y'all"
     """
 
-    ing_word = re.search('(.+)ing([:;,.?])?$', word)
+    ing_word = re.search('(.+)ing$', word)
     you = re.match('([Yy])ou$', word)
 
     if ing_word:
         prefix = ing_word.group(1)
         if re.search('[aeiouy]', prefix):
-            return prefix + "in'" + (ing_word.group(2) or '')
+            return prefix + "in'"
     elif you:
         return you.group(1) + "'all"
 

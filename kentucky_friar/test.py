@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 """tests for friar.py"""
 
+import os
 import re
 import random
 from subprocess import getstatusoutput, getoutput
 
 prg = './friar.py'
 
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 # --------------------------------------------------
 def test_usage():
