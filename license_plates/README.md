@@ -6,7 +6,7 @@ Write a Python program called `license.py` that will create a regular expression
 * X K Y
 * 1 I
 * 3 E
-* 0 O Q
+* D 0 O Q
 * M N
 * U V W
 * 2 8

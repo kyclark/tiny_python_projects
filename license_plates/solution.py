@@ -25,7 +25,7 @@ def main():
     args = get_args()
     plate = args.plate
     mixups = [('5', 'S'), ('X', 'K', 'Y'), ('1', 'I'), ('3', 'E'),
-              ('0', 'O', 'Q'), ('M', 'N'), ('U', 'V', 'W'), ('2', '7')]
+              ('D', '0', 'O', 'Q'), ('M', 'N'), ('U', 'V', 'W'), ('2', '7')]
 
     chars = []
     for char in plate:

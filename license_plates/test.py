@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """tests for license.py"""
 
+import os
 import re
-import random
-import string
 from subprocess import getstatusoutput, getoutput
 
 prg = './license.py'
 
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 # --------------------------------------------------
 def test_usage():
@@ -20,6 +24,8 @@ def test_usage():
 
 # --------------------------------------------------
 def test_accept_01():
+    """runs"""
+
     out = getoutput('{} ABC1234'.format(prg))
     expected = """
 plate = "ABC1234"
@@ -38,6 +44,8 @@ ABCI7E4 OK
 
 # --------------------------------------------------
 def test_accept_02():
+    """runs"""
+
     out = getoutput('{} 123456'.format(prg))
     expected = """
 plate = "123456"
