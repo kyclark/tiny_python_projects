@@ -18,6 +18,8 @@ Guess a number between 1 and 50 (q to quit): 9
 "9" is correct. You win!
 ````
 
+![What does the future hold?](images/crystal_ball.png)
+
 Because I want to be able to write a test for this, I also want the program to accept an `-i|--inputs` option so that the game can also be played exactly the same but without the prompts for input:
 
 ````

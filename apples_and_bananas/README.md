@@ -11,6 +11,8 @@ Perhaps you remember the children's song "Apples and Bananas"?
     I like to eat, eat, eat ee-ples and bee-nee-nees
     I like to eat, eat, eat ee-ples and bee-nee-nees
 
+![Apple and bananas go together like peas and carrots.](images/apples-and-bananas.png)
+
 Write a Python program called `apples.py` that will turn all the vowels in some given text in a single positional argument into just one `-v|--vowel` (default `a`) like this song. It should complain if the `--vowel` argument isn't a single, lowercase vowel (hint, see `choices` in the `argparse` documentation). If the given text argument is a file, read the text from the file. Replace all vowels with the given vowel, both lower- and uppercase.
 
 ````

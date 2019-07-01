@@ -1,3 +1,5 @@
+![Telephones are for communication.](images/telephone.png)
+
 The number of mutations will be proportional to the length of the text
 
 ````

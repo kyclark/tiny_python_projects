@@ -9,7 +9,7 @@ import argparse
 import os
 import re
 import sys
-from subprocess import getstatusoutput, getoutput
+from subprocess import getstatusoutput, getoutput, run
 from dire import die
 
 
@@ -147,7 +147,6 @@ def main():
 
     if rv != 0:
         die('Error: {}'.format(out))
-
 
 # --------------------------------------------------
 if __name__ == '__main__':

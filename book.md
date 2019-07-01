@@ -655,6 +655,8 @@ Perhaps you remember the children's song "Apples and Bananas"?
     I like to eat, eat, eat ee-ples and bee-nee-nees
     I like to eat, eat, eat ee-ples and bee-nee-nees
 
+![Apple and bananas go together like peas and carrots.](images/apples-and-bananas.png)
+
 Write a Python program called `apples.py` that will turn all the vowels in some given text in a single positional argument into just one `-v|--vowel` (default `a`) like this song. It should complain if the `--vowel` argument isn't a single, lowercase vowel (hint, see `choices` in the `argparse` documentation). If the given text argument is a file, read the text from the file. Replace all vowels with the given vowel, both lower- and uppercase.
 
 ````
@@ -1270,6 +1272,8 @@ TypeError: 'str' object does not support item assignment
 \newpage
 
 ## Discussion
+
+![Telephones are for communication.](images/telephone.png)
 
 The number of mutations will be proportional to the length of the text
 
@@ -3278,6 +3282,8 @@ Guess a number between 1 and 50 (q to quit): 9
 "9" is correct. You win!
 ````
 
+![What does the future hold?](images/crystal_ball.png)
+
 Because I want to be able to write a test for this, I also want the program to accept an `-i|--inputs` option so that the game can also be played exactly the same but without the prompts for input:
 
 ````
@@ -3674,6 +3680,8 @@ All that is left is to check if any words matched. If so, we print them out, num
 
 Write a Python program called `friar.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
+![The friar is fixin' ta do some cookin'!](images/friar.png)
+
 ````
 $ ./friar.py
 usage: friar.py [-h] str
@@ -3768,6 +3776,8 @@ to go for a swing and maybe do some swimmin', too.
 \newpage
 
 # Chapter 24: Mad Libs
+
+![This definitely not a copyright infringment.](images/mad_libs.png)
 
 Write a Python program called `mad_lib.py` that will read a file given as a positional argument and find all the placeholders noted in `<>`, e.g., `<verb>`, prompt the user for the part of speech being reuqested, e.g., a "verb", and then substitute that into the text of the file, finally printing out all the placeholders replaced by the user's inputs. By default, this is an interactive program that will use the `input` prompt to ask the user for their answers, but, for testing purposes, please add a `-i|--inputs` option so the test suite can pass in all the answers and bypass the `input` calls.
 
