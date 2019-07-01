@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
+"""Find anagrams"""
 
 import argparse
 import logging
-import os
 import re
-import sys
 from collections import defaultdict, Counter
 from itertools import combinations, permutations, product, chain
-from dire import warn, die
 
 
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Find anagrams',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -23,7 +22,7 @@ def get_args():
                         '--wordlist',
                         help='Wordlist',
                         metavar='str',
-                        type=str,
+                        type=argparse.FileType('r'),
                         default='/usr/share/dict/words')
 
     parser.add_argument('-n',
@@ -41,22 +40,20 @@ def get_args():
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
     text = args.text
-    word_list = args.wordlist
-
-    if not os.path.isfile(word_list):
-        die('--wordlist "{}" is not a file'.format(word_list))
 
     logging.basicConfig(
-        filename='.log',
+         filename='.log',
         filemode='w',
         level=logging.DEBUG if args.debug else logging.CRITICAL)
 
     words = defaultdict(set)
-    for line in open(word_list):
+    regex = re.compile('[^a-z0-9]')
+    for line in args.wordlist:
         for word in line.split():
-            clean = re.sub('[^a-z0-9]', '', word.lower())
+            clean = regex.sub('', word.lower())
             if len(clean) == 1 and clean not in 'ai':
                 continue
             words[len(clean)].add(clean)
@@ -65,26 +62,27 @@ def main():
     counts = Counter(text)
     anagrams = set()
     lengths = list(words.keys())
-    for i in range(1, args.num_combos + 1):
+    for n in range(1, args.num_combos + 1):
         key_combos = list(
             filter(
                 lambda t: sum(t) == text_len,
                 set(
                     map(lambda t: tuple(sorted(t)),
-                        combinations(chain(lengths, lengths), i)))))
+                        combinations(chain(lengths, lengths), n)))))
+        logging.debug('key combos = %s', key_combos)
 
         for keys in key_combos:
-            logging.debug('Searching keys {}'.format(keys))
+            logging.debug('Searching keys %s', keys)
             word_combos = list(product(*list(map(lambda k: words[k], keys))))
 
             for t in word_combos:
                 if Counter(''.join(t)) == counts:
-                    for p in filter(
-                            lambda x: x != text,
-                            map(lambda x: ' '.join(x), permutations(t))):
-                        anagrams.add(p)
+                    logging.debug('combo = %s', t)
+                    for s in [' '.join(l) for l in permutations(t)]:
+                        if s != text:
+                            anagrams.add(s)
 
-            logging.debug('# anagrams = {}'.format(len(anagrams)))
+            logging.debug('# anagrams = %s', len(anagrams))
 
     logging.debug('Finished searching')
 
