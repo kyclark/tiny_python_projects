@@ -55,23 +55,15 @@ def test_y():
 
 
 # --------------------------------------------------
-def test_number():
-    """Test for a number"""
+def test_bad_input():
+    """Test for bad input"""
 
-    rv, out = getstatusoutput('{} 5'.format(prg))
-    assert rv == 0
-    expected = 'I do not know "5".'
-    assert out.strip() == expected
+    for arg in ['5', 'ch']:
+        rv, out = getstatusoutput('{} {}'.format(prg, arg))
+        assert rv == 0
+        expected = 'I do not know "{}".'.format(arg)
+        assert out.strip() == expected
 
-
-# --------------------------------------------------
-def test_too_long():
-    """Test for too long"""
-
-    rv, out = getstatusoutput('{} ch'.format(prg))
-    assert rv != 0
-    expected = '"ch" is not 1 character'
-    assert re.search(expected, out)
 
 # --------------------------------------------------
 def test_bad_file():

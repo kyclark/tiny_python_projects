@@ -21,12 +21,7 @@ def get_args():
                         type=argparse.FileType('r'),
                         default='gashlycrumb.txt')
 
-    args = parser.parse_args()
-
-    if len(args.letter) != 1:
-        parser.error('"{}" is not 1 character.'.format(args.letter))
-
-    return args
+    return parser.parse_args()
 
 
 # --------------------------------------------------
@@ -34,7 +29,7 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    letter = args.letter.upper()
+    letter = args.letter
 
     # lookup = {}
     # for line in args.file:
@@ -42,8 +37,8 @@ def main():
 
     lookup = {line[0]: line.rstrip() for line in args.file}
 
-    if letter in lookup:
-        print(lookup[letter])
+    if letter.upper() in lookup:
+        print(lookup[letter.upper()])
     else:
         print('I do not know "{}".'.format(letter))
 

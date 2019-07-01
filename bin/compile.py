@@ -123,6 +123,8 @@ def main():
                 fh.write(numbered)
                 fh.write('\n````\n')
                 fh.write('\n\\newpage\n\n')
+            else:
+                print('\t>>>>>>> MISSING SOLUTION <<<<<<<<\n\n')
 
             solution_md = os.path.join(in_dir, dir_name, 'discussion.md')
             if os.path.isfile(solution_md):

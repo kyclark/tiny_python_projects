@@ -1559,7 +1559,7 @@ Once you get to the line `args = get_args()` in `main`, a great deal of hard wor
 
 # Chapter 8: Gashlycrumb
 
-Write a Python program called `gashlycrumb.py` that takes a letter of the alphabet as an argument and looks up the line in a `-f|--file` argument (default `gashlycrumb.txt`) and prints the line starting with that letter.
+Write a Python program called `gashlycrumb.py` that takes a letter of the alphabet as an argument and looks up the line in a `-f|--file` argument (default `gashlycrumb.txt`) and prints the line starting with that letter. It should generate usage with no arguments or for `-h|--help`:
 
 ````
 $ ./gashlycrumb.py
@@ -1576,32 +1576,55 @@ positional arguments:
 optional arguments:
   -h, --help          show this help message and exit
   -f str, --file str  Input file (default: gashlycrumb.txt)
-$ ./gashlycrumb.py 3
-I do not know "3".
-$ ./gashlycrumb.py CH
-"CH" is not 1 character.
+````
+
+You can see the structure of the default "gashlycrumb.txt" file:
+
+````
+$ head -3 gashlycrumb.txt
+A is for Amy who fell down the stairs.
+B is for Basil assaulted by bears.
+C is for Clara who wasted away.
+````
+
+![D is for Donald, who died from gas.](images/donald.png)
+
+You will use the first character of the line as a lookup value:
+
+````
 $ ./gashlycrumb.py a
 A is for Amy who fell down the stairs.
 $ ./gashlycrumb.py z
 Z is for Zillah who drank too much gin.
 ````
 
-If you are not familiar with the work of Edward Gorey, please stop and go read about him immediately, e.g. https://www.brainpickings.org/2011/01/19/edward-gorey-the-gashlycrumb-tinies/! 
-
-Write your own version of Gorey's text and pass in your version as the `--file`.
-
-Write an interactive version that takes input directly from the user:
+If given a value that does not exist in the list of first characters on the lines from the input file (when searched with regard to case), you should print a message:
 
 ````
-$ ./gashlycrumb_i.py
-Please provide a letter [! to quit]: a
-A is for Amy who fell down the stairs.
-Please provide a letter [! to quit]: b
-B is for Basil assaulted by bears.
-Please provide a letter [! to quit]: !
-Bye
+$ ./gashlycrumb.py 3
+I do not know "3".
+$ ./gashlycrumb.py CH
+I do not know "CH".
 ````
 
+If provided a `--file` argument that does not exist, your program should exit with an error and message:
+
+````
+$ ./gashlycrumb.py -f sdfl b
+usage: gashlycrumb.py [-h] [-f str] str
+gashlycrumb.py: error: argument -f/--file: can't open 'sdfl': \
+[Errno 2] No such file or directory: 'sdfl'
+````
+
+Hints:
+
+* To validate that the `--filename` is actually a readable file, look into using `argparse.FileType('r')` to describe the `type` of the `--file` argument so that `argparse` will do the check and create the error. 
+* A dictionary is a natural data structure that you can use to associate some value like the letter "A" to some phrase like "A is for Amy who fell down the stairs."
+* Once you have an open file handle to the `--filename` (which is exactly what you get when use `argparse.FileType`), you can `read` the file line-by-line with a `for` loop.
+* Each line of text is a string. How can you get the first character of a string?
+* Using that first character, how can you set the value of a `dict` to be the key and the line itself to be the value?
+* Once you have constructed the dictionary of letters to lines, how can you check that the user's `letter` argument is `in` the dictionary?
+* Can you solve this without a `dict`?
 \newpage
 
 ## Solution
@@ -1611,56 +1634,189 @@ Bye
      2	"""Lookup tables"""
      3	
      4	import argparse
-     5	import os
-     6	from dire import die
-     7	
-     8	
-     9	# --------------------------------------------------
-    10	def get_args():
-    11	    """get command-line arguments"""
-    12	    parser = argparse.ArgumentParser(
-    13	        description='Gashlycrumb',
-    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    15	
-    16	    parser.add_argument('letter', help='Letter', metavar='str', type=str)
-    17	
-    18	    parser.add_argument('-f',
-    19	                        '--file',
-    20	                        help='Input file',
-    21	                        metavar='str',
-    22	                        type=str,
-    23	                        default='gashlycrumb.txt')
-    24	
-    25	    return parser.parse_args()
+     5	
+     6	
+     7	# --------------------------------------------------
+     8	def get_args():
+     9	    """get command-line arguments"""
+    10	
+    11	    parser = argparse.ArgumentParser(
+    12	        description='Gashlycrumb',
+    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    14	
+    15	    parser.add_argument('letter', help='Letter', metavar='str', type=str)
+    16	
+    17	    parser.add_argument('-f',
+    18	                        '--file',
+    19	                        help='Input file',
+    20	                        metavar='str',
+    21	                        type=argparse.FileType('r'),
+    22	                        default='gashlycrumb.txt')
+    23	
+    24	    return parser.parse_args()
+    25	
     26	
-    27	
-    28	# --------------------------------------------------
-    29	def main():
-    30	    """Make a jazz noise here"""
+    27	# --------------------------------------------------
+    28	def main():
+    29	    """Make a jazz noise here"""
+    30	
     31	    args = get_args()
-    32	    letter = args.letter.upper()
-    33	    file = args.file
-    34	
-    35	    if not os.path.isfile(file):
-    36	        die('--file "{}" is not a file.'.format(file))
+    32	    letter = args.letter
+    33	
+    34	    # lookup = {}
+    35	    # for line in args.file:
+    36	    #     lookup[line[0]] = line.rstrip()
     37	
-    38	    if len(letter) != 1:
-    39	        die('"{}" is not 1 character.'.format(letter))
-    40	
-    41	    lookup = {}
-    42	    for line in open(file):
-    43	        lookup[line[0]] = line.rstrip()
+    38	    lookup = {line[0]: line.rstrip() for line in args.file}
+    39	
+    40	    if letter.upper() in lookup:
+    41	        print(lookup[letter.upper()])
+    42	    else:
+    43	        print('I do not know "{}".'.format(letter))
     44	
-    45	    if letter in lookup:
-    46	        print(lookup[letter])
-    47	    else:
-    48	        print('I do not know "{}".'.format(letter))
-    49	
-    50	
-    51	# --------------------------------------------------
-    52	if __name__ == '__main__':
-    53	    main()
+    45	
+    46	# --------------------------------------------------
+    47	if __name__ == '__main__':
+    48	    main()
 ````
+
+\newpage
+
+## Discussion
+
+I prefer to have all the logic for parsing and validating the command-line arguments in the `get_args` function. In particular, `argparse` can do a fine job verifying tedious things such as an argument being an existing, readable `--file` which is why I use `type=argparse.FileType('r')` for that argument. If the user doesn't supply a valid argument, then `argparse` will throw an error, printing a helpful message along with the short usage and exiting with an error code. 
+
+By the time I get to the line `args = get_args()`, I know that I have a valid, open file handle in the `args.file` slot. In the REPL, I can manually do what `argparse` has done by using `open` to get a file handle which I like to usually call `fh`:
+
+````
+>>> fh = open('gashlycrumb.txt')
+````
+
+I can use a `for` loop to read each line of text and get the first letter using `line[0]` and set a `dict` called `lookup` with the value for the `line`:
+
+````
+>>> lookup = {}
+>>> for line in fh:
+...     lookup[line[0]] = line.rstrip()
+...
+>>> from pprint import pprint as pp
+>>> pp(lookup)
+{'A': 'A is for Amy who fell down the stairs.',
+ 'B': 'B is for Basil assaulted by bears.',
+ 'C': 'C is for Clara who wasted away.',
+ 'D': 'D is for Desmond thrown out of a sleigh.',
+ 'E': 'E is for Ernest who choked on a peach.',
+ 'F': 'F is for Fanny sucked dry by a leech.',
+ 'G': 'G is for George smothered under a rug.',
+ 'H': 'H is for Hector done in by a thug.',
+ 'I': 'I is for Ida who drowned in a lake.',
+ 'J': 'J is for James who took lye by mistake.',
+ 'K': 'K is for Kate who was struck with an axe.',
+ 'L': 'L is for Leo who choked on some tacks.',
+ 'M': 'M is for Maud who was swept out to sea.',
+ 'N': 'N is for Neville who died of ennui.',
+ 'O': 'O is for Olive run through with an awl.',
+ 'P': 'P is for Prue trampled flat in a brawl.',
+ 'Q': 'Q is for Quentin who sank on a mire.',
+ 'R': 'R is for Rhoda consumed by a fire.',
+ 'S': 'S is for Susan who perished of fits.',
+ 'T': 'T is for Titus who flew into bits.',
+ 'U': 'U is for Una who slipped down a drain.',
+ 'V': 'V is for Victor squashed under a train.',
+ 'W': 'W is for Winnie embedded in ice.',
+ 'X': 'X is for Xerxes devoured by mice.',
+ 'Y': 'Y is for Yorick whose head was bashed in.',
+ 'Z': 'Z is for Zillah who drank too much gin.'}
+````
+
+We've seen list comprehensions by essentially sticking a `for` inside brackets `[]`, and we can use a dictionary comprehension by doing the same with a `for` loop inside curlies `{}`. If you are following along by pasting code into the REPL, note that we have exhausted the file handle `fh` just above by reading it. I need to `open` it again for this next bit:
+
+````
+>>> fh = open('gashlycrumb.txt')
+>>> lookup = {line[0]: line.rstrip() for line in fh}
+````
+
+If you `pprint` it again, you should see the same output as above. It may seem like showing off to write one line of code instead of three, but it really does make a good deal of sense to write compact, idiomatic code. More code always means more chances for bugs, so I usually try to write code that is as simple as possible (but no simpler).
+
+Now that I have a `lookup`, I can ask if some value is `in` the keys. Note that I know the letters are in uppercase and I assume the user could give me lower, so I just use `letter.upper()` to only compare that case:
+
+````
+>>> letter = 'a'
+>>> letter.upper() in lookup
+True
+>>> lookup[letter.upper()]
+'A is for Amy who fell down the stairs.'
+````
+
+If the letter is found, I can print the line of text for that letter; otherwise, I can print the message that I don't know that letter:
+
+````
+>>> letter = '4'
+>>> if letter.upper() in lookup:
+...     print(lookup[letter.upper()])
+... else:
+...     print('I do not know "{}".'.format(letter))
+...
+I do not know "4".
+````
+
+I don't have to use a `dict`. I could, for example, use a `list` of `tuple` values:
+
+````
+>>> fh = open('gashlycrumb.txt')
+>>> lookup = [(line[0], line.rstrip()) for line in fh]
+>>> pp(lookup[:2])
+[('A', 'A is for Amy who fell down the stairs.'),
+ ('B', 'B is for Basil assaulted by bears.')]
+````
+
+I can get the letters with a list comprehension:
+
+````
+>>> [char for char, line in lookup][:3]
+['A', 'B', 'C']
+````
+
+And then use `in` to see if my `letter` is present:
+
+````
+>>> letter = 'a'
+>>> letter.upper() in [char for char, line in lookup]
+True
+````
+
+And get the value like so:
+
+````
+>>> [line for char, line in lookup if char == letter.upper()]
+['A is for Amy who fell down the stairs.']
+````
+
+The problem is that the cost of the search is proportional to the number of values. That is, if we were searching a million keys in a list, then Python starts searching at the beginning of the list and goes until it finds the value. When you store items in a `dict`, the search time for a key can be much shorter, often nearly instantaneous. It's well worth your time to learn dictionaries very well!
+
+## Edward Gorey
+
+If you are not familiar with the work of Edward Gorey, please  go read about him immediately, e.g. https://www.brainpickings.org/2011/01/19/edward-gorey-the-gashlycrumb-tinies/! 
+
+## Alternate text
+
+Write your own version of Gorey's text and pass in your version as the `--file`. I include my own `alternate.txt` which I used the simple and Soundex rhymers to help me find words.
+
+## Interactive version
+
+Write an interactive version that takes input directly from the user.
+
+````
+$ ./gashlycrumb_interactive.py
+Please provide a letter [! to quit]: t
+T is for Titus who flew into bits.
+Please provide a letter [! to quit]: 7
+I do not know "7".
+Please provide a letter [! to quit]: !
+Bye
+````
+
+Hint: Use `while True` to set up an infinite loop and keep using `input` to get the user's next `letter`.
 
 \newpage
 
@@ -4560,6 +4716,138 @@ def test_stemmer():
 And them I modified `make test` to include `rhymer.py` in the list of files to test. The `pytest` module looks for any function name that starts with `test_` and runs them. The `assert` will halt execution of the program if the test fails.
 
 Some of the words in my system dictionary don't have vowels, so some of methods that assumed the presence of a vowel failed. Writing a test just for this one function really helped me find errors in my code.
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Find rhyming words using the Soundex"""
+     3	
+     4	import argparse
+     5	import re
+     6	import string
+     7	from soundex import Soundex
+     8	
+     9	
+    10	# --------------------------------------------------
+    11	def get_args():
+    12	    """get command-line arguments"""
+    13	
+    14	    parser = argparse.ArgumentParser(
+    15	        description='Find rhyming words using the Soundex',
+    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    17	
+    18	    parser.add_argument('word', metavar='str', help='Word')
+    19	
+    20	    parser.add_argument('-w',
+    21	                        '--wordlist',
+    22	                        metavar='str',
+    23	                        help='Wordlist',
+    24	                        type=argparse.FileType('r'),
+    25	                        default='/usr/share/dict/words')
+    26	
+    27	    parser.add_argument('-s',
+    28	                        '--stem',
+    29	                        help='Stem the word (remove starting consonants',
+    30	                        action='store_true')
+    31	
+    32	    args = parser.parse_args()
+    33	
+    34	    #if not any([c in 'aeiouy' for c in args.word.lower()]):
+    35	    if not re.search('[aeiouy]', args.word, re.IGNORECASE):
+    36	        msg = 'word "{}" must contain at least one vowel'
+    37	        parser.error(msg.format(args.word))
+    38	
+    39	    return args
+    40	
+    41	
+    42	# --------------------------------------------------
+    43	def stemmer(s: str, stem: bool) -> str:
+    44	    """Use regular expressions"""
+    45	
+    46	    if stem:
+    47	        match = re.search(r'^[^aeiou]+([aeiou].*)', s, re.IGNORECASE)
+    48	        return match.group(1) if match else s
+    49	    return s
+    50	
+    51	
+    52	# --------------------------------------------------
+    53	# def stemmer(s: str, stem: bool) -> str:
+    54	#     """Manually `find` first vowel"""
+    55	
+    56	#     if stem:
+    57	#         positions = list(
+    58	#             filter(lambda p: p >= 0, [s.lower().find(v) for v in 'aeiou']))
+    59	#         if positions:
+    60	#             first = min(positions)
+    61	#             return s[first:] if first else s
+    62	#     return s
+    63	
+    64	# --------------------------------------------------
+    65	# def stemmer(s: str, stem: bool) -> str:
+    66	#     """Manually find first vowel with generator/next"""
+    67	
+    68	#     if stem:
+    69	#         first = next(
+    70	#             (t[0] for t in enumerate(s) if t[1].lower() in 'aeiou'), False)
+    71	#         return s[first:] if first else s
+    72	#     return s
+    73	
+    74	
+    75	# --------------------------------------------------
+    76	def test_stemmer():
+    77	    """test stemmer"""
+    78	
+    79	    assert stemmer('listen', True) == 'isten'
+    80	    assert stemmer('listen', False) == 'listen'
+    81	    assert stemmer('chair', True) == 'air'
+    82	    assert stemmer('chair', False) == 'chair'
+    83	    assert stemmer('apple', True) == 'apple'
+    84	    assert stemmer('apple', False) == 'apple'
+    85	    assert stemmer('xxxxxx', True) == 'xxxxxx'
+    86	    assert stemmer('xxxxxx', False) == 'xxxxxx'
+    87	
+    88	    assert stemmer('LISTEN', True) == 'ISTEN'
+    89	    assert stemmer('LISTEN', False) == 'LISTEN'
+    90	    assert stemmer('CHAIR', True) == 'AIR'
+    91	    assert stemmer('CHAIR', False) == 'CHAIR'
+    92	    assert stemmer('APPLE', True) == 'APPLE'
+    93	    assert stemmer('APPLE', False) == 'APPLE'
+    94	    assert stemmer('XXXXXX', True) == 'XXXXXX'
+    95	    assert stemmer('XXXXXX', False) == 'XXXXXX'
+    96	
+    97	
+    98	# --------------------------------------------------
+    99	def main():
+   100	    """Make a jazz noise here"""
+   101	
+   102	    args = get_args()
+   103	    given = args.word
+   104	    words = args.wordlist.read().split()
+   105	
+   106	    def sndx(s):
+   107	        return Soundex().soundex(stemmer(s, args.stem))
+   108	
+   109	    wanted = sndx(given)
+   110	
+   111	    for word in words:
+   112	        if given != word and sndx(word) == wanted:
+   113	            print(word)
+   114	
+   115	    # print('\n'.join(
+   116	    #     filter(lambda word: given != word and sndx(word) == wanted, words)))
+   117	
+   118	    # print('\n'.join([
+   119	    #     word for word in words if given != word and sndx(word) == wanted
+   120	    # ]))
+   121	
+   122	
+   123	# --------------------------------------------------
+   124	if __name__ == '__main__':
+   125	    main()
+````
+
 \newpage
 
 ## Discussion
