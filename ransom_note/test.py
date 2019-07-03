@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """tests for ransom.py"""
 
+import os
 import re
 import random
 from subprocess import getstatusoutput
@@ -13,6 +14,13 @@ now = '../inputs/now.txt'
 # --------------------------------------------------
 def seed_flag():
     return '-s' if random.randint(0, 1) else '--seed'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
@@ -62,6 +70,7 @@ def test_file1():
         cmd = '{} {} {} {}'.format(prg, seed_flag(), seed, fox)
         rv, out = getstatusoutput(cmd)
         assert out.strip() == expected
+
 
 # --------------------------------------------------
 def test_file2():

@@ -4,7 +4,6 @@
 import argparse
 import os
 import re
-import sys
 
 
 # --------------------------------------------------
@@ -17,7 +16,20 @@ def get_args():
 
     parser.add_argument('text', metavar='str', help='Input text or file')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if os.path.isfile(args.text):
+        args.text = open(args.text).read()
+
+    return args
+
+
+# --------------------------------------------------
+def word2num(word):
+    """Sum the ordinal values of all the characters"""
+
+    word = re.sub('[^a-zA-Z0-9]', '', word)
+    return str(sum(map(ord, word)))
 
 
 # --------------------------------------------------
@@ -27,16 +39,8 @@ def main():
     args = get_args()
     text = args.text
 
-    if os.path.isfile(text):
-        text = open(text).read()
-
-    def clean(word):
-        return re.sub('[^a-zA-Z0-9]', '', word)
-
     for line in text.splitlines():
-        words = line.rstrip().split()
-        nums = map(lambda word: str(sum(map(ord, clean(word)))), words)
-        print(' '.join(nums))
+        print(' '.join(map(word2num, line.split())))
 
 
 # --------------------------------------------------

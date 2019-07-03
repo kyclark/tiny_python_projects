@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
+"""Ransom note"""
 
 import argparse
 import os
 import random
-import sys
 
 
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Ransom Note',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -22,31 +23,43 @@ def get_args():
                         type=int,
                         default=None)
 
-    return parser.parse_args()
+    args = parser.parse_args()
 
+    if os.path.isfile(args.text):
+        args.text = open(args.text).read().rstrip()
+
+    return args
+
+# --------------------------------------------------
+def choose(c):
+    """Randomly choose an upper or lowercase letter to return"""
+
+    return c.upper() if random.choice([0, 1]) else c.lower()
 
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
     args = get_args()
-
+    text = args.text
     random.seed(args.seed)
 
-    text = args.text
-    if os.path.isfile(text):
-        text = open(text).read()
+    # Method 1: Iterate each character, add to list
+    # ransom = []
+    # for char in text:
+    #     ransom.append(char.upper() if random.choice([0, 1]) else char.lower())
 
-    #ransom = []
-    #for char in text:
-    #    ransom.append(char.upper() if random.choice([0, 1]) else char.lower())
-
+    # Method 2: List comprehension
     #ransom = [c.upper() if random.choice([0, 1]) else c.lower() for c in text]
 
-    #ransom = map(lambda c: c.upper() if random.choice([0, 1]) else c.lower(),
-    #             text)
+    # Method 3: List comprehension with function
+    #ransom = [choose(c) for c in text]
 
-    f = lambda c: c.upper() if random.choice([0, 1]) else c.lower()
-    ransom = map(f, text)
+    # Method 4: map with lambda
+    # ransom = map(lambda c: c.upper() if random.choice([0, 1]) else c.lower(),
+    #              text)
+
+    # Method 5: map with function
+    ransom = map(choose, text)
 
     print(''.join(ransom))
 

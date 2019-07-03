@@ -121,6 +121,7 @@ def main():
                 fh.write('````\n')
                 numbered = getoutput('cat -n {}'.format(solution_py))
                 fh.write(numbered)
+                #fh.write(open(solution_py).read())
                 fh.write('\n````\n')
                 fh.write('\n\\newpage\n\n')
             else:

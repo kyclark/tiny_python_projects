@@ -4,20 +4,44 @@
 import argparse
 import re
 import string
-import sys
-from dire import die
 
 
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Make rhyming "words"',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('word', metavar='str', help='A word')
+    parser.add_argument('word', metavar='str', help='A word to rhyme')
 
     return parser.parse_args()
+
+
+# --------------------------------------------------
+def stemmer(word):
+    """Return leading consonants (if any), and 'stem' of word"""
+
+
+def stemmer(word):
+    vowels = 'aeiou'
+    consonants = ''.join(
+        filter(lambda c: c not in vowels, string.ascii_lowercase))
+    match = re.match('^([' + consonants + ']*)([' + vowels + '].*)', word)
+    if match:
+        return match.groups()
+    return None
+
+
+# --------------------------------------------------
+def test_stemmer():
+    """Test the stemmer"""
+
+    assert ('c', 'ake') == stemmer('cake')
+    assert ('ch', 'air') == stemmer('chair')
+    assert ('', 'apple') == stemmer('apple')
+    assert stemmer('bbb') is None
 
 
 # --------------------------------------------------
@@ -25,22 +49,17 @@ def main():
     """Make a jazz noise here"""
     args = get_args()
     word = args.word
+    stemmed = stemmer(word.lower())
+    prefixes = list('bcdfghjklmnpqrstvwxyz') + (
+        'bl br ch cl cr dr fl fr gl gr pl pr sc '
+        'sh sk sl sm sn sp st sw th tr tw wh wr'
+        'sch scr shr sph spl spr squ str thr').split()
 
-    vowels = 'aeiou'
-    if word[0] in vowels:
-        die('Word "{}" must start with consonants'.format(word))
-
-    consonants = [c for c in string.ascii_lowercase if c not in 'aeiou']
-    match = re.match('^([' + ''.join(consonants) + ']+)(.+)', word)
-
-    clusters = ('bl br ch cl cr dr fl fr gl gr pl pr sc '
-                'sh sk sl sm sn sp st sw th tr tw wh wr '
-                'sch scr shr sph spl spr squ str thr').split()
-
-    if match:
-        start, rest = match.group(1), match.group(2)
-        for c in filter(lambda c: c != start, consonants + clusters):
-            print(c + rest)
+    if stemmed:
+        start, rest = stemmed
+        print('\n'.join([p + rest for p in prefixes if p != start]))
+    else:
+        print('Cannot rhyme "{}"'.format(word))
 
 
 # --------------------------------------------------

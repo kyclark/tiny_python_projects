@@ -2000,7 +2000,7 @@ tenet
 
 # Chapter 11: Ransom
 
-Create a Python program called `ransom.py` that will randomly capitalize the letters in a given word or phrase. The input text may also name a file in which case the text should come from the file. The program should take a `-s|--seed` argument for the `random.seed` to control randomness for the test suite. It should also respond to `-h|--help` for usage.
+Create a Python program called `ransom.py` that will randomly capitalize the letters in a text. The program should take a `-s|--seed` argument for the `random.seed` to control randomness for the test suite. It should print usage when given no arguments or `-h|--help`.
 
 ````
 $ ./ransom.py
@@ -2017,85 +2017,214 @@ positional arguments:
 optional arguments:
   -h, --help          show this help message and exit
   -s int, --seed int  Random seed (default: None)
-$ cat fox.txt
-The quick brown fox jumps over the lazy dog.
-$ ./ransom.py fox.txt
-the quiCK bROWn fOx JUMps OveR tHe LAzy Dog.
+````
+
+The text can be given on the command line:
+
+````
 $ ./ransom.py -s 2 'The quick brown fox jumps over the lazy dog.'
 the qUIck BROWN fOX JUmps ovEr ThE LAZY DOg.
 ````
 
+Or in a file:
+
+````
+$ cat ../inputs/fox.txt
+The quick brown fox jumps over the lazy dog.
+$ ./ransom.py --seed 2 ../inputs/fox.txt
+the qUIck BROWN fOX JUmps ovEr ThE LAZY DOg.
+````
+
+Hints:
+
+* You can iterate each character in the input string with a `for` loop
+* For each character, can use the `random.choice` function to decide whether to force the character to upper or lower case using methods from the `str` class
 \newpage
 
 ## Solution
 
 ````
      1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import os
-     5	import random
-     6	import sys
+     2	"""Ransom note"""
+     3	
+     4	import argparse
+     5	import os
+     6	import random
      7	
      8	
      9	# --------------------------------------------------
     10	def get_args():
     11	    """get command-line arguments"""
-    12	    parser = argparse.ArgumentParser(
-    13	        description='Ransom Note',
-    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    15	
-    16	    parser.add_argument('text', metavar='str', help='Input text or file')
-    17	
-    18	    parser.add_argument('-s',
-    19	                        '--seed',
-    20	                        help='Random seed',
-    21	                        metavar='int',
-    22	                        type=int,
-    23	                        default=None)
-    24	
-    25	    return parser.parse_args()
-    26	
+    12	
+    13	    parser = argparse.ArgumentParser(
+    14	        description='Ransom Note',
+    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    16	
+    17	    parser.add_argument('text', metavar='str', help='Input text or file')
+    18	
+    19	    parser.add_argument('-s',
+    20	                        '--seed',
+    21	                        help='Random seed',
+    22	                        metavar='int',
+    23	                        type=int,
+    24	                        default=None)
+    25	
+    26	    args = parser.parse_args()
     27	
-    28	# --------------------------------------------------
-    29	def main():
-    30	    """Make a jazz noise here"""
-    31	    args = get_args()
+    28	    if os.path.isfile(args.text):
+    29	        args.text = open(args.text).read().rstrip()
+    30	
+    31	    return args
     32	
-    33	    random.seed(args.seed)
-    34	
-    35	    text = args.text
-    36	    if os.path.isfile(text):
-    37	        text = open(text).read()
+    33	# --------------------------------------------------
+    34	def choose(c):
+    35	    """Randomly choose an upper or lowercase letter to return"""
+    36	
+    37	    return c.upper() if random.choice([0, 1]) else c.lower()
     38	
-    39	    #ransom = []
-    40	    #for char in text:
-    41	    #    ransom.append(char.upper() if random.choice([0, 1]) else char.lower())
-    42	
-    43	    #ransom = [c.upper() if random.choice([0, 1]) else c.lower() for c in text]
-    44	
-    45	    #ransom = map(lambda c: c.upper() if random.choice([0, 1]) else c.lower(),
-    46	    #             text)
-    47	
-    48	    f = lambda c: c.upper() if random.choice([0, 1]) else c.lower()
-    49	    ransom = map(f, text)
+    39	# --------------------------------------------------
+    40	def main():
+    41	    """Make a jazz noise here"""
+    42	    args = get_args()
+    43	    text = args.text
+    44	    random.seed(args.seed)
+    45	
+    46	    # Method 1: Iterate each character, add to list
+    47	    # ransom = []
+    48	    # for char in text:
+    49	    #     ransom.append(char.upper() if random.choice([0, 1]) else char.lower())
     50	
-    51	    print(''.join(ransom))
-    52	
+    51	    # Method 2: List comprehension
+    52	    #ransom = [c.upper() if random.choice([0, 1]) else c.lower() for c in text]
     53	
-    54	# --------------------------------------------------
-    55	if __name__ == '__main__':
-    56	    main()
+    54	    # Method 3: List comprehension with function
+    55	    #ransom = [choose(c) for c in text]
+    56	
+    57	    # Method 4: map with lambda
+    58	    # ransom = map(lambda c: c.upper() if random.choice([0, 1]) else c.lower(),
+    59	    #              text)
+    60	
+    61	    # Method 5: map with function
+    62	    ransom = map(choose, text)
+    63	
+    64	    print(''.join(ransom))
+    65	
+    66	
+    67	# --------------------------------------------------
+    68	if __name__ == '__main__':
+    69	    main()
 ````
+
+\newpage
+
+## Discussion
+
+I like this problem because there are so many interesting ways to solve it. I know, I know, Python likes there to be "one obvious way" to solve it, but let's explore, shall we?
+
+It's a common pattern in many of these problems that the input can either be given on the command line or in a file, so I have to defined the `text` argument as having `type=str`. In this version of the program, I decided to check in the `get_args` if the `text` is a file (`os.path.isfile(text)`), and, if so, to override the value of `args.text` with the result of reading the contents of the file. That way when I get to the `args = get_args()` line in my program, I've already gotten the text from the user, whether given on the command line or in a file.
+
+I set the `--seed` optional `default` to Python's special `None` value which means nothing at all. As such, I can pass it directly to `random.seed` because setting the seed to `None` is the same as not setting it. Only if the user indicates a `--seed` value (which must be an `int` and which `argparse` will validate) will this affect the behavior of the program.
+
+Assume that we have the following:
+
+````
+>>> text = 'The quick brown fox jumps over the lazy dog.'
+````
+
+We want to randomly upper- and lowercase the letters. As suggested in the description of the problem, we can use a `for` loop to iterate over each character. Here's one way to print an uppercase version of the `text`
+
+````
+>>> for char in text:
+...     print(char.upper(), end='')
+...
+THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
+````
+
+Let's use `random.choice` to make a binary selection:
+
+````
+>>> import random
+>>> random.choice([True, False])
+False
+>>> random.choice([0, 1])
+0
+>>> random.choice(['blue', 'green'])
+'blue'
+````
+
+Now use that to select whether to take the upper- or lowercase character. Note that this version relies on the idea of "truthiness" (cf appendix) where `0` is considered `False` and anything not zero (like `1`) is `True`. So if `random.choice([0, 1])` returns a `1` (or `True`) then we take `char.upper()` otherwise we take `char.lower()`:
+
+````
+>>> ransom = []
+>>> for char in text:
+...     ransom.append(char.upper() if random.choice([0, 1]) else char.lower())
+...
+>>> ''.join(ransom)
+'The quIck brOwn Fox JumpS over ThE lAZY dOG.'
+````
+
+We can shorten this to one line of code if we use a list comprehension, essentially putting the `for` loop inside the brackets `[]` that create the `ransom` list:
+
+````
+>>> ransom = [c.upper() if random.choice([0, 1]) else c.lower() for c in text]
+>>> ''.join(ransom)
+'thE quicK bRowN foX JUmPs OVER tHe lAzY dog.'
+````
+
+All the code for deciding which case could go into a very small function which you could either write as a `lambda`:
+
+````
+>>> choose = lambda c: c.upper() if random.choice([0, 1]) else c.lower()
+>>> choose('t')
+'T'
+````
+
+Or the more standard `def` version:
+
+````
+>>> def choose(c):
+...     return c.upper() if random.choice([0, 1]) else c.lower()
+...
+>>> choose('t')
+'t'
+````
+
+And then use that in your list comprehension. This version reads very well as is perhaps my favorite:
+
+````
+>>> ransom = [choose(c) for c in text]
+>>> ''.join(ransom)
+'thE QUicK broWN fOx JUmPS OVeR the lAZy doG.'
+````
+
+But I also quite like the `map` function which takes another function as the first argument which is applied to all the elements of second argument which is an iterable:
+
+````
+>>> ransom = map(lambda c: c.upper() if random.choice([0, 1]) else c.lower(), text)
+>>> ''.join(ransom)
+'ThE qUiCk BROwn FoX JUMps oVER THe lAzY dog.'
+````
+
+And that cleans up very nicely if instead we used our named function. This version is the shortest and perhaps cleanest but does require the reader to understand `map`:
+
+````
+>>> ransom = map(choose, text)
+>>> ''.join(ransom)
+'thE QUIck BrOwN FOX jumPs oVeR thE lAZY dOg.'
+````
+
+It may seem silly to spend so much time working through five ways to solve what is an essientially trivial problem, but one of the goals in this book is to explore the various ideas available in Python. The first method is a very imperative, c-like solution while the list comprehensions are very Pythonic and the `map` versions borrow from the world of purely functional languages like Haskell.
 
 \newpage
 
 # Chapter 12: Simple Rhymer
 
-Write a Python program called `rhymer.py` that will create new words by removing the consonant(s) from the beginning of the word and then creating new words by prefixing the remainder with all the consonants and clusters that were not at the beginning. That is, prefix with all the consonants in the alphabet plus these clusters:
+Write a Python program called `rhymer.py` that will create new words by removing the consonant(s) from the beginning (if any) of a given word and then create new words by prefixing the remainder with all the consonants and clusters that were not at the beginning. That is, prefix with all the consonants in the alphabet plus these clusters:
 
     bl br ch cl cr dr fl fr gl gr pl pr sc sh sk sl sm sn sp 
     st sw th tr tw wh wr sch scr shr sph spl spr squ str thr
+
+If given no arguments or the `-h|--help` flags, print a usage statement:
 
 ````
 $ ./rhymer.py
@@ -2111,21 +2240,58 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
-$ ./rhymer.py apple
-Word "apple" must start with consonants  
-$ ./rhymer.py take | head
+````  
+  
+If the word starts with a vowel, use the word as-is:
+
+````
+$ ./rhymer.py apple | head -3
+bapple
+capple
+dapple
+````
+
+If the word begins with any consonants, remove them and append all the prefixes above making sure not to include any prefixes that match what you removed:
+
+````
+$ ./rhymer.py take | head -3
 bake
 cake
 dake
-fake
-gake
-hake
-jake
-kake
-lake
-make
+$ ./rhymer.py take | grep take
+stake
 ````
 
+If the word doesn't match one of the above conditions, e.g., it is entirely consonants, print a message that you cannot rhyme it.
+
+````
+$ ./rhymer.py RDNZL
+Cannot rhyme "RDNZL"
+````
+
+Hints:
+
+The heart of the program for me is the stemming of the word. Do you even need to stemp it? Not if it begins with a vowel, so how can you detect that? I ended up writing a function called `stemmer` and inserted this into my `rhymer.py`:
+
+````
+def test_stemmer():
+    """Test the stemmer"""
+
+    assert ('c', 'ake') == stemmer('cake')
+    assert ('ch', 'air') == stemmer('chair')
+    assert ('', 'apple') == stemmer('apple')
+    assert stemmer('bbb') is None
+````
+
+If you notice the `make test` target also include `rhymer.py`:
+
+````
+pytest -xv rhymer.py test.py
+````
+
+I wrote my `stemmer(word)` to return a tuple of `(prefix, stem)` where `prefix` will be the empty string when the `word` starts with a vowel. If the word starts with a consonant and can be split, I return the two parts of the word e.g., `chair` become `('ch', 'air')`. Otherwise I return `None` to indicate a failure to communicate.
+
+If you choose to do the same, you can add the `test_stemmer` to your program and  `pytest` will find any function with a name starting with `test_` to run. You can use this to verify that your `stemmer` does what you expect.
 \newpage
 
 ## Solution
@@ -2137,50 +2303,237 @@ make
      4	import argparse
      5	import re
      6	import string
-     7	import sys
-     8	from dire import die
-     9	
-    10	
-    11	# --------------------------------------------------
-    12	def get_args():
-    13	    """get command-line arguments"""
-    14	    parser = argparse.ArgumentParser(
-    15	        description='Make rhyming "words"',
-    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    17	
-    18	    parser.add_argument('word', metavar='str', help='A word')
-    19	
-    20	    return parser.parse_args()
+     7	
+     8	
+     9	# --------------------------------------------------
+    10	def get_args():
+    11	    """get command-line arguments"""
+    12	
+    13	    parser = argparse.ArgumentParser(
+    14	        description='Make rhyming "words"',
+    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    16	
+    17	    parser.add_argument('word', metavar='str', help='A word to rhyme')
+    18	
+    19	    return parser.parse_args()
+    20	
     21	
-    22	
-    23	# --------------------------------------------------
-    24	def main():
-    25	    """Make a jazz noise here"""
-    26	    args = get_args()
-    27	    word = args.word
-    28	
-    29	    vowels = 'aeiou'
-    30	    if word[0] in vowels:
-    31	        die('Word "{}" must start with consonants'.format(word))
-    32	
-    33	    consonants = [c for c in string.ascii_lowercase if c not in 'aeiou']
-    34	    match = re.match('^([' + ''.join(consonants) + ']+)(.+)', word)
+    22	# --------------------------------------------------
+    23	def stemmer(word):
+    24	    """Return leading consonants (if any), and 'stem' of word"""
+    25	
+    26	
+    27	def stemmer(word):
+    28	    vowels = 'aeiou'
+    29	    consonants = ''.join(
+    30	        filter(lambda c: c not in vowels, string.ascii_lowercase))
+    31	    match = re.match('^([' + consonants + ']*)([' + vowels + '].*)', word)
+    32	    if match:
+    33	        return match.groups()
+    34	    return None
     35	
-    36	    clusters = ('bl br ch cl cr dr fl fr gl gr pl pr sc '
-    37	                'sh sk sl sm sn sp st sw th tr tw wh wr '
-    38	                'sch scr shr sph spl spr squ str thr').split()
-    39	
-    40	    if match:
-    41	        start, rest = match.group(1), match.group(2)
-    42	        for c in filter(lambda c: c != start, consonants + clusters):
-    43	            print(c + rest)
-    44	
+    36	
+    37	# --------------------------------------------------
+    38	def test_stemmer():
+    39	    """Test the stemmer"""
+    40	
+    41	    assert ('c', 'ake') == stemmer('cake')
+    42	    assert ('ch', 'air') == stemmer('chair')
+    43	    assert ('', 'apple') == stemmer('apple')
+    44	    assert stemmer('bbb') is None
     45	
-    46	# --------------------------------------------------
-    47	if __name__ == '__main__':
-    48	    main()
+    46	
+    47	# --------------------------------------------------
+    48	def main():
+    49	    """Make a jazz noise here"""
+    50	    args = get_args()
+    51	    word = args.word
+    52	    stemmed = stemmer(word.lower())
+    53	    prefixes = list('bcdfghjklmnpqrstvwxyz') + (
+    54	        'bl br ch cl cr dr fl fr gl gr pl pr sc '
+    55	        'sh sk sl sm sn sp st sw th tr tw wh wr'
+    56	        'sch scr shr sph spl spr squ str thr').split()
+    57	
+    58	    if stemmed:
+    59	        start, rest = stemmed
+    60	        print('\n'.join([p + rest for p in prefixes if p != start]))
+    61	    else:
+    62	        print('Cannot rhyme "{}"'.format(word))
+    63	
+    64	
+    65	# --------------------------------------------------
+    66	if __name__ == '__main__':
+    67	    main()
 ````
 
+\newpage
+
+## Discussion
+
+As stated in the description, I spent most of my time working out how to stem a word. Some other programs in the book require this idea (Soundex rhymer, Runny Babbit), so you might look there, too. I decided to write a function `stemmer(word)` that will return a tuple of `(prefix, stem)`.
+
+We need to check if the word can be split into one or more consonants followed by at least one vowel and maybe some other stuff, e.g., `'ha'` could be `('h', 'a')`. The easiest way is to write a regular expression using the `re` module. We've already defined the `vowels`, so we can use those to find the complement of `consonants`. I can iterate through the letters of the alphabet by using `string.ascii_lowercase` and find those not in the `vowels`:
+
+````
+>>> import string
+>>> string.ascii_lowercase
+'abcdefghijklmnopqrstuvwxyz'
+>>> vowels = 'aeiou'
+>>> consonants = ''.join(
+...     filter(lambda c: c not in vowels, string.ascii_lowercase))
+>>> consonants
+'bcdfghjklmnpqrstvwxyz'
+````
+
+Here we see the use of `filter` which is a "higher-order" function takes a *another function* as the first argument and an iterable as the second argument. The `lambda c` keyword creates an anonymous function with a single argument I call `c` (for "character") which can then be referenced in the function body. 
+
+The more Pythonic way to write this would be a list comprehension:
+
+````
+>>> consonants = ''.join([c for c in string.ascii_lowercase if c not in vowels])
+>>> consonants
+'bcdfghjklmnpqrstvwxyz'
+````
+
+Both ways are fine. It's mostly preference, though true Pythonistas would probably disagree. If nothing else, the `filter` might be slower than a comprehension, especially if the iterable were large, so choose whichever way makes more sense for your style and application.
+
+The regular expression is a bit tricky. We want to find consonants at the beginning, so we can use the caret (`^`) to anchor the regex to the start of the string. 
+
+````
+>>> r = '^'
+>>> r
+'^'
+````
+
+Then we create a "character class" using `[]` and enumerate inside all the characters that are allowed:
+
+````
+>>> r = '^[' + consonants + ']'
+>>> r
+'^[bcdfghjklmnpqrstvwxyz]'
+````
+
+We will want to "capture" these so we can extract them later, so we put parentheses `()` around the character class to group them:
+
+````
+>>> r = '^([' + consonants + '])'
+>>> r
+'^([bcdfghjklmnpqrstvwxyz])'
+````
+
+Let's try that and see what we get:
+
+````
+>>> import re
+>>> re.search(r, 'chair')
+<re.Match object; span=(0, 1), match='c'>
+````
+
+Hmm, it didn't match `ch` because we didn't tell the regex *how many* to match, so it just matched one. We can add `*` to indicate "zero or more":
+
+````
+>>> r = '^([' + consonants + ']*)'
+>>> r
+'^([bcdfghjklmnpqrstvwxyz]*)'
+>>> re.search(r, 'chair')
+<re.Match object; span=(0, 2), match='ch'>
+````
+
+Very nice. Sometimes you'll see `+` to mean that a pattern can be repeated, but that one means "one or more." By using `*`, I'm relying on the fact that "zero" matches will always be true, so this will also help me find any `word` that begins with a vowel (although it doesn't seem like it just yet):
+
+````
+>>> re.search(r, 'apple')
+<re.Match object; span=(0, 0), match=''>
+````
+
+Now I want to say that after some optional consonant prefix there must be at least one vowel:
+
+````
+>>> r = '^([' + consonants + ']*)' + '([' + vowels + '])'
+>>> r
+'^([bcdfghjklmnpqrstvwxyz]*)([aeiou])'
+>>> re.search(r, 'chair')
+<re.Match object; span=(0, 3), match='cha'>
+>>> re.search(r, 'apple')
+<re.Match object; span=(0, 1), match='a'>
+````
+
+Getting closer, but we need the regular expression to reach the end of the word now, so we add `.*` where `.` means "one of anything" and `*` means "zero or more":
+
+````
+>>> r = '^([' + consonants + ']*)' + '([' + vowels + '].*)'
+>>> r
+'^([bcdfghjklmnpqrstvwxyz]*)([aeiou].*)'
+>>> re.search(r, 'chair')
+<re.Match object; span=(0, 5), match='chair'>
+>>> re.search(r, 'apple')
+<re.Match object; span=(0, 5), match='apple'>
+````
+
+Great! We're matching the entire word. The true magic comes in when we look at the capture `groups`:
+
+````
+>>> re.search(r, 'chair').groups()
+('ch', 'air')
+>>> re.search(r, 'apple').groups()
+('', 'apple')
+````
+
+That is exactly what I wanted to return! For what it's worth, I can get each `group` individually by referencing their order:
+
+````
+>>> re.search(r, 'chair').group(1)
+'ch'
+>>> re.search(r, 'apple').group(2)
+'apple'
+````
+
+If I can't `match` a string:
+
+````
+>>> type(re.search(r, 'RDNZL'))
+<class 'NoneType'>
+````
+
+I return `None` from my function:
+
+````
+>>> def stemmer(word):
+...     vowels = 'aeiou'
+...     consonants = ''.join(
+...         filter(lambda c: c not in vowels, string.ascii_lowercase))
+...     match = re.match('^([' + consonants + ']*)([' + vowels + '].*)', word)
+...     if match:
+...         return match.groups()
+...     return None
+...
+>>> stemmer('apple')
+('', 'apple')
+>>> stemmer('chair')
+('ch', 'air')
+>>> stemmer('RDNZL')
+````
+
+So, given a working `stemmer` I try to stem a given `word`. If there is no result, I print the message that I cannot rhyme the word. Otherwise I iterate over all the prefixes:
+
+````
+>>> prefixes = list('bcdfghjklmnpqrstvwxyz') + (
+...     'bl br ch cl cr dr fl fr gl gr pl pr sc '
+...     'sh sk sl sm sn sp st sw th tr tw wh wr'
+...     'sch scr shr sph spl spr squ str thr').split()
+````
+
+And add them to the stem of the word, being sure to avoid any prefix that was the same as the original word:
+
+````
+>>> start, rest = stemmer('chair')
+>>> start
+'ch'
+>>> rest
+'air'
+>>> [p + rest for p in prefixes if p != start][:3]
+['bair', 'cair', 'dair']
+````
 \newpage
 
 # Chapter 13: Rock, Paper, Scissors
@@ -3143,12 +3496,9 @@ Done, see output in "tudor.txt.gv".
 
 \newpage
 
-# Chapter 19: Gematria
+# Chapter 19: Gematria: Numeric encoding of text
 
-Write a Python program called `gematria.py` 
-
-Gematria is a system for assigning a number to a word by summing the numeric values of each of the letters as defined by the Mispar godol (https://en.wikipedia.org/wiki/Gematria). For English characters, we can use the ASCII table (https://en.wikipedia.org/wiki/ASCII). It is not necessary, however, to encode this table in our program as Python provides the `ord` function to convert a character to its "ordinal" (order in the ASCII table) value as well as the `chr` function to convert a number to its "character."
-
+Write a Python program called `gematria.py` that will numerically encode each word in a given text. The name of this program comes from gematria, a system for assigning a number to a word by summing the numeric values of each of the letters as defined by the Mispar godol (https://en.wikipedia.org/wiki/Gematria). For English characters, we can use the ASCII table (https://en.wikipedia.org/wiki/ASCII). Python provides these value throug the `ord` function to convert a character to its "ordinal" (order in the ASCII table) value as well as the `chr` function to convert a number to its "character."
 
 ````
 >>> ord('A')
@@ -3161,11 +3511,10 @@ Gematria is a system for assigning a number to a word by summing the numeric val
 'p'
 ````
 
-To implement an ASCII version of gematria in Python, we need to turn each letter into a number and add them all together.  So, to start, note that Python can use a `for` loop to cycle through all the members of a list (in order):
-
+To implement an ASCII version of gematria in Python, for each word in a text we need to turn each letter into a number and add them all together.  So, to start, note that Python can use a `for` loop to cycle through all the characters in a string:
 
 ````
->>> for char in ['p', 'y', 't', 'h', 'o', 'n']:
+>>> for char in 'python':
 ...     print(ord(char))
 ...
 112
@@ -3176,7 +3525,9 @@ To implement an ASCII version of gematria in Python, we need to turn each letter
 110
 ````
 
-Now you just need to `sum` those up for each word!
+We've seen before how you can put a `for` loop inside brackets `[]` for a list comprehension. Do that and then `sum` the list.
+
+The program should print a usage if given no arguments or the `-h|--help` flag:
 
 ````
 $ ./gematria.py
@@ -3192,12 +3543,28 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+````
+
+The text may be given on the command line:
+
+````
 $ ./gematria.py 'foo bar baz'
 324 309 317
+````
+
+Or in a file:
+
+````
 $ ./gematria.py ../inputs/fox.txt
 289 541 552 333 559 444 321 448 314
 ````
 
+Hints:
+
+* You'll want to read the input line-by-line because the tests are expecting lines of output where each word has been encoded.
+* Can you write a function that can encode just one word? E.g, "gematria" = 842.
+* Be sure you only encode the words themselves and not any punctuation that might be next to a word. E.g., if you use `str.split` to break text on whitespaces, quotes/commas/periods and such will still be attached to the words. Additionally, you should remove any internal punctuation like apostrophes. Maybe look into the `re` module to use regular expressions.
+* Now can you apply that function to each word in a line of text?
 \newpage
 
 ## Solution
@@ -3209,46 +3576,260 @@ $ ./gematria.py ../inputs/fox.txt
      4	import argparse
      5	import os
      6	import re
-     7	import sys
+     7	
      8	
-     9	
-    10	# --------------------------------------------------
-    11	def get_args():
-    12	    """Get command-line arguments"""
-    13	
-    14	    parser = argparse.ArgumentParser(
-    15	        description='Gematria',
-    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    17	
-    18	    parser.add_argument('text', metavar='str', help='Input text or file')
-    19	
-    20	    return parser.parse_args()
-    21	
-    22	
-    23	# --------------------------------------------------
-    24	def main():
-    25	    """Make a jazz noise here"""
+     9	# --------------------------------------------------
+    10	def get_args():
+    11	    """Get command-line arguments"""
+    12	
+    13	    parser = argparse.ArgumentParser(
+    14	        description='Gematria',
+    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    16	
+    17	    parser.add_argument('text', metavar='str', help='Input text or file')
+    18	
+    19	    args = parser.parse_args()
+    20	
+    21	    if os.path.isfile(args.text):
+    22	        args.text = open(args.text).read()
+    23	
+    24	    return args
+    25	
     26	
-    27	    args = get_args()
-    28	    text = args.text
-    29	
-    30	    if os.path.isfile(text):
-    31	        text = open(text).read()
-    32	
-    33	    def clean(word):
-    34	        return re.sub('[^a-zA-Z0-9]', '', word)
-    35	
-    36	    for line in text.splitlines():
-    37	        words = line.rstrip().split()
-    38	        nums = map(lambda word: str(sum(map(ord, clean(word)))), words)
-    39	        print(' '.join(nums))
-    40	
+    27	# --------------------------------------------------
+    28	def word2num(word):
+    29	    """Sum the ordinal values of all the characters"""
+    30	
+    31	    word = re.sub('[^a-zA-Z0-9]', '', word)
+    32	    return str(sum(map(ord, word)))
+    33	
+    34	
+    35	# --------------------------------------------------
+    36	def main():
+    37	    """Make a jazz noise here"""
+    38	
+    39	    args = get_args()
+    40	    text = args.text
     41	
-    42	# --------------------------------------------------
-    43	if __name__ == '__main__':
-    44	    main()
+    42	    for line in text.splitlines():
+    43	        print(' '.join(map(word2num, line.split())))
+    44	
+    45	
+    46	# --------------------------------------------------
+    47	if __name__ == '__main__':
+    48	    main()
 ````
 
+\newpage
+
+## Discussion
+
+The `text` argument for the program might be taken directly from the command line or from a named file. I chose to handle inside the `get_args` the reading of a file argument so that by the time I call `args = get_args()` I have the actual `text` I need to process.
+
+## Reading lines of text
+
+As mentioned in the description of the program, the test suite is looking for the lines of input text to be maintained in the output. It's straightforward to `read` an `open` file line-by-line:
+
+````
+>>> file = '../inputs/spiders.txt'
+>>> for line in open(file):
+...     print(line, end='')
+...
+Don’t worry, spiders,
+I keep house
+casually.
+````
+
+If I've taken the `text` from a file, then it's all just now just one string and a `for` loop on a string will iterate over each *character* not each line.
+
+````
+>>> text = open(file).read()
+>>> text
+'Don’t worry, spiders,\nI keep house\ncasually.\n'
+>>> for char in text:
+...     print(char, end='-')
+...
+D-o-n-’-t- -w-o-r-r-y-,- -s-p-i-d-e-r-s-,-
+-I- -k-e-e-p- -h-o-u-s-e-
+-c-a-s-u-a-l-l-y-.-
+````
+
+So instead we can use `str.splitlines()` to break `text` on the newlines:
+
+````
+>>> for line in text.splitlines():
+...     print(line)
+...
+Don’t worry, spiders,
+I keep house
+casually.
+````
+
+## List comprehensions vs map
+
+Like several other programs, we now are left with applying some function to each member of a list. That is, we want to turn each word into a number, and we've seen there are several ways to go about this. I will focus on two methods which I use twice each: list comprensions and the `map` function.
+
+## Encoding one word
+
+First let's take just one word. We've seen how we can use `ord` to turn one character into a number:
+
+````
+>>> ord('g')
+103
+````
+
+We can use a list comprehension to do this for every character in a word:
+
+````
+>>> word = 'gematria'
+>>> [ord(char) for char in word]
+[103, 101, 109, 97, 116, 114, 105, 97]
+````
+
+And then the `sum` function will add those for us:
+
+````
+>>> sum([ord(char) for char in word])
+842
+````
+
+We can do the same thing with `map`. The first argument to `map` is a function which is applied to every element in the second argument which must be something *iterable* like a `list` or a generator. Because the second argument is iterable, we don't have to spell out `for char in`. 
+
+````
+>>> map(ord, word)
+<map object at 0x105c3c550>
+````
+
+We see this because `map` is a "lazy" function that doesn't actually produce results until they are actually required. For purposes of viewing in the REPL only, we can use `list` to see the values. (You do not have to use `list` in your actual code!)
+
+````
+>>> list(map(ord, word))
+[103, 101, 109, 97, 116, 114, 105, 97]
+````
+
+And now we can `sum` that. Note that `sum` will consume the `map` object, so we don't have to use `list`. To me, this is an extremly clean bit of code:
+
+````
+>>> sum(map(ord, word))
+842
+````
+
+Since ultimately I will be giving these numbers to `print` in a way that will expect strings, I will additionally coerce the number using `str`. We can put this into a function either writing it with `lambda` on one line:
+
+````
+>>> word2num = lambda word: str(sum(map(ord, word)))
+>>> word2num('gematria')
+'842'
+````
+
+Or using `def`:
+
+````
+>>> def word2num(word):
+...     return str(sum(map(ord, word)))
+...
+>>> word2num('gematria')
+'842'
+````
+
+## Finding the words
+
+Just above we were applying the `ord` function to every character in a word. Now we want to apply our new `word2num` function to every word in a line. I hope you see it's the exact same problem, and both list comprehensions and `map` will serve equally. 
+
+So how to find "words" in a line? We know that we can use `str.split()` to break each `line` into `words`:
+
+````
+>>> for line in text.splitlines():
+...     words = line.split()
+...     print(words)
+...
+['Don’t', 'worry,', 'spiders,']
+['I', 'keep', 'house']
+['casually.']
+````
+
+There's a small problem, though. Notice that we get `worry,` and not `worry` and `spiders,` instead of `spiders`. We don't want to encode the punctuation that is still attached to the words. Also, let's just say we also don't want to encode the apostrophe in `Don't`. So how can we remove these offending characters? The first step is in identifying what they are. If we say "remove anything that is not the a letter in the set A-Z or a number in the list 0-9", that helps. We can use regular expressions to describe that exactly using `[]` to create a "character class" and putting the allowed characters in there. Notice this filters out the unwanted characters:
+
+````
+>>> import re
+>>> re.findall('[a-zA-Z0-9]', "Don't")
+['D', 'o', 'n', 't']
+>>> re.findall('[a-zA-Z0-9]', "spiders,")
+['s', 'p', 'i', 'd', 'e', 'r', 's']
+````
+
+Or we could use the `re.sub` function to "substitute" any matches. We can negate our character class by putting a caret (`^`) just *inside* the start of the brackets to indicate we want to find anything that's *not* an English alphabet character or an Arabic number and replace it with the empty string:
+
+````
+>>> re.sub('[^a-zA-Z0-9]', '', "Don't")
+'Dont'
+>>> re.sub('[^a-zA-Z0-9]', '', "spiders,")
+'spiders'
+````
+
+Let's put that into a function:
+
+````
+>>> def clean(word):
+...     return re.sub('[^a-zA-Z0-9]', '', word)
+...
+>>> clean("Don't")
+'Dont'
+>>> clean("spiders,")
+'spiders'
+````
+
+Compare this with the earlier version to see that we now have "clean" words to encode:
+
+````
+>>> for line in text.splitlines():
+...     words = map(clean, line.split())
+...     print(list(words))
+...
+['Dont', 'worry', 'spiders']
+['I', 'keep', 'house']
+['casually']
+````
+
+For convenience, let's update the `word2num` function to use that:
+
+````
+def word2num(word):
+    word = re.sub('[^a-zA-Z0-9]', '', word)
+    return str(sum(map(ord, word)))
+>>> word2num('spiders,')
+'762'
+>>> word2num('spiders')
+'762'
+````
+
+## Encoding all words
+
+So we're finally to the point where we have lines of text and lists of words to encode. As we've seen, a list comprehension works adequately:
+
+````
+>>> words = ['Dont', 'worry', 'spiders']
+>>> [word2num(word) for word in words]
+['405', '579', '762']
+````
+
+But `map` is cleaner:
+
+````
+>>> list(map(word2num, words))
+['405', '579', '762']
+````
+
+All that is left is to `print` the encoded words back out:
+
+````
+>>> for line in text.splitlines():
+...     print(' '.join(map(word2num, line.split())))
+...
+405 579 762
+73 421 548
+862
+````
 \newpage
 
 # Chapter 20: Histogram
@@ -4152,7 +4733,7 @@ Write a Python program called `license.py` that will create a regular expression
 * X K Y
 * 1 I
 * 3 E
-* 0 O Q
+* D 0 O Q
 * M N
 * U V W
 * 2 8
@@ -4249,7 +4830,7 @@ In creating all the possible plates from your regular expression, you are making
     25	    args = get_args()
     26	    plate = args.plate
     27	    mixups = [('5', 'S'), ('X', 'K', 'Y'), ('1', 'I'), ('3', 'E'),
-    28	              ('0', 'O', 'Q'), ('M', 'N'), ('U', 'V', 'W'), ('2', '7')]
+    28	              ('D', '0', 'O', 'Q'), ('M', 'N'), ('U', 'V', 'W'), ('2', '7')]
     29	
     30	    chars = []
     31	    for char in plate:
@@ -8775,7 +9356,7 @@ for line in sys.stdin:
 
 \newpage
 
-# Appendix 4: Markov Chains
+# Appendix 4: N-grams, K-mers, and Markov Chains
 
 Read about Markov chains:
 

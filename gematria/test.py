@@ -3,13 +3,19 @@
 
 import os
 import re
-import random
-import string
 from subprocess import getstatusoutput, getoutput
 
 prg = './gematria.py'
+spiders = '../inputs/spiders.txt'
 fox = '../inputs/fox.txt'
 sonnet = '../inputs/sonnet-29.txt'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
@@ -36,6 +42,15 @@ def test_fox():
 
     out = getoutput('{} {}'.format(prg, fox))
     assert out.strip() == '289 541 552 333 559 444 321 448 314'
+
+
+# --------------------------------------------------
+def test_spiders():
+    """File"""
+
+    out = getoutput('{} {}'.format(prg, spiders))
+    assert out.strip() == '405 579 762\n73 421 548\n862'
+
 
 # --------------------------------------------------
 def test_sonnet():

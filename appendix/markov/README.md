@@ -1,4 +1,4 @@
-# Markov Chains
+# N-grams, K-mers, and Markov Chains
 
 Read about Markov chains:
 
