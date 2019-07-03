@@ -2802,7 +2802,304 @@ You base, ruinous, slanderous, false liar!
 
 \newpage
 
-# Chapter 15: Bacronym
+# Chapter 15: Scrambler
+
+Write a Python program called `scrambler.py` that will take a single position positional argument that is text or a text file and then convert each word into a scrambled version. The scrambling should only work on words greater than 3 characters in length and should only scramble the letters in the middle, leaving the first and last characters unchanged. The program should take a `-s|--seed` argument (default `None`) to pass to `random.seed`.
+
+Cf. Typoglycemia https://www.dictionary.com/e/typoglycemia/
+
+We'll need to use the same algorithm for scrambling the words. I used the `random.shuffle` method to mix up the letters in the middle, being sure that the word that gets created is not the same as the word that you are given. If the word is 3 characters or shorter, just return the word unchanged.
+
+Another very tricky bit is that we want to scramble all the "words" on each line and leave everything that's not a "word" unchanged. We'll use a regular expression that looks for strings composed only of the characters a-z, A-Z, and the single quote so we can find words like `can't` or `Susie's`. Everything else will be consider not a word. Here is the regex you should use:
+
+````
+>>> import re
+>>> text = 'this is  a\n"sentence?"'
+>>> re.split(r'(\W+)', text)
+['this', ' ', 'is', '  ', 'a', '\n"', 'sentence', '?"', '']
+````
+
+Now scramble all the things that are "words"!
+
+Here is how the program should perform:
+
+````
+$ ./scrambler.py
+usage: scrambler.py [-h] [-s int] STR
+scrambler.py: error: the following arguments are required: STR
+$ ./scrambler.py -h
+usage: scrambler.py [-h] [-s int] STR
+
+Scramble the letters of words
+
+positional arguments:
+  STR                 Input text or file
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -s int, --seed int  Random seed (default: None)
+````  
+  
+It should handle text on the command line:
+
+````
+$ ./scrambler.py -s 1 foobar
+faobor
+$ ./scrambler.py -s 1 "foobar bazquux"
+faobor buuzaqx
+````
+
+Or from a file:
+
+````
+$ ./scrambler.py -s 1 ../inputs/the-bustle.txt
+The blutse in a hsoue
+The monrnig atefr dteah
+Is snleoemst of iusinedrts
+Eatcend uopn etarh,--
+
+The sewnpeig up the hreat,
+And ptunitg lvoe aawy
+We slahl not wnat to use agian
+Utnil ertiteny.
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Scramble the letters of words"""
+     3	
+     4	import argparse
+     5	import os
+     6	import re
+     7	import random
+     8	
+     9	
+    10	# --------------------------------------------------
+    11	def get_args():
+    12	    """Get command-line arguments"""
+    13	
+    14	    parser = argparse.ArgumentParser(
+    15	        description='Scramble the letters of words',
+    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    17	
+    18	    parser.add_argument('text', metavar='STR', help='Input text or file')
+    19	
+    20	    parser.add_argument('-s',
+    21	                        '--seed',
+    22	                        help='Random seed',
+    23	                        metavar='int',
+    24	                        type=int,
+    25	                        default=None)
+    26	
+    27	    args = parser.parse_args()
+    28	
+    29	    if os.path.isfile(args.text):
+    30	        args.text = open(args.text).read()
+    31	
+    32	    return args
+    33	
+    34	
+    35	# --------------------------------------------------
+    36	def scramble(word):
+    37	    """For words over 3 characters, shuffle the letters in the middle"""
+    38	
+    39	    if len(word) > 3 and re.match(r'\w+', word):
+    40	        orig = list(word[1:-1])
+    41	        middle = orig.copy()
+    42	        if len(set(middle)) > 1:
+    43	            while middle == orig:
+    44	                random.shuffle(middle)
+    45	        word = word[0] + ''.join(middle) + word[-1]
+    46	
+    47	    return word
+    48	
+    49	
+    50	# --------------------------------------------------
+    51	def main():
+    52	    """Make a jazz noise here"""
+    53	
+    54	    args = get_args()
+    55	    text = args.text
+    56	    random.seed(args.seed)
+    57	
+    58	    for line in text.splitlines():
+    59	        print(''.join(map(scramble, re.split(r'\b', line))))
+    60	
+    61	
+    62	# --------------------------------------------------
+    63	if __name__ == '__main__':
+    64	    main()
+````
+
+\newpage
+
+## Discussion
+
+As with several other programs, we want to take our `text` either from the command line or from a file. I decided to put this logic into the `get_args` function and detect in there if `args.text` is a file and read it so that by the time I call `get_args` I already have the `text` I need. Since `--seed` has a default of `None`, I can directly pass it to `random.seed`. If the seed is `None`, it's the same as not setting the seed. If the seed is defined (and it must be an `int` because of the constraint in `argparse`), then it sets the seed properly.
+
+Because I want to preserve the shape of the input text, I decided to handle the `text` line-by-line by calling `text.splitlines()`. If we are reading the "spiders" haiku, the first line is:
+
+````
+>>> line = 'Don’t worry, spiders,'
+````
+
+We need to break the line into "words" which we often do with `str.split`:
+
+````
+>>> line.split()
+['Don’t', 'worry,', 'spiders,']
+````
+
+But that leaves punctation stuck to our words. Instead, we'll `import re` to get the regular expression module and split on word boundaries (`\b`):
+
+````
+>>> re.split(r'\b', line)
+['', 'Don', '’', 't', ' ', 'worry', ', ', 'spiders', ',']
+````
+
+That actually breaks "Don't" into two words, but we'll just not worry about that. So let's think about how we'll scramble our words by starting with just one word.
+
+## Scrambling one word
+
+Given any particular "word" that:
+
+1. looks like a string
+2. is longer than 3 characters 
+
+We want to scramble the middle of any string, where the "middle" is everything after the first character up to the second to last character. 
+
+We can use list slices to extract part of a string. Since Python starts numbering at `0`, we use `1` to indicate the second character. The position of any string is `-1`:
+
+````
+>>> word = 'spiders'
+>>> word[0]
+'s'
+>>> word[-1]
+'s'
+````
+
+If we want a slice, we use the `list[start:stop]` syntax. Since the `stop` position is not included, we can get the `middle` like so:
+
+````
+>>> middle = word[1:-1]
+>>> middle
+'pider'
+````
+
+We can `import random` to get access to the `shuffle` method. You have to know that this method mutates the given list **in-place**, and that's going to cause a problem:
+
+````
+>>> import random
+>>> random.shuffle(middle)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/Users/kyclark/anaconda3/lib/python3.7/random.py", line 278, in shuffle
+    x[i], x[j] = x[j], x[i]
+TypeError: 'str' object does not support item assignment
+````
+
+Hey, wha' happan? This is a bit tricky to understand, but basically when we defined the `middle` variable, we were just *pointing to a part of a string*, and strings are immutable. We'd get same error if we did `random.shuffle('ooba')`. We need `middle` make a new `list` of the characters from `word`:
+
+````
+>>> middle = list(word[1:-1])
+>>> middle
+['p', 'i', 'd', 'e', 'r']
+````
+
+And that is something we can `shuffle`:
+
+````
+>>> random.shuffle(middle)
+>>> middle
+['r', 'e', 'p', 'i', 'd']
+````
+
+While writing the program, I found that the shuffling didn't always result in a different order, so I added a bit of logic to keep shuffling until I get something new. Another problem I encountered was creating an infinite loop while comparing my shuffled string to the original when the word was "keep" because the middle is "ee" and no matter how many times you shuffle that it will always be "ee", so I added a check that the unique `set` of letters in the middle is greater than 1:
+
+````
+>>> orig = list(word[1:-1])
+>>> middle = orig.copy()
+>>> if len(set(middle)) > 1:
+...     while middle == orig:
+...         random.shuffle(middle)
+...
+>>> middle
+['p', 'i', 'd', 'r', 'e']
+>>> middle
+['r', 'e', 'p', 'i', 'd']
+````
+
+And now I can put the `word` back together with the original first and last characters:
+
+````
+>>> word = word[0] + ''.join(middle) + word[-1]
+>>> word
+'srepids'
+````
+
+## Scrambling all the words
+
+Now I have a function `scramble(word)`:
+
+````
+>>> def scramble(word):
+...     """For words over 3 characters, shuffle the letters in the middle"""
+...     if len(word) > 3 and re.match(r'\w+', word):
+...         orig = list(word[1:-1])
+...         middle = orig.copy()
+...         if len(set(middle)) > 1:
+...             while middle == orig:
+...                 random.shuffle(middle)
+...         word = word[0] + ''.join(middle) + word[-1]
+...     return word
+...
+````
+
+And a way to break up each line into word-like piecies (using `re.split`). 
+
+I need to apply a function to a list, and that is exactly what `map` does. For instance, I could `split` the line into words:
+
+````
+>>> line.split()
+['Don’t', 'worry,', 'spiders,']
+````
+
+And `map` that into the `len` function to find the lengths of each element in the list. In order to evaluate the resulting `map` object, I have to use `list` in the REPL (but not in actual code):
+
+````
+>>> list(map(len, line.split()))
+[5, 6, 8]
+````
+
+Instead, we'll `map` into our `scramble` function and split on word boundaries:
+
+````
+>>> list(map(scramble, re.split(r'\b', line)))
+['', 'Don', '’', 't', ' ', 'wrory', ', ', 'sdeirps', ',']
+````
+
+And then put that `list` back together by joining on the empty string:
+
+````
+>>> ''.join(map(scramble, re.split(r'\b', line)))
+'Don’t wrroy, sperdis,'
+````
+
+I do this for each line of text, printing the scrambled line, and that is the whole program.
+
+If you don't like `map`, you can accomplish the same thing with a list comprehension:
+
+````
+>>> ''.join([scramble(w) for w in re.split(r'\b', line)])
+'Don’t wrory, sdepris,'
+````
+\newpage
+
+# Chapter 16: Bacronym
 
 Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--number` (default `5`) of acronyms by reading a `-w|--wordlist` argument (defualt `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
 
@@ -2952,7 +3249,7 @@ FBI =
 
 \newpage
 
-# Chapter 16: Workout Of (the) Day (WOD)
+# Chapter 17: Workout Of (the) Day (WOD)
 
 Write a Python program called `wod.py` that will create a Workout Of (the) Day (WOD) from a list of exercises provided in CSV format (default `wod.csv`). Accept a `-n|--num_exercises` argument (default `4`) to determine the sample size from your exercise list. Also accept a `-e|--easy` flag to indicate that the reps should be cut in half. Finally accept a `-s|--seed` argument to pass to `random.seed` for testing purposes. You should use the `tabulate` module to format the output as expected.
 
@@ -3196,7 +3493,7 @@ Then I can `append` to the `table` a new tuple containing the `name` of the exer
 
 \newpage
 
-# Chapter 17: Blackjack 
+# Chapter 18: Blackjack 
 
 Write a Python program called `blackjack.py` that plays an abbreviated game of Blackjack. You will need to `import random` to get random cards from a deck you will construct, and so your program will need to accept a `-s|--seed` that will set `random.seed()` with the value that is passed in so that the test suite will work. The other arguments you will accept are two flags (Boolean values) of `-p|--player_hits` and `-d|--dealer_hits`. As usual, you will also have a `-h|--help` option for usage statement.
 
@@ -3349,15 +3646,38 @@ Player wins. You probably cheated.
 
 \newpage
 
-# Chapter 18: Family Tree
+# Chapter 19: Family Tree
 
-Write a program called `tree.py` that will take an input file as a single positional argument and produce a graph of the family tree described therein. The file can have only three kinds of statements:
+![Partial Tudor family tree](family_tree/tudor.txt.gv.pdf)
+
+Write a program called `tree.py` that will take an input file as a single positional argument and produce an `-o|--outfile` graph of the family tree described therein. There should be a '-v|--view' flag to have the image opened when done (default `False`). The program should produce a usage with no arguments or if given `-h|--help` flags:
+
+````
+$ ./tree.py
+usage: tree.py [-h] [-o str] [-v] FILE
+tree.py: error: the following arguments are required: FILE
+$ ./tree.py -h
+usage: tree.py [-h] [-o str] [-v] FILE
+
+Display a family tree
+
+positional arguments:
+  FILE                  File input
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o str, --outfile str
+                        Output filename (default: )
+  -v, --view            View image (default: False)
+````
+
+The input file can have only three kinds of statements:
 
 1. `INITIALS = Full Name`
-2. `person1 married person2`
-3. `person1 and person2 begat child1[, child2...]`
+2. `INITIALS married INTIALLS`
+3. `INITIALS and INITIALS begat INITIALS[, INITIALS...]`
 
-Use the `graphviz` module to generate a graph like the `kyc.gv.pdf` included here that was generated from the following input:
+Use the `graphviz` module to generate a graph like the one shown above from the following input:
 
 ````
 $ cat tudor.txt
@@ -3386,117 +3706,285 @@ H8 married CP
 H8 and COA begat HDC, M1
 H8 and AB begat E1
 H8 and JS begat E6
+````
+
+If given no `-o|--outfile`, the default should be the name of the input file with `.gv` appended:
+
+````
 $ ./tree.py tudor.txt
 Done, see output in "tudor.txt.gv".
 ````
 
+Technically your input file doesn't need the "INITIALS = Full Name" lines. Those are just to make it a bit easier to spell out all the marrying and begetting that people do. Here is a very simple tree:
+
+````
+$ cat joanie.txt
+Joanie married Chachi
+$ ./tree.py joanie.txt
+Done, see output in "joanie.txt.gv".
+````
+
+![Joanie Loves Chachi](family_tree/joanie.txt.gv.pdf)
+
+## Graphs
+
+You are creating a graph that describes the relationships among entities. Graphs have "nodes" (or "vertices") and "edges" that connect them. In the phrase "My best friend's sister's boyfriend's brother's girlfriend heard from this guy who knows this kid who's going with the girl who saw Ferris pass out at 31 Flavors last night," there are 10 nodes:
+
+1. the speaker (Simone)
+2. my best friend
+3. sister
+4. boyfriend
+5. brother
+6. girlfriend
+7. this guy
+8. this kid
+9. the girl
+10. Ferris
+
+If we call all the unnamed people by a letter like `A`, then we could write code to visualize this graph:
+
+````
+from graphviz import Digraph
+nodes = ('Simone', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'Ferris')
+labels = ("best friend's", "sister's", "boyfriend's", "brother's",
+          "girlfriend", "heard from", "knows", "going out with", "saw")
+
+dot = Digraph('Simone')
+for k in range(len(nodes) - 1):
+    dot.edge(nodes[k], nodes[k+1], label=' ' + labels[k])
+
+dot.render('simone.gv', view=True)
+````
+
+![Thank you, Simone.](family_tree/simone.gv.pdf)
 \newpage
 
 ## Solution
 
 ````
      1	#!/usr/bin/env python3
-     2	"""
-     3	Author : kyclark
-     4	Date   : 2019-05-24
-     5	Purpose: Display a family tree
-     6	"""
-     7	
-     8	import argparse
-     9	import os
-    10	import re
-    11	import sys
-    12	from graphviz import Digraph
-    13	
+     2	"""Display a family tree"""
+     3	
+     4	import argparse
+     5	import os
+     6	import re
+     7	from dire import die
+     8	from graphviz import Digraph
+     9	
+    10	
+    11	# --------------------------------------------------
+    12	def get_args():
+    13	    """Get command-line arguments"""
     14	
-    15	# --------------------------------------------------
-    16	def get_args():
-    17	    """Get command-line arguments"""
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Display a family tree',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     18	
-    19	    parser = argparse.ArgumentParser(
-    20	        description='Display a family tree',
-    21	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    22	
-    23	    parser.add_argument('file',
-    24	                        metavar='FILE',
-    25	                        type=argparse.FileType('r'),
-    26	                        help='File input')
-    27	
-    28	    parser.add_argument('-o',
-    29	                        '--outfile',
-    30	                        help='Output filename',
-    31	                        metavar='str',
-    32	                        type=str,
-    33	                        default='')
+    19	    parser.add_argument('file',
+    20	                        metavar='FILE',
+    21	                        type=argparse.FileType('r'),
+    22	                        help='File input')
+    23	
+    24	    parser.add_argument('-o',
+    25	                        '--outfile',
+    26	                        help='Output filename',
+    27	                        metavar='str',
+    28	                        type=str,
+    29	                        default='')
+    30	
+    31	    parser.add_argument('-v', '--view', help='View image', action='store_true')
+    32	
+    33	    return parser.parse_args()
     34	
-    35	    return parser.parse_args()
-    36	
-    37	
-    38	# --------------------------------------------------
-    39	def main():
-    40	    """Make a jazz noise here"""
-    41	
-    42	    args = get_args()
-    43	    fh = args.file
-    44	    out_file = args.outfile or os.path.basename(fh.name) + '.gv'
+    35	
+    36	# --------------------------------------------------
+    37	def main():
+    38	    """Make a jazz noise here"""
+    39	
+    40	    args = get_args()
+    41	    fh = args.file
+    42	    out_file = args.outfile or os.path.basename(fh.name) + '.gv'
+    43	
+    44	    nodes, edges = parse_tree(fh)
     45	
-    46	    nodes, edges = parse_tree(fh)
-    47	    dot = Digraph(comment='Tree')
-    48	    for initials, name in nodes.items():
-    49	        dot.node(name)
+    46	    if not nodes and not edges:
+    47	        die('No nodes or edges in "{}".'.format(fh.name))
+    48	
+    49	    dot = Digraph(comment='Tree')
     50	
-    51	    for n1, n2 in edges:
-    52	        if n1 in nodes:
-    53	            n1 = nodes[n1]
-    54	        if n2 in nodes:
-    55	            n2 = nodes[n2]
-    56	
-    57	        dot.edge(n1, n2)
-    58	
-    59	    dot.render(out_file, view=True)
+    51	    # keys are initials which we don't need
+    52	    for _, name in nodes.items():
+    53	        dot.node(name)
+    54	
+    55	    for n1, n2 in edges:
+    56	        # see if node has alias in nodes, else use node itself
+    57	        n1 = nodes.get(n1, n1)
+    58	        n2 = nodes.get(n2, n2)
+    59	        dot.edge(n1, n2)
     60	
-    61	    print('Done, see output in "{}".'.format(out_file))
+    61	    dot.render(out_file, view=args.view)
     62	
-    63	# --------------------------------------------------
-    64	def parse_tree(fh):
-    65	    """parse input file"""
-    66	
-    67	    ini_patt = '([A-Za-z0-9]+)'
-    68	    name_patt = ini_patt + '\s*=\s*(.+)'
-    69	    begat_patt = ini_patt + '\s+and\s+' + ini_patt + '\s+begat\s+(.+)'
-    70	    married_patt = ini_patt + '\s+married\s+' + ini_patt
-    71	    edges = set()
-    72	    nodes = {}
+    63	    print('Done, see output in "{}".'.format(out_file))
+    64	
+    65	
+    66	# --------------------------------------------------
+    67	def parse_tree(fh):
+    68	    """parse input file"""
+    69	
+    70	    name_patt = r'(.+)\s*=\s*(.+)'
+    71	    married_patt = r'(.+)\s+married\s+(.+)'
+    72	    begat_patt = r'(.+)\s+and\s+(.+)\s+begat\s+(.+)'
     73	
-    74	    for line in fh:
-    75	        name_match = re.match(name_patt, line)
-    76	        begat_match = re.match(begat_patt, line)
-    77	        married_match = re.match(married_patt, line)
-    78	
-    79	        if name_match:
-    80	            initials, name = name_match.groups()
-    81	            nodes[initials] = name
-    82	        elif married_match:
-    83	            p1, p2 = married_match.groups()
-    84	            edges.add((p1, p2))
-    85	        elif begat_match:
-    86	            p1, p2, begat = begat_match.groups()
-    87	            children = re.split('\s*,\s*', begat)
-    88	            for parent in p1, p2:
-    89	                for child in children:
-    90	                    edges.add((parent, child))
-    91	
-    92	    return nodes, edges
-    93	
+    74	    edges = set()
+    75	    nodes = {}
+    76	
+    77	    for line in fh:
+    78	        name_match = re.match(name_patt, line)
+    79	        begat_match = re.match(begat_patt, line)
+    80	        married_match = re.match(married_patt, line)
+    81	
+    82	        if name_match:
+    83	            initials, name = name_match.groups()
+    84	            nodes[initials.strip()] = name.strip()
+    85	        elif married_match:
+    86	            p1, p2 = married_match.groups()
+    87	            edges.add((p1.strip(), p2.strip()))
+    88	        elif begat_match:
+    89	            p1, p2, begat = begat_match.groups()
+    90	            children = re.split(r'\s*,\s*', begat)
+    91	            for parent in p1, p2:
+    92	                for child in children:
+    93	                    edges.add((parent.strip(), child.strip()))
     94	
-    95	# --------------------------------------------------
-    96	if __name__ == '__main__':
-    97	    main()
+    95	    return nodes, edges
+    96	
+    97	
+    98	# --------------------------------------------------
+    99	if __name__ == '__main__':
+   100	    main()
 ````
 
 \newpage
 
-# Chapter 19: Gematria: Numeric encoding of text
+## Discussion
+
+There are two main parts to the program:
+
+1. Parsing the input file for nodes and edges
+2. Using nodes and edges with the `graphviz` module to produce a graph
+
+## Parsing input file
+
+Since there are only three types of statements we expect in the input file, I will create three regular expressions to match each. 
+
+### Parsing name line
+
+The first allowed expression is something along the lines of "INITIALS = Full Name":
+
+````
+>>> line = 'H7 = Henry VII'
+````
+
+I could look for an equal sign in the line and `split` it if found:
+
+````
+>>> if '=' in line:
+...     line.split('=')
+...
+['H7 ', ' Henry VII']
+````
+
+Or I could `import re` to bring in the regular expression module and write a pattern to match "something, an equal sign, something else". The dot `.` means "anything" and I can use `.+` to say "one or more of anything". This regex matches the whole line:
+
+````
+>>> import re
+>>> re.match('.+', line)
+<re.Match object; span=(0, 14), match='H7 = Henry VII'>
+````
+
+There may or may not be whitespace around the equal signs. Whitespace is `\s`, and we can use `\s*` to indicate "zero or more whitespace". The equal sign is a literal `=`, and then more optional whitespace. This regex takes up to the space after the `=`:
+
+````
+>>> re.match('.+\s*=\s*', line)
+<re.Match object; span=(0, 5), match='H7 = '>
+````
+
+We can finish it off with the same pattern at the beginning and put parentheses `()` around the parts of the pattern we want to capture:
+
+````
+>>> re.match('(.+)\s*=\s*(.+)', line)
+<re.Match object; span=(0, 14), match='H7 = Henry VII'>
+>>> match = re.match('(.+)\s*=\s*(.+)', line)
+>>> match.groups()
+('H7 ', 'Henry VII')
+````
+
+There is some trailing whitespace around the first group, so I'll be sure to `strip` it to remove spaces from the beginning and end.
+
+### Parsing married line
+
+The "A married B" line can be found in a very similar fashion. Instead of `=` we can substitute `married`:
+
+````
+>>> line = 'H8 married COA'
+>>> re.match(r'(.+)\s+married\s+(.+)', line)
+<re.Match object; span=(0, 14), match='H8 married COA'>
+````
+
+And get the parts from `groups`:
+
+````
+>>> match = re.match(r'(.+)\s+married\s+(.+)', line)
+>>> match.groups()
+('H8', 'COA')
+````
+
+### Parsing begat line
+
+The previous patterns could have just as easily been handled by looking for the `=` or `married` in the `line` and using `line.split` on the string. The "begat" line is the most complicated and really makes use of regular expressions. 
+
+The pattern still looks similar:
+
+````
+>>> line = 'H8 and COA begat HDC, M1'
+>>> re.match(r'(.+)\s+and\s+(.+)\s+begat\s+(.+)', line).groups()
+('H8', 'COA', 'HDC, M1')
+````
+
+The parents are groups 1 and 2, and the children (group 3) can be split with another regex:
+
+````
+>>> re.split('\s*,\s*', 'HDC, M1')
+['HDC', 'M1']
+````
+
+## Building the graph
+
+I chose to represent my graph with two structures:
+
+1. nodes: a `dict` from initials to full names
+2. edges: a `set` of 2-tuples of node names
+
+I said in the intro that the "INTIALS = Full Name" was optional, and so technically the "nodes" can be empty. You saw in the `simone.py` example that Graphviz will automatically create nodes as needed when you add edges that name nodes that do not yet exist.
+
+When parsing the input file, I decided to create a `parse_tree` function that takes the input file handle, reads it line-by-line, and tries to match each line to the three regular expressions described above. If I match the "initials" line, I add the initials and names to the `nodes` dictionary. If I find a "married" line, I add the two nodes to the `edges` set. If I find a "begat" line, I add an edge from each parent to each child.
+
+## Using graphviz
+
+The `graphviz` module is an interface to the `graphviz` program which is a stand-alone program you can use directly. Mostly the Python module makes it fairly easy to write the graph structure that `graphviz` expects, giving us an interface to add nodes and edges using the objects provided by the module. Here is a very simple tree:
+
+````
+>>> from graphviz import Digraph
+>>> dot = Digraph()
+>>> dot.edge('Joanie', 'Chachi')
+>>> dot.render(view=True)
+'Digraph.gv.pdf'
+````
+
+To make a more complicated graph, I added the full names from my `nodes` dictionary, and then use those full names to expand the initials from the `edges`, if present. In the end, the code isn't much more complicated that these few lines.
+\newpage
+
+# Chapter 20: Gematria: Numeric encoding of text
 
 Write a Python program called `gematria.py` that will numerically encode each word in a given text. The name of this program comes from gematria, a system for assigning a number to a word by summing the numeric values of each of the letters as defined by the Mispar godol (https://en.wikipedia.org/wiki/Gematria). For English characters, we can use the ASCII table (https://en.wikipedia.org/wiki/ASCII). Python provides these value throug the `ord` function to convert a character to its "ordinal" (order in the ASCII table) value as well as the `chr` function to convert a number to its "character."
 
@@ -3832,7 +4320,7 @@ All that is left is to `print` the encoded words back out:
 ````
 \newpage
 
-# Chapter 20: Histogram
+# Chapter 21: Histogram
 
 Write a Python program called `histy.py` that takes a single positional argument that may be plain text or the name of a file to read for the text. Count the frequency of each character (not spaces) and print a histogram of the data. By default, you should order the histogram by the characters but include `-f|--frequency_sort` option to sort by the frequency (in descending order). Also include a `-c|--character` option (default `|`) to represent a mark in the histogram, a `-m|--minimum` option (default `1`) to include a character in the output, a `-w|--width` option (default `70`) to limit the size of the histogram, and a `-i|--case_insensitive` flag to force all input to uppercase.
 
@@ -4007,7 +4495,7 @@ W    375 ###
 
 \newpage
 
-# Chapter 21: Guessing Game
+# Chapter 22: Guessing Game
 
 Write a Python program called `guess.py` that plays a guessing game for a number between a `-m|--min` and `-x|--max` value (default 1 and 50, respectively) with a limited number of `-g|--guesses` (default 5). Complain if either `--min` or `--guesses` is less than 1. Accept a `-s|--seed` for `random.seed`. If the user guesses something that is not a number, complain about it.
 
@@ -4169,7 +4657,7 @@ You should be able to handle this in your inifinite game loop.
 
 \newpage
 
-# Chapter 22: Mommy's Little (Crossword) Helper
+# Chapter 23: Mommy's Little (Crossword) Helper
 
 Write a Python program called `helper.py` that finds all words matching a given `-p|--pattern` such as one might use to complete a crossword puzzle to find words matching from a given `-w|--wordlist` (default `/usr/share/dict/words`). E.g., all 5-letter words with a "t" as the second character and ending in "ed". I could do this on the command line like so:
 
@@ -4421,7 +4909,7 @@ If both conditions are `True` (same length, all characters the same), then I `ap
 All that is left is to check if any words matched. If so, we print them out, numbered and nicely aligned; otherwise, we let the user know that no matches were found. I hope you tried solving this problem with and without regular expressions as there is much to learn by each method.
 \newpage
 
-# Chapter 23: Kentucky Friar
+# Chapter 24: Kentucky Friar
 
 Write a Python program called `friar.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
@@ -4601,7 +5089,7 @@ Finally we need to apply our `fry` function to all the pieces we got from splitt
 ````
 \newpage
 
-# Chapter 24: Mad Libs
+# Chapter 25: Mad Libs
 
 ![This definitely not a copyright infringment.](images/mad_libs.png)
 
@@ -4725,7 +5213,7 @@ What here shall hammer, our toil shall strive to mend.
 
 \newpage
 
-# Chapter 25: License Plates
+# Chapter 26: License Plates
 
 Write a Python program called `license.py` that will create a regular expression for a license plate that accounts for characters and numbers which might be confused according to the following list:
 
@@ -4858,7 +5346,7 @@ In creating all the possible plates from your regular expression, you are making
 
 \newpage
 
-# Chapter 26: Gibberish Generator
+# Chapter 27: Gibberish Generator
 
 Write a Python program called `gibberish.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
@@ -5061,7 +5549,7 @@ $ ./gibberish.py -k 2 ../inputs/1945-boys.txt
 
 \newpage
 
-# Chapter 27: Pig Latin
+# Chapter 28: Pig Latin
 
 Write a Python program named `piggie.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
@@ -5209,7 +5697,7 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
 
 \newpage
 
-# Chapter 28: Soundex Rhymer
+# Chapter 29: Soundex Rhymer
 
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, you sometimes want to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part, so the program should have an optional flag `-s|--stem` to indicate that the given word and the words you compare should both be trimmed to the "stem". The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons and should respond, as always, to `-h|--help` for usage.
 
@@ -5528,7 +6016,7 @@ Once I have the `stemmer` function, I can apply it to the given `word` and every
 
 \newpage
 
-# Chapter 29: Substring Guessing Game
+# Chapter 30: Substring Guessing Game
 
 Write a Python program called `sub.py` that plays a guessing game where you read a `-f|--file` input (default `/usr/share/dict/words`) and use a given `-k|--ksize` to find all the words grouped by their shared kmers. Remove any kmers where the number of words is fewer than `-m|--min_words`. Also accept a `-s|--seed` for `random.seed` for testing purposes. Prompt the user to guess a word for a randomly chosen kmer. If their guess is not present in the shared list, taunt them mercilessly. If their guess is present, affirm their worth and prompt to guess again. Allow them to use `!` to quit and `?` to be provided a hint (a word from the list). For both successful guesses and hints, remove the word from the shared list. When they have quit or exhausted the list, quit play. At the end of the game, report the number of found words.
 
@@ -5739,7 +6227,7 @@ Hey, you found 2 words! Not bad.
 
 \newpage
 
-# Chapter 30: Tic-Tac-Toe Outcome
+# Chapter 31: Tic-Tac-Toe Outcome
 
 Create a Python program called `outcome.py` that takes a given Tic-Tac-Toe state as it's only (positional) argument and reports if X or O has won or if there is no winner. The state should only contain the characters ".", "O", and "X", and must be exactly 9 characters long. If there is not exactly one argument, print a "usage" statement.
 
@@ -5834,7 +6322,7 @@ X has won
 
 \newpage
 
-# Chapter 31: Twelve Days of Christmas
+# Chapter 32: Twelve Days of Christmas
 
 Write a Python program called `twelve_days.py` that will generate the "Twelve Days of Christmas" song up to the `-n|--number_days` argument (default `12`), writing the resulting text to the `-o|--outfile` argument (default STDOUT).
 
@@ -5969,7 +6457,7 @@ $ wc -l out
 
 \newpage
 
-# Chapter 32: War
+# Chapter 33: War
 
 > The generation of random numbers is too important to be left to chance. -- Robert R. Coveyou
 
@@ -6162,7 +6650,7 @@ P1 12 P2 12: DRAW
 
 \newpage
 
-# Chapter 33: Anagram
+# Chapter 34: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -6612,7 +7100,7 @@ In the end, I look to see how many `anagrams` I found using `len(anagrams)`. If 
 
 \newpage
 
-# Chapter 34: Hangman
+# Chapter 35: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -6832,7 +7320,7 @@ You lose, loser!  The word was "metromania."
 
 \newpage
 
-# Chapter 35: First Bank of Change
+# Chapter 36: First Bank of Change
 
 Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100.
 
@@ -7064,7 +7552,7 @@ The `plural` version of each name is made by adding `s` except for `penny`, so l
 Finally lines 39-43 are left to formatting the report to the user, being sure to provide feedback that includes the original `value` ("If you give me ...") and an enumerated list of all the possible ways we could make change. The test suite does not bother to check the order in which you return the combinations, only that the correct number are present and they are in the correct format.
 \newpage
 
-# Chapter 36: Runny Babbit
+# Chapter 37: Runny Babbit
 
 Are you familiar with Spoonerisms where the initial consonant sounds of two words are switched? According to Wikipedia, they get their name from William Archibald Spooner who did this often. The author Shel Silverstein wrote a wonderful book called _Runny Babbit_ ("bunny rabbit") based on this. So, let's write a Python program called `runny_babbit.py` that will read some text or an input file given as a single positional argument and finds neighboring words with initial consonant sounds to swap. As we'll need to look at pairs of words and in such as way that it will make it difficult to remember the original formatting of the text, let's also take a `-w|--width` (default `70`) to format the output text to a maximum width.
 
@@ -7348,7 +7836,7 @@ The runny babbit is cute.
 ````
 \newpage
 
-# Chapter 37: Markov Chain
+# Chapter 38: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -7609,7 +8097,7 @@ But there will be spaces in between each word, so I account for them by adding o
 At this point, the `words` list needs to be turned into text. It would be ugly to just `print` out one long string, so I use the `textwrap.wrap` to break up the long string into lines that are no longer than the given `text_width`. That function returns a list of lines that need to be joined on newlines to print.
 \newpage
 
-# Chapter 38: Hamming Chain
+# Chapter 39: Hamming Chain
 
 Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
 
@@ -7812,7 +8300,7 @@ Failed to find more words!
 
 \newpage
 
-# Chapter 39: Morse Encoder/Decoder
+# Chapter 40: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -8030,7 +8518,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 40: ROT13 (Rotate 13)
+# Chapter 41: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -8195,7 +8683,7 @@ The quick brown fox jumps over the lazy dog.
 
 \newpage
 
-# Chapter 41: Tranpose ABC Notation
+# Chapter 42: Tranpose ABC Notation
 
 Write a Python program called `transpose.py` that will read a file in ABC notation (https://en.wikipedia.org/wiki/ABC_notation) and transpose the melody line up or down by a given `-s|--shift` argument. Like the `rot13` exercise, it might be helpful to think of the space of notes (`ABCDEFG`) as a list which you can roll through. For instance, if you have the note `c` and want to transpose up a (minor) third (`-s 3`), you would make the new note `e`; similarly if you have the note `F` and you go up a (major) third, you get `A`. You will not need to worry about the actual number of semitones that you are being asked to shift, as the previous example showed that we might be shifting by a major/minor/augmented/diminished/pure interval. The purpose of the exercise is simply to practice with lists.
 
@@ -8391,7 +8879,7 @@ aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
 
 \newpage
 
-# Chapter 42: Word Search
+# Chapter 43: Word Search
 
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 

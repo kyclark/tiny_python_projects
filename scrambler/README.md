@@ -1,6 +1,6 @@
 # Scrambler
 
-Write a Python program called `scrambler.py` that will take a single position positional argument that is text or a text file and then convert each word into a scrambled version. The scrambling should only work on words greater than 3 characters in length and should only scramble the letters in the middle, leaving the first and last characters unchanged. The program should take a `-s|--seed` argumen to pass to `random.seed`.
+Write a Python program called `scrambler.py` that will take a single position positional argument that is text or a text file and then convert each word into a scrambled version. The scrambling should only work on words greater than 3 characters in length and should only scramble the letters in the middle, leaving the first and last characters unchanged. The program should take a `-s|--seed` argument (default `None`) to pass to `random.seed`.
 
 Cf. Typoglycemia https://www.dictionary.com/e/typoglycemia/
 
@@ -34,10 +34,20 @@ positional arguments:
 optional arguments:
   -h, --help          show this help message and exit
   -s int, --seed int  Random seed (default: None)
+````  
+  
+It should handle text on the command line:
+
+````
 $ ./scrambler.py -s 1 foobar
 faobor
 $ ./scrambler.py -s 1 "foobar bazquux"
 faobor buuzaqx
+````
+
+Or from a file:
+
+````
 $ ./scrambler.py -s 1 ../inputs/the-bustle.txt
 The blutse in a hsoue
 The monrnig atefr dteah

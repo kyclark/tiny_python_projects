@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
+"""Scramble the letters of words"""
 
 import argparse
 import os
 import re
 import random
-import sys
-from itertools import chain
 
 
 # --------------------------------------------------
@@ -25,18 +24,24 @@ def get_args():
                         type=int,
                         default=None)
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if os.path.isfile(args.text):
+        args.text = open(args.text).read()
+
+    return args
 
 
 # --------------------------------------------------
 def scramble(word):
     """For words over 3 characters, shuffle the letters in the middle"""
 
-    if len(word) > 3:
+    if len(word) > 3 and re.match(r'\w+', word):
         orig = list(word[1:-1])
         middle = orig.copy()
-        while middle == orig:
-            random.shuffle(middle)
+        if len(set(middle)) > 1:
+            while middle == orig:
+                random.shuffle(middle)
         word = word[0] + ''.join(middle) + word[-1]
 
     return word
@@ -48,14 +53,10 @@ def main():
 
     args = get_args()
     text = args.text
-
     random.seed(args.seed)
 
-    if os.path.isfile(text):
-        text = open(text).read()
-
     for line in text.splitlines():
-        print(''.join(map(scramble, re.split(r'(\W+)', line))))
+        print(''.join(map(scramble, re.split(r'\b', line))))
 
 
 # --------------------------------------------------

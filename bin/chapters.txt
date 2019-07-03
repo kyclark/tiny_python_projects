@@ -12,6 +12,7 @@ ransom_note
 rhymer
 rock_paper_scissors
 abuse
+scrambler
 bacronym
 wod
 blackjack
