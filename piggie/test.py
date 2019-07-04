@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Tests for piggie.py"""
 
 import os
 import random
@@ -11,6 +12,13 @@ prg = './piggie.py'
 nobody = '../inputs/nobody.txt'
 gettysburg = '../inputs/gettysburg.txt'
 decl = '../inputs/usdeclar.txt'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
@@ -32,15 +40,18 @@ def random_string():
 
 # --------------------------------------------------
 def test_bad_input():
+    """Test bad"""
+
     bad = random_string()
     rv, out = getstatusoutput('{} {}'.format(prg, bad))
-    assert rv == 0
-    assert re.search('"{}" is not a file.'.format(bad), out)
-    assert re.search('Done, wrote 0 files to "out-yay".', out)
+    assert rv != 0
+    assert re.search("No such file or directory: '{}'".format(bad), out)
 
 
 # --------------------------------------------------
 def run(file):
+    """Run any one file"""
+
     basename = os.path.basename(file)
     flip = random.choice([True, False])
     out_flag = '-o ' if flip else '--outdir '
@@ -51,7 +62,7 @@ def run(file):
 
     try:
         out_dir_arg = out_flag + out_dir if out_dir else ''
-        rv, out = getstatusoutput('{} {} "{}"'.format(prg, out_dir_arg, file))
+        rv, _ = getstatusoutput('{} {} "{}"'.format(prg, out_dir_arg, file))
 
         assert rv == 0
 
@@ -62,6 +73,7 @@ def run(file):
         expected_file = os.path.join('test-outs', basename)
         expected_out = open(expected_file).read()
         assert expected_out == prg_out
+
     finally:
         if out_dir and os.path.isdir(out_dir):
             rmtree(out_dir)
@@ -69,21 +81,29 @@ def run(file):
 
 # --------------------------------------------------
 def test_nobody():
+    """Test nobody"""
+
     run(nobody)
 
 
 # --------------------------------------------------
 def test_gettysburg():
+    """Test gettysburg"""
+
     run(gettysburg)
 
 
 # --------------------------------------------------
 def test_decl():
+    """Test Decl of Ind"""
+
     run(decl)
 
 
 # --------------------------------------------------
 def test_all():
+    """Test multiple"""
+
     out_dir = random_string()
 
     if os.path.isdir(out_dir):

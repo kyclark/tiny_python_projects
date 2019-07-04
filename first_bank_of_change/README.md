@@ -1,6 +1,6 @@
 # First Bank of Change
 
-Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100.
+Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100. It should provide a usage if given no arguments or the `-h|--help` flag:
 
 ````
 $ ./fboc.py
@@ -16,12 +16,22 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+````
+
+It should throw an error if the value is not greater than 0 and less than or equal to 100:
+
+````
 $ ./fboc.py 0
 usage: fboc.py [-h] int
 fboc.py: error: value "0" must be > 0 and <= 100
 $ ./fboc.py 124
 usage: fboc.py [-h] int
 fboc.py: error: value "124" must be > 0 and <= 100
+````
+
+For valid values, it should print out all the combinations, always in order from largest to smalled denominations:
+
+````
 $ ./fboc.py 1
 If you give me 1 cent, I can give you:
   1: 1 penny

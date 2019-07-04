@@ -5,7 +5,7 @@ import argparse
 import os
 import re
 import string
-from dire import warn
+import textwrap
 
 
 # --------------------------------------------------
@@ -19,6 +19,7 @@ def get_args():
     parser.add_argument('file',
                         metavar='FILE',
                         nargs='+',
+                        type=argparse.FileType('r'),
                         help='Input file(s)')
 
     parser.add_argument('-o',
@@ -41,22 +42,18 @@ def main():
     if not os.path.isdir(out_dir):
         os.makedirs(out_dir)
 
+    splitter = re.compile("([a-zA-Z](?:[a-zA-Z']*[a-zA-Z])?)")
+
     num_files = 0
-    for i, file in enumerate(args.file, start=1):
-        basename = os.path.basename(file)
+    for i, fh in enumerate(args.file, start=1):
+        basename = os.path.basename(fh.name)
         out_file = os.path.join(out_dir, basename)
-        out_fh = open(out_file, 'wt')
         print('{:3}: {}'.format(i, basename))
 
-        if not os.path.isfile(file):
-            warn('"{}" is not a file.'.format(file))
-            continue
-
         num_files += 1
-        for line in open(file):
-            for bit in re.split(r"([\w']+)", line):
-                out_fh.write(pig(bit))
-
+        out_fh = open(out_file, 'wt')
+        for line in fh:
+            out_fh.write(''.join(map(pig, splitter.split(line))))
         out_fh.close()
 
     print('Done, wrote {} file{} to "{}".'.format(
@@ -68,14 +65,30 @@ def pig(word):
     """Create Pig Latin version of a word"""
 
     if re.match(r"^[\w']+$", word):
-        consonants = re.sub('[aeiouAEIOU]', '', string.ascii_letters)
-        match = re.match('^([' + consonants + ']+)(.+)', word)
+        vowels = 'aeiouAEIOU'
+        consonants = re.sub('[' + vowels + ']', '', string.ascii_letters)
+        match = re.match('^([' + consonants + ']+)(['+ vowels + '].*)', word)
         if match:
             word = '-'.join([match.group(2), match.group(1) + 'ay'])
         else:
             word = word + '-yay'
 
     return word
+
+# --------------------------------------------------
+def test_pig():
+    """Test pig"""
+
+    assert pig(' ') == ' '
+    assert pig(', ') == ', '
+    assert pig('\n') == '\n'
+    assert pig('a') == 'a-yay'
+    assert pig('i') == 'i-yay'
+    assert pig('apple') == 'apple-yay'
+    assert pig('cat') == 'at-cay'
+    assert pig('chair') == 'air-chay'
+    assert pig('the') == 'e-thay'
+    assert list(map(pig, ['foo', '\n'])) == ['oo-fay', '\n']
 
 
 # --------------------------------------------------
