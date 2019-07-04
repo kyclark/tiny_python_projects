@@ -5549,23 +5549,25 @@ $ ./gibberish.py -k 2 ../inputs/1945-boys.txt
 
 \newpage
 
-# Chapter 28: Pig Latin
+# Chapter 28: Piggy (Pig Latin)
 
-Write a Python program named `piggie.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
+Write a Python program named `piggy.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
-if a file argument names a non-existent file, print a warning to STDERR and skip that file. If the output directory does not exist, create it.
+If an argument names a non-existent file, print a warning to STDERR and skip that file. If the output directory does not exist, create it.
 
 To create "Pig Latin":
 
 1. If the word begins with consonants, e.g., "k" or "ch", move them to the end of the word and append "ay" so that "mouse" becomes "ouse-may" and "chair" becomes "air-chay."
 2. If the word begins with a vowel, simple append "-yay" to the end, so "apple" is "apple-yay."
 
+The program should print a usage if given no arguments or the `-h|--help` flag:
+
 ````
-$ ./piggie.py
-usage: piggie.py [-h] [-o str] FILE [FILE ...]
-piggie.py: error: the following arguments are required: FILE
-$ ./piggie.py -h
-usage: piggie.py [-h] [-o str] FILE [FILE ...]
+$ ./piggy.py
+usage: piggy.py [-h] [-o str] FILE [FILE ...]
+piggy.py: error: the following arguments are required: FILE
+[cholla@~/work/python/playful_python/piggie]$ ./piggy.py -h
+usage: piggy.py [-h] [-o str] FILE [FILE ...]
 
 Convert to Pig Latin
 
@@ -5575,35 +5577,45 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -o str, --outdir str  Output directory (default: out-yay)
-[cholla@~/work/python/playful_python/piggie]$ ./piggie.py
-usage: piggie.py [-h] [-o str] FILE [FILE ...]
-piggie.py: error: the following arguments are required: FILE
-[cholla@~/work/python/playful_python/piggie]$ ./piggie.py -h
-usage: piggie.py [-h] [-o str] FILE [FILE ...]
+````
 
-Convert to Pig Latin
+If given a bad input file, it should complain and indicate an error:
 
-positional arguments:
-  FILE                  Input file(s)
+````
+$ ./piggy.py lkdflk
+usage: piggy.py [-h] [-o str] FILE [FILE ...]
+piggy.py: error: argument FILE: can't open 'lkdflk': [Errno 2] \
+No such file or directory: 'lkdflk'
+````
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -o str, --outdir str  Output directory (default: out-yay)
-$ ./piggie.py ../inputs/sonnet-29.txt
+For each file, write a new output file into the `--outdir`:
+
+````
+$ ./piggy.py ../inputs/sonnet-29.txt
   1: sonnet-29.txt
 Done, wrote 1 file to "out-yay".
-$ head out-yay/sonnet-29.txt
-onnet-Say 29-yay
+$ head -6 out-yay/sonnet-29.txt
+onnet-Say 29
 illiam-Way akespeare-Shay
 
 en-Whay, in-yay isgrace-day ith-way ortune-fay and-yay en-may’s-yay eyes-yay,
-I-yay all-yay alone-yay eweep-bay y-may outcast-yay ate-stay,
-And-yay ouble-tray eaf-day eaven-hay ith-way y-may ootless-bay ies-cray,
-And-yay ook-lay upon-yay elf-mysay and-yay urse-cay y-may ate-fay,
-ishing-Way e-may ike-lay o-tay one-yay ore-may ich-ray in-yay ope-hay,
-eatured-Fay ike-lay im-hay, ike-lay im-hay ith-way iends-fray ossessed-pay,
-esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-scay,
+I-yay all-yay alone-yay eweep-bay my-yay outcast-yay ate-stay,
+And-yay ouble-tray eaf-day eaven-hay ith-way my-yay ootless-bay ies-cray,
+$ ./piggy.py ../inputs/s*.txt
+  1: scarlet.txt
+  2: sonnet-29.txt
+  3: spiders.txt
+Done, wrote 3 files to "out-yay".
 ````
+
+Hints:
+
+* For the `file` argument, use `type=argparse.FileType('r')`
+* First write a function that will create a Pig Latin version of just one word; write tests to verify that it does the right thing with words starting with vowels and with consonants
+* Write a loop that prints the names of each input file
+* Then write a loop inside that to read and print each line from a file
+* Then figure out how to print each word on the line
+* Then figure out how to print the Pig Latin version of each word on the line
 
 \newpage
 
@@ -5617,7 +5629,7 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
      5	import os
      6	import re
      7	import string
-     8	from dire import warn
+     8	import textwrap
      9	
     10	
     11	# --------------------------------------------------
@@ -5631,69 +5643,317 @@ esiring-Day is-thay an-may’s-yay art-yay and-yay at-thay an-may’s-yay ope-sc
     19	    parser.add_argument('file',
     20	                        metavar='FILE',
     21	                        nargs='+',
-    22	                        help='Input file(s)')
-    23	
-    24	    parser.add_argument('-o',
-    25	                        '--outdir',
-    26	                        help='Output directory',
-    27	                        metavar='str',
-    28	                        type=str,
-    29	                        default='out-yay')
-    30	
-    31	    return parser.parse_args()
-    32	
+    22	                        type=argparse.FileType('r'),
+    23	                        help='Input file(s)')
+    24	
+    25	    parser.add_argument('-o',
+    26	                        '--outdir',
+    27	                        help='Output directory',
+    28	                        metavar='str',
+    29	                        type=str,
+    30	                        default='out-yay')
+    31	
+    32	    return parser.parse_args()
     33	
-    34	# --------------------------------------------------
-    35	def main():
-    36	    """Make a jazz noise here"""
-    37	
-    38	    args = get_args()
-    39	    out_dir = args.outdir
-    40	
-    41	    if not os.path.isdir(out_dir):
-    42	        os.makedirs(out_dir)
-    43	
-    44	    num_files = 0
-    45	    for i, file in enumerate(args.file, start=1):
-    46	        basename = os.path.basename(file)
-    47	        out_file = os.path.join(out_dir, basename)
-    48	        out_fh = open(out_file, 'wt')
-    49	        print('{:3}: {}'.format(i, basename))
-    50	
-    51	        if not os.path.isfile(file):
-    52	            warn('"{}" is not a file.'.format(file))
-    53	            continue
-    54	
-    55	        num_files += 1
-    56	        for line in open(file):
-    57	            for bit in re.split(r"([\w']+)", line):
-    58	                out_fh.write(pig(bit))
-    59	
-    60	        out_fh.close()
+    34	
+    35	# --------------------------------------------------
+    36	def main():
+    37	    """Make a jazz noise here"""
+    38	
+    39	    args = get_args()
+    40	    out_dir = args.outdir
+    41	
+    42	    if not os.path.isdir(out_dir):
+    43	        os.makedirs(out_dir)
+    44	
+    45	    splitter = re.compile("([a-zA-Z](?:[a-zA-Z']*[a-zA-Z])?)")
+    46	
+    47	    num_files = 0
+    48	    for i, fh in enumerate(args.file, start=1):
+    49	        basename = os.path.basename(fh.name)
+    50	        out_file = os.path.join(out_dir, basename)
+    51	        print('{:3}: {}'.format(i, basename))
+    52	
+    53	        num_files += 1
+    54	        out_fh = open(out_file, 'wt')
+    55	        for line in fh:
+    56	            out_fh.write(''.join(map(pig, splitter.split(line))))
+    57	        out_fh.close()
+    58	
+    59	    print('Done, wrote {} file{} to "{}".'.format(
+    60	        num_files, '' if num_files == 1 else 's', out_dir))
     61	
-    62	    print('Done, wrote {} file{} to "{}".'.format(
-    63	        num_files, '' if num_files == 1 else 's', out_dir))
-    64	
-    65	
-    66	# --------------------------------------------------
-    67	def pig(word):
-    68	    """Create Pig Latin version of a word"""
-    69	
-    70	    if re.match(r"^[\w']+$", word):
-    71	        consonants = re.sub('[aeiouAEIOU]', '', string.ascii_letters)
-    72	        match = re.match('^([' + consonants + ']+)(.+)', word)
-    73	        if match:
-    74	            word = '-'.join([match.group(2), match.group(1) + 'ay'])
-    75	        else:
-    76	            word = word + '-yay'
-    77	
-    78	    return word
+    62	
+    63	# --------------------------------------------------
+    64	def pig(word):
+    65	    """Create Pig Latin version of a word"""
+    66	    if re.match(r"^[\w']+$", word):
+    67	        vowels = 'aeiouAEIOU'
+    68	        consonants = re.sub('[' + vowels + ']', '', string.ascii_letters)
+    69	        match = re.match('^([' + consonants + ']+)(['+ vowels + '].*)', word)
+    70	        if match:
+    71	            word = '-'.join([match.group(2), match.group(1) + 'ay'])
+    72	        else:
+    73	            word = word + '-yay'
+    74	    return word
+    75	
+    76	# --------------------------------------------------
+    77	def test_pig():
+    78	    """Test pig"""
     79	
-    80	
-    81	# --------------------------------------------------
-    82	if __name__ == '__main__':
-    83	    main()
+    80	    assert pig(' ') == ' '
+    81	    assert pig(', ') == ', '
+    82	    assert pig('\n') == '\n'
+    83	    assert pig('a') == 'a-yay'
+    84	    assert pig('i') == 'i-yay'
+    85	    assert pig('apple') == 'apple-yay'
+    86	    assert pig('cat') == 'at-cay'
+    87	    assert pig('chair') == 'air-chay'
+    88	    assert pig('the') == 'e-thay'
+    89	    assert list(map(pig, ['foo', '\n'])) == ['oo-fay', '\n']
+    90	
+    91	
+    92	# --------------------------------------------------
+    93	if __name__ == '__main__':
+    94	    main()
 ````
+
+\newpage
+
+## Discussion
+
+As with so many other exercises that want files as input, I'm going to rely on `argparse` to verify that the `type=argparse.FileType('r')` for the `file` argument. I will also specify `nargs='+'` to indicate "one or more." The `--outdir` is just a `str` and the directory it names may or may not exist, so there's really nothing to validate. I set the `default='out-yay'`.
+
+Testing to see if a string names a directory is rather straightforward:
+
+````
+>>> import os
+>>> out_dir = 'out-yay'
+>>> os.path.isdir(out_dir)
+False
+````
+
+If it doesn't exist, we use `os.makedirs` which is equivalent to `mkdir -p` on the command line in that parent directories will be created along the way if needed. That is, if the user specifies `~/python/pigsty/out_files` and you try to use `os.mkdir`, it will fail. This is why I never use `os.mkdir`:
+
+````
+>>> out_dir = '~/python/pigsty/out_files'
+>>> os.path.isdir(out_dir)
+False
+>>> os.mkdir(out_dir)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: \
+'~/python/pigsty/out_files'
+````
+
+## The Pigifier
+
+Let's start with the actual Pig Latinification of any given word. According to the rules, we add "-yay" to words starting with vowels, so "apple" becomes "apple-yay"; otherwise, we move consonant sounds to the end and add "ay", so "chair" becomes "air-chay." We've seen this same problem in other exercises like Runny Babbit and the rhymers. As in those solutions, to identify consonants I will complement the set of vowels:
+
+````
+>>> import string, re
+>>> vowels = 'aeiouAEIOU'
+>>> consonants = re.sub('[' + vowels + ']', '', string.ascii_letters)
+>>> consonants
+'bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ'
+````
+
+I'm looking for the start of a string, so I will use the caret (`^`) to anchor a character class of consonants. I will verify this works:
+
+````
+>>> regex = '^[' + consonants + ']+'
+>>> regex
+'^[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]+'
+>>> re.search(regex, 'chair')
+<re.Match object; span=(0, 2), match='ch'>
+````
+
+There needs to be at least one vowel after this:
+
+````
+>>> regex = '^[' + consonants + ']+[' + vowels + ']'
+>>> regex
+'^[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]+[aeiouAEIOU]'
+>>> re.search(regex, 'chair')
+<re.Match object; span=(0, 3), match='cha'>
+````
+
+And then anything else which is represented with a dot `.` and any number which is a star `*`:
+
+````
+>>> regex = '^[' + consonants + ']+[' + vowels + '].*'
+>>> re.search(regex, 'chair')
+<re.Match object; span=(0, 5), match='chair'>
+````
+
+Finally we want to capture the first thing and the second thing, so we add parentheses so we can access the `match.groups()` method:
+
+````
+>>> regex = '^([' + consonants + ']+)([' + vowels + '].*)'
+>>> regex
+'^([bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]+)([aeiouAEIOU].*)'
+>>> re.search(regex, 'chair')
+>>> re.search(regex, 'chair').groups()
+('ch', 'air')
+````
+
+So *if* the `search` succeeds and we get a `match` object, we can use the `groups` to move the first group to the end with "ay"; otherwise, we just add "-yay" to the end:
+
+````
+>>> word = 'chair'
+>>> match = re.match('^([' + consonants + ']+)(['+ vowels + '].*)', word)
+>>> if match:
+...     word = '-'.join([match.group(2), match.group(1) + 'ay'])
+... else:
+...     word = word + '-yay'
+...
+>>> word
+'air-chay'
+````
+
+Let's make this into a function:
+
+````
+>>> def pig(word):
+...     """Create Pig Latin version of a word"""
+...     if re.match(r"^[\w']+$", word):
+...         vowels = 'aeiouAEIOU'
+...         consonants = re.sub('[' + vowels + ']', '', string.ascii_letters)
+...         match = re.match('^([' + consonants + ']+)(['+ vowels + '].*)', word)
+...         if match:
+...             word = '-'.join([match.group(2), match.group(1) + 'ay'])
+...         else:
+...             word = word + '-yay'
+...     return word
+...
+````
+
+And manually verify it:
+
+````
+>>> pig('chair')
+'air-chay'
+>>> pig('apple')
+'apple-yay'
+````
+
+In my solution, I added a `test_pig` function that uses th  `assert` function to verify that `pig('apple')` return "apple-yay" and so forth. If I run `pytest` on my `piggy.py` program, it will execute any function that starts with `test_`. This way I can be sure that my function continues to work if I make changes to the program.
+
+## Pigification of words
+
+Now we have a problem we've seen in many other examples: we want to apply our `pig` function to all the words in a file. I've shown my preference for the `map` function, but we can also use `for` loops or list comprehensions. They will all accomplish the task. 
+
+First we have to deal with fact that we can have several input files. Since I defined the `file` argument with `nargs='+'`, then `args.file` will be a `list`. Even if the user defined only one file, `args.file` will be a `list` with one element. I can use a `for` loop to iterate through the files. Additionally, I want to list the number of the file as I'm processing them, so I will use the `enumerate` function to give me both the position in the list and the name of each file. Because I don't want to start counting at `0`, I'll use the `start=1` option:
+
+````
+>>> files = ['../inputs/spiders.txt', '../inputs/fox.txt']
+>>> list(enumerate(files, start=1))
+[(1, '../inputs/spiders.txt'), (2, '../inputs/fox.txt')]
+````
+
+That returns a `list` of tuples which I can unpack into a `i` ("integer", a common throwaway name for an incrementing counter) and `fh` ("file handle" which it is because `argparse` has already performed an `open` on the file). I will use a format string to print the `i` in a space three characters wide (right-justified), followed by a colon and then the name of the file:
+
+````
+>>> files = map(open, ['../inputs/spiders.txt', '../inputs/fox.txt'])
+>>> for i, fh in enumerate(files, start=1):
+...     print('{:3}: {}'.format(i, fh.name))
+...
+  1: ../inputs/spiders.txt
+  2: ../inputs/fox.txt
+````
+
+I want to maintain the original line endings for each file, so I will read each file line-by-line using a `for` loop:
+
+````
+>>> fh = open('../inputs/spiders.txt')
+>>> for line in fh:
+...     print(line, end='')
+...
+Don’t worry, spiders,
+I keep house
+casually.
+````
+
+Now here is a problem: We can't just use `split` to read the input text because punctuation will still be attached:
+
+````
+>>> line = "Don't worry, spiders,"
+>>> line.split()
+["Don't", 'worry,', 'spiders,']
+````
+
+Our `pig` fails with this input:
+
+````
+>>> pig('worry,')
+'worry,'
+>>> list(map(pig, line.split()))
+["on't-Day", 'worry,', 'spiders,']
+````
+
+We could use regular expressions to remove anything not a character, but then we'd lose the original structure of the document. We need to find just the words themselves but not lose anything along the way. We can use `re.split` on `\W+` to define "one or more of any non-word character":
+
+````
+>>> re.split('\W+', line)
+['Don', 't', 'worry', 'spiders', '']
+````
+
+But that splits "Don't" into two words, and we lose all the punctionation. Oddly, we can add capturing parens around the split pattern to get all the parts of the string:
+
+````
+>>> re.split('(\W+)', line)
+['Don', "'", 't', ' ', 'worry', ', ', 'spiders', ',', '']
+````
+
+But that doesn't stop "Don't" being split. We need a far more complicated pattern:
+
+````
+>>> splitter = re.compile("([a-zA-Z](?:[a-zA-Z']*[a-zA-Z])?)")
+>>> splitter.split(line)
+['', "Don't", ' ', 'worry', ', ', 'spiders', ',']
+````
+
+Wow! I'll confess that I did not create that myself. I found it on StackOverflow, but the magical thing is that it was from a Java question. Regular expressions, however, is an idea separate from any one programming language. They are mostly compatible from Perl to Ruby to Rust. I searched for "regex split text word boundaries apostrophe" because I wanted a pattern that wouldn't split on a single quote (an apostrophe). I was able to use the exact pattern from an answer in Java because the regex is (usually) the same no matter where you use it!
+
+Now I can `map` the `pig` function onto each part of the split line:
+
+````
+>>> list(map(pig, splitter.split(line)))
+['', "on't-Day", ' ', 'orry-way', ', ', 'iders-spay', ',']
+````
+
+Or a list comprehension:
+
+````
+>>> [pig(w) for w in splitter.split(line)]
+['', "on't-Day", ' ', 'orry-way', ', ', 'iders-spay', ',']
+````
+
+This is a rare exercise where you are required to write an output file. To create the ouput file name, we need the "basename" of the file which we can get with `os.path.basename`. Then use `os.path.join` to add the `out_dir` (which we created if needed) to the basename. Then we `open` that with the flags `w` for "write" and `t` for "text" which can be combined `wt`:
+
+````
+>>> fh.name
+'../inputs/spiders.txt'
+>>> basename = os.path.basename(fh.name)
+>>> basename
+'spiders.txt'
+>>> out_file = os.path.join(out_dir, basename)
+>>> out_file
+'~/python/pigsty/out_files/spiders.txt'
+>>> out_fh = open(out_file, 'wt')
+````
+
+I've called my output file handle `out_fh` so I can remember what it is. For each line of input text, we use `out_fh.write()` to print our text. It's important to remember that `print` will add a newline unless you tell it not to (using `end=''`), but `fh.write` will *not* add a newline unless you tell it to (by adding `+ '\n'` to your output string). In our case, the lines we are reading have a newline still attached, so we don't need to add another. Be sure to `close` the file handle when you are done.
+
+````
+>>> out_fh = open(out_file, 'wt')
+>>> for line in fh:
+...     out_fh.write(''.join(map(pig, splitter.split(line))))
+...
+>>> out_fh.close()
+````
+
+That is the crux of the program. All that is left is to report to the user how many files were processed and to remind them of the output directory.
 
 \newpage
 
@@ -7322,7 +7582,7 @@ You lose, loser!  The word was "metromania."
 
 # Chapter 36: First Bank of Change
 
-Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100.
+Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100. It should provide a usage if given no arguments or the `-h|--help` flag:
 
 ````
 $ ./fboc.py
@@ -7338,12 +7598,22 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+````
+
+It should throw an error if the value is not greater than 0 and less than or equal to 100:
+
+````
 $ ./fboc.py 0
 usage: fboc.py [-h] int
 fboc.py: error: value "0" must be > 0 and <= 100
 $ ./fboc.py 124
 usage: fboc.py [-h] int
 fboc.py: error: value "124" must be > 0 and <= 100
+````
+
+For valid values, it should print out all the combinations, always in order from largest to smalled denominations:
+
+````
 $ ./fboc.py 1
 If you give me 1 cent, I can give you:
   1: 1 penny

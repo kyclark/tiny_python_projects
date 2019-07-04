@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for piggie.py"""
+"""Tests for piggy.py"""
 
 import os
 import random
@@ -8,7 +8,7 @@ import string
 from subprocess import getstatusoutput
 from shutil import rmtree
 
-prg = './piggie.py'
+prg = './piggy.py'
 nobody = '../inputs/nobody.txt'
 gettysburg = '../inputs/gettysburg.txt'
 decl = '../inputs/usdeclar.txt'

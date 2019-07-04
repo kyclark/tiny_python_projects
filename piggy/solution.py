@@ -63,7 +63,6 @@ def main():
 # --------------------------------------------------
 def pig(word):
     """Create Pig Latin version of a word"""
-
     if re.match(r"^[\w']+$", word):
         vowels = 'aeiouAEIOU'
         consonants = re.sub('[' + vowels + ']', '', string.ascii_letters)
@@ -72,7 +71,6 @@ def pig(word):
             word = '-'.join([match.group(2), match.group(1) + 'ay'])
         else:
             word = word + '-yay'
-
     return word
 
 # --------------------------------------------------

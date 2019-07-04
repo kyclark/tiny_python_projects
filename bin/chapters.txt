@@ -25,7 +25,7 @@ kentucky_friar
 mad_libs
 license_plates
 gibberish
-piggie
+piggy
 soundex_rhymer
 substring
 tictactoe
