@@ -10,7 +10,7 @@ movie_reader
 palindromes
 ransom_note
 rhymer
-rock_paper_scissors
+#rock_paper_scissors
 abuse
 scrambler
 bacronym
@@ -19,7 +19,7 @@ blackjack
 family_tree
 gematria
 histy
-guess
+#guess
 mommys_little_helper
 kentucky_friar
 mad_libs
@@ -27,10 +27,10 @@ license_plates
 gibberish
 piggy
 soundex_rhymer
-substring
-tictactoe
-twelve_days_of_christmas
-war
+#substring
+#tictactoe
+#twelve_days_of_christmas
+#war
 anagram
 hangman
 first_bank_of_change

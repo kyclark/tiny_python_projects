@@ -1,5 +1,7 @@
 # Ransom
 
+![A ransom note.](images/ransom.png)
+
 Create a Python program called `ransom.py` that will randomly capitalize the letters in a text. The program should take a `-s|--seed` argument for the `random.seed` to control randomness for the test suite. It should print usage when given no arguments or `-h|--help`.
 
 ````

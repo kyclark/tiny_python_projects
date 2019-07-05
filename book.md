@@ -2000,6 +2000,8 @@ tenet
 
 # Chapter 11: Ransom
 
+![A ransom note.](images/ransom.png)
+
 Create a Python program called `ransom.py` that will randomly capitalize the letters in a text. The program should take a `-s|--seed` argument for the `random.seed` to control randomness for the test suite. It should print usage when given no arguments or `-h|--help`.
 
 ````
@@ -2039,6 +2041,7 @@ Hints:
 
 * You can iterate each character in the input string with a `for` loop
 * For each character, can use the `random.choice` function to decide whether to force the character to upper or lower case using methods from the `str` class
+
 \newpage
 
 ## Solution
@@ -2536,152 +2539,11 @@ And add them to the stem of the word, being sure to avoid any prefix that was th
 ````
 \newpage
 
-# Chapter 13: Rock, Paper, Scissors
+# Chapter 13: Abuse
 
-Write a Python program called `rps.py` that will play the ever-popular "Rock, Paper, Scissors" game. As often as possible, insult the player by combining an adjective and a noun from the following lists:
+Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default `3`) by randomly combining some number of `-a|--adjectives` (default `2`) with a noun (see below). Be sure your program accepts a `-s|--seed` argument (default `None`) to pass to `random.seed`.
 
-Adjectives =
-truculent fatuous vainglorious fatuous petulant moribund jejune
-feckless antiquated rambunctious mundane misshapen glib dreary
-dopey devoid deleterious degrading clammy brazen indiscreet
-indecorous imbecilic dysfunctional dubious drunken disreputable
-dismal dim deficient deceitful damned daft contrary churlish
-catty banal asinine infantile lurid morbid repugnant unkempt
-vapid decrepit malevolent impertinent decrepit grotesque puerile
-
-Nouns =
-abydocomist bedswerver bespawler bobolyne cumberworld dalcop
-dew-beater dorbel drate-poke driggle-draggle fopdoodle fustylugs
-fustilarian gillie-wet-foot gnashgab gobermouch
-gowpenful-o’-anything klazomaniac leasing-monger loiter-sack
-lubberwort muck-spout mumblecrust quisby raggabrash rakefire
-roiderbanks saddle-goose scobberlotcher skelpie-limmer
-smell-feast smellfungus snoutband sorner stampcrab stymphalist
-tallowcatch triptaker wandought whiffle-whaffle yaldson zoilist
-
-The program should accept a `-s|--seed` to pass to `random`.
-
-````
-$ ./rps.py
-1-2-3-Go! [rps|q] r
-You: Rock
-Me : Scissors
-You win. You are a clammy drate-poke.
-1-2-3-Go! [rps|q] t
-You dysfunctional dew-beater! Please choose from: p, r, s.
-1-2-3-Go! [rps|q] p
-You: Paper
-Me : Rock
-You win. You are a dismal gillie-wet-foot.
-1-2-3-Go! [rps|q] q
-Bye, you imbecilic fopdoodle!
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	"""Rock, Paper, Scissors"""
-     3	
-     4	import argparse
-     5	import os
-     6	import random
-     7	import sys
-     8	
-     9	
-    10	# --------------------------------------------------
-    11	def get_args():
-    12	    """Get command-line arguments"""
-    13	
-    14	    parser = argparse.ArgumentParser(
-    15	        description='Rock, Paper, Scissors',
-    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    17	
-    18	    parser.add_argument('-s',
-    19	                        '--seed',
-    20	                        help='Random seed',
-    21	                        metavar='int',
-    22	                        type=int,
-    23	                        default=None)
-    24	
-    25	    return parser.parse_args()
-    26	
-    27	
-    28	# --------------------------------------------------
-    29	def insult():
-    30	    adjective = """
-    31	    truculent fatuous vainglorious fatuous petulant moribund jejune
-    32	    feckless antiquated rambunctious mundane misshapen glib dreary
-    33	    dopey devoid deleterious degrading clammy brazen indiscreet
-    34	    indecorous imbecilic dysfunctional dubious drunken disreputable
-    35	    dismal dim deficient deceitful damned daft contrary churlish
-    36	    catty banal asinine infantile lurid morbid repugnant unkempt
-    37	    vapid decrepit malevolent impertinent decrepit grotesque puerile
-    38	    """.split()
-    39	
-    40	    noun = """
-    41	    abydocomist bedswerver bespawler bobolyne cumberworld dalcop
-    42	    dew-beater dorbel drate-poke driggle-draggle fopdoodle fustylugs
-    43	    fustilarian gillie-wet-foot gnashgab gobermouch
-    44	    gowpenful-o’-anything klazomaniac leasing-monger loiter-sack
-    45	    lubberwort muck-spout mumblecrust quisby raggabrash rakefire
-    46	    roiderbanks saddle-goose scobberlotcher skelpie-limmer
-    47	    smell-feast smellfungus snoutband sorner stampcrab stymphalist
-    48	    tallowcatch triptaker wandought whiffle-whaffle yaldson zoilist
-    49	    """.split()
-    50	
-    51	    return ' '.join([random.choice(adjective), random.choice(noun)])
-    52	
-    53	
-    54	# --------------------------------------------------
-    55	def main():
-    56	    """Make a jazz noise here"""
-    57	
-    58	    args = get_args()
-    59	    random.seed(args.seed)
-    60	
-    61	    valid = set('rps')
-    62	    beats = {'r': 's', 's': 'p', 'p': 'r'}
-    63	    display = {'r': 'Rock', 'p': 'Paper', 's': 'Scissors'}
-    64	
-    65	    while True:
-    66	        play = input('1-2-3-Go! [rps|q] ').lower()
-    67	
-    68	        if play.startswith('q'):
-    69	            print('Bye, you {}!'.format(insult()))
-    70	            sys.exit(0)
-    71	
-    72	        if play not in valid:
-    73	            print('You {}! Please choose from: {}.'.format(
-    74	                insult(), ', '.join(sorted(valid))))
-    75	            continue
-    76	
-    77	        computer = random.choice(list(valid))
-    78	
-    79	        print('You: {}\nMe : {}'.format(display[play], display[computer]))
-    80	
-    81	        if beats[play] == computer:
-    82	            print('You win. You are a {}.'.format(insult()))
-    83	        elif beats[computer] == play:
-    84	            print('You lose, {}!'.format(insult()))
-    85	        else:
-    86	            print('Draw, you {}.'.format(insult()))
-    87	
-    88	
-    89	# --------------------------------------------------
-    90	if __name__ == '__main__':
-    91	    main()
-````
-
-\newpage
-
-# Chapter 14: Abuse
-
-Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default `3`) by randomly combining some number of `-a|--adjectives` (default `2`) with a noun (see below). Be sure your program accepts a `-s|--seed` argument (defualt `None`) to pass to `random.seed`.
-
-Adjectives:
+The are the adjectives you should use:
 
 bankrupt base caterwauling corrupt cullionly detestable dishonest
 false filthsome filthy foolish foul gross heedless indistinguishable
@@ -2689,12 +2551,14 @@ infected insatiate irksome lascivious lecherous loathsome lubbery old
 peevish rascaly rotten ruinous scurilous scurvy slanderous
 sodden-witted thin-faced toad-spotted unmannered vile wall-eyed
 
-Nouns:
+And these are the nouns:
 
 Judas Satan ape ass barbermonger beggar block boy braggart butt
 carbuncle coward coxcomb cur dandy degenerate fiend fishmonger fool
 gull harpy jack jolthead knave liar lunatic maw milksop minion
 ratcatcher recreant rogue scold slave swine traitor varlet villain worm
+
+If run with the `-h|--help` flag, the program should generate usage:
 
 ````
 $ ./abuse.py -h
@@ -2708,10 +2572,20 @@ optional arguments:
                         Number of adjectives (default: 2)
   -n int, --number int  Number of insults (default: 3)
   -s int, --seed int    Random seed (default: None)
+````
+
+When run with no arguments, the program should generate insults using the defaults:
+  
+````  
 $ ./abuse.py
 You slanderous, rotten block!
 You lubbery, scurilous ratcatcher!
 You rotten, foul liar!
+````
+
+It's unlikely you'll get the same output above when you run yours because no seed was set. The following, however, should be exactly reproducible due to the `--seed`:
+
+````
 $ ./abuse.py -s 1 -n 2 -a 1
 You rotten rogue!
 You lascivious ape!
@@ -2722,87 +2596,233 @@ You foul, lecherous, infected, slanderous degenerate!
 You base, ruinous, slanderous, false liar!
 ````
 
+If run with a `--number` less than 1, exit with an error code and message, preferably with the usage:
+
+````
+$ ./abuse.py -n -4
+usage: abuse.py [-h] [-a int] [-n int] [-s int]
+abuse.py: error: --number "-4" cannot be less than 1
+````
+
+Hints:
+
+* You can use three single or double quotes (\"\"\") to create a multi-line string and then `split()` that to get a list of strings. This is easier than individually quoting a long list of shorter strings (e.g., the list of adjectives and nouns).
+* Perform the check for `--number` inside the `get_args` function and use `parser.error` to throw the error while printing a message and the usage.
+* If you set the default for `args.seed` to `None` while using a `type=int`, you should be able to directly pass the argument's value to `random.seed` to control testing.
+* Use a `for` loop with the `range` function to create a loop that will execute `--number` of times to generate each insult.
+* Look at the `sample` and `choice` functions in the `random` module for help in selecting some adjectives and a noun.
+* To construct an insult string to print, you can use the `+` operator to concatenate strings, use the `str.join` method, or use format strings (and maybe other methods?).
+
 \newpage
 
 ## Solution
 
 ````
      1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import random
-     5	import sys
-     6	
-     7	adjectives = """
-     8	bankrupt base caterwauling corrupt cullionly detestable dishonest
-     9	false filthsome filthy foolish foul gross heedless indistinguishable
-    10	infected insatiate irksome lascivious lecherous loathsome lubbery old
-    11	peevish rascaly rotten ruinous scurilous scurvy slanderous
-    12	sodden-witted thin-faced toad-spotted unmannered vile wall-eyed
-    13	""".strip().split()
-    14	
-    15	nouns = """
-    16	Judas Satan ape ass barbermonger beggar block boy braggart butt
-    17	carbuncle coward coxcomb cur dandy degenerate fiend fishmonger fool
-    18	gull harpy jack jolthead knave liar lunatic maw milksop minion
-    19	ratcatcher recreant rogue scold slave swine traitor varlet villain worm
-    20	""".strip().split()
-    21	
+     2	"""Heap abuse"""
+     3	
+     4	import argparse
+     5	import random
+     6	import sys
+     7	
+     8	adjectives = """
+     9	bankrupt base caterwauling corrupt cullionly detestable dishonest
+    10	false filthsome filthy foolish foul gross heedless indistinguishable
+    11	infected insatiate irksome lascivious lecherous loathsome lubbery old
+    12	peevish rascaly rotten ruinous scurilous scurvy slanderous
+    13	sodden-witted thin-faced toad-spotted unmannered vile wall-eyed
+    14	""".strip().split()
+    15	
+    16	nouns = """
+    17	Judas Satan ape ass barbermonger beggar block boy braggart butt
+    18	carbuncle coward coxcomb cur dandy degenerate fiend fishmonger fool
+    19	gull harpy jack jolthead knave liar lunatic maw milksop minion
+    20	ratcatcher recreant rogue scold slave swine traitor varlet villain worm
+    21	""".strip().split()
     22	
-    23	# --------------------------------------------------
-    24	def get_args():
-    25	    """get command-line arguments"""
-    26	    parser = argparse.ArgumentParser(
-    27	        description='Argparse Python script',
-    28	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    29	
-    30	    parser.add_argument('-a',
-    31	                        '--adjectives',
-    32	                        help='Number of adjectives',
-    33	                        metavar='int',
-    34	                        type=int,
-    35	                        default=2)
-    36	
-    37	    parser.add_argument('-n',
-    38	                        '--number',
-    39	                        help='Number of insults',
-    40	                        metavar='int',
-    41	                        type=int,
-    42	                        default=3)
-    43	
-    44	    parser.add_argument('-s',
-    45	                        '--seed',
-    46	                        help='Random seed',
-    47	                        metavar='int',
-    48	                        type=int,
-    49	                        default=None)
-    50	
-    51	    return parser.parse_args()
+    23	
+    24	# --------------------------------------------------
+    25	def get_args():
+    26	    """get command-line arguments"""
+    27	
+    28	    parser = argparse.ArgumentParser(
+    29	        description='Heap abuse',
+    30	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    31	
+    32	    parser.add_argument('-a',
+    33	                        '--adjectives',
+    34	                        help='Number of adjectives',
+    35	                        metavar='int',
+    36	                        type=int,
+    37	                        default=2)
+    38	
+    39	    parser.add_argument('-n',
+    40	                        '--number',
+    41	                        help='Number of insults',
+    42	                        metavar='int',
+    43	                        type=int,
+    44	                        default=3)
+    45	
+    46	    parser.add_argument('-s',
+    47	                        '--seed',
+    48	                        help='Random seed',
+    49	                        metavar='int',
+    50	                        type=int,
+    51	                        default=None)
     52	
-    53	
-    54	# --------------------------------------------------
-    55	def main():
-    56	    """Make a jazz noise here"""
-    57	    args = get_args()
-    58	    num_adj = args.adjectives
-    59	    num_insults = args.number
+    53	    args = parser.parse_args()
+    54	
+    55	    if args.number < 1:
+    56	        parser.error('--number "{}" cannot be less than 1'.format(args.number))
+    57	
+    58	    return args
+    59	
     60	
-    61	    random.seed(args.seed)
-    62	
-    63	    for _ in range(num_insults):
-    64	        adjs = random.sample(adjectives, k=num_adj)
-    65	        noun = random.choice(nouns)
-    66	        print('You {} {}!'.format(', '.join(adjs), noun))
-    67	
-    68	
-    69	# --------------------------------------------------
-    70	if __name__ == '__main__':
-    71	    main()
+    61	# --------------------------------------------------
+    62	def main():
+    63	    """Make a jazz noise here"""
+    64	
+    65	    args = get_args()
+    66	    num_adj = args.adjectives
+    67	    num_insults = args.number
+    68	    random.seed(args.seed)
+    69	
+    70	    for _ in range(num_insults):
+    71	        adjs = random.sample(adjectives, k=num_adj)
+    72	        noun = random.choice(nouns)
+    73	        print('You {} {}!'.format(', '.join(adjs), noun))
+    74	
+    75	
+    76	# --------------------------------------------------
+    77	if __name__ == '__main__':
+    78	    main()
 ````
 
 \newpage
 
-# Chapter 15: Scrambler
+## Discussion
+
+![Erak! The captain is a corrupt, irksome fiend!](images/parrot.png)
+
+## get_args
+
+More than half of my solution is just in defining the program's arguments to `argparse`. The effort is well worth the result, because `argparse` will ensure that each argument is a valid integer value because I set `type=int`. Notice there are no quotes around the `int` -- it's not the string `'int'` but a reference to the class in Python. You can use the `type` function in Python to find out how Python represents a value:
+
+````
+>>> type(int)
+<class 'type'>
+>>> type('int')
+<class 'str'>
+````
+
+For `--adjectives` and `--number`, I can set reasonable defaults so that no input is *required* from the user but the values are easily overridden. This makes your program dynamic, interesting, and testable. How do you know if your values are being used correctly unless you change them and test that the proper change was made in your program. Maybe you started off hardcoding the number of insults and forgot to change the `range` to use a variable. Without changing the input value and testing that the number of insults changed accordingly, it might be a user who discovers your bug, and that's somewhat embarrassing.
+
+Another reason I quite like `argparse` is that, if I find there is a problem with an argument, I can use `parser.error` to do four things:
+
+1. Print the short usage of the program to the user
+2. Print a specific message about the problem
+3. Halt execution of the program
+4. Return an error code to the operating system
+
+For instance, I can't very easily tell `argparse` that the `--number` should be a positive integer, only that it must be of type `int`. I can, however, inspect the value myself and call `parser.error('message')` if there is a problem. I do all this inside `get_args` so that, by the time I call `args = get_args()` in my `main` function, I know that all the arguments have been validated. I could have also added a similar check for `--adjectives`, but the main point was to highlight that such a thing is possible. As you write your own programs, you'll have to decide how much validation of user input you feel is necessary.
+
+## main
+
+Once I'm in `main` and have my arguments, I can control the randomness of the program by calling `random.seed(args.seed)` because:
+
+1. The default value of the `seed` is `None`, and setting `random.seed` to `None` is the same as not setting it at all.
+2. The `type` of `args.seed` is `int` which is the proper type for `random.seed`. I do not have to validate the argument further. Negative integers are valid values.
+
+To generate some `--number` of insults, I use the `range` function. Because I don't need the number of the insult, I can use the underscore (`_`) as a throwaway value:
+
+````
+>>> num_insults = 2
+>>> for _ in range(num_insults):
+...     print('An insult!')
+...
+An insult!
+An insult!
+````
+
+The underscore is a way to unpack a value and indicate that you do not intend to use it. That is, it's not possible to write this:
+
+````
+>>> for in range(num_insults):
+  File "<stdin>", line 1
+    for in range(num_insults):
+````
+
+You have to put *something* after the `for` that looks like a variable. If you put a named variable like `n` and then don't use it in the loop, some tools like `pylint` will detect this as a possible error (and well it could be). The `_` shows that you won't use it, which is good information for your future self, some other user, or external tools to know.
+
+You can use multiple `_`, e.g., here I can unpack a 3-tuple so as to get the middle value:
+
+````
+>>> x = 'Jesus', 'Mary', 'Joseph'
+>>> _, name, _ = x
+>>> name
+'Mary'
+````
+
+To create my list of adjectives, I used the `str.split` method on a long, multi-line string I created using three quotes:
+
+````
+>>> adjectives = """
+... bankrupt base caterwauling corrupt cullionly detestable dishonest
+... false filthsome filthy foolish foul gross heedless indistinguishable
+... infected insatiate irksome lascivious lecherous loathsome lubbery old
+... peevish rascaly rotten ruinous scurilous scurvy slanderous
+... sodden-witted thin-faced toad-spotted unmannered vile wall-eyed
+... """.strip().split()
+>>> nouns = """
+... Judas Satan ape ass barbermonger beggar block boy braggart butt
+... carbuncle coward coxcomb cur dandy degenerate fiend fishmonger fool
+... gull harpy jack jolthead knave liar lunatic maw milksop minion
+... ratcatcher recreant rogue scold slave swine traitor varlet villain worm
+... """.strip().split()
+>>> len(adjectives)
+36
+>>> len(nouns)
+39
+````
+
+To select some number of adjectives, I chose to use `random.sample` function since I needed more than one:
+
+````
+>>> import random
+>>> random.sample(adjectives, k=3)
+['filthsome', 'cullionly', 'insatiate']
+````
+
+For just one randomly selected value, I use `random.choice`:
+
+````
+>>> random.choice(nouns)
+'boy'
+````
+
+To concatenante them together, I need to put `', '` (a comma and a space) between each of the adjectives, and I can use `str.join` for that:
+
+````
+>>> adjs = random.sample(adjectives, k=3)
+>>> adjs
+['thin-faced', 'scurvy', 'sodden-witted']
+>>> ', '.join(adjs)
+'thin-faced, scurvy, sodden-witted'
+````
+
+And feed all this to a format string:
+
+````
+>>> noun = random.choice(nouns)
+>>> print('You {} {}!'.format(', '.join(adjs), noun))
+You thin-faced, scurvy, sodden-witted liar!
+````
+
+And now you have a handy way to make enemies and influence people.
+
+\newpage
+
+# Chapter 14: Scrambler
 
 Write a Python program called `scrambler.py` that will take a single position positional argument that is text or a text file and then convert each word into a scrambled version. The scrambling should only work on words greater than 3 characters in length and should only scramble the letters in the middle, leaving the first and last characters unchanged. The program should take a `-s|--seed` argument (default `None`) to pass to `random.seed`.
 
@@ -3099,7 +3119,7 @@ If you don't like `map`, you can accomplish the same thing with a list comprehen
 ````
 \newpage
 
-# Chapter 16: Bacronym
+# Chapter 15: Bacronym
 
 Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--number` (default `5`) of acronyms by reading a `-w|--wordlist` argument (defualt `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
 
@@ -3249,7 +3269,7 @@ FBI =
 
 \newpage
 
-# Chapter 17: Workout Of (the) Day (WOD)
+# Chapter 16: Workout Of (the) Day (WOD)
 
 Write a Python program called `wod.py` that will create a Workout Of (the) Day (WOD) from a list of exercises provided in CSV format (default `wod.csv`). Accept a `-n|--num_exercises` argument (default `4`) to determine the sample size from your exercise list. Also accept a `-e|--easy` flag to indicate that the reps should be cut in half. Finally accept a `-s|--seed` argument to pass to `random.seed` for testing purposes. You should use the `tabulate` module to format the output as expected.
 
@@ -3493,7 +3513,7 @@ Then I can `append` to the `table` a new tuple containing the `name` of the exer
 
 \newpage
 
-# Chapter 18: Blackjack 
+# Chapter 17: Blackjack 
 
 Write a Python program called `blackjack.py` that plays an abbreviated game of Blackjack. You will need to `import random` to get random cards from a deck you will construct, and so your program will need to accept a `-s|--seed` that will set `random.seed()` with the value that is passed in so that the test suite will work. The other arguments you will accept are two flags (Boolean values) of `-p|--player_hits` and `-d|--dealer_hits`. As usual, you will also have a `-h|--help` option for usage statement.
 
@@ -3646,7 +3666,7 @@ Player wins. You probably cheated.
 
 \newpage
 
-# Chapter 19: Family Tree
+# Chapter 18: Family Tree
 
 ![Partial Tudor family tree](family_tree/tudor.txt.gv.pdf)
 
@@ -3984,7 +4004,7 @@ The `graphviz` module is an interface to the `graphviz` program which is a stand
 To make a more complicated graph, I added the full names from my `nodes` dictionary, and then use those full names to expand the initials from the `edges`, if present. In the end, the code isn't much more complicated that these few lines.
 \newpage
 
-# Chapter 20: Gematria: Numeric encoding of text
+# Chapter 19: Gematria: Numeric encoding of text
 
 Write a Python program called `gematria.py` that will numerically encode each word in a given text. The name of this program comes from gematria, a system for assigning a number to a word by summing the numeric values of each of the letters as defined by the Mispar godol (https://en.wikipedia.org/wiki/Gematria). For English characters, we can use the ASCII table (https://en.wikipedia.org/wiki/ASCII). Python provides these value throug the `ord` function to convert a character to its "ordinal" (order in the ASCII table) value as well as the `chr` function to convert a number to its "character."
 
@@ -4320,7 +4340,7 @@ All that is left is to `print` the encoded words back out:
 ````
 \newpage
 
-# Chapter 21: Histogram
+# Chapter 20: Histogram
 
 Write a Python program called `histy.py` that takes a single positional argument that may be plain text or the name of a file to read for the text. Count the frequency of each character (not spaces) and print a histogram of the data. By default, you should order the histogram by the characters but include `-f|--frequency_sort` option to sort by the frequency (in descending order). Also include a `-c|--character` option (default `|`) to represent a mark in the histogram, a `-m|--minimum` option (default `1`) to include a character in the output, a `-w|--width` option (default `70`) to limit the size of the histogram, and a `-i|--case_insensitive` flag to force all input to uppercase.
 
@@ -4495,169 +4515,7 @@ W    375 ###
 
 \newpage
 
-# Chapter 22: Guessing Game
-
-Write a Python program called `guess.py` that plays a guessing game for a number between a `-m|--min` and `-x|--max` value (default 1 and 50, respectively) with a limited number of `-g|--guesses` (default 5). Complain if either `--min` or `--guesses` is less than 1. Accept a `-s|--seed` for `random.seed`. If the user guesses something that is not a number, complain about it.
-
-The game is intended to actually be interactive, which makes it difficult to test. Here is how it should look in interactive mode:
-
-````
-$ ./guess.py -s 1
-Guess a number between 1 and 50 (q to quit): 25
-"25" is too high.
-Guess a number between 1 and 50 (q to quit): foo
-"foo" is not a number.
-Guess a number between 1 and 50 (q to quit): 12
-"12" is too high.
-Guess a number between 1 and 50 (q to quit): 6
-"6" is too low.
-Guess a number between 1 and 50 (q to quit): 9
-"9" is correct. You win!
-````
-
-![What does the future hold?](images/crystal_ball.png)
-
-Because I want to be able to write a test for this, I also want the program to accept an `-i|--inputs` option so that the game can also be played exactly the same but without the prompts for input:
-
-````
-$ ./guess.py -s 1 -i 25 foo 12 6 9
-"25" is too high.
-"foo" is not a number.
-"12" is too high.
-"6" is too low.
-"9" is correct. You win!
-````
-
-You should be able to handle this in your inifinite game loop.
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import random
-     5	import re
-     6	import sys
-     7	from dire import die
-     8	
-     9	
-    10	# --------------------------------------------------
-    11	def get_args():
-    12	    """get args"""
-    13	    parser = argparse.ArgumentParser(
-    14	        description='Guessing game',
-    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    16	
-    17	    parser.add_argument('-m',
-    18	                        '--min',
-    19	                        help='Minimum value',
-    20	                        metavar='int',
-    21	                        type=int,
-    22	                        default=1)
-    23	
-    24	    parser.add_argument('-x',
-    25	                        '--max',
-    26	                        help='Maximum value',
-    27	                        metavar='int',
-    28	                        type=int,
-    29	                        default=50)
-    30	
-    31	    parser.add_argument('-g',
-    32	                        '--guesses',
-    33	                        help='Number of guesses',
-    34	                        metavar='int',
-    35	                        type=int,
-    36	                        default=5)
-    37	
-    38	    parser.add_argument('-s',
-    39	                        '--seed',
-    40	                        help='Random seed',
-    41	                        metavar='int',
-    42	                        type=int,
-    43	                        default=None)
-    44	
-    45	    parser.add_argument('-i',
-    46	                        '--inputs',
-    47	                        help='Inputs',
-    48	                        metavar='str',
-    49	                        type=str,
-    50	                        nargs='+',
-    51	                        default=[])
-    52	
-    53	    return parser.parse_args()
-    54	
-    55	
-    56	# --------------------------------------------------
-    57	def main():
-    58	    """main"""
-    59	    args = get_args()
-    60	    low = args.min
-    61	    high = args.max
-    62	    guesses_allowed = args.guesses
-    63	    inputs = args.inputs
-    64	    random.seed(args.seed)
-    65	
-    66	    if low < 1:
-    67	        die('--min "{}" cannot be lower than 1'.format(low))
-    68	
-    69	    if guesses_allowed < 1:
-    70	        die('--guesses "{}" cannot be lower than 1'.format(guesses_allowed))
-    71	
-    72	    if low > high:
-    73	        die('--min "{}" is higher than --max "{}"'.format(low, high))
-    74	
-    75	    secret = random.randint(low, high)
-    76	    prompt = 'Guess a number between {} and {} (q to quit): '.format(low, high)
-    77	    num_guesses = 0
-    78	
-    79	    while True:
-    80	        guess = inputs.pop(0) if inputs else input(prompt)
-    81	        num_guesses += 1
-    82	
-    83	        if re.match('q(uit)?', guess.lower()):
-    84	            print('Now you will never know the answer.')
-    85	            sys.exit()
-    86	
-    87	        # Method 1: test if the guess is a digit
-    88	        if not guess.isdigit():
-    89	            print('"{}" is not a number.'.format(guess))
-    90	            continue
-    91	        num = int(guess)
-    92	
-    93	        # Method 2: try/except
-    94	        num = 0
-    95	        try:
-    96	            num = int(guess)
-    97	        except:
-    98	            warn('"{}" is not an integer'.format(guess))
-    99	            continue
-   100	
-   101	        if not low <= num <= high:
-   102	            print('Number "{}" is not in the allowed range'.format(num))
-   103	        elif num == secret:
-   104	            print('"{}" is correct. You win!'.format(num))
-   105	            break
-   106	        else:
-   107	            print('"{}" is too {}.'.format(num,
-   108	                                           'low' if num < secret else 'high'))
-   109	
-   110	        if num_guesses >= guesses_allowed:
-   111	            print(
-   112	                'Too many guesses, loser! The number was "{}."'.format(secret))
-   113	            sys.exit(1)
-   114	
-   115	
-   116	# --------------------------------------------------
-   117	if __name__ == '__main__':
-   118	    main()
-````
-
-\newpage
-
-# Chapter 23: Mommy's Little (Crossword) Helper
+# Chapter 21: Mommy's Little (Crossword) Helper
 
 Write a Python program called `helper.py` that finds all words matching a given `-p|--pattern` such as one might use to complete a crossword puzzle to find words matching from a given `-w|--wordlist` (default `/usr/share/dict/words`). E.g., all 5-letter words with a "t" as the second character and ending in "ed". I could do this on the command line like so:
 
@@ -4909,7 +4767,7 @@ If both conditions are `True` (same length, all characters the same), then I `ap
 All that is left is to check if any words matched. If so, we print them out, numbered and nicely aligned; otherwise, we let the user know that no matches were found. I hope you tried solving this problem with and without regular expressions as there is much to learn by each method.
 \newpage
 
-# Chapter 24: Kentucky Friar
+# Chapter 22: Kentucky Friar
 
 Write a Python program called `friar.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
@@ -5089,7 +4947,7 @@ Finally we need to apply our `fry` function to all the pieces we got from splitt
 ````
 \newpage
 
-# Chapter 25: Mad Libs
+# Chapter 23: Mad Libs
 
 ![This definitely not a copyright infringment.](images/mad_libs.png)
 
@@ -5213,7 +5071,7 @@ What here shall hammer, our toil shall strive to mend.
 
 \newpage
 
-# Chapter 26: License Plates
+# Chapter 24: License Plates
 
 Write a Python program called `license.py` that will create a regular expression for a license plate that accounts for characters and numbers which might be confused according to the following list:
 
@@ -5346,7 +5204,7 @@ In creating all the possible plates from your regular expression, you are making
 
 \newpage
 
-# Chapter 27: Gibberish Generator
+# Chapter 25: Gibberish Generator
 
 Write a Python program called `gibberish.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
@@ -5549,7 +5407,7 @@ $ ./gibberish.py -k 2 ../inputs/1945-boys.txt
 
 \newpage
 
-# Chapter 28: Piggy (Pig Latin)
+# Chapter 26: Piggy (Pig Latin)
 
 Write a Python program named `piggy.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
@@ -5559,6 +5417,8 @@ To create "Pig Latin":
 
 1. If the word begins with consonants, e.g., "k" or "ch", move them to the end of the word and append "ay" so that "mouse" becomes "ouse-may" and "chair" becomes "air-chay."
 2. If the word begins with a vowel, simple append "-yay" to the end, so "apple" is "apple-yay."
+
+![He's speaking "pig" Latin. Get it?](images/pig.png)
 
 The program should print a usage if given no arguments or the `-h|--help` flag:
 
@@ -5837,7 +5697,7 @@ And manually verify it:
 'apple-yay'
 ````
 
-In my solution, I added a `test_pig` function that uses th  `assert` function to verify that `pig('apple')` return "apple-yay" and so forth. If I run `pytest` on my `piggy.py` program, it will execute any function that starts with `test_`. This way I can be sure that my function continues to work if I make changes to the program.
+In my solution, I added a `test_pig` function that uses the  `assert` function to verify that `pig('apple')` return "apple-yay" and so forth. If I run `pytest` on my `piggy.py` program, it will execute any function that starts with `test_`. This way I can be sure that my function continues to work if I make changes to the program.
 
 ## Pigification of words
 
@@ -5957,7 +5817,7 @@ That is the crux of the program. All that is left is to report to the user how m
 
 \newpage
 
-# Chapter 29: Soundex Rhymer
+# Chapter 27: Soundex Rhymer
 
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, you sometimes want to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part, so the program should have an optional flag `-s|--stem` to indicate that the given word and the words you compare should both be trimmed to the "stem". The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons and should respond, as always, to `-h|--help` for usage.
 
@@ -6276,641 +6136,7 @@ Once I have the `stemmer` function, I can apply it to the given `word` and every
 
 \newpage
 
-# Chapter 30: Substring Guessing Game
-
-Write a Python program called `sub.py` that plays a guessing game where you read a `-f|--file` input (default `/usr/share/dict/words`) and use a given `-k|--ksize` to find all the words grouped by their shared kmers. Remove any kmers where the number of words is fewer than `-m|--min_words`. Also accept a `-s|--seed` for `random.seed` for testing purposes. Prompt the user to guess a word for a randomly chosen kmer. If their guess is not present in the shared list, taunt them mercilessly. If their guess is present, affirm their worth and prompt to guess again. Allow them to use `!` to quit and `?` to be provided a hint (a word from the list). For both successful guesses and hints, remove the word from the shared list. When they have quit or exhausted the list, quit play. At the end of the game, report the number of found words.
-
-````
-$ ./sub.py -h
-usage: sub.py [-h] [-f str] [-s int] [-m int] [-k int]
-
-Find words sharing a substring
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -f str, --file str    Input file (default: /usr/share/dict/words)
-  -s int, --seed int    Random seed (default: None)
-  -m int, --min_words int
-                        Minimum number of words for a given kmer (default: 3)
-  -k int, --ksize int   Size of k (default: 4)
-$ ./sub.py
-Name a word that contains "slak" [!=quit, ?=hint] (10 left) slake
-Totes! "slake" is found!
-Name a word that contains "slak" [!=quit, ?=hint] (9 left) ?
-For instance, "breislakite"...
-Name a word that contains "slak" [!=quit, ?=hint] (8 left) unslakable
-Totes! "unslakable" is found!
-Name a word that contains "slak" [!=quit, ?=hint] (7 left) q
-What is wrong with you?
-Name a word that contains "slak" [!=quit, ?=hint] (7 left) !
-Quitter!
-Hey, you found 2 words! Not bad.
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import os
-     5	import random
-     6	import re
-     7	import sys
-     8	from collections import defaultdict
-     9	from dire import die
-    10	
-    11	
-    12	# --------------------------------------------------
-    13	def get_args():
-    14	    """get command-line arguments"""
-    15	    parser = argparse.ArgumentParser(
-    16	        description='Find words sharing a substring',
-    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    18	
-    19	    parser.add_argument('-f',
-    20	                        '--file',
-    21	                        metavar='str',
-    22	                        help='Input file',
-    23	                        type=str,
-    24	                        default='/usr/share/dict/words')
-    25	
-    26	    parser.add_argument('-s',
-    27	                        '--seed',
-    28	                        help='Random seed',
-    29	                        metavar='int',
-    30	                        type=int,
-    31	                        default=None)
-    32	
-    33	    parser.add_argument('-m',
-    34	                        '--min_words',
-    35	                        help='Minimum number of words for a given kmer',
-    36	                        metavar='int',
-    37	                        type=int,
-    38	                        default=3)
-    39	
-    40	    parser.add_argument('-k',
-    41	                        '--ksize',
-    42	                        help='Size of k',
-    43	                        metavar='int',
-    44	                        type=int,
-    45	                        default=4)
-    46	
-    47	    return parser.parse_args()
-    48	
-    49	
-    50	# --------------------------------------------------
-    51	def get_words(file):
-    52	    """Get words from input file"""
-    53	
-    54	    if not os.path.isfile(file):
-    55	        die('"{}" is not a file')
-    56	
-    57	    words = set()
-    58	    for line in open(file):
-    59	        for word in line.split():
-    60	            words.add(re.sub('[^a-zA-Z0-9]', '', word.lower()))
-    61	
-    62	    if not words:
-    63	        die('No usable words in "{}"'.format(file))
-    64	
-    65	    return words
-    66	
-    67	
-    68	# --------------------------------------------------
-    69	def get_kmers(words, k, min_words):
-    70	    """ Find all words sharing kmers"""
-    71	
-    72	    if k <= 1:
-    73	        die('-k "{}" must be greater than 1'.format(k))
-    74	
-    75	    shared = defaultdict(list)
-    76	    for word in words:
-    77	        for kmer in [word[i:i + k] for i in range(len(word) - k + 1)]:
-    78	            shared[kmer].append(word)
-    79	
-    80	    # Select kmers having enough words (can't use `pop`!)
-    81	
-    82	    # Method 1: for loop
-    83	    ok = dict()
-    84	    for kmer in shared:
-    85	        if len(shared[kmer]) >= min_words:
-    86	            ok[kmer] = shared[kmer]
-    87	
-    88	    # Method 2: list comprehension
-    89	    # ok = dict([(kmer, shared[kmer]) for kmer in shared
-    90	    #            if len(shared[kmer]) >= min_words])
-    91	
-    92	    # Method 3: map/filter
-    93	    # ok = dict(
-    94	    #     map(lambda kmer: (kmer, shared[kmer]),
-    95	    #         filter(lambda kmer: len(shared[kmer]) >= min_words,
-    96	    #                shared.keys())))
-    97	
-    98	    return ok
-    99	
-   100	
-   101	# --------------------------------------------------
-   102	def main():
-   103	    """Make a jazz noise here"""
-   104	
-   105	    args = get_args()
-   106	
-   107	    random.seed(args.seed)
-   108	
-   109	    shared = get_kmers(get_words(args.file), args.ksize, args.min_words)
-   110	
-   111	    # Choose a kmer, setup game state
-   112	    kmer = random.choice(list(shared.keys()))
-   113	    guessed = set()
-   114	    found = []
-   115	    prompt = 'Name a word that contains "{}" [!=quit, ?=hint] '.format(kmer)
-   116	    compliments = ['Nice', 'Rock on', 'Totes', 'Fantastic', 'Excellent']
-   117	    taunts = [
-   118	        'Surely you jest!', 'Are you kidding me?',
-   119	        'You must have rocks for brains.', 'What is wrong with you?'
-   120	    ]
-   121	
-   122	    #print(kmer, shared[kmer])
-   123	
-   124	    while True:
-   125	        num_left = len(shared[kmer])
-   126	        if num_left == 0:
-   127	            print('No more words!')
-   128	            break
-   129	
-   130	        guess = input(prompt + '({} left) '.format(num_left)).lower()
-   131	
-   132	        if guess == '?':
-   133	            # Provide a hint
-   134	            pos = random.choice(range(len(shared[kmer])))
-   135	            word = shared[kmer].pop(pos)
-   136	            print('For instance, "{}"...'.format(word))
-   137	
-   138	        elif guess == '!':
-   139	            # Bail
-   140	            print('Quitter!')
-   141	            break
-   142	
-   143	        elif guess in guessed:
-   144	            # Chastise
-   145	            print('You have already guessed "{}"'.format(guess))
-   146	
-   147	        elif guess in shared[kmer]:
-   148	            # Remove the word, feedback with compliment
-   149	            pos = shared[kmer].index(guess)
-   150	            word = shared[kmer].pop(pos)
-   151	            print('{}! "{}" is found!'.format(random.choice(compliments),
-   152	                                              word))
-   153	            found.append(word)
-   154	            guessed.add(guess)
-   155	
-   156	        else:
-   157	            # Taunt
-   158	            print(random.choice(taunts))
-   159	
-   160	    # Game over, man!
-   161	    if found:
-   162	        n = len(found)
-   163	        print('Hey, you found {} word{}! Not bad.'.format(
-   164	            n, '' if n == 1 else 's'))
-   165	    else:
-   166	        print('Wow, you found no words. You suck!')
-   167	
-   168	
-   169	# --------------------------------------------------
-   170	if __name__ == '__main__':
-   171	    main()
-````
-
-\newpage
-
-# Chapter 31: Tic-Tac-Toe Outcome
-
-Create a Python program called `outcome.py` that takes a given Tic-Tac-Toe state as it's only (positional) argument and reports if X or O has won or if there is no winner. The state should only contain the characters ".", "O", and "X", and must be exactly 9 characters long. If there is not exactly one argument, print a "usage" statement.
-
-````
-$ ./outcome.py
-Usage: outcome.py STATE
-$ ./outcome.py ..X.OA..X
-State "..X.OA..X" must be 9 characters of only ., X, O
-$ ./outcome.py ..X.OX...
-No winner
-$ ./outcome.py ..X.OX..X
-X has won
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	
-     3	import os
-     4	import re
-     5	import sys
-     6	
-     7	
-     8	# --------------------------------------------------
-     9	def main():
-    10	    args = sys.argv[1:]
-    11	
-    12	    if len(args) != 1:
-    13	        print('Usage: {} STATE'.format(os.path.basename(sys.argv[0])))
-    14	        sys.exit(1)
-    15	
-    16	    state = args[0]
-    17	
-    18	    if not re.search('^[.XO]{9}$', state):
-    19	        print('State "{}" must be 9 characters of only ., X, O'.format(state),
-    20	              file=sys.stderr)
-    21	        sys.exit(1)
-    22	
-    23	    winning = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7],
-    24	               [2, 5, 8], [0, 4, 8], [2, 4, 6]]
-    25	
-    26	    winner = 'No winner'
-    27	
-    28	    # for player in ['X', 'O']:
-    29	    #     for combo in winning:
-    30	    #         i, j, k = combo
-    31	    #         if state[i] == player and state[j] == player and state[k] == player:
-    32	    #             winner = player
-    33	    #             break
-    34	
-    35	    # for player in ['X', 'O']:
-    36	    #     for combo in winning:
-    37	    #         chars = []
-    38	    #         for i in combo:
-    39	    #             chars.append(state[i])
-    40	
-    41	    #         if ''.join(chars) == player * 3:
-    42	    #             winner = player
-    43	    #             break
-    44	
-    45	    # for player in ['X', 'O']:
-    46	    #     for i, j, k in winning:
-    47	    #         chars = ''.join([state[i], state[j], state[k]])
-    48	    #         if ''.join(chars) == '{}{}{}'.format(player, player, player):
-    49	    #             winner = player
-    50	    #             break
-    51	
-    52	    for player in ['X', 'O']:
-    53	        for i, j, k in winning:
-    54	            combo = [state[i], state[j], state[k]]
-    55	            if combo == [player, player, player]:
-    56	                winner = '{} has won'.format(player)
-    57	                break
-    58	
-    59	    # for combo in winning:
-    60	    #     group = list(map(lambda i: state[i], combo))
-    61	    #     for player in ['X', 'O']:
-    62	    #         if all(x == player for x in group):
-    63	    #             winner = player
-    64	    #             break
-    65	
-    66	    print(winner)
-    67	
-    68	
-    69	# --------------------------------------------------
-    70	if __name__ == '__main__':
-    71	    main()
-````
-
-\newpage
-
-# Chapter 32: Twelve Days of Christmas
-
-Write a Python program called `twelve_days.py` that will generate the "Twelve Days of Christmas" song up to the `-n|--number_days` argument (default `12`), writing the resulting text to the `-o|--outfile` argument (default STDOUT).
-
-````
-$ ./twelve_days.py -h
-usage: twelve_days.py [-h] [-o str] [-n int]
-
-Twelve Days of Christmas
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -o str, --outfile str
-                        Outfile (STDOUT) (default: )
-  -n int, --number_days int
-                        Number of days to sing (default: 12)
-$ ./twelve_days.py -n 1
-On the first day of Christmas,
-My true love gave to me,
-A partridge in a pear tree.
-
-$ ./twelve_days.py -n 3
-On the first day of Christmas,
-My true love gave to me,
-A partridge in a pear tree.
-
-On the second day of Christmas,
-My true love gave to me,
-Two turtle doves,
-And a partridge in a pear tree.
-
-On the third day of Christmas,
-My true love gave to me,
-Three French hens,
-Two turtle doves,
-And a partridge in a pear tree.
-
-$ ./twelve_days.py -o out
-$ wc -l out
-     113 out
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import sys
-     5	from dire import die
-     6	
-     7	
-     8	# --------------------------------------------------
-     9	def get_args():
-    10	    """get command-line arguments"""
-    11	    parser = argparse.ArgumentParser(
-    12	        description='Twelve Days of Christmas',
-    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    14	
-    15	    parser.add_argument('-o',
-    16	                        '--outfile',
-    17	                        help='Outfile (STDOUT)',
-    18	                        metavar='str',
-    19	                        type=str,
-    20	                        default='')
-    21	
-    22	    parser.add_argument('-n',
-    23	                        '--number_days',
-    24	                        help='Number of days to sing',
-    25	                        metavar='int',
-    26	                        type=int,
-    27	                        default=12)
-    28	
-    29	    return parser.parse_args()
-    30	
-    31	
-    32	# --------------------------------------------------
-    33	def main():
-    34	    """Make a jazz noise here"""
-    35	
-    36	    args = get_args()
-    37	    out_file = args.outfile
-    38	    num_days = args.number_days
-    39	    out_fh = open(out_file, 'wt') if out_file else sys.stdout
-    40	
-    41	    days = {
-    42	        12: 'Twelve drummers drumming',
-    43	        11: 'Eleven pipers piping',
-    44	        10: 'Ten lords a leaping',
-    45	        9: 'Nine ladies dancing',
-    46	        8: 'Eight maids a milking',
-    47	        7: 'Seven swans a swimming',
-    48	        6: 'Six geese a laying',
-    49	        5: 'Five gold rings',
-    50	        4: 'Four calling birds',
-    51	        3: 'Three French hens',
-    52	        2: 'Two turtle doves',
-    53	        1: 'a partridge in a pear tree',
-    54	    }
-    55	
-    56	    ordinal = {
-    57	        12: 'twelfth', 11: 'eleven', 10: 'tenth',
-    58	        9: 'ninth', 8: 'eighth', 7: 'seventh',
-    59	        6: 'sixth', 5: 'fifth', 4: 'fourth',
-    60	        3: 'third', 2: 'second', 1: 'first',
-    61	    }
-    62	
-    63	    if not num_days in days:
-    64	        die('Cannot sing "{}" days'.format(num_days))
-    65	
-    66	    for i in range(1, num_days + 1):
-    67	        first = 'On the {} day of Christmas,\nMy true love gave to me,'
-    68	        out_fh.write(first.format(ordinal[i]) + '\n')
-    69	        for j in reversed(range(1, i + 1)):
-    70	            if j == 1:
-    71	                if i == 1:
-    72	                    out_fh.write('{}.\n'.format(days[j].title()))
-    73	                else:
-    74	                    out_fh.write('And {}.\n'.format(days[j]))
-    75	            else:
-    76	                out_fh.write('{},\n'.format(days[j]))
-    77	
-    78	        if i < max(days.keys()):
-    79	            out_fh.write('\n')
-    80	
-    81	
-    82	# --------------------------------------------------
-    83	if __name__ == '__main__':
-    84	    main()
-````
-
-\newpage
-
-# Chapter 33: War
-
-> The generation of random numbers is too important to be left to chance. -- Robert R. Coveyou
-
-Create a Python program called `war.py` that plays the card game "War." The program will use the `random` module to shuffle a deck of cards, so your program will need to accept a `-s|--seed` argument (default: `None`) which you will use to call `random.seed`, if present.
- 
-First you program will need to create a deck of cards. You will need to use the Unicode symbols for the suites ( ♥ ♠ ♣ ♦ ) [which won't display in the PDF, so consult the Markdown file] and combine those with the numbers 2-10 and the letters "J", "Q," "K," and "A." (hint: look at `itertools.product`). 
-
-````
->>> from itertools import product
->>> a = list('AB')
->>> b = range(2)
->>> list(product(a, b))
-[('A', 0), ('A', 1), ('B', 0), ('B', 1)]
-````
-
-**NB**: You must sort your deck and then use the `random.shuffle` method so that your cards will be in the correct order to pass the tests!
-
-In the real game of War, the cards are shuffled and then dealt one card each first to the non-dealer, then to the dealer, until all cards are dealt and each player has 26 cards. We will not be modeling this behavior. When writing your version of the game, simply `pop` two cards off the deck as the cards for player 1 and player 2, respectively. Compare the two cards by ignoring the suite and evaluating the value where 2 is the lowest and Aces are the highest. When two cards have the same values (e.g., two 5s or two Jacks), print "WAR!" In the real game, this initiates a sub-game of War which is a "recursive" algorithm which we will not bother modeling. Keep track of which player wins each round where no points are awarded in a tie. At the end, report the points for each player and state the winner. In the event of a tie, print "DRAW."
-
-````
-$ ./war.py -h
-usage: war.py [-h] [-s int]
-
-"War" cardgame
-
-optional arguments:
-  -h, --help          show this help message and exit
-  -s int, --seed int  Random seed (default: None)
-$ ./war.py -s 1
- ♠9  ♥J P2
- ♦A  ♠5 P1
- ♣4  ♠8 P2
- ♥6  ♥3 P1
- ♥5  ♦3 P1
- ♣K ♣10 P1
- ♠7  ♦7 WAR!
- ♠2  ♦4 P2
- ♥2 ♠10 P2
- ♦6  ♣5 P1
- ♣2  ♣6 P2
- ♠4  ♥8 P2
- ♠J  ♥9 P1
-♥10  ♣Q P2
- ♣8  ♥7 P1
- ♦K  ♠Q P1
-♦10  ♦2 P1
- ♣9  ♦9 WAR!
- ♦8  ♣J P2
- ♣3  ♦5 P2
- ♦Q  ♥4 P1
- ♠6  ♥A P2
- ♠K  ♣7 P1
- ♥Q  ♠3 P1
- ♣A  ♥K P1
- ♠A  ♦J P1
-P1 14 P2 10: Player 1 wins
-$ ./war.py -s 2
- ♠4  ♠6 P2
- ♦K  ♣J P1
- ♠J  ♦4 P1
- ♣7  ♣4 P1
- ♥Q ♣10 P1
- ♦5  ♠3 P1
- ♥K  ♦9 P1
- ♥2  ♣Q P2
- ♥7  ♦A P2
- ♥3  ♥A P2
- ♣5  ♥8 P2
- ♠2 ♦10 P2
-♠10  ♠K P2
- ♣2  ♦3 P2
- ♠Q  ♦8 P1
- ♦6  ♦J P2
- ♥6  ♣8 P2
- ♠8  ♦7 P1
- ♥5  ♦2 P1
- ♣6  ♥J P2
- ♥9  ♠9 WAR!
- ♣K  ♣A P2
-♥10  ♦Q P2
- ♠7  ♠5 P1
- ♣9  ♠A P2
- ♥4  ♣3 P1
-P1 11 P2 14: Player 2 wins
-$ ./war.py -s 10
- ♥J  ♠3 P1
- ♥2  ♥5 P2
- ♦Q ♠10 P1
-♣10  ♥4 P1
- ♥6  ♣5 P1
- ♦3  ♠J P2
- ♦K  ♥8 P1
- ♦5  ♣8 P2
- ♠5  ♣3 P1
- ♣J ♦10 P1
-♥10  ♦J P2
- ♥A  ♣7 P1
- ♠K  ♠Q P1
- ♦7  ♠A P2
- ♣9  ♠9 WAR!
- ♣2  ♠6 P2
- ♣K  ♦A P2
- ♦6  ♥Q P2
- ♠8  ♥9 P2
- ♥3  ♠7 P2
- ♦8  ♣Q P2
- ♣6  ♠4 P1
- ♥7  ♠2 P1
- ♣4  ♦4 WAR!
- ♦9  ♦2 P1
- ♥K  ♣A P2
-P1 12 P2 12: DRAW
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import random
-     5	import sys
-     6	from itertools import product
-     7	
-     8	
-     9	# --------------------------------------------------
-    10	def get_args():
-    11	    """get command-line arguments"""
-    12	    parser = argparse.ArgumentParser(
-    13	        description='"War" cardgame',
-    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    15	
-    16	    parser.add_argument('-s',
-    17	                        '--seed',
-    18	                        help='Random seed',
-    19	                        metavar='int',
-    20	                        type=int,
-    21	                        default=None)
-    22	
-    23	    return parser.parse_args()
-    24	
-    25	
-    26	# --------------------------------------------------
-    27	def main():
-    28	    """Make a jazz noise here"""
-    29	    args = get_args()
-    30	    seed = args.seed
-    31	
-    32	    if seed is not None:
-    33	        random.seed(seed)
-    34	
-    35	    suits = list('♥♠♣♦')
-    36	    values = list(map(str, range(2, 11))) + list('JQKA')
-    37	    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suits, values)))
-    38	    random.shuffle(cards)
-    39	
-    40	    p1_wins = 0
-    41	    p2_wins = 0
-    42	
-    43	    card_value = dict(
-    44	        list(map(lambda t: list(reversed(t)), enumerate(list(values)))))
-    45	
-    46	    while cards:
-    47	        p1, p2 = cards.pop(), cards.pop()
-    48	        v1, v2 = card_value[p1[1:]], card_value[p2[1:]]
-    49	        res = ''
-    50	
-    51	        if v1 > v2:
-    52	            p1_wins += 1
-    53	            res = 'P1'
-    54	        elif v2 > v1:
-    55	            p2_wins += 1
-    56	            res = 'P2'
-    57	        else:
-    58	            res = 'WAR!'
-    59	
-    60	        print('{:>3} {:>3} {}'.format(p1, p2, res))
-    61	
-    62	    print('P1 {} P2 {}: {}'.format(
-    63	        p1_wins, p2_wins, 'Player 1 wins' if p1_wins > p2_wins else
-    64	        'Player 2 wins' if p2_wins > p1_wins else 'DRAW'))
-    65	
-    66	
-    67	# --------------------------------------------------
-    68	if __name__ == '__main__':
-    69	    main()
-````
-
-\newpage
-
-# Chapter 34: Anagram
+# Chapter 28: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -7360,7 +6586,7 @@ In the end, I look to see how many `anagrams` I found using `len(anagrams)`. If 
 
 \newpage
 
-# Chapter 35: Hangman
+# Chapter 29: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -7580,7 +6806,7 @@ You lose, loser!  The word was "metromania."
 
 \newpage
 
-# Chapter 36: First Bank of Change
+# Chapter 30: First Bank of Change
 
 Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100. It should provide a usage if given no arguments or the `-h|--help` flag:
 
@@ -7822,7 +7048,7 @@ The `plural` version of each name is made by adding `s` except for `penny`, so l
 Finally lines 39-43 are left to formatting the report to the user, being sure to provide feedback that includes the original `value` ("If you give me ...") and an enumerated list of all the possible ways we could make change. The test suite does not bother to check the order in which you return the combinations, only that the correct number are present and they are in the correct format.
 \newpage
 
-# Chapter 37: Runny Babbit
+# Chapter 31: Runny Babbit
 
 Are you familiar with Spoonerisms where the initial consonant sounds of two words are switched? According to Wikipedia, they get their name from William Archibald Spooner who did this often. The author Shel Silverstein wrote a wonderful book called _Runny Babbit_ ("bunny rabbit") based on this. So, let's write a Python program called `runny_babbit.py` that will read some text or an input file given as a single positional argument and finds neighboring words with initial consonant sounds to swap. As we'll need to look at pairs of words and in such as way that it will make it difficult to remember the original formatting of the text, let's also take a `-w|--width` (default `70`) to format the output text to a maximum width.
 
@@ -8106,7 +7332,7 @@ The runny babbit is cute.
 ````
 \newpage
 
-# Chapter 38: Markov Chain
+# Chapter 32: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -8367,7 +7593,7 @@ But there will be spaces in between each word, so I account for them by adding o
 At this point, the `words` list needs to be turned into text. It would be ugly to just `print` out one long string, so I use the `textwrap.wrap` to break up the long string into lines that are no longer than the given `text_width`. That function returns a list of lines that need to be joined on newlines to print.
 \newpage
 
-# Chapter 39: Hamming Chain
+# Chapter 33: Hamming Chain
 
 Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
 
@@ -8570,7 +7796,7 @@ Failed to find more words!
 
 \newpage
 
-# Chapter 40: Morse Encoder/Decoder
+# Chapter 34: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -8788,7 +8014,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 41: ROT13 (Rotate 13)
+# Chapter 35: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -8953,7 +8179,7 @@ The quick brown fox jumps over the lazy dog.
 
 \newpage
 
-# Chapter 42: Tranpose ABC Notation
+# Chapter 36: Tranpose ABC Notation
 
 Write a Python program called `transpose.py` that will read a file in ABC notation (https://en.wikipedia.org/wiki/ABC_notation) and transpose the melody line up or down by a given `-s|--shift` argument. Like the `rot13` exercise, it might be helpful to think of the space of notes (`ABCDEFG`) as a list which you can roll through. For instance, if you have the note `c` and want to transpose up a (minor) third (`-s 3`), you would make the new note `e`; similarly if you have the note `F` and you go up a (major) third, you get `A`. You will not need to worry about the actual number of semitones that you are being asked to shift, as the previous example showed that we might be shifting by a major/minor/augmented/diminished/pure interval. The purpose of the exercise is simply to practice with lists.
 
@@ -9149,7 +8375,7 @@ aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
 
 \newpage
 
-# Chapter 43: Word Search
+# Chapter 37: Word Search
 
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 

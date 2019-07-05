@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Heap abuse"""
 
 import argparse
 import random
@@ -23,8 +24,9 @@ ratcatcher recreant rogue scold slave swine traitor varlet villain worm
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
+
     parser = argparse.ArgumentParser(
-        description='Argparse Python script',
+        description='Heap abuse',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('-a',
@@ -48,16 +50,21 @@ def get_args():
                         type=int,
                         default=None)
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if args.number < 1:
+        parser.error('--number "{}" cannot be less than 1'.format(args.number))
+
+    return args
 
 
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
     num_adj = args.adjectives
     num_insults = args.number
-
     random.seed(args.seed)
 
     for _ in range(num_insults):

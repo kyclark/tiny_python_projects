@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 """tests for abuse.py"""
 
-import re
+import os
 import random
+import re
 from subprocess import getstatusoutput, getoutput
 
 prg = './abuse.py'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
@@ -19,43 +27,55 @@ def test_usage():
 
 
 # --------------------------------------------------
+def test_bad_number():
+    """bad_number"""
+
+    n = random.choice(range(-10, 0))
+    rv, out = getstatusoutput('{} -n {}'.format(prg, n))
+    assert rv != 0
+    assert re.search('--number "{}" cannot be less than 1'.format(n), out)
+
+
+# --------------------------------------------------
 def test_01():
-    out = getoutput('{} -s 1'.format(prg))
-    expected = """
-You filthsome, whoreson barbermonger!
-You insatiate, false rogue!
-You scurvy, sodden-witted liar!
-""".strip()
-    assert out.strip() == expected
+    """test"""
+
+    out = getoutput('{} -s 1 -n 1'.format(prg))
+    assert out.strip() == 'You filthsome, cullionly fiend!'
 
 
 # --------------------------------------------------
 def test_02():
-    out = getoutput('{} --seed 2 -n 4'.format(prg))
+    """test"""
+
+    out = getoutput('{} --seed 2'.format(prg))
     expected = """
 You corrupt, detestable beggar!
 You peevish, foolish gull!
-You insatiate, heedless whore!
-You caterwauling, foolish milksop!
+You insatiate, heedless worm!
 """.strip()
     assert out.strip() == expected
 
 
 # --------------------------------------------------
 def test_03():
+    """test"""
+
     out = getoutput('{} -s 3 -n 5 -a 1'.format(prg))
     expected = """
 You infected villain!
 You vile braggart!
-You peevish whore!
+You peevish worm!
 You sodden-witted villain!
-You cullionly whore!
+You cullionly worm!
 """.strip()
     assert out.strip() == expected
 
 
 # --------------------------------------------------
 def test_04():
+    """test"""
+
     out = getoutput('{} --seed 4 --number 2 --adjectives 4'.format(prg))
     expected = """
 You infected, lecherous, dishonest, rotten recreant!
