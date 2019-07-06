@@ -10,6 +10,13 @@ prg = './mad_lib.py'
 
 
 # --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
+
+
+# --------------------------------------------------
 def test_usage():
     """usage"""
 
@@ -32,6 +39,7 @@ Arriba!
     rv, out = getstatusoutput('{} {}'.format(prg, args))
     assert rv == 0
     assert out.strip() == expected.strip()
+
 
 # --------------------------------------------------
 def test_02():

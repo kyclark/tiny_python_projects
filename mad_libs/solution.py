@@ -2,9 +2,7 @@
 """Mad Libs"""
 
 import argparse
-import os
 import re
-import sys
 from dire import die
 
 
@@ -38,17 +36,18 @@ def main():
 
     args = get_args()
     inputs = args.inputs
-    regex = re.compile('([<][^>]+[>])')
+    regex = re.compile('(<([^>])+>)')
     text = args.file.read().rstrip()
     blanks = list(regex.finditer(text))
 
-    if not blanks: die('File "{}" has no placeholders'.format(args.file.name))
+    if not blanks:
+        die('File "{}" has no placeholders'.format(args.file.name))
 
-    for blank in blanks:
-        name = blank.group(1)
-        answer = inputs.pop(0) if inputs else input('{}: '.format(
-            name.replace('<', '').replace('>', '')))
-        text = re.sub(name, answer, text, count=1)
+    for match in blanks:
+        placeholder = match.group(1)
+        name = match.group(2)
+        answer = inputs.pop(0) if inputs else input('{}: '.format(name))
+        text = re.sub(placeholder, answer, text, count=1)
 
     print(text)
 

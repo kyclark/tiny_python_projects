@@ -1820,185 +1820,7 @@ Hint: Use `while True` to set up an infinite loop and keep using `input` to get 
 
 \newpage
 
-# Chapter 9: Movie Reader
-
-![Matt Damon in The Martian (no, really).](images/astro_reader.png)
-
-Write a Python program called `movie_reader.py` that takes a single positional argument that is a bit of text or the name of an input file. The output will be dynamic, so I cannot write a test for how the program should behave, nor can I include a bit of text that shows you how it should work. Your program should print the input text character-by-character and then pause .5 seconds for ending punctuation like `.`, `!` or `?`, .2 seconds for a pause like `,` `:`, or `;`, and .05 seconds for anything else.
-
-````
-$ ./movie_reader.py
-usage: movie_reader.py [-h] str
-movie_reader.py: error: the following arguments are required: str
-$ ./movie_reader.py -h
-usage: movie_reader.py [-h] str
-
-Movie Reader
-
-positional arguments:
-  str         Input text or file
-
-optional arguments:
-  -h, --help  show this help message and exit
-$ ./movie_reader.py 'Foo, bar!'
-Foo, bar!
-$ ./movie_reader.py ../inputs/fox.txt
-The quick brown fox jumps over the lazy dog.
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import os
-     5	import sys
-     6	import time
-     7	
-     8	
-     9	# --------------------------------------------------
-    10	def get_args():
-    11	    """Get command-line arguments"""
-    12	
-    13	    parser = argparse.ArgumentParser(
-    14	        description='Movie Reader',
-    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    16	
-    17	    parser.add_argument('text', metavar='str', help='Input text or file')
-    18	
-    19	    return parser.parse_args()
-    20	
-    21	
-    22	# --------------------------------------------------
-    23	def main():
-    24	    """Make a jazz noise here"""
-    25	
-    26	    args = get_args()
-    27	    text = args.text
-    28	
-    29	    if os.path.isfile(text):
-    30	        text = open(text).read()
-    31	
-    32	    for line in text.splitlines():
-    33	        for char in line:
-    34	            print(char, end='')
-    35	            time.sleep(.5 if char in '.!?\n' else .2 if char in ',:;' else .05)
-    36	            sys.stdout.flush()
-    37	
-    38	        print()
-    39	
-    40	
-    41	# --------------------------------------------------
-    42	if __name__ == '__main__':
-    43	    main()
-````
-
-\newpage
-
-# Chapter 10: Palindromes
-
-Write a Python program called `palindromic.py` that will find words that are palindromes in positional argument which is either a string or a file name.
-
-````
-$ ./palindromic.py
-usage: palindromic.py [-h] [-m int] str
-palindromic.py: error: the following arguments are required: str
-$ ./palindromic.py -h
-usage: palindromic.py [-h] [-m int] str
-
-Find palindromes in text
-
-positional arguments:
-  str                Input text or file
-
-optional arguments:
-  -h, --help         show this help message and exit
-  -m int, --min int  Minimum word length (default: 3)
-$ ./palindromic.py '"Wow!" said Mom.'
-wow
-mom
-$ ./palindromic.py input.txt
-anna
-civic
-kayak
-madam
-mom
-wow
-level
-noon
-racecar
-radar
-redder
-refer
-rotator
-rotor
-solos
-stats
-tenet
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import os
-     5	import re
-     6	
-     7	
-     8	# --------------------------------------------------
-     9	def get_args():
-    10	    """Get command-line arguments"""
-    11	
-    12	    parser = argparse.ArgumentParser(
-    13	        description='Find palindromes in text',
-    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    15	
-    16	    parser.add_argument('text', metavar='str', help='Input text or file')
-    17	
-    18	    parser.add_argument('-m',
-    19	                        '--min',
-    20	                        metavar='int',
-    21	                        type=int,
-    22	                        help='Minimum word length',
-    23	                        default=3)
-    24	
-    25	    return parser.parse_args()
-    26	
-    27	
-    28	# --------------------------------------------------
-    29	def main():
-    30	    """Make a jazz noise here"""
-    31	
-    32	    args = get_args()
-    33	    text = args.text
-    34	    min_length = args.min
-    35	
-    36	    if os.path.isfile(text):
-    37	        text = open(text).read()
-    38	
-    39	    for line in text.splitlines():
-    40	        for word in re.split(r'(\W+)', line.lower()):
-    41	            if len(word) >= min_length:
-    42	                rev = ''.join(reversed(word))
-    43	                if rev == word:
-    44	                    print(word)
-    45	
-    46	
-    47	# --------------------------------------------------
-    48	if __name__ == '__main__':
-    49	    main()
-````
-
-\newpage
-
-# Chapter 11: Ransom
+# Chapter 9: Ransom
 
 ![A ransom note.](images/ransom.png)
 
@@ -2220,7 +2042,7 @@ It may seem silly to spend so much time working through five ways to solve what 
 
 \newpage
 
-# Chapter 12: Simple Rhymer
+# Chapter 10: Simple Rhymer
 
 Write a Python program called `rhymer.py` that will create new words by removing the consonant(s) from the beginning (if any) of a given word and then create new words by prefixing the remainder with all the consonants and clusters that were not at the beginning. That is, prefix with all the consonants in the alphabet plus these clusters:
 
@@ -2539,7 +2361,7 @@ And add them to the stem of the word, being sure to avoid any prefix that was th
 ````
 \newpage
 
-# Chapter 13: Abuse
+# Chapter 11: Abuse
 
 Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default `3`) by randomly combining some number of `-a|--adjectives` (default `2`) with a noun (see below). Be sure your program accepts a `-s|--seed` argument (default `None`) to pass to `random.seed`.
 
@@ -2822,7 +2644,7 @@ And now you have a handy way to make enemies and influence people.
 
 \newpage
 
-# Chapter 14: Scrambler
+# Chapter 12: Scrambler
 
 Write a Python program called `scrambler.py` that will take a single position positional argument that is text or a text file and then convert each word into a scrambled version. The scrambling should only work on words greater than 3 characters in length and should only scramble the letters in the middle, leaving the first and last characters unchanged. The program should take a `-s|--seed` argument (default `None`) to pass to `random.seed`.
 
@@ -3119,7 +2941,7 @@ If you don't like `map`, you can accomplish the same thing with a list comprehen
 ````
 \newpage
 
-# Chapter 15: Bacronym
+# Chapter 13: Bacronym
 
 Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--number` (default `5`) of acronyms by reading a `-w|--wordlist` argument (defualt `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
 
@@ -3269,7 +3091,7 @@ FBI =
 
 \newpage
 
-# Chapter 16: Workout Of (the) Day (WOD)
+# Chapter 14: Workout Of (the) Day (WOD)
 
 Write a Python program called `wod.py` that will create a Workout Of (the) Day (WOD) from a list of exercises provided in CSV format (default `wod.csv`). Accept a `-n|--num_exercises` argument (default `4`) to determine the sample size from your exercise list. Also accept a `-e|--easy` flag to indicate that the reps should be cut in half. Finally accept a `-s|--seed` argument to pass to `random.seed` for testing purposes. You should use the `tabulate` module to format the output as expected.
 
@@ -3513,7 +3335,7 @@ Then I can `append` to the `table` a new tuple containing the `name` of the exer
 
 \newpage
 
-# Chapter 17: Blackjack 
+# Chapter 15: Blackjack 
 
 Write a Python program called `blackjack.py` that plays an abbreviated game of Blackjack. You will need to `import random` to get random cards from a deck you will construct, and so your program will need to accept a `-s|--seed` that will set `random.seed()` with the value that is passed in so that the test suite will work. The other arguments you will accept are two flags (Boolean values) of `-p|--player_hits` and `-d|--dealer_hits`. As usual, you will also have a `-h|--help` option for usage statement.
 
@@ -3666,7 +3488,7 @@ Player wins. You probably cheated.
 
 \newpage
 
-# Chapter 18: Family Tree
+# Chapter 16: Family Tree
 
 ![Partial Tudor family tree](family_tree/tudor.txt.gv.pdf)
 
@@ -4004,7 +3826,7 @@ The `graphviz` module is an interface to the `graphviz` program which is a stand
 To make a more complicated graph, I added the full names from my `nodes` dictionary, and then use those full names to expand the initials from the `edges`, if present. In the end, the code isn't much more complicated that these few lines.
 \newpage
 
-# Chapter 19: Gematria: Numeric encoding of text
+# Chapter 17: Gematria: Numeric encoding of text
 
 Write a Python program called `gematria.py` that will numerically encode each word in a given text. The name of this program comes from gematria, a system for assigning a number to a word by summing the numeric values of each of the letters as defined by the Mispar godol (https://en.wikipedia.org/wiki/Gematria). For English characters, we can use the ASCII table (https://en.wikipedia.org/wiki/ASCII). Python provides these value throug the `ord` function to convert a character to its "ordinal" (order in the ASCII table) value as well as the `chr` function to convert a number to its "character."
 
@@ -4340,7 +4162,7 @@ All that is left is to `print` the encoded words back out:
 ````
 \newpage
 
-# Chapter 20: Histogram
+# Chapter 18: Histogram
 
 Write a Python program called `histy.py` that takes a single positional argument that may be plain text or the name of a file to read for the text. Count the frequency of each character (not spaces) and print a histogram of the data. By default, you should order the histogram by the characters but include `-f|--frequency_sort` option to sort by the frequency (in descending order). Also include a `-c|--character` option (default `|`) to represent a mark in the histogram, a `-m|--minimum` option (default `1`) to include a character in the output, a `-w|--width` option (default `70`) to limit the size of the histogram, and a `-i|--case_insensitive` flag to force all input to uppercase.
 
@@ -4515,7 +4337,7 @@ W    375 ###
 
 \newpage
 
-# Chapter 21: Mommy's Little (Crossword) Helper
+# Chapter 19: Mommy's Little (Crossword) Helper
 
 Write a Python program called `helper.py` that finds all words matching a given `-p|--pattern` such as one might use to complete a crossword puzzle to find words matching from a given `-w|--wordlist` (default `/usr/share/dict/words`). E.g., all 5-letter words with a "t" as the second character and ending in "ed". I could do this on the command line like so:
 
@@ -4767,7 +4589,7 @@ If both conditions are `True` (same length, all characters the same), then I `ap
 All that is left is to check if any words matched. If so, we print them out, numbered and nicely aligned; otherwise, we let the user know that no matches were found. I hope you tried solving this problem with and without regular expressions as there is much to learn by each method.
 \newpage
 
-# Chapter 22: Kentucky Friar
+# Chapter 20: Kentucky Friar
 
 Write a Python program called `friar.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
@@ -4947,11 +4769,13 @@ Finally we need to apply our `fry` function to all the pieces we got from splitt
 ````
 \newpage
 
-# Chapter 23: Mad Libs
+# Chapter 21: Mad Libs
 
 ![This definitely not a copyright infringment.](images/mad_libs.png)
 
-Write a Python program called `mad_lib.py` that will read a file given as a positional argument and find all the placeholders noted in `<>`, e.g., `<verb>`, prompt the user for the part of speech being reuqested, e.g., a "verb", and then substitute that into the text of the file, finally printing out all the placeholders replaced by the user's inputs. By default, this is an interactive program that will use the `input` prompt to ask the user for their answers, but, for testing purposes, please add a `-i|--inputs` option so the test suite can pass in all the answers and bypass the `input` calls.
+Write a Python program called `mad_lib.py` that will read a file given as a positional argument and find all the placeholders noted in `<>`, e.g., `<verb>`, prompt the user for the part of speech being requested, e.g., a "verb", and then substitute that into the text of the file, finally printing out all the placeholders replaced by the user's inputs. By default, this is an interactive program that will use the `input` prompt to ask the user for their answers, but, for testing purposes, you will have an option for `-i|--inputs` so the test suite can pass in all the answers and bypass the `input` calls.
+
+Given no arguments or the `-h|--help` flag, the program should print a usage:
 
 ````
 $ ./mad_lib.py
@@ -4969,11 +4793,21 @@ optional arguments:
   -h, --help            show this help message and exit
   -i str [str ...], --inputs str [str ...]
                         Inputs (for testing) (default: None)
+````
+
+The structure of the input file has a part of speech enclosed in angle brackets, e.g., `<verb>`:
+
+````
 $ cat help.txt
 <exclamation>! I need <noun>!
 <exclamation>! Not just <noun>!
 <exclamation>! You know I need <noun>!
 <exclamation>!
+````
+
+When this is the input for the program, you should ask for each part of speech in order using the `input` command to ask the user for some text. When you've gotten all the text you need, print out the result of putting the user's answers into the placeholders:	
+	
+````
 $ ./mad_lib.py help.txt
 exclamation: Hey
 noun: tacos
@@ -4986,6 +4820,11 @@ Hey! I need tacos!
 Oi! Not just fish!
 Ouch! You know I need pie!
 Dang!
+````
+
+The default mode is to be interactive, which is difficult to test, so take all the  `--inputs` from the command line, skip the `input` prompts, and just show the resulting text:
+
+````
 $ ./mad_lib.py romeo_juliet.txt -i cars Detroit oil pistons \
 > "stick shift" furious accelerate 42 foot hammer
 Two cars, both alike in dignity,
@@ -5004,6 +4843,10 @@ The which if you with patient foot attend,
 What here shall hammer, our toil shall strive to mend.
 ````
 
+Hints:
+
+* Definitely look into using regular expressions!
+
 \newpage
 
 ## Solution
@@ -5013,65 +4856,232 @@ What here shall hammer, our toil shall strive to mend.
      2	"""Mad Libs"""
      3	
      4	import argparse
-     5	import os
-     6	import re
-     7	import sys
-     8	from dire import die
-     9	
-    10	
-    11	# --------------------------------------------------
-    12	def get_args():
-    13	    """Get command-line arguments"""
-    14	
-    15	    parser = argparse.ArgumentParser(
-    16	        description='Mad Libs',
-    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    18	
-    19	    parser.add_argument('file',
-    20	                        metavar='FILE',
-    21	                        type=argparse.FileType('r'),
-    22	                        help='Input file')
-    23	
-    24	    parser.add_argument('-i',
-    25	                        '--inputs',
-    26	                        help='Inputs (for testing)',
-    27	                        metavar='str',
-    28	                        type=str,
-    29	                        nargs='+',
-    30	                        required=False)
+     5	import re
+     6	from dire import die
+     7	
+     8	
+     9	# --------------------------------------------------
+    10	def get_args():
+    11	    """Get command-line arguments"""
+    12	
+    13	    parser = argparse.ArgumentParser(
+    14	        description='Mad Libs',
+    15	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    16	
+    17	    parser.add_argument('file',
+    18	                        metavar='FILE',
+    19	                        type=argparse.FileType('r'),
+    20	                        help='Input file')
+    21	
+    22	    parser.add_argument('-i',
+    23	                        '--inputs',
+    24	                        help='Inputs (for testing)',
+    25	                        metavar='str',
+    26	                        type=str,
+    27	                        nargs='+',
+    28	                        required=False)
+    29	
+    30	    return parser.parse_args()
     31	
-    32	    return parser.parse_args()
-    33	
-    34	
-    35	# --------------------------------------------------
-    36	def main():
-    37	    """Make a jazz noise here"""
-    38	
-    39	    args = get_args()
-    40	    inputs = args.inputs
-    41	    regex = re.compile('([<][^>]+[>])')
-    42	    text = args.file.read().rstrip()
-    43	    blanks = list(regex.finditer(text))
-    44	
-    45	    if not blanks: die('File "{}" has no placeholders'.format(args.file.name))
-    46	
-    47	    for blank in blanks:
-    48	        name = blank.group(1)
-    49	        answer = inputs.pop(0) if inputs else input('{}: '.format(
-    50	            name.replace('<', '').replace('>', '')))
-    51	        text = re.sub(name, answer, text, count=1)
-    52	
-    53	    print(text)
+    32	
+    33	# --------------------------------------------------
+    34	def main():
+    35	    """Make a jazz noise here"""
+    36	
+    37	    args = get_args()
+    38	    inputs = args.inputs
+    39	    regex = re.compile('(<([^>])+>)')
+    40	    text = args.file.read().rstrip()
+    41	    blanks = list(regex.finditer(text))
+    42	
+    43	    if not blanks:
+    44	        die('File "{}" has no placeholders'.format(args.file.name))
+    45	
+    46	    for match in blanks:
+    47	        placeholder = match.group(1)
+    48	        name = match.group(2)
+    49	        answer = inputs.pop(0) if inputs else input('{}: '.format(name))
+    50	        text = re.sub(placeholder, answer, text, count=1)
+    51	
+    52	    print(text)
+    53	
     54	
-    55	
-    56	# --------------------------------------------------
-    57	if __name__ == '__main__':
-    58	    main()
+    55	# --------------------------------------------------
+    56	if __name__ == '__main__':
+    57	    main()
 ````
 
 \newpage
 
-# Chapter 24: License Plates
+## Discussion
+
+If you define the `file` with `type=argparse.FileType('r')`, then `argparse` with verify that the value is a file, creating an error and usage if it is not, and then will `open` it for you. Quite the time saver. I also define `--inputs` with `nargs='+'` so that I can get any number of strings as a `list`. If none are provided, the default value will be `None`, so be sure you don't assume it's a list and try doing list operations on a `None`.
+
+The first thing we need to do is `read` the input file:
+
+````
+>>> from pprint import pprint as pp
+>>> text = open('help.txt').read()
+>>> pp(text)
+('<exclamation>! I need <noun>!\n'
+ '<exclamation>! Not just <noun>!\n'
+ '<exclamation>! You know I need <noun>!\n'
+ '<exclamation>!\n')
+````
+
+We need to find all the `<...>` bits, so let's use a regular expression. We can find a literal `<` character like so:
+
+````
+>>> import re
+>>> re.search('<', text)
+<re.Match object; span=(0, 1), match='<'>
+````
+
+Now let's find it's mate pair. The `.` means "anything," and we can add a `+` after it to mean "one or more":
+
+````
+>>> re.search('<.+>', text)
+<re.Match object; span=(0, 28), match='<exclamation>! I need <noun>'>
+````
+
+Hmm, that matched all the way to the end of the string instead of stopping at the first available `>`. Often we find that regexes are "greedy" in that they will keep matching beyond where we want them to. If we add a `?` after the `+`, that will make it "non-greedy":
+
+````
+>>> re.search('<.+?>', text)
+<re.Match object; span=(0, 13), match='<exclamation>'>
+````
+
+Another way is to say that we want to match one or more of anything that is *not* a `>`. We can create a character class `[>]` and then put a caret (`^`) *inside* it to negate the class. We'll add parens `()` to capture the whole mess as well as parens to capture the bit inside the `<>`
+
+````
+>>> re.search('(<([^>]+)>)', text)
+<re.Match object; span=(0, 13), match='<exclamation>'>
+````
+ 
+Now we can `re.findall` if we just want the matching text:
+
+````
+>>> pp(re.findall('(<([^>]+)>)', text))
+['<exclamation>',
+ '<noun>',
+ '<exclamation>',
+ '<noun>',
+ '<exclamation>',
+ '<noun>',
+ '<exclamation>']
+````
+
+But I wanted to use each match object, so I used `re.finditer` to return an iterator over the matches:
+
+````
+>>> it = re.finditer('(<([^>]+)>)', text)
+>>> type(it)
+<class 'callable_iterator'>
+````
+
+Iterables are "lazy", so if I `print` it, I'll just get a message about it being an object:
+
+````
+>>> pp(it)
+<callable_iterator object at 0x1015a30f0>
+````
+
+In the REPL, I can call `list` to force Python to evaluate the iterable to the end:
+
+````
+>>> pp(list(it))
+[<re.Match object; span=(0, 13), match='<exclamation>'>,
+ <re.Match object; span=(22, 28), match='<noun>'>,
+ <re.Match object; span=(30, 43), match='<exclamation>'>,
+ <re.Match object; span=(54, 60), match='<noun>'>,
+ <re.Match object; span=(62, 75), match='<exclamation>'>,
+ <re.Match object; span=(93, 99), match='<noun>'>,
+ <re.Match object; span=(101, 114), match='<exclamation>'>]
+````
+
+But note that it has not been exhausted and cannot be iterated again:
+
+````
+>>> pp(list(it))
+[]
+````
+
+Which is why I convert it to a `list` right away so that I can evaluate if I found any (by inspecting the length) and then iterate over them:
+
+````
+>>> blanks = list(re.finditer('(<([^>]+)>)', text))
+>>> len(blanks)
+7
+>>> for match in blanks:
+...     print(match.group(1))
+...
+<exclamation>
+<noun>
+<exclamation>
+<noun>
+<exclamation>
+<noun>
+<exclamation>
+````
+
+The `groups` are defined in the order that you create them by counting the opening parenthesis. In our case, the second group is inside the first group, which is fine. If you start getting lots of groups, it might be best to name them:
+
+````
+>>> blanks = list(re.finditer(r'(?P<placeholder><(?P<name>[^>]+)>)', text))
+>>> for match in blanks:
+...     print(match.group('name'))
+...
+exclamation
+noun
+exclamation
+noun
+exclamation
+noun
+exclamation
+````
+
+Now to get the values from the user. We can use the `name` as the prompt for `input`:
+
+````
+>>> blanks = list(re.finditer(r'(<([^>]+)>)', text))
+>>> for match in blanks:
+...     name = match.group(2)
+...     answer = input('{}: '.format(name))
+...
+exclamation: Dude!
+````
+
+But I will make it a bit more flexible by using an `if` *expression to take `pop` a value from the `inputs` list if that is available, otherwise I will use the `input`:
+
+````
+>>> inputs = ['Wow']
+>>> answer = inputs.pop(0) if inputs else input('{}: '.format(name))
+>>> answer
+'Wow'
+````
+
+Now we need to put the user's `answer` into the original `text` which we can do with `re.sub` (substitute):
+
+````
+>>> pp(text)
+('<exclamation>! I need <noun>!\n'
+ '<exclamation>! Not just <noun>!\n'
+ '<exclamation>! You know I need <noun>!\n'
+ '<exclamation>!\n')
+>>> placeholder = '<exclamation>'
+>>> text = re.sub(placeholder, answer, text, count=1)
+>>> pp(text)
+('Wow! I need <noun>!\n'
+ '<exclamation>! Not just <noun>!\n'
+ '<exclamation>! You know I need <noun>!\n'
+ '<exclamation>!\n')
+````
+
+The `count=1` is necessary to prevent `re.sub` from replacing *every* instance of the pattern. After doing that for every placeholder in the `text`, we can `print(text)` and we are done!
+
+\newpage
+
+# Chapter 22: License Plates
 
 Write a Python program called `license.py` that will create a regular expression for a license plate that accounts for characters and numbers which might be confused according to the following list:
 
@@ -5204,7 +5214,7 @@ In creating all the possible plates from your regular expression, you are making
 
 \newpage
 
-# Chapter 25: Gibberish Generator
+# Chapter 23: Gibberish Generator
 
 Write a Python program called `gibberish.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
@@ -5407,7 +5417,7 @@ $ ./gibberish.py -k 2 ../inputs/1945-boys.txt
 
 \newpage
 
-# Chapter 26: Piggy (Pig Latin)
+# Chapter 24: Piggy (Pig Latin)
 
 Write a Python program named `piggy.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
@@ -5817,7 +5827,7 @@ That is the crux of the program. All that is left is to report to the user how m
 
 \newpage
 
-# Chapter 27: Soundex Rhymer
+# Chapter 25: Soundex Rhymer
 
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, you sometimes want to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part, so the program should have an optional flag `-s|--stem` to indicate that the given word and the words you compare should both be trimmed to the "stem". The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons and should respond, as always, to `-h|--help` for usage.
 
@@ -6136,7 +6146,7 @@ Once I have the `stemmer` function, I can apply it to the given `word` and every
 
 \newpage
 
-# Chapter 28: Anagram
+# Chapter 26: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -6586,7 +6596,7 @@ In the end, I look to see how many `anagrams` I found using `len(anagrams)`. If 
 
 \newpage
 
-# Chapter 29: Hangman
+# Chapter 27: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -6806,7 +6816,7 @@ You lose, loser!  The word was "metromania."
 
 \newpage
 
-# Chapter 30: First Bank of Change
+# Chapter 28: First Bank of Change
 
 Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100. It should provide a usage if given no arguments or the `-h|--help` flag:
 
@@ -7048,7 +7058,7 @@ The `plural` version of each name is made by adding `s` except for `penny`, so l
 Finally lines 39-43 are left to formatting the report to the user, being sure to provide feedback that includes the original `value` ("If you give me ...") and an enumerated list of all the possible ways we could make change. The test suite does not bother to check the order in which you return the combinations, only that the correct number are present and they are in the correct format.
 \newpage
 
-# Chapter 31: Runny Babbit
+# Chapter 29: Runny Babbit
 
 Are you familiar with Spoonerisms where the initial consonant sounds of two words are switched? According to Wikipedia, they get their name from William Archibald Spooner who did this often. The author Shel Silverstein wrote a wonderful book called _Runny Babbit_ ("bunny rabbit") based on this. So, let's write a Python program called `runny_babbit.py` that will read some text or an input file given as a single positional argument and finds neighboring words with initial consonant sounds to swap. As we'll need to look at pairs of words and in such as way that it will make it difficult to remember the original formatting of the text, let's also take a `-w|--width` (default `70`) to format the output text to a maximum width.
 
@@ -7332,7 +7342,7 @@ The runny babbit is cute.
 ````
 \newpage
 
-# Chapter 32: Markov Chain
+# Chapter 30: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -7593,7 +7603,7 @@ But there will be spaces in between each word, so I account for them by adding o
 At this point, the `words` list needs to be turned into text. It would be ugly to just `print` out one long string, so I use the `textwrap.wrap` to break up the long string into lines that are no longer than the given `text_width`. That function returns a list of lines that need to be joined on newlines to print.
 \newpage
 
-# Chapter 33: Hamming Chain
+# Chapter 31: Hamming Chain
 
 Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
 
@@ -7796,7 +7806,7 @@ Failed to find more words!
 
 \newpage
 
-# Chapter 34: Morse Encoder/Decoder
+# Chapter 32: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -8014,7 +8024,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 35: ROT13 (Rotate 13)
+# Chapter 33: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -8179,203 +8189,7 @@ The quick brown fox jumps over the lazy dog.
 
 \newpage
 
-# Chapter 36: Tranpose ABC Notation
-
-Write a Python program called `transpose.py` that will read a file in ABC notation (https://en.wikipedia.org/wiki/ABC_notation) and transpose the melody line up or down by a given `-s|--shift` argument. Like the `rot13` exercise, it might be helpful to think of the space of notes (`ABCDEFG`) as a list which you can roll through. For instance, if you have the note `c` and want to transpose up a (minor) third (`-s 3`), you would make the new note `e`; similarly if you have the note `F` and you go up a (major) third, you get `A`. You will not need to worry about the actual number of semitones that you are being asked to shift, as the previous example showed that we might be shifting by a major/minor/augmented/diminished/pure interval. The purpose of the exercise is simply to practice with lists.
-
-````
-$ ./transpose.py
-usage: transpose.py [-h] [-s int] FILE
-transpose.py: error: the following arguments are required: FILE
-$ ./transpose.py -h
-usage: transpose.py [-h] [-s int] FILE
-
-Tranpose ABC notation
-
-positional arguments:
-  FILE                 Input file
-
-optional arguments:
-  -h, --help           show this help message and exit
-  -s int, --shift int  Interval to shift (default: 2)
-$ ./transpose.py foo
-"foo" is not a file
-$ ./transpose.py songs/legacy.abc -s 1
---shift "1" must be between 2 and 8
-$ ./transpose.py songs/legacy.abc
-<score lang="ABC">
-X:1
-T:The Legacy Jig
-M:6/8
-L:1/8
-R:jig
-K:A
-AGA CBC | aga abc | AGA CBC | e2B BGE |
-AGA CBC | aga abc | baf feC |1 eCB BGE :|2 eCB BCe |:
-fgf feC | eCB BCe | fgf feC | aeC BCe |
-fgf feC | e2e efg | agf feC |1 eCB BCe :|2 eCB BGE |]
-</score>
-````
-
-A sample ABC song is given:
-
-````
-$ cat songs/legacy.abc
-<score lang="ABC">
-X:1
-T:The Legacy Jig
-M:6/8
-L:1/8
-R:jig
-K:G
-GFG BAB | gfg gab | GFG BAB | d2A AFD |
-GFG BAB | gfg gab | age edB |1 dBA AFD :|2 dBA ABd |:
-efe edB | dBA ABd | efe edB | gdB ABd |
-efe edB | d2d def | gfe edB |1 dBA ABd :|2 dBA AFD |]
-</score>
-````
-
-If you use `new_py.py` to create your new program with the `file` as a single positional argument, you can use this code to get the input file and check that it is, indeed, a file:
-
-````
-args = get_args()
-file = args.file
-
-if not os.path.isfile(file):
-    die('"{}" is not a file'.formate(file))
-````
-
-Now that you have a file, you can use a `for` loop to read it. Each line will still have a newline attached to the end, so you can use `rstrip()` to remove it:
-
-````
-for line in open(file):
-    line = line.rstrip()
-````
-
-If a line starts with `<` and ends with `>` (cf. `str.startswith` and `str.endswith`), you can just print the line as-is. If the line starts with `K:`, then you have the key signature and should transpose it, e.g., if you have `K:A` and you are shifting a fifth, you should print `K:E`. If you have a line that starts with any other single uppercase letter and a colon, just print the line as-is. Finally, if you have a line that doesn't match any of the above conditions, you have a line of melody that needs to be transposed.
-
-If you are unfamiliar with musical transposition, you may be a bit confused by the notion of a interval. A "second" equals a `--shift` of one note; that is, the distance from `A` to `B` is one note, but we call that a "second." Therefore, assume that the `--shift` argument is the name of the interval, e.g., `4` (a "fourth") is actually a move of three notes. That means the argument provided by the user should be in the range 2 to 8, inclusive, so complain if it is not. 
-
-Note that the transposition of a tune up a fourth is the same as down a fifth:
-
-````
-$ ./transpose.py songs/legacy.abc -s 4
-<score lang="ABC">
-X:1
-T:The Legacy Jig
-M:6/8
-L:1/8
-R:jig
-K:C
-CBC EDE | cbc cde | CBC EDE | g2D DBG |
-CBC EDE | cbc cde | dca agE |1 gED DBG :|2 gED DEg |:
-aba agE | gED DEg | aba agE | cgE DEg |
-aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
-</score>
-$ ./transpose.py songs/legacy.abc -s -5
-<score lang="ABC">
-X:1
-T:The Legacy Jig
-M:6/8
-L:1/8
-R:jig
-K:C
-CBC EDE | cbc cde | CBC EDE | g2D DBG |
-CBC EDE | cbc cde | dca agE |1 gED DBG :|2 gED DEg |:
-aba agE | gED DEg | aba agE | cgE DEg |
-aba agE | g2g gab | cba agE |1 gED DEg :|2 gED DBG |]
-</score>
-````
-
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	"""Tranpose ABC notation"""
-     3	
-     4	import argparse
-     5	import os
-     6	import re
-     7	import sys
-     8	from dire import die
-     9	
-    10	
-    11	# --------------------------------------------------
-    12	def get_args():
-    13	    """get command-line arguments"""
-    14	    parser = argparse.ArgumentParser(
-    15	        description='Tranpose ABC notation',
-    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    17	
-    18	    parser.add_argument('file', metavar='FILE', help='Input file')
-    19	
-    20	    parser.add_argument('-s',
-    21	                        '--shift',
-    22	                        help='Interval to shift',
-    23	                        metavar='int',
-    24	                        type=int,
-    25	                        default=2)
-    26	
-    27	    return parser.parse_args()
-    28	
-    29	
-    30	# --------------------------------------------------
-    31	def main():
-    32	    """Make a jazz noise here"""
-    33	    args = get_args()
-    34	    file = args.file
-    35	    shift = args.shift
-    36	    ucase = 'ABCDEFG'
-    37	    lcase = 'abcdefg'
-    38	    num_notes = 7
-    39	
-    40	    if not 1 < abs(shift) <= 8:
-    41	        die('--shift "{}" must be between 2 and 8'.format(shift))
-    42	
-    43	    if not os.path.isfile(file):
-    44	        die('"{}" is not a file'.format(file))
-    45	
-    46	    # account for interval where a 2nd (-s 2) is a move of one note
-    47	    shift = shift - 1 if shift > 0 else shift + 1
-    48	
-    49	    def transpose(note):
-    50	        if note in lcase:
-    51	            pos = lcase.index(note)
-    52	            tran = (pos + shift) % num_notes
-    53	            return lcase[tran]
-    54	        elif note in ucase:
-    55	            pos = ucase.index(note)
-    56	            tran = (pos + shift) % num_notes
-    57	            return ucase[tran]
-    58	        else:
-    59	            return note
-    60	
-    61	    for line in open(file):
-    62	        line = line.rstrip()
-    63	
-    64	        if line.startswith('K:'):
-    65	            key = line[2]
-    66	            print('K:' + transpose(key))
-    67	        elif (line.startswith('<') and line.endswith('>')) or re.match(
-    68	                '[A-Z]:\s?', line):
-    69	            print(line)
-    70	        else:
-    71	            for char in line.rstrip():
-    72	                print(transpose(char), end='')
-    73	
-    74	            print()
-    75	
-    76	
-    77	# --------------------------------------------------
-    78	if __name__ == '__main__':
-    79	    main()
-````
-
-\newpage
-
-# Chapter 37: Word Search
+# Chapter 34: Word Search
 
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 

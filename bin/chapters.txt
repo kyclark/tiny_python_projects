@@ -6,8 +6,8 @@ apples_and_bananas
 telephone
 bottles_of_beer
 gashlycrumb
-movie_reader
-palindromes
+#movie_reader
+#palindromes
 ransom_note
 rhymer
 #rock_paper_scissors
@@ -39,5 +39,5 @@ markov_chain
 hamming_chain
 morse
 rot13
-transpose
+#transpose
 word_search
