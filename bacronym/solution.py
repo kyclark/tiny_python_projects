@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-"""Make guesses about acronyms"""
+"""Explain acronyms"""
 
 import argparse
+import io
 import sys
 import os
 import random
 import re
 from collections import defaultdict
+from functools import partial
 
 
 # --------------------------------------------------
 def get_args():
     """get arguments"""
+
     parser = argparse.ArgumentParser(
         description='Explain acronyms',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -28,7 +31,7 @@ def get_args():
     parser.add_argument('-w',
                         '--wordlist',
                         help='Dictionary/word file',
-                        type=str,
+                        type=argparse.FileType('r'),
                         metavar='STR',
                         default='/usr/share/dict/words')
 
@@ -37,7 +40,8 @@ def get_args():
                         help='List of words to exclude',
                         type=str,
                         metavar='STR',
-                        default='a,an,the')
+                        nargs='+',
+                        default='a an the'.split())
 
     parser.add_argument('-s',
                         '--seed',
@@ -46,56 +50,98 @@ def get_args():
                         metavar='INT',
                         default=None)
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if args.num < 1:
+        parser.error('--num "{}" must be > 0'.format(args.num))
+
+    if not re.search(r'^[A-Z]{2,}$', args.acronym.upper()):
+        msg = 'Acronym "{}" must be >1 in length, only use letters'.format(
+            args.acronym)
+        parser.error(msg)
+
+    return args
+
+
+# --------------------------------------------------
+def group_words(file, stop_words=set()):
+    """Groups words in file by first letter"""
+
+    good = partial(re.search, r'^[a-z]{2,}$')
+    seen = set()
+    words_by_letter = defaultdict(list)
+    clean = lambda word: re.sub('[^a-z]', '', word)
+    for word in filter(good, map(clean, file.read().lower().split())):
+        if word not in seen and word not in stop_words:
+            seen.add(word)
+            words_by_letter[word[0]].append(word)
+
+    return words_by_letter
+
+
+# --------------------------------------------------
+def test_group_words():
+    """Test group_words()"""
+
+    words = io.StringIO('apple, "BANANA," The Coconut! Berry - APPLE; A cabbage.')
+    stop = 'a an the'.split()
+    words_by_letter = group_words(words, stop)
+
+    assert words_by_letter['a'] == ['apple']
+    assert words_by_letter['b'] == ['banana', 'berry']
+    assert words_by_letter['c'] == ['coconut', 'cabbage']
+    assert 't' not in words_by_letter
+
+
+# --------------------------------------------------
+def make_definitions(acronym, words_by_letter, limit=1):
+    """Find definitions an acronym given groupings of words by letters"""
+
+    definitions = []
+    for _ in range(limit):
+        definition = []
+        for letter in acronym.lower():
+            opts = words_by_letter.get(letter.lower(), [])
+            definition.append(random.choice(opts).title() if opts else '?')
+        definitions.append(' '.join(definition))
+
+    return definitions
+
+
+# --------------------------------------------------
+def test_make_definitions():
+    """Test make_definitions()"""
+
+    words = {
+        'a': ['apple'],
+        'b': ['banana', 'berry'],
+        'c': ['coconut', 'cabbage']
+    }
+
+    random.seed(1)
+    assert make_definitions('ABC', words) == ['Apple Banana Cabbage']
+    random.seed(2)
+    assert make_definitions('ABC', words) == ['Apple Banana Coconut']
+    random.seed(3)
+    assert make_definitions('AAA', words) == ['Apple Apple Apple']
+    random.seed(4)
+    assert make_definitions('YYZ', words) == ['? ? ?']
+    random.seed(None)
 
 
 # --------------------------------------------------
 def main():
-    """main"""
+    """Make a jazz noise here"""
 
     args = get_args()
     acronym = args.acronym
-    wordlist = args.wordlist
-    limit = args.num
-    goodword = r'^[a-z]{2,}$'
-    badwords = set(re.split(r'\s*,\s*', args.exclude.lower()))
-
+    stop = set(map(str.lower, args.exclude))
     random.seed(args.seed)
 
-    if not re.match(goodword, acronym.lower()):
-        print('"{}" must be >1 in length, only use letters'.format(acronym))
-        sys.exit(1)
+    words_by_letter = group_words(args.wordlist, stop)
+    definitions = make_definitions(acronym, words_by_letter, args.num)
 
-    if not os.path.isfile(wordlist):
-        print('"{}" is not a file.'.format(wordlist))
-        sys.exit(1)
-
-    seen = set()
-    words_by_letter = defaultdict(list)
-    for word in open(wordlist).read().lower().split():
-        clean = re.sub('[^a-z]', '', word)
-        if not clean:  # nothing left?
-            continue
-
-        if re.match(goodword,
-                    clean) and clean not in seen and clean not in badwords:
-            seen.add(clean)
-            words_by_letter[clean[0]].append(clean)
-
-    len_acronym = len(acronym)
-    definitions = []
-    for i in range(0, limit):
-        definition = []
-        for letter in acronym.lower():
-            possible = words_by_letter.get(letter, [])
-            if len(possible) > 0:
-                definition.append(
-                    random.choice(possible).title() if possible else '?')
-
-        if len(definition) == len_acronym:
-            definitions.append(' '.join(definition))
-
-    if len(definitions) > 0:
+    if definitions:
         print(acronym.upper() + ' =')
         for definition in definitions:
             print(' - ' + definition)

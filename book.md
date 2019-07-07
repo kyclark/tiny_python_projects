@@ -2943,14 +2943,16 @@ If you don't like `map`, you can accomplish the same thing with a list comprehen
 
 # Chapter 13: Bacronym
 
-Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--number` (default `5`) of acronyms by reading a `-w|--wordlist` argument (defualt `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
+Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--num` (default `5`) of acronyms by reading a `-w|--wordlist` argument (default `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
+
+If provided the `-h|--help` flags or no arguments, the program should print a usage:
 
 ````
 $ ./bacronym.py
-usage: bacronym.py [-h] [-n NUM] [-w STR] [-x STR] [-s INT] STR
+usage: bacronym.py [-h] [-n NUM] [-w STR] [-x STR [STR ...]] [-s INT] STR
 bacronym.py: error: the following arguments are required: STR
 $ ./bacronym.py -h
-usage: bacronym.py [-h] [-n NUM] [-w STR] [-x STR] [-s INT] STR
+usage: bacronym.py [-h] [-n NUM] [-w STR] [-x STR [STR ...]] [-s INT] STR
 
 Explain acronyms
 
@@ -2962,10 +2964,15 @@ optional arguments:
   -n NUM, --num NUM     Maximum number of definitions (default: 5)
   -w STR, --wordlist STR
                         Dictionary/word file (default: /usr/share/dict/words)
-  -x STR, --exclude STR
-                        List of words to exclude (default: a,an,the)
+  -x STR [STR ...], --exclude STR [STR ...]
+                        List of words to exclude (default: ['a', 'an', 'the'])
   -s INT, --seed INT    Random seed (default: None)
-$ ./bacronym.py FBI -s 1
+````
+
+Because I'm including a `--seed` argumment, you should get this exact output if using the same `--wordlist`:
+
+````
+$ ./bacronym.py -s 1 FBI
 FBI =
  - Fecundity Brokage Imitant
  - Figureless Basketmaking Ismailite
@@ -2974,121 +2981,571 @@ FBI =
  - Fastland Bouncingly Idiospasm
 ````
 
+The program should create errors and usage for `--num` less than 1:
+
+````
+$ ./bacronym.py -n -3 AAA
+usage: bacronym.py [-h] [-n NUM] [-w STR] [-x STR [STR ...]] [-s INT] STR
+bacronym.py: error: --num "-3" must be > 0
+````
+
+And for a bad `--wordlist`:
+
+````
+$ ./bacronym.py -w mnvdf AAA
+usage: bacronym.py [-h] [-n NUM] [-w STR] [-x STR [STR ...]] [-s INT] STR
+bacronym.py: error: argument -w/--wordlist: can't open 'mnvdf': \
+[Errno 2] No such file or directory: 'mnvdf'
+````
+
+The acronym must be composed entirely of letters:
+
+````
+$ ./bacronym.py 666
+usage: bacronym.py [-h] [-n NUM] [-w STR] [-x STR [STR ...]] [-s INT] STR
+bacronym.py: error: Acronym "666" must be >1 in length, only use letters
+````
+
+And be greater than 1 character in length:
+
+````
+$ ./bacronym.py A
+usage: bacronym.py [-h] [-n NUM] [-w STR] [-x STR [STR ...]] [-s INT] STR
+bacronym.py: error: Acronym "A" must be >1 in length, only use letters
+````
+
+Hints:
+
+* See how much error checking you can put into the `get_args` function and use `parser.error` to throw the errors
+* The `--wordlist` need not be a system dictionary file with one lower-case word on each line. Assume that you can read any file with many words on each line and that might include punctuation. I suggest you use a regualar expression to remove anything that is not an alphabet character with `re.sub('[^a-z]', '')`. Be sure that words are only represented once in your list.
+* In my version, I write two important functions: one (`group_words`) that reads the wordlist and returns a grouping of words by their first letter, and another (`make_definitions`) that produces plausible definitions from that grouping of words by letters for a given acronym. I place the following test functions into my program and run `pytest` to verify that the functions work properly.
+
+````
+def test_group_words():
+    """Test group_words()"""
+
+    words = io.StringIO('apple, "BANANA," The Coconut! Berry; A cabbage.')
+    stop = 'a an the'.split()
+    words_by_letter = group_words(words, stop)
+    assert words_by_letter['a'] == ['apple']
+    assert words_by_letter['b'] == ['banana', 'berry']
+    assert words_by_letter['c'] == ['coconut', 'cabbage']
+    assert 't' not in words_by_letter
+
+def test_make_definitions():
+    """Test make_definitions()"""
+
+    words = {
+        'a': ['apple'],
+        'b': ['banana', 'berry'],
+        'c': ['coconut', 'cabbage']
+    }
+
+    random.seed(1)
+    assert make_definitions('ABC', words) == ['Apple Banana Cabbage']
+    random.seed(2)
+    assert make_definitions('ABC', words) == ['Apple Banana Coconut']
+    random.seed(3)
+    assert make_definitions('AAA', words) == ['Apple Apple Apple']
+    random.seed(4)
+    assert make_definitions('YYZ', words) == ['? ? ?']
+    random.seed(None)
+````
 \newpage
 
 ## Solution
 
 ````
      1	#!/usr/bin/env python3
-     2	"""Make guesses about acronyms"""
+     2	"""Explain acronyms"""
      3	
      4	import argparse
-     5	import sys
-     6	import os
-     7	import random
-     8	import re
-     9	from collections import defaultdict
-    10	
-    11	
-    12	# --------------------------------------------------
-    13	def get_args():
-    14	    """get arguments"""
-    15	    parser = argparse.ArgumentParser(
-    16	        description='Explain acronyms',
-    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    18	
-    19	    parser.add_argument('acronym', help='Acronym', type=str, metavar='STR')
-    20	
-    21	    parser.add_argument('-n',
-    22	                        '--num',
-    23	                        help='Maximum number of definitions',
-    24	                        type=int,
-    25	                        metavar='NUM',
-    26	                        default=5)
-    27	
-    28	    parser.add_argument('-w',
-    29	                        '--wordlist',
-    30	                        help='Dictionary/word file',
-    31	                        type=str,
-    32	                        metavar='STR',
-    33	                        default='/usr/share/dict/words')
-    34	
-    35	    parser.add_argument('-x',
-    36	                        '--exclude',
-    37	                        help='List of words to exclude',
-    38	                        type=str,
-    39	                        metavar='STR',
-    40	                        default='a,an,the')
-    41	
-    42	    parser.add_argument('-s',
-    43	                        '--seed',
-    44	                        help='Random seed',
-    45	                        type=int,
-    46	                        metavar='INT',
-    47	                        default=None)
-    48	
-    49	    return parser.parse_args()
-    50	
-    51	
-    52	# --------------------------------------------------
-    53	def main():
-    54	    """main"""
-    55	
-    56	    args = get_args()
-    57	    acronym = args.acronym
-    58	    wordlist = args.wordlist
-    59	    limit = args.num
-    60	    goodword = r'^[a-z]{2,}$'
-    61	    badwords = set(re.split(r'\s*,\s*', args.exclude.lower()))
+     5	import io
+     6	import sys
+     7	import os
+     8	import random
+     9	import re
+    10	from collections import defaultdict
+    11	from functools import partial
+    12	
+    13	
+    14	# --------------------------------------------------
+    15	def get_args():
+    16	    """get arguments"""
+    17	
+    18	    parser = argparse.ArgumentParser(
+    19	        description='Explain acronyms',
+    20	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    21	
+    22	    parser.add_argument('acronym', help='Acronym', type=str, metavar='STR')
+    23	
+    24	    parser.add_argument('-n',
+    25	                        '--num',
+    26	                        help='Maximum number of definitions',
+    27	                        type=int,
+    28	                        metavar='NUM',
+    29	                        default=5)
+    30	
+    31	    parser.add_argument('-w',
+    32	                        '--wordlist',
+    33	                        help='Dictionary/word file',
+    34	                        type=argparse.FileType('r'),
+    35	                        metavar='STR',
+    36	                        default='/usr/share/dict/words')
+    37	
+    38	    parser.add_argument('-x',
+    39	                        '--exclude',
+    40	                        help='List of words to exclude',
+    41	                        type=str,
+    42	                        metavar='STR',
+    43	                        nargs='+',
+    44	                        default='a an the'.split())
+    45	
+    46	    parser.add_argument('-s',
+    47	                        '--seed',
+    48	                        help='Random seed',
+    49	                        type=int,
+    50	                        metavar='INT',
+    51	                        default=None)
+    52	
+    53	    args = parser.parse_args()
+    54	
+    55	    if args.num < 1:
+    56	        parser.error('--num "{}" must be > 0'.format(args.num))
+    57	
+    58	    if not re.search(r'^[A-Z]{2,}$', args.acronym.upper()):
+    59	        msg = 'Acronym "{}" must be >1 in length, only use letters'.format(
+    60	            args.acronym)
+    61	        parser.error(msg)
     62	
-    63	    random.seed(args.seed)
+    63	    return args
     64	
-    65	    if not re.match(goodword, acronym.lower()):
-    66	        print('"{}" must be >1 in length, only use letters'.format(acronym))
-    67	        sys.exit(1)
-    68	
-    69	    if not os.path.isfile(wordlist):
-    70	        print('"{}" is not a file.'.format(wordlist))
-    71	        sys.exit(1)
-    72	
-    73	    seen = set()
-    74	    words_by_letter = defaultdict(list)
-    75	    for word in open(wordlist).read().lower().split():
-    76	        clean = re.sub('[^a-z]', '', word)
-    77	        if not clean:  # nothing left?
-    78	            continue
-    79	
-    80	        if re.match(goodword,
-    81	                    clean) and clean not in seen and clean not in badwords:
-    82	            seen.add(clean)
-    83	            words_by_letter[clean[0]].append(clean)
-    84	
-    85	    len_acronym = len(acronym)
-    86	    definitions = []
-    87	    for i in range(0, limit):
-    88	        definition = []
-    89	        for letter in acronym.lower():
-    90	            possible = words_by_letter.get(letter, [])
-    91	            if len(possible) > 0:
-    92	                definition.append(
-    93	                    random.choice(possible).title() if possible else '?')
+    65	
+    66	# --------------------------------------------------
+    67	def group_words(file, stop_words=set()):
+    68	    """Groups words in file by first letter"""
+    69	
+    70	    good = partial(re.search, r'^[a-z]{2,}$')
+    71	    seen = set()
+    72	    words_by_letter = defaultdict(list)
+    73	    clean = lambda word: re.sub('[^a-z]', '', word)
+    74	    for word in filter(good, map(clean, file.read().lower().split())):
+    75	        if word not in seen and word not in stop_words:
+    76	            seen.add(word)
+    77	            words_by_letter[word[0]].append(word)
+    78	
+    79	    return words_by_letter
+    80	
+    81	
+    82	# --------------------------------------------------
+    83	def test_group_words():
+    84	    """Test group_words()"""
+    85	
+    86	    words = io.StringIO('apple, "BANANA," The Coconut! Berry - APPLE; A cabbage.')
+    87	    stop = 'a an the'.split()
+    88	    words_by_letter = group_words(words, stop)
+    89	
+    90	    assert words_by_letter['a'] == ['apple']
+    91	    assert words_by_letter['b'] == ['banana', 'berry']
+    92	    assert words_by_letter['c'] == ['coconut', 'cabbage']
+    93	    assert 't' not in words_by_letter
     94	
-    95	        if len(definition) == len_acronym:
-    96	            definitions.append(' '.join(definition))
-    97	
-    98	    if len(definitions) > 0:
-    99	        print(acronym.upper() + ' =')
-   100	        for definition in definitions:
-   101	            print(' - ' + definition)
-   102	    else:
-   103	        print('Sorry I could not find any good definitions')
-   104	
-   105	
-   106	# --------------------------------------------------
-   107	if __name__ == '__main__':
-   108	    main()
+    95	
+    96	# --------------------------------------------------
+    97	def make_definitions(acronym, words_by_letter, limit=1):
+    98	    """Find definitions an acronym given groupings of words by letters"""
+    99	
+   100	    definitions = []
+   101	    for _ in range(limit):
+   102	        definition = []
+   103	        for letter in acronym.lower():
+   104	            opts = words_by_letter.get(letter.lower(), [])
+   105	            definition.append(random.choice(opts).title() if opts else '?')
+   106	        definitions.append(' '.join(definition))
+   107	
+   108	    return definitions
+   109	
+   110	
+   111	# --------------------------------------------------
+   112	def test_make_definitions():
+   113	    """Test make_definitions()"""
+   114	
+   115	    words = {
+   116	        'a': ['apple'],
+   117	        'b': ['banana', 'berry'],
+   118	        'c': ['coconut', 'cabbage']
+   119	    }
+   120	
+   121	    random.seed(1)
+   122	    assert make_definitions('ABC', words) == ['Apple Banana Cabbage']
+   123	    random.seed(2)
+   124	    assert make_definitions('ABC', words) == ['Apple Banana Coconut']
+   125	    random.seed(3)
+   126	    assert make_definitions('AAA', words) == ['Apple Apple Apple']
+   127	    random.seed(4)
+   128	    assert make_definitions('YYZ', words) == ['? ? ?']
+   129	    random.seed(None)
+   130	
+   131	
+   132	# --------------------------------------------------
+   133	def main():
+   134	    """Make a jazz noise here"""
+   135	
+   136	    args = get_args()
+   137	    acronym = args.acronym
+   138	    stop = set(map(str.lower, args.exclude))
+   139	    random.seed(args.seed)
+   140	
+   141	    words_by_letter = group_words(args.wordlist, stop)
+   142	    definitions = make_definitions(acronym, words_by_letter, args.num)
+   143	
+   144	    if definitions:
+   145	        print(acronym.upper() + ' =')
+   146	        for definition in definitions:
+   147	            print(' - ' + definition)
+   148	    else:
+   149	        print('Sorry I could not find any good definitions')
+   150	
+   151	
+   152	# --------------------------------------------------
+   153	if __name__ == '__main__':
+   154	    main()
 ````
 
+\newpage
+
+## Discussion
+
+## Handling arguments
+
+As suggested in the introduction, I check that the `--num` argument is a positive integar and that the given acronym is composed entirely of letters and is at least two characters in length. The second is achieved with a regular expression which returns `None` when it fails to match:
+
+````
+>>> import re
+>>> acronym = 'A'
+>>> type(re.search(r'^[A-Z]{2,}$', acronym.upper()))
+<class 'NoneType'>
+>>> acronym = '4E9'
+>>> type(re.search(r'^[A-Z]{2,}$', acronym.upper()))
+<class 'NoneType'>
+>>> acronym = 'ABC'
+>>> type(re.search(r'^[A-Z]{2,}$', acronym.upper()))
+<class 're.Match'>
+````
+
+If any errors with the arguments are detected, I use `parser.error` to cause `argparse` to do the following:
+
+1. Print the short usage
+2. Print an error message
+3. Exit the program with a non-zero exit value to indicate a failure
+
+If you inspect the `test.py`, you can see that the tests for these bad inputs verify that the `rv` (return value) for these calls is not `0`. If you write "pipelines" on the command line where the output of one program is the input for the next, it is important to stop the process when a program exits with an error. Non-zero exit values can be used by tools like `make` to halt a larger execution of programs.
+
+I defined my `--exclude` words with `nargs='+'` to indicate one or more string values, so I set the `default='a an the'.split()` which creates a list more easily than typing each individual word in quotes and `[]`:
+
+````
+>>> 'a an the'.split()
+['a', 'an', 'the']
+````
+
+I can take that list and lowercase each word by mapping the values into the `str.lower` function. Note that `map` is a "lazy" function that only produces values when needed, so I have to use `list` in the REPL if I want to see the evaluated `list`:
+
+````
+>>> list(map(str.lower, 'A AN THE'.split()))
+['a', 'an', 'the']
+````
+
+Then I can use `set` to create a unique list of stop words:
+
+````
+>>> exclude = 'a an the'.split()
+>>> stop = set(map(str.lower, exclude))
+>>> stop
+{'the', 'an', 'a'}
+````
+
+Because I define the `--seed` to be `type=int` with a `default=None`, I can pass `args.seed` directly to `random.seed`. I also define `--wordlist` using `type=argparse.FileType('r')` to ensure that the value is a readable file, and I set the default to my system dictionary.
+
+## Grouping words by first letters
+
+After validating the arguments, the next big conceptual task is reading the `--wordlist` and grouping the words by their first letters. A dictionary is perfect for this sort of task. Many times we associate some single value like a string to some other single value like another string or a number, e.g., a last name to a first name or a name to an age. Here, though, we want to link a letter like `a` to a `list` of words that start with that letter. 
+
+It's tedious to check for the existence of a key and then create a new `list` if that key doesn't exist, so let's use the `defaultdict` for this. The argument to `defaultdict` is the **type** of data we want to use for the **value** of a new entry. That is, if we start with an empty `dict` called `words` and try to access `words['a']`, it will blow up:
+
+````
+>>> words = dict()
+>>> words['a']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 'a'
+````
+
+If instead we create `words` as a `defaultdict` that initializes an undefined key with an empty list, we get this instead:
+
+````
+>>> from collections import defaultdict
+>>> words = defaultdict(list)
+>>> words['a']
+[]
+````
+
+Which means we can call `list` methods on the values of elements in the `dict`, methods like `append`:
+
+````
+>>> words['b'].append('banana')
+>>> words
+defaultdict(<class 'list'>, {'a': [], 'b': ['banana']})
+````
+
+Since we defined the `--wordlist` to be a readable file, `argparse` has already delivered to us an open file handle upon which we can call `read`. I also want to lowercase the line and then `split` it into word-like units. I'm going to create an `io.StringIO` object here that I also use in the test to create a string that will behave like an open filehandle:
+
+````
+>>> fh = io.StringIO('apple, "BANANA," The Coconut! Berry - APPLE; A cabbage.')
+>>> type(fh)
+<class '_io.StringIO'>
+````
+
+My goal is to turn this into a data structure where the words are grouped by their first, lowercased letter, something like this:
+
+````
+'a' = ['apple']
+'b' = ['banana']
+'c' = ['cabbage', 'coconut']
+````
+
+I can chain the methods `read`, `lower`, and `split` to get word-like units. Note that I can only `read` an `io.StringIO` object once. Just like a file handle, once it is exhausted it has to be opened again:
+
+````
+>>> words = fh.read().lower().split()
+>>> words
+['apple,', '"banana,"', 'the', 'coconut!', 'berry', '-', 'apple;', 'a', 'cabbage.']
+````
+
+We're getting closer, but we still need to remove anything that's not a letter from each word. We can create a `clean` function to do this. It's really just one line of code, so I can actually make it like so:
+
+````
+>>> clean = lambda word: re.sub('[^a-z]', '', word)
+````
+
+And I can `map` all the words into that function to get actual "words":
+
+````
+>>> words = list(map(clean, fh.read().lower().split()))
+>>> words
+['apple', 'banana', 'the', 'coconut', 'berry', '', 'apple', 'a', 'cabbage']
+````
+
+We only want to take words that are at least 2 characters long, so we can create a regular expression for this:
+
+````
+>>> good = re.compile(r'^[a-z]{2,}$')
+````
+
+And we can use it like so:
+
+````
+>>> type(good.search('banana'))
+<class 're.Match'>
+>>> type(good.search('i'))
+<class 'NoneType'>
+````
+
+I'd actually like to use it as a `filter` for the elements coming out of the `map`, but there's a problem in that we can't use it like it is:
+
+````
+>>> words = list(filter(good, map(clean, fh.read().lower().split())))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 're.Pattern' object is not callable
+````
+
+It's a bit cryptic to figure this out, but the problem is with the fact that `good` is not a function, it's a compiled regular expression:
+
+````
+>>> type(good)
+<class 're.Pattern'>
+````
+
+What we want is something that is something that uses `re.match` with a regex to filter the elements. The `re.match` function takes two arguments, and the `filter` will automatically feed in the words, so what we need is a *partially applied* function where the first argument (the regex pattern) is already bound. We can use `functools.partial` for this:
+
+````
+>>> good = partial(re.search, r'^[a-z]{2,}$')
+>>> type(good('banana'))
+<class 're.Match'>
+>>> type(good('x'))
+<class 'NoneType'>
+````
+
+And it can now be a part of our chain:
+
+````
+>>> words = list(filter(good, map(clean, fh.read().lower().split())))
+>>> words
+['apple', 'banana', 'the', 'coconut', 'berry', 'apple', 'cabbage']
+````
+
+So we're just read the input file, split it into words, removed any bad characters, and filtered out unwanted strings in one line of code that is extremely readable! To avoid adding words more than once, I created a `seen` variable from a `set` to check if a word has been seed before. I was also given a list of `stop` words to avoid which is also a `set` (or it could just as easily be a `list`), so I need to check that any given `word` is not in either of these.
+
+````
+>>> stop
+{'the', 'an', 'a'}
+>>> seen = set()
+>>> for word in words:
+...     if not any([word in stop, word in seen]):
+...         print(word)
+...         seen.add(word)
+...
+apple
+banana
+coconut
+berry
+cabbage
+````
+
+And you can see that "apple" was only printed once. Returning to the end goal of making a list of words by first letter, we return to our `defaultdict(list)` that we started off with:
+
+````
+>>> words_by_letter = defaultdict(list)
+>>> for word in words:
+...     if not any([word in stop, word in seen]):
+...         words_by_letter[word[0]].append(word)
+...         seen.add(word)
+...
+>>> from pprint import pprint as pp
+>>> pp(words_by_letter)
+defaultdict(<class 'list'>,
+            {'a': ['apple'],
+             'b': ['banana', 'berry'],
+             'c': ['coconut', 'cabbage']})
+````
+
+Finally we can make all this a function called `group_words`. Note that I'll make the `stop` words an option by adding a default value:
+
+````
+>>> def group_words(file, stop_words=set()):
+...     """Groups words in file by first letter"""
+...     good = partial(re.search, r'^[a-z]{2,}$')
+...     seen = set()
+...     words_by_letter = defaultdict(list)
+...     clean = lambda word: re.sub('[^a-z]', '', word)
+...     for word in filter(good, map(clean, file.read().lower().split())):
+...         if word not in seen and word not in stop_words:
+...             seen.add(word)
+...             words_by_letter[word[0]].append(word)
+...     return words_by_letter
+...
+````
+
+I can call it with an open file handle:
+
+````
+>>> pp(group_words(open('../inputs/fox.txt')))
+defaultdict(<class 'list'>,
+            {'b': ['brown'],
+             'd': ['dog'],
+             'f': ['fox'],
+             'j': ['jumps'],
+             'l': ['lazy'],
+             'o': ['over'],
+             'q': ['quick'],
+             't': ['the']})
+````
+
+Most importantly, I can write a test which I'll call `test_group_words` (included in the introduction) so that `pytest` will execute it. My test sends in a fake (or "mock" in testing parlance) file handle and checks that the expected words are present and absent. It may seem like overkill to put just a few lines of code into a function, but it's very important to write small functions that do essentially one thing and which can be tested!
+
+## Making definitions
+
+Similarly, I made a small function that takes the grouped words, an acronym, and number and returns a list of that number of plausible definitions. I can use a `for` loop with `range(n)` to iterate `n` times through some code. Since I don't need the number for each loop, I can use an underscore (`_`) to throwaway the value:
+
+````
+>>> limit = 2
+>>> for _ in range(limit):
+...     print('hi')
+...
+hi
+hi
+````
+
+So, for however many definitions I want, I need to loop through each letter of the acronym and select some word from the grouped words:
+
+````
+>>> pp(words_by_letter)
+defaultdict(<class 'list'>,
+            {'a': ['apple'],
+             'b': ['banana', 'berry'],
+             'c': ['coconut', 'cabbage']})
+>>> import random
+>>> definition = []
+>>> acronym = 'ABC'
+>>> for letter in acronym:
+...     opts = words_by_letter.get(letter.lower(), [])
+...     definition.append(random.choice(opts).title() if opts else '?')
+...
+>>>
+>>> definition
+['Apple', 'Berry', 'Coconut']
+````
+
+Depending on the wordlist I read, a given letter may not exist, so I use the `dict.get` method to safely look for a `letter` with the default return value being an empty list `[]`. Then I can use an `if` *expression* to use `random.choice` to select from those options if they exists or use the question mark `?` to indicate no possible value. I can put all this into a function:
+
+````
+>>> def make_definitions(acronym, words_by_letter, limit=1):
+...     definitions = []
+...     for _ in range(limit):
+...         definition = []
+...         for letter in acronym.lower():
+...             opts = words_by_letter.get(letter.lower(), [])
+...             definition.append(random.choice(opts).title() if opts else '?')
+...         definitions.append(' '.join(definition))
+...     return definitions
+...
+>>> make_definitions('ABC', words_by_letter)
+['Apple Berry Coconut']
+>>> make_definitions('ABX', words_by_letter)
+['Apple Berry ?']
+````
+
+The `test_make_definitions` function included in the introduction ensures that this function works properly.
+
+## Putting it together
+
+To recap, so far we've written three central functions to:
+
+1. Parse and validate the user arguments
+2. Read the word list file and group the words by their first letters
+3. Make definitions from the grouped words for the given acronym
+
+Now we can write very understandable, almost self-documenting code:
+
+````
+>>> words_by_letter = group_words(open('/usr/share/dict/words'), stop)
+>>> definitions = make_definitions('YYZ', words_by_letter, 2)
+>>> definitions
+['Yearock Yon Zone', 'Yacca Yengee Zincalo']
+````
+
+If we are able to make some `definitions`, we will print them out; otherwise we can apologize:
+
+````
+>>> if definitions:
+...     print(acronym.upper() + ' =')
+...     for definition in definitions:
+...         print(' - ' + definition)
+... else:
+...     print('Sorry I could not find any good definitions')
+...
+ABC =
+ - Yearock Yon Zone
+ - Yacca Yengee Zincalo
+````
+
+## Testing
+
+In the introduction, I encouraged you to write a couple of functions that included specific tests that live *inside* your program. Such tests help you know that the building blocks of your code work -- what are often called "unit tests." 
+
+Additionally, you have been provided a test suite that checks that the program works from the *outside*. However you implement the logic of the code, these tests check that the whole program works -- what might be called "integration tests."
+
+As you write your own programs, you should think about writing very small functions that do *one thing* and then writing tests to be sure they actually do the thing you think and always continue to do that thing as you change your program. Additionally, you need to write tests to make sure that all the parts work together to accomplish the larger task at hand. While writing and refactoring this program, I repeatedly updated and used my test suite to ensure I wasn't introducing bugs!
 \newpage
 
 # Chapter 14: Workout Of (the) Day (WOD)
