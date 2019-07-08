@@ -3,24 +3,18 @@
 
 import argparse
 import random
+import re
 import sys
 from itertools import product
-from dire import die
 
 
 # --------------------------------------------------
 def get_args():
     """get command-line arguments"""
-    parser = argparse.ArgumentParser(
-        description='Argparse Python script',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-s',
-                        '--seed',
-                        help='Random seed',
-                        metavar='int',
-                        type=int,
-                        default=None)
+    parser = argparse.ArgumentParser(
+        description='Blackjack',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('-d',
                         '--dealer_hits',
@@ -32,12 +26,27 @@ def get_args():
                         help='Player hits',
                         action='store_true')
 
+    parser.add_argument('-S',
+                        '--stand',
+                        help='Stand on value',
+                        metavar='int',
+                        type=int,
+                        default=18)
+
+    parser.add_argument('-s',
+                        '--seed',
+                        help='Random seed',
+                        metavar='int',
+                        type=int,
+                        default=None)
+
     return parser.parse_args()
 
 
 # --------------------------------------------------
 def bail(msg):
     """print() and exit(0)"""
+
     print(msg)
     sys.exit(0)
 
@@ -45,25 +54,57 @@ def bail(msg):
 # --------------------------------------------------
 def card_value(card):
     """card to numeric value"""
+
     val = card[1:]
     faces = {'A': 1, 'J': 10, 'Q': 10, 'K': 10}
-    if val.isdigit():
-        return int(val)
-    elif val in faces:
-        return faces[val]
-    else:
-        die('Unknown card value for "{}"'.format(card))
+    return int(val) if val.isdigit() else faces[val] if val in faces else None
+
+
+# --------------------------------------------------
+def test_card_value():
+    """Test card_value"""
+
+    assert card_value('HA') == 1
+
+    for face in 'JQK':
+        assert card_value('D' + face) == 10
+
+    for num in range(1, 11):
+        assert card_value('S' + str(num)) == num
+
+
+# --------------------------------------------------
+def make_deck():
+    """Make a deck of cards"""
+
+    suites = list('HDSC')
+    values = list(range(2, 11)) + list('AJQK')
+    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
+    random.shuffle(cards)
+    return cards
+
+
+# --------------------------------------------------
+def test_make_deck():
+    """Test for make_deck"""
+
+    deck = make_deck()
+    assert len(deck) == 52
+
+    for suite in 'HDSC':
+        cards = list(filter(lambda c: c[0] == suite, deck))
+        assert len(cards) == 13
+        num_cards = list(filter(lambda c: re.match('\d+', c[1:]), deck))
 
 
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
+    stand_on = args.stand
     random.seed(args.seed)
-    suites = list('♥♠♣♦')
-    values = list(range(2, 11)) + list('AJQK')
-    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
-    random.shuffle(cards)
+    cards = make_deck()
 
     p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
     player = [p1, p2]
@@ -77,20 +118,27 @@ def main():
     player_hand = sum(map(card_value, player))
     dealer_hand = sum(map(card_value, dealer))
 
-    print('D [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
-    print('P [{:2}]: {}'.format(player_hand, ' '.join(player)))
+    print('Dealer [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
+    print('Player [{:2}]: {}'.format(player_hand, ' '.join(player)))
 
-    if player_hand > 21:
+    blackjack = 21
+    if player_hand > blackjack:
         bail('Player busts! You lose, loser!')
-    elif dealer_hand > 21:
+
+    if dealer_hand > blackjack:
         bail('Dealer busts.')
-    elif player_hand == 21:
+
+    if player_hand == blackjack:
         bail('Player wins. You probably cheated.')
-    elif dealer_hand == 21:
+
+    if dealer_hand == blackjack:
         bail('Dealer wins!')
 
-    if dealer_hand < 18: print('Dealer should hit.')
-    if player_hand < 18: print('Player should hit.')
+    if dealer_hand < stand_on:
+        print('Dealer should hit.')
+
+    if player_hand < stand_on:
+        print('Player should hit.')
 
 
 # --------------------------------------------------

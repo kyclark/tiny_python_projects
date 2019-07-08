@@ -1,7 +1,4 @@
-.PHONY: pdf test
-
-pdf:
-	pandoc README.md -o README.pdf --pdf-engine=xelatex
+.PHONY: test
 
 test:
-	pytest -v test.py
+	pytest -xv blackjack.py test.py
