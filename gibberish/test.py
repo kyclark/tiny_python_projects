@@ -13,6 +13,13 @@ dickinson = '../inputs/dickinson.txt'
 
 
 # --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
+
+
+# --------------------------------------------------
 def test_usage():
     """usage"""
 
@@ -30,14 +37,14 @@ def test_01():
     expected = """
   1: extri
   2: uirepres
-  3: yonstorsonf
-  4: endangr
-  5: mordiclym
-  6: asenertio
-  7: lotwerma
-  8: parandentri
-  9: quiresid
- 10: gailighted
+  3: rceptityfi
+  4: ighersonsta
+  5: titson
+  6: btsoneven
+  7: hundentiver
+  8: zatesside
+  9: bjectivente
+ 10: manceediat
     """.strip()
     assert out.strip() == expected
 
@@ -45,13 +52,14 @@ def test_01():
 # --------------------------------------------------
 def test_02():
     """Test"""
+
     args = '--seed 1 --kmer_size 4 --num_words 5 --max_word 8'
     out = getoutput('{} {} {}'.format(prg, args, dickinson))
     expected = """
-  1: liriou
-  2: savious
-  3: untrys
-  4: hempen
-  5: urday
+  1: miled
+  2: iliar
+  3: noticin
+  4: venture
+  5: nelled
     """.strip()
     assert out.strip() == expected
