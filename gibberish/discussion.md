@@ -132,3 +132,7 @@ Finally I `print` out the number of the word and the word itself using a format 
 >>> print('{:3}: {}'.format(i+1, word))
   3: piders
 ````
+
+## Machine Learning
+
+If you didn't realize it, you just implemented a basic machine learning algorithm. Your program predicts the next letter after a given sequence based on the frequencies of patterns you "learned" from the training files! The kmers you extracted from the text could become vectors for other machine learning techniques. You could, for instance, train on texts that are labeled by language source (e.g., English, German, French) and then, given a new unlabled text, predict the language by the kmer frequencies.
