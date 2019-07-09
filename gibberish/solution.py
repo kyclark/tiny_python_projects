@@ -4,10 +4,8 @@
 import argparse
 import io
 import logging
-import os
 import random
 import re
-import sys
 from collections import defaultdict
 
 
@@ -62,21 +60,21 @@ def get_args():
 
 
 # --------------------------------------------------
-def kmers(text, k=1):
-    return [text[i:i + k] for i in range(len(text) - k + 1)]
+def get_kmers(text, k=1):
     """Return k-mers from text"""
 
+    return [text[i:i + k] for i in range(len(text) - k + 1)]
 
 
 # --------------------------------------------------
-def test_kmers():
-    """Test kmers"""
+def test_get_kmers():
+    """Test get_kmers"""
 
-    assert kmers('abcd') == list('abcd')
-    assert kmers('abcd', 2) == ['ab', 'bc', 'cd']
-    assert kmers('abcd', 3) == ['abc', 'bcd']
-    assert kmers('abcd', 4) == ['abcd']
-    assert kmers('abcd', 5) == []
+    assert get_kmers('abcd') == list('abcd')
+    assert get_kmers('abcd', 2) == ['ab', 'bc', 'cd']
+    assert get_kmers('abcd', 3) == ['abc', 'bcd']
+    assert get_kmers('abcd', 4) == ['abcd']
+    assert get_kmers('abcd', 5) == []
 
 
 # --------------------------------------------------
@@ -84,11 +82,11 @@ def read_training(fhs, k=1):
     """Read training files, return chains"""
 
     chains = defaultdict(list)
-    clean = lambda word: re.sub('[^a-z]', '', word.lower())
+    clean = lambda w: re.sub('[^a-z]', '', w.lower())
 
     for fh in fhs:
         for word in map(clean, fh.read().split()):
-            for kmer in kmers(word, k + 1):
+            for kmer in get_kmers(word, k + 1):
                 chains[kmer[:-1]].append(kmer[-1])
 
     return chains
@@ -129,14 +127,14 @@ def main():
         filemode='w',
         level=logging.DEBUG if args.debug else logging.CRITICAL)
 
-    chains = read_training(args.file, args.kmer_size)
+    chains = read_training(args.file, k)
     logging.debug(chains)
 
     kmers = list(chains.keys())
     for i in range(args.num_words):
         word = random.choice(kmers)
         length = random.choice(range(k + 2, args.max_word))
-        logging.debug('Length "{}" starting with "{}"'.format(length, word))
+        logging.debug('Length "%s" starting with "%s"', length, word)
 
         while len(word) < length:
             kmer = word[-1 * k:]
@@ -144,11 +142,11 @@ def main():
                 break
 
             char = random.choice(list(chains[kmer]))
-            logging.debug('char = "{}"'.format(char))
+            logging.debug('char = "%s"', char)
             word += char
 
-        logging.debug('word = "{}"'.format(word))
-        print('{:3}: {}'.format(i+1, word))
+        logging.debug('word = "%s"', word)
+        print('{:3}: {}'.format(i + 1, word))
 
 
 # --------------------------------------------------

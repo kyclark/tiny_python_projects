@@ -1,0 +1,138 @@
+1: Article Selector
+* Solution
+* Discussion
+2: Jump the Five
+* Solution
+* Discussion
+3: Picnic
+* Solution
+* Discussion
+4: Howler
+* Solution
+* Discussion
+5: Apples and Bananas
+* Solution
+* Discussion
+* Method 1: Iterate every character
+* Method 2: str.replace
+* Method 3: str.translate
+* Method 4: List comprehension
+* Method 5: List comprehension with function
+* Method 6: `map` with a `lambda`
+* Method 7: `map` with `new_char`
+* Method 8: Regular expressions
+6: Telephone
+* Solution
+* Discussion
+* Mutations in DNA
+7: Bottles of Beer Song
+* Counting down
+* Solution
+* Discussion
+8: Gashlycrumb
+* Solution
+* Discussion
+* Edward Gorey
+* Alternate text
+* Interactive version
+9: Ransom
+* Solution
+* Discussion
+10: Simple Rhymer
+* Solution
+* Discussion
+11: Abuse
+* Solution
+* Discussion
+* get_args
+* main
+12: Scrambler
+* Solution
+* Discussion
+* Scrambling one word
+* Scrambling all the words
+13: Bacronym
+* Solution
+* Discussion
+* Handling arguments
+* Grouping words by first letters
+* Making definitions
+* Putting it together
+* Testing
+14: Workout Of (the) Day (WOD)
+* Solution
+* Discussion
+15: Blackjack 
+* Solution
+16: Family Tree
+* Graphs
+* Solution
+* Discussion
+* Parsing input file
+* Building the graph
+* Using graphviz
+17: Gematria: Numeric encoding of text
+* Solution
+* Discussion
+* Reading lines of text
+* List comprehensions vs map
+* Encoding one word
+* Finding the words
+* Encoding all words
+18: Histogram
+* Solution
+19: Mommy's Little (Crossword) Helper
+* Hints
+* Solution
+* Discussion
+* Regular Expressions
+* Manual Matching
+* Summary
+20: Kentucky Friar
+* Solution
+* Discussion
+21: Mad Libs
+* Solution
+* Discussion
+22: License Plates
+* Solution
+23: Gibberish Generator
+* Solution
+24: Piggy (Pig Latin)
+* Solution
+* Discussion
+* The Pigifier
+* Pigification of words
+25: Soundex Rhymer
+* Testing the stemmer
+* Solution
+* Discussion
+* Using Soundex
+26: Anagram
+* Solution
+* Discussion
+* Logging
+* Reading wordlist
+* defaultdict
+* Identifying anagrams
+* Selecting words to compare
+27: Hangman
+* Solution
+28: First Bank of Change
+* Solution
+* Discussion
+29: Runny Babbit
+* Solution
+* Discussion
+30: Markov Chain
+* Solution
+* Discussion
+31: Hamming Chain
+* Solution
+32: Morse Encoder/Decoder
+* Solution
+33: ROT13 (Rotate 13)
+* Solution
+34: Word Search
+* Solution
+* Discussion

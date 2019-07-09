@@ -11,7 +11,7 @@ m = a
 
 That is, given this training set, if you started with `l` you could only choose an `a`, but if you have `a` then you could choose `l`, `b`, or `m`.
 
-The program should generate `-n|--num_words` words (default `10`), each a random size between `k` + 2 and a `-m|--max_word` size (default `12`). Be sure to accept `-s|--seed` to pass to `random.seed`. My solution also takes a `-d|--debug` flag that will emit debug messages to `.log` for you to inspect.
+The program should generate `-n|--num_words` words (default `10`), each a random size between `k+2` and a `-m|--max_word` size (default `12`). Be sure to accept `-s|--seed` to pass to `random.seed`. My solution also takes a `-d|--debug` flag that will emit debug messages to `.log` for you to inspect.
 
 If provided no arguments or the `-h|--help` flag, generate a usage:
  
@@ -50,7 +50,7 @@ $ ./gibberish.py /usr/share/dict/words -s 1 -n 5
   5: woco
 ````
 
-Create different words by training on the US Constitution:
+Or train on the US Constitution:
 
 ````
 $ ./gibberish.py ../inputs/const.txt -s 2 -k 3 -n 4
@@ -78,22 +78,30 @@ Chose the best words and create definitions for them:
 * umjamp: skateboarding trick
 * callots: insignia of officers in Greek army
 * urchenev: fungal growth found under cobblestones
-
+ 
 ## Kmers
 
-To create the Markov chains, you'll need to read all the words from each file. Use `str.lower` to lowercase all the text and then remove any character that is not in the regular English alphabet (a-z). You'll need to extract "k-mers" or "n-grams" from each word. In the text "abcd," if `k=2` then the 2-mers are "ab," "bc," and "cd." If `k=3`, then the 3-mers are "abc" and "bcd." It may be helpful to know the number `n` of kmers `k` is proportional to the length `l` of the string `n = l - k + 1`. 
-
-Consider writing a function `kmers(text, k=1)` that only extracts kmers from some text, and then add this function to your program:
+To create the Markov chains, first you'll need to read all the words from each file. Use `str.lower` to lowercase all the text and then remove any character that are not in the regular English alphabet (a-z). A regular expression is handy for that:
 
 ````
-def test_kmers():
-    """Test kmers"""
+>>> import re
+>>> re.sub('[^a-z]', '', 'H48,`b09e3!"')
+'be'
+````
 
-    assert kmers('abcd') == list('abcd')
-    assert kmers('abcd', 2) == ['ab', 'bc', 'cd']
-    assert kmers('abcd', 3) == ['abc', 'bcd']
-    assert kmers('abcd', 4) == ['abcd']
-    assert kmers('abcd', 5) == []
+You'll need to extract "k-mers" or "n-grams" from each word. In the text "abcd," if `k=2` then the 2-mers are "ab," "bc," and "cd." If `k=3`, then the 3-mers are "abc" and "bcd." It may be helpful to know the number `n` of kmers `k` is proportional to the length `l` of the string `n = l - k + 1`. 
+
+Consider writing a function `get_kmers(text, k=1)` that only extracts kmers from some text, and then add this function to your program:
+
+````
+def test_get_kmers():
+    """Test get_kmers"""
+
+    assert get_kmers('abcd') == list('abcd')
+    assert get_kmers('abcd', 2) == ['ab', 'bc', 'cd']
+    assert get_kmers('abcd', 3) == ['abc', 'bcd']
+    assert get_kmers('abcd', 4) == ['abcd']
+    assert get_kmers('abcd', 5) == []
 ````
 
 Run your program with `pytest -v gibberish.py` and see if it passes.
@@ -115,7 +123,7 @@ To create the Markov chains, you'll need to get all the kmers for `k+1` for all 
  'ump': ['s']}
 ````
 
-For every 3-mer, we need to know all the characters that follow each. Obviously this is not very exciting given the small size of the input text.
+For every 3-mer, we need to know all the characters that follow each. Obviously this is not very exciting given the small size of the input text. If `k=2`, then you will see that `th` has two options, `e` and `e`. It's important to note how you will represent the choices for a given kmer. Will you use a `list`, a `set`, or a `collections.Counter`? Consider the implications. A `set` is smaller as it will represent only the *unique* letters but you will lose information about the *frequency* of letters. A `Counter` would store letters and counts, but how will you sample from that in a way that takes into account frequency? A `list` is probably the easiest structure.
 
 Consider writing a function `read_training(fhs, k=1)` that reads the input training files and returns a dictionary of kmer chains. Then add this function to test that is works properly:
 
@@ -143,9 +151,9 @@ def test_read_training():
 
 ## Making new words
 
-Once you have the chains of letters that follow each kmer, you need can use `random.choice` to find a starting kmer from the `keys` of your chain dictionary. Also use that function to select a length for your new word from the range of `k + 2` to the `args.max_word` (which defaults to `12`). Build up your new word by again using `random.choice` to select from the possibilities for the kmer which will change through each iteration.
+Once you have the chains of letters that follow each kmer, you need can use `random.choice` to find a starting kmer from the `keys` of your chain dictionary. Also use that function to select a length for your new word from the range of `k+2` to the `args.max_word` (which defaults to `12`). Build up your new word by again using `random.choice` to select from the possibilities for the kmer which will change through each iteration.
 
-That is, if you `k=3` and you start with the randomly selected kmer `ero`, you might get `n` as your next letter. On the next iteration of the loop, the `kmer` will be `ron` and you will look to see what letters follow that 3-mer. You might get `d`, and so the next time you would look for those letters following `ond`, and so forth. Continue until you've built a word that is the length you selected.
+That is, if `k=3` and you start with the randomly selected kmer `ero`, you might get `n` as your next letter. On the next iteration of the loop, the `kmer` will be `ron` and you will look to see what letters follow that 3-mer. You might get `d`, and so the next time you would look for those letters following `ond`, and so forth. Continue until you've built a word that is the length you selected.
 
 Hints: 
 

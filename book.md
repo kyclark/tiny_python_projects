@@ -60,7 +60,9 @@ For what it's worth, I always create a `$HOME/.local` directory for local instal
 
 Once you have stubbed out your new program, open it in your favorite editor and change the example arguments in `get_args` to suit the needs of your app, then add your code to `main` to accomplish the task described in the README. To run the test suite using `make`, you can type `make test` in the same directory as the `test.py` and `article.py` program. If your system does not have `make` or you just don't want to use it, type `pytest -v test.py`. 
 
-Your goal is to pass all the tests. The tests are written in an order designed to guide you in how break the problem down, e.g., often a test will ask you to alter one bit of text from the command line, and this it will ask you to read and alter the text from a file. I would suggest you solve the tests in order.
+Your goal is to pass all the tests. The tests are written in an order designed to guide you in how break the problem down, e.g., often a test will ask you to alter one bit of text from the command line, and this it will ask you to read and alter the text from a file. I would suggest you solve the tests in order. The `make test` target in every Makefile executes `pytest -xv test.py` where the `-x` flag will have `pytest` halt testing after it finds one that fails. There's no point in running every test when one fails, so I think this is less frustrating that seeing perhaps hundreds of lines of failing tests shoot by.
+
+A fair number of the program rely on a dictionary of English words. To be sure that you can reproduce my results, I include a copy of mine in `inputs/words.zip`.
 
 ## Author
 
@@ -660,7 +662,11 @@ Perhaps you remember the children's song "Apples and Bananas"?
 
 ![Apple and bananas go together like peas and carrots.](images/apples-and-bananas.png)
 
-Write a Python program called `apples.py` that will turn all the vowels in some given text in a single positional argument into just one `-v|--vowel` (default `a`) like this song. It should complain if the `--vowel` argument isn't a single, lowercase vowel (hint, see `choices` in the `argparse` documentation). If the given text argument is a file, read the text from the file. Replace all vowels with the given vowel, both lower- and uppercase.
+Write a Python program called `apples.py` that will turn all the vowels in some given text in a single positional argument into just one `-v|--vowel` (default `a`) like this song. 
+
+Replace all vowels with the given vowel, both lower- and uppercase.
+
+If the program is run with no arguments or the `-h|--help` flags, print a usage statement:
 
 ````
 $ ./apples.py
@@ -677,14 +683,38 @@ positional arguments:
 optional arguments:
   -h, --help           show this help message and exit
   -v str, --vowel str  The only vowel allowed (default: a)
+````
+
+The program should complain if the `--vowel` argument is not a single, lowercase vowel:
+
+````
 $ ./apples.py -v x foo
 usage: apples.py [-h] [-v str] str
-apples.py: error: argument -v/--vowel: invalid choice: 'x' (choose from 'a', 'e', 'i', 'o', 'u')
+apples.py: error: argument -v/--vowel: \
+invalid choice: 'x' (choose from 'a', 'e', 'i', 'o', 'u')
+````
+
+The program should handle text on the command line:
+
+````
 $ ./apples.py foo
 faa
+$ ./apples.py foo -v i
+fii
+````
+
+If the given text argument is a file, read the text from the file:
+
+````
 $ ./apples.py ../inputs/fox.txt
 Tha qaack brawn fax jamps avar tha lazy dag.
+$ ./apples.py --vowel u ../inputs/fox.txt
+Thu quuck bruwn fux jumps uvur thu luzy dug.
 ````
+
+Hints:
+
+* See `choices` in the `argparse` documentation for how to constrain the `--vowel` options
 
 \newpage
 
@@ -1554,6 +1584,8 @@ return parser.parse_args()
 But here we capture the arguments inside `get_args` and add a bit of validation. If `args.num_bottles` is less than one, we call `parser.error` with the message we want to tell the user. We don't have to tell the program to stop executing as `argparse` will exit immediately. Even better is that it will indicate a non-zero exit value to the operating system to indicate there was some sort of error. If you ever start writing command-line programs that chain together to make workflows, this is a way for one program to indicate failure and halt the entire process until the error has been fixed!
 
 Once you get to the line `args = get_args()` in `main`, a great deal of hard work has already occurred to get and validate the input from the user. From here, I decided to create a template for the song putting `{}` in the spots that change from verse to verse. Then I use the `reversed(range(...))` bit we discussed before to count down, with a `for` loop, using the current number `bottle` and `next_bottle` to print out the verse noting the presence or absence of the `s` where appropriate.
+
+I'd like to stress that there are literally hundreds of ways to solve this problem. The website http://www.99-bottles-of-beer.net/ claims to have 1500 variations in various languages, 15 in Python alone. As always, the solution you wrote and understand and that passes the test suite is the "right" solution.
 
 \newpage
 
@@ -3794,49 +3826,80 @@ Then I can `append` to the `table` a new tuple containing the `name` of the exer
 
 # Chapter 15: Blackjack 
 
-Write a Python program called `blackjack.py` that plays an abbreviated game of Blackjack. You will need to `import random` to get random cards from a deck you will construct, and so your program will need to accept a `-s|--seed` that will set `random.seed()` with the value that is passed in so that the test suite will work. The other arguments you will accept are two flags (Boolean values) of `-p|--player_hits` and `-d|--dealer_hits`. As usual, you will also have a `-h|--help` option for usage statement.
-
-To play the game, the user will run the program and will see a display of what cards the dealer has (noted "D") and what cards the player has (noted "P") along with a sum of the values of the cards. In Blackjack, number cards are worth their value, face cards are worth 10, and the Ace will be worth 1 for our game (though in the real game it can alternate between 1 and 11).
-
-To create your deck of cards, you will need to use the Unicode symbols for the suites ( ♥ ♠ ♣ ♦ ) [which won't display in the PDF, so consult the Markdown file].
-
-Combine these with the numbers 2-10 and the letters "A", "J", "Q," and "K" (hint: look at `itertools.product`). Because your game will use randomness, you will need to sort your deck and then use the `random.shuffle` method so that your cards will be in the correct order to pass the tests.
-
-When you make the initial deal, keep in mind how cards are actually dealt -- first one card to each of the players, then one to the dealer, then the players, then the dealer, etc. You might be tempted to use `random.choice` or something like that to select your cards, but you need to keep in mind that you are modeling an actual deck and so selected cards should no longer be present in the deck. If the `-p|--player_htis` flag is present, deal an additional card to the player; likewise with the `-d|--dealer_hits` flag.
-
-After displaying the hands, the code should:
-
-1. Check if the player has more than 21; if so, print 'Player busts! You lose, loser!' and exit(0)
-2. Check if the dealer has more than 21; if so, print 'Dealer busts.' and exit(0)
-3. Check if the player has exactly 21; if so, print 'Player wins. You probably cheated.' and exit(0)
-4. Check if the dealer has exactly 21; if so, print 'Dealer wins!' and exit(0)
-5. If the either the dealer or the player has less than 18, you should indicate "X should hit."
-
-NB: Look at the Markdown format to see the actual output as the suites won't display in the PDF version!
+What's a games book without a card game? Let's write a Python program called `blackjack.py` that plays an abbreviated game of Blackjack. Your program should accept a `-S|--stand` option (default `18`) for the value to "stand" on (not "hit" or take another card). Your program should also accept two flags (Boolean values) for `-p|--player_hits` and `-d|--dealer_hits` which will be explained shortly. You will need to accept a `-s|--seed` (default `None`) to set `random.seed`. As usual, you will also have a `-h|--help` option for usage statement:
 
 ````
-$ ./blackjack.py
-D [11]: ♠J ♥A
-P [18]: ♦8 ♠10
-Dealer should hit.
-$ ./blackjack.py
-D [13]: ♥3 ♦J
-P [16]: ♥6 ♦10
+$ ./blackjack.py -h
+usage: blackjack.py [-h] [-d] [-p] [-S int] [-s int]
+
+Blackjack
+
+optional arguments:
+  -h, --help           show this help message and exit
+  -d, --dealer_hits    Dealer hits (default: False)
+  -p, --player_hits    Player hits (default: False)
+  -S int, --stand int  Stand on value (default: 18)
+  -s int, --seed int   Random seed (default: None)
+````
+
+The program will create a deck of cards by combining symbols "H," "D," "S", and "C" for the suites "hearts," "diamonds," "spades," and "clubs," respectively, with the numbers 2-10 and the letters "A", "J", "Q," and "K". In order to pass the tests, you will need to sort your deck and then use the `random.shuffle` method so that your cards will be in the order the tests expect. 
+
+To deal, keep in mind how cards are actually dealt -- first one card to each of the players, then one to the dealer, then the players, then the dealer, etc. You might be tempted to use `random.choice` or something like that to select your cards, but you need to keep in mind that you are modeling an actual deck and so selected cards should no longer be present in the deck. If the `--player_hits` flag is present, deal an additional card to the player; likewise with the `--dealer_hits` flag.
+
+When the program runs with no arguments, display the dealer and players hand along with a sum of the values of the cards. In Blackjack, number cards are worth their value, face cards are worth 10, and the Ace will be worth 1 for our game (though in the real game it can alternate between 1 and 11).
+
+````
+$ ./blackjack.py -s 1
+Dealer [15]: HJ C5
+Player [10]: C9 SA
 Dealer should hit.
 Player should hit.
-$ ./blackjack.py -s 5
-D [ 5]: ♣4 ♣A
-P [19]: ♦10 ♦9
-Dealer should hit.
-$ ./blackjack.py -s 3 -p
-D [19]: ♥K ♠9
-P [22]: ♣3 ♥9 ♣J
-Player busts! You lose, loser!
-$ ./blackjack.py -s 15 -p
-D [19]: ♠10 ♦9
-P [21]: ♣10 ♥8 ♠3
-Player wins. You probably cheated.
 ````
+
+Here we see that both the dealer and player fall below the `--stand` value of `18`. Run again and have both players hit:
+
+````
+$ ./blackjack.py -s 1 -d -p
+Dealer [23]: HJ C5 C8
+Player [14]: C9 SA D4
+Dealer busts.
+````
+
+Here the dealer's hand went above 21, so he "busts." The player could stand to hit again, but, of course, need not since the dealer busted.
+
+If we run with a different seed, we see different results:
+
+````
+$ ./blackjack.py -s 3
+Dealer [19]: HK C9
+Player [12]: D3 H9
+Player should hit.
+````
+
+Here the dealer is recommended to stand because they have more than 18. Run with a higher `--stand` to change that:
+
+````
+$ ./blackjack.py -s 3 -S 20
+Dealer [19]: HK C9
+Player [12]: D3 H9
+Dealer should hit.
+Player should hit.
+````
+
+Now the dealer is recommended to hit, which seems unwise.
+
+
+After dealing all the required cards and displaying the hands, the code should do (in order):
+
+1. Check if the player has more than 21; if so, print 'Player busts! You lose, loser!' and `exit(0)`
+2. Check if the dealer has more than 21; if so, print 'Dealer busts.' and `exit(0)`
+3. Check if the player has exactly 21; if so, print 'Player wins. You probably cheated.' and `exit(0)`
+4. Check if the dealer has exactly 21; if so, print 'Dealer wins!' and `exit(0)`
+5. If the either the dealer or the player has less than 18, you should indicate "X should hit."
+
+Hints:
+
+* Use `itertools.product` to combine the suites and cards to make your deck.
 
 \newpage
 
@@ -3848,99 +3911,147 @@ Player wins. You probably cheated.
      3	
      4	import argparse
      5	import random
-     6	import sys
-     7	from itertools import product
-     8	from dire import die
+     6	import re
+     7	import sys
+     8	from itertools import product
      9	
     10	
     11	# --------------------------------------------------
     12	def get_args():
     13	    """get command-line arguments"""
-    14	    parser = argparse.ArgumentParser(
-    15	        description='Argparse Python script',
-    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    17	
-    18	    parser.add_argument('-s',
-    19	                        '--seed',
-    20	                        help='Random seed',
-    21	                        metavar='int',
-    22	                        type=int,
-    23	                        default=None)
-    24	
-    25	    parser.add_argument('-d',
-    26	                        '--dealer_hits',
-    27	                        help='Dealer hits',
-    28	                        action='store_true')
-    29	
-    30	    parser.add_argument('-p',
-    31	                        '--player_hits',
-    32	                        help='Player hits',
-    33	                        action='store_true')
-    34	
-    35	    return parser.parse_args()
-    36	
-    37	
-    38	# --------------------------------------------------
-    39	def bail(msg):
-    40	    """print() and exit(0)"""
-    41	    print(msg)
-    42	    sys.exit(0)
-    43	
+    14	
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Blackjack',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('-d',
+    20	                        '--dealer_hits',
+    21	                        help='Dealer hits',
+    22	                        action='store_true')
+    23	
+    24	    parser.add_argument('-p',
+    25	                        '--player_hits',
+    26	                        help='Player hits',
+    27	                        action='store_true')
+    28	
+    29	    parser.add_argument('-S',
+    30	                        '--stand',
+    31	                        help='Stand on value',
+    32	                        metavar='int',
+    33	                        type=int,
+    34	                        default=18)
+    35	
+    36	    parser.add_argument('-s',
+    37	                        '--seed',
+    38	                        help='Random seed',
+    39	                        metavar='int',
+    40	                        type=int,
+    41	                        default=None)
+    42	
+    43	    return parser.parse_args()
     44	
-    45	# --------------------------------------------------
-    46	def card_value(card):
-    47	    """card to numeric value"""
-    48	    val = card[1:]
-    49	    faces = {'A': 1, 'J': 10, 'Q': 10, 'K': 10}
-    50	    if val.isdigit():
-    51	        return int(val)
-    52	    elif val in faces:
-    53	        return faces[val]
-    54	    else:
-    55	        die('Unknown card value for "{}"'.format(card))
-    56	
+    45	
+    46	# --------------------------------------------------
+    47	def bail(msg):
+    48	    """print() and exit(0)"""
+    49	
+    50	    print(msg)
+    51	    sys.exit(0)
+    52	
+    53	
+    54	# --------------------------------------------------
+    55	def card_value(card):
+    56	    """card to numeric value"""
     57	
-    58	# --------------------------------------------------
-    59	def main():
-    60	    """Make a jazz noise here"""
-    61	    args = get_args()
-    62	    random.seed(args.seed)
-    63	    suites = list('♥♠♣♦')
-    64	    values = list(range(2, 11)) + list('AJQK')
-    65	    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
-    66	    random.shuffle(cards)
-    67	
-    68	    p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
-    69	    player = [p1, p2]
-    70	    dealer = [d1, d2]
+    58	    val = card[1:]
+    59	    faces = {'A': 1, 'J': 10, 'Q': 10, 'K': 10}
+    60	    return int(val) if val.isdigit() else faces[val] if val in faces else None
+    61	
+    62	
+    63	# --------------------------------------------------
+    64	def test_card_value():
+    65	    """Test card_value"""
+    66	
+    67	    assert card_value('HA') == 1
+    68	
+    69	    for face in 'JQK':
+    70	        assert card_value('D' + face) == 10
     71	
-    72	    if args.player_hits:
-    73	        player.append(cards.pop())
-    74	    if args.dealer_hits:
-    75	        dealer.append(cards.pop())
-    76	
-    77	    player_hand = sum(map(card_value, player))
-    78	    dealer_hand = sum(map(card_value, dealer))
+    72	    for num in range(1, 11):
+    73	        assert card_value('S' + str(num)) == num
+    74	
+    75	
+    76	# --------------------------------------------------
+    77	def make_deck():
+    78	    """Make a deck of cards"""
     79	
-    80	    print('D [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
-    81	    print('P [{:2}]: {}'.format(player_hand, ' '.join(player)))
-    82	
-    83	    if player_hand > 21:
-    84	        bail('Player busts! You lose, loser!')
-    85	    elif dealer_hand > 21:
-    86	        bail('Dealer busts.')
-    87	    elif player_hand == 21:
-    88	        bail('Player wins. You probably cheated.')
-    89	    elif dealer_hand == 21:
-    90	        bail('Dealer wins!')
-    91	
-    92	    if dealer_hand < 18: print('Dealer should hit.')
-    93	    if player_hand < 18: print('Player should hit.')
-    94	
-    95	
-    96	# --------------------------------------------------
-    97	if __name__ == '__main__':
-    98	    main()
+    80	    suites = list('HDSC')
+    81	    values = list(range(2, 11)) + list('AJQK')
+    82	    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
+    83	    random.shuffle(cards)
+    84	    return cards
+    85	
+    86	
+    87	# --------------------------------------------------
+    88	def test_make_deck():
+    89	    """Test for make_deck"""
+    90	
+    91	    deck = make_deck()
+    92	    assert len(deck) == 52
+    93	
+    94	    for suite in 'HDSC':
+    95	        cards = list(filter(lambda c: c[0] == suite, deck))
+    96	        assert len(cards) == 13
+    97	        num_cards = list(filter(lambda c: re.match('\d+', c[1:]), deck))
+    98	
+    99	
+   100	# --------------------------------------------------
+   101	def main():
+   102	    """Make a jazz noise here"""
+   103	
+   104	    args = get_args()
+   105	    stand_on = args.stand
+   106	    random.seed(args.seed)
+   107	    cards = make_deck()
+   108	
+   109	    p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
+   110	    player = [p1, p2]
+   111	    dealer = [d1, d2]
+   112	
+   113	    if args.player_hits:
+   114	        player.append(cards.pop())
+   115	    if args.dealer_hits:
+   116	        dealer.append(cards.pop())
+   117	
+   118	    player_hand = sum(map(card_value, player))
+   119	    dealer_hand = sum(map(card_value, dealer))
+   120	
+   121	    print('Dealer [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
+   122	    print('Player [{:2}]: {}'.format(player_hand, ' '.join(player)))
+   123	
+   124	    blackjack = 21
+   125	    if player_hand > blackjack:
+   126	        bail('Player busts! You lose, loser!')
+   127	
+   128	    if dealer_hand > blackjack:
+   129	        bail('Dealer busts.')
+   130	
+   131	    if player_hand == blackjack:
+   132	        bail('Player wins. You probably cheated.')
+   133	
+   134	    if dealer_hand == blackjack:
+   135	        bail('Dealer wins!')
+   136	
+   137	    if dealer_hand < stand_on:
+   138	        print('Dealer should hit.')
+   139	
+   140	    if player_hand < stand_on:
+   141	        print('Player should hit.')
+   142	
+   143	
+   144	# --------------------------------------------------
+   145	if __name__ == '__main__':
+   146	    main()
 ````
 
 \newpage
@@ -5673,7 +5784,7 @@ In creating all the possible plates from your regular expression, you are making
 
 # Chapter 23: Gibberish Generator
 
-Write a Python program called `gibberish.py` that uses the Markov chain algorithm to generate new words from a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
+Write a Python program called `gibberish.py` that uses the Markov chain algorithm to generate new words from the words in a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
 ````
 a = l, b, m
@@ -5684,15 +5795,10 @@ m = a
 
 That is, given this training set, if you started with `l` you could only choose an `a`, but if you have `a` then you could choose `l`, `b`, or `m`.
 
-The program should generate `-n|--num_words` words (default `10`), each a random size between `k` + 2 and a `-m|--max_word` size (default `12`). Be sure to accept `-s|--seed` to pass to `random.seed`. My solution also takes a `-d|--debug` flag that will emit debug messages to `.log` for you to inspect.
+The program should generate `-n|--num_words` words (default `10`), each a random size between `k+2` and a `-m|--max_word` size (default `12`). Be sure to accept `-s|--seed` to pass to `random.seed`. My solution also takes a `-d|--debug` flag that will emit debug messages to `.log` for you to inspect.
 
-Chose the best words and create definitions for them:
-
-* yulcogicism: the study of Christmas gnostics
-* umjamp: skateboarding trick
-* callots: insignia of officers in Greek army
-* urchenev: fungal growth found under cobblestones
-
+If provided no arguments or the `-h|--help` flag, generate a usage:
+ 
 ````
 $ ./gibberish.py
 usage: gibberish.py [-h] [-n int] [-k int] [-m int] [-s int] [-d] FILE [FILE ...]
@@ -5715,54 +5821,141 @@ optional arguments:
                         Max word length (default: 12)
   -s int, --seed int    Random seed (default: None)
   -d, --debug           Debug to ".log" (default: False)
-$ ./gibberish.py /usr/share/dict/words -s 1
-  1: oveli
-  2: uming
-  3: uylatiteda
-  4: owsh
-  5: uuse
-  6: ismandl
-  7: efortai
-  8: eyhopy
-  9: auretrab
- 10: ozogralach
-$ ./gibberish.py ../inputs/const.txt -s 2 -k 3
-  1: romot
-  2: leasonsusp
-  3: gdoned
-  4: bunablished
-  5: neithere
-  6: achmen
-  7: reason
-  8: nmentyone
-  9: effereof
- 10: eipts
-$ ./gibberish.py -k 2 ../inputs/1945-boys.txt
-  1: baronaler
-  2: lip
-  3: oselli
-  4: ard
-  5: vicharley
-  6: melli
-  7: denry
-  8: jerictomank
-  9: rick
- 10: larvichaell
 ````
 
+Create new English words by training on a dictionary:
+
+````
+$ ./gibberish.py /usr/share/dict/words -s 1 -n 5
+  1: salva
+  2: xeroolizati
+  3: upst
+  4: azeconi
+  5: woco
+````
+
+Or train on the US Constitution:
+
+````
+$ ./gibberish.py ../inputs/const.txt -s 2 -k 3 -n 4
+  1: lfare
+  2: sachmentit
+  3: such
+  4: rcessadopti
+```` 
+
+Generate new names for boys:
+
+```` 
+$ ./gibberish.py -k 2 -n 6 ../inputs/1945-boys.txt
+  1: marthomart
+  2: danie
+  3: muel
+  4: osep
+  5: tomandrenny
+  6: alberber
+````
+
+Chose the best words and create definitions for them:
+
+* yulcogicism: the study of Christmas gnostics
+* umjamp: skateboarding trick
+* callots: insignia of officers in Greek army
+* urchenev: fungal growth found under cobblestones
+ 
+## Kmers
+
+To create the Markov chains, first you'll need to read all the words from each file. Use `str.lower` to lowercase all the text and then remove any character that are not in the regular English alphabet (a-z). A regular expression is handy for that:
+
+````
+>>> import re
+>>> re.sub('[^a-z]', '', 'H48,`b09e3!"')
+'be'
+````
+
+You'll need to extract "k-mers" or "n-grams" from each word. In the text "abcd," if `k=2` then the 2-mers are "ab," "bc," and "cd." If `k=3`, then the 3-mers are "abc" and "bcd." It may be helpful to know the number `n` of kmers `k` is proportional to the length `l` of the string `n = l - k + 1`. 
+
+Consider writing a function `get_kmers(text, k=1)` that only extracts kmers from some text, and then add this function to your program:
+
+````
+def test_get_kmers():
+    """Test get_kmers"""
+
+    assert get_kmers('abcd') == list('abcd')
+    assert get_kmers('abcd', 2) == ['ab', 'bc', 'cd']
+    assert get_kmers('abcd', 3) == ['abc', 'bcd']
+    assert get_kmers('abcd', 4) == ['abcd']
+    assert get_kmers('abcd', 5) == []
+````
+
+Run your program with `pytest -v gibberish.py` and see if it passes.
+
+## Chains
+
+To create the Markov chains, you'll need to get all the kmers for `k+1` for all the words in all the texts. That is, if `k=3` you need to find all the 4-mers so that you can find the character *after* the 3-mers in the texts. For example, in the text "The quick brown fox jumps over the lazy dog.", we need to create a data structure that looks like this:
+
+````
+>>> from pprint import pprint as pp
+>>> pp(chains)
+{'bro': ['w'],
+ 'jum': ['p'],
+ 'laz': ['y'],
+ 'ove': ['r'],
+ 'qui': ['c'],
+ 'row': ['n'],
+ 'uic': ['k'],
+ 'ump': ['s']}
+````
+
+For every 3-mer, we need to know all the characters that follow each. Obviously this is not very exciting given the small size of the input text. If `k=2`, then you will see that `th` has two options, `e` and `e`. It's important to note how you will represent the choices for a given kmer. Will you use a `list`, a `set`, or a `collections.Counter`? Consider the implications. A `set` is smaller as it will represent only the *unique* letters but you will lose information about the *frequency* of letters. A `Counter` would store letters and counts, but how will you sample from that in a way that takes into account frequency? A `list` is probably the easiest structure.
+
+Consider writing a function `read_training(fhs, k=1)` that reads the input training files and returns a dictionary of kmer chains. Then add this function to test that is works properly:
+
+````
+def test_read_training():
+    """Test read_training"""
+
+    text = 'The quick brown fox jumps over the lazy dog.'
+
+    expected3 = {
+        'qui': ['c'],
+        'uic': ['k'],
+        'bro': ['w'],
+        'row': ['n'],
+        'jum': ['p'],
+        'ump': ['s'],
+        'ove': ['r'],
+        'laz': ['y']
+    }
+    assert read_training([io.StringIO(text)], k=3) == expected3
+
+    expected4 = {'quic': ['k'], 'brow': ['n'], 'jump': ['s']}
+    assert read_training([io.StringIO(text)], k=4) == expected4
+````
+
+## Making new words
+
+Once you have the chains of letters that follow each kmer, you need can use `random.choice` to find a starting kmer from the `keys` of your chain dictionary. Also use that function to select a length for your new word from the range of `k+2` to the `args.max_word` (which defaults to `12`). Build up your new word by again using `random.choice` to select from the possibilities for the kmer which will change through each iteration.
+
+That is, if `k=3` and you start with the randomly selected kmer `ero`, you might get `n` as your next letter. On the next iteration of the loop, the `kmer` will be `ron` and you will look to see what letters follow that 3-mer. You might get `d`, and so the next time you would look for those letters following `ond`, and so forth. Continue until you've built a word that is the length you selected.
+
+Hints: 
+
+* Define the input files with `type=argparse.FileType('r')` so that `argparse` will validate the user provides readable files and then will `open` them for you.
+* Consider using the `logging` module to print out debugging messages. Run the `solution.py` with the `-d` flag and then inspect the `.log` file.
 \newpage
 
 ## Solution
 
 ````
      1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import logging
-     5	import os
-     6	import random
-     7	import re
-     8	import sys
+     2	"""Markov chain word generator"""
+     3	
+     4	import argparse
+     5	import io
+     6	import logging
+     7	import random
+     8	import re
      9	from collections import defaultdict
     10	
     11	
@@ -5771,107 +5964,284 @@ $ ./gibberish.py -k 2 ../inputs/1945-boys.txt
     14	    """Get command-line arguments"""
     15	
     16	    parser = argparse.ArgumentParser(
-    17	        description='Markov chain for characters/words',
+    17	        description='Markov chain word generator',
     18	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     19	
     20	    parser.add_argument('file',
     21	                        metavar='FILE',
     22	                        nargs='+',
-    23	                        help='Training file(s)')
-    24	
-    25	    parser.add_argument('-n',
-    26	                        '--num_words',
-    27	                        help='Number of words to generate',
-    28	                        metavar='int',
-    29	                        type=int,
-    30	                        default=10)
-    31	
-    32	    parser.add_argument('-k',
-    33	                        '--kmer_size',
-    34	                        help='Kmer size',
-    35	                        metavar='int',
-    36	                        type=int,
-    37	                        default=2)
-    38	
-    39	    parser.add_argument('-m',
-    40	                        '--max_word',
-    41	                        help='Max word length',
-    42	                        metavar='int',
-    43	                        type=int,
-    44	                        default=12)
-    45	
-    46	    parser.add_argument('-s',
-    47	                        '--seed',
-    48	                        help='Random seed',
-    49	                        metavar='int',
-    50	                        type=int,
-    51	                        default=None)
-    52	
-    53	    parser.add_argument('-d',
-    54	                        '--debug',
-    55	                        help='Debug to ".log"',
-    56	                        action='store_true')
-    57	
-    58	    return parser.parse_args()
-    59	
+    23	                        type=argparse.FileType('r'),
+    24	                        help='Training file(s)')
+    25	
+    26	    parser.add_argument('-n',
+    27	                        '--num_words',
+    28	                        help='Number of words to generate',
+    29	                        metavar='int',
+    30	                        type=int,
+    31	                        default=10)
+    32	
+    33	    parser.add_argument('-k',
+    34	                        '--kmer_size',
+    35	                        help='Kmer size',
+    36	                        metavar='int',
+    37	                        type=int,
+    38	                        default=2)
+    39	
+    40	    parser.add_argument('-m',
+    41	                        '--max_word',
+    42	                        help='Max word length',
+    43	                        metavar='int',
+    44	                        type=int,
+    45	                        default=12)
+    46	
+    47	    parser.add_argument('-s',
+    48	                        '--seed',
+    49	                        help='Random seed',
+    50	                        metavar='int',
+    51	                        type=int,
+    52	                        default=None)
+    53	
+    54	    parser.add_argument('-d',
+    55	                        '--debug',
+    56	                        help='Debug to ".log"',
+    57	                        action='store_true')
+    58	
+    59	    return parser.parse_args()
     60	
-    61	# --------------------------------------------------
-    62	def main():
-    63	    """Make a jazz noise here"""
-    64	
-    65	    args = get_args()
-    66	    k = args.kmer_size
-    67	    random.seed(args.seed)
+    61	
+    62	# --------------------------------------------------
+    63	def get_kmers(text, k=1):
+    64	    """Return k-mers from text"""
+    65	
+    66	    return [text[i:i + k] for i in range(len(text) - k + 1)]
+    67	
     68	
-    69	    logging.basicConfig(
-    70	        filename='.log',
-    71	        filemode='w',
-    72	        level=logging.DEBUG if args.debug else logging.CRITICAL)
-    73	
-    74	    # debate use of set/list in terms of letter frequencies
-    75	    chains = defaultdict(list)
-    76	    for file in args.file:
-    77	        for line in open(file):
-    78	            for word in line.lower().split():
-    79	                word = re.sub('[^a-z]', '', word)
-    80	                for i in range(0, len(word) - k):
-    81	                    kmer = word[i:i + k + 1]
-    82	                    chains[kmer[:-1]].append(kmer[-1])
+    69	# --------------------------------------------------
+    70	def test_get_kmers():
+    71	    """Test get_kmers"""
+    72	
+    73	    assert get_kmers('abcd') == list('abcd')
+    74	    assert get_kmers('abcd', 2) == ['ab', 'bc', 'cd']
+    75	    assert get_kmers('abcd', 3) == ['abc', 'bcd']
+    76	    assert get_kmers('abcd', 4) == ['abcd']
+    77	    assert get_kmers('abcd', 5) == []
+    78	
+    79	
+    80	# --------------------------------------------------
+    81	def read_training(fhs, k=1):
+    82	    """Read training files, return chains"""
     83	
-    84	    logging.debug(chains)
-    85	
-    86	    kmers = list(chains.keys())
-    87	    starts = set()
-    88	
-    89	    for i in range(1, args.num_words + 1):
-    90	        word = ''
-    91	        while not word:
-    92	            kmer = random.choice(kmers)
-    93	            if not kmer in starts and chains[kmer] and re.search(
-    94	                    '[aeiou]', kmer):
-    95	                if k > 1:
-    96	                    starts.add(kmer)
-    97	                word = kmer
+    84	    chains = defaultdict(list)
+    85	    clean = lambda w: re.sub('[^a-z]', '', w.lower())
+    86	
+    87	    for fh in fhs:
+    88	        for word in map(clean, fh.read().split()):
+    89	            for kmer in get_kmers(word, k + 1):
+    90	                chains[kmer[:-1]].append(kmer[-1])
+    91	
+    92	    return chains
+    93	
+    94	
+    95	# --------------------------------------------------
+    96	def test_read_training():
+    97	    """Test read_training"""
     98	
-    99	        length = random.choice(range(k + 2, args.max_word))
-   100	        logging.debug('Make a word {} long starting with "{}"'.format(
-   101	            length, word))
-   102	        while len(word) < length:
-   103	            if not chains[kmer]: break
-   104	            char = random.choice(list(chains[kmer]))
-   105	            logging.debug('char = "{}"'.format(char))
-   106	            word += char
-   107	            kmer = kmer[1:] + char
-   108	
-   109	        logging.debug('word = "{}"'.format(word))
-   110	        print('{:3}: {}'.format(i, word))
-   111	
+    99	    text = 'The quick brown fox jumps over the lazy dog.'
+   100	
+   101	    expected3 = {
+   102	        'qui': ['c'],
+   103	        'uic': ['k'],
+   104	        'bro': ['w'],
+   105	        'row': ['n'],
+   106	        'jum': ['p'],
+   107	        'ump': ['s'],
+   108	        'ove': ['r'],
+   109	        'laz': ['y']
+   110	    }
+   111	    assert read_training([io.StringIO(text)], k=3) == expected3
    112	
-   113	# --------------------------------------------------
-   114	if __name__ == '__main__':
-   115	    main()
+   113	    expected4 = {'quic': ['k'], 'brow': ['n'], 'jump': ['s']}
+   114	    assert read_training([io.StringIO(text)], k=4) == expected4
+   115	
+   116	
+   117	# --------------------------------------------------
+   118	def main():
+   119	    """Make a jazz noise here"""
+   120	
+   121	    args = get_args()
+   122	    k = args.kmer_size
+   123	    random.seed(args.seed)
+   124	
+   125	    logging.basicConfig(
+   126	        filename='.log',
+   127	        filemode='w',
+   128	        level=logging.DEBUG if args.debug else logging.CRITICAL)
+   129	
+   130	    chains = read_training(args.file, k)
+   131	    logging.debug(chains)
+   132	
+   133	    kmers = list(chains.keys())
+   134	    for i in range(args.num_words):
+   135	        word = random.choice(kmers)
+   136	        length = random.choice(range(k + 2, args.max_word))
+   137	        logging.debug('Length "%s" starting with "%s"', length, word)
+   138	
+   139	        while len(word) < length:
+   140	            kmer = word[-1 * k:]
+   141	            if not chains[kmer]:
+   142	                break
+   143	
+   144	            char = random.choice(list(chains[kmer]))
+   145	            logging.debug('char = "%s"', char)
+   146	            word += char
+   147	
+   148	        logging.debug('word = "%s"', word)
+   149	        print('{:3}: {}'.format(i + 1, word))
+   150	
+   151	
+   152	# --------------------------------------------------
+   153	if __name__ == '__main__':
+   154	    main()
 ````
 
+\newpage
+
+## Discussion
+
+As recommended in the description, I define my arguments in `get_args` to rely on `argparse` to validate as much as possible, e.g. verify that I get `int` values and readable files as well as provide reasonable defaults for everything but the required `file` argument. I additionally define a `-d|--debug` flag that is only `True` when present so that I can add this bit of code:
+
+````
+logging.basicConfig(
+    filename='.log',
+    filemode='w',
+    level=logging.DEBUG if args.debug else logging.CRITICAL)
+````
+
+This is a simple and effective way to turn debugging messages on and off. I usually write to a `.log` file, being sure to choose a name that starts with a `.` so that it will normally be hidden when I `ls` the directory. Since the `filemode='w'`, the file will be overwritten on each run. I set the threshold to `logging.DEBUG` if the `debug` flag is `True`; otherwise the `logging` module will only emit those at the `CRITICAL` level. As I don't have any "critical" messages, the `.log` file will be empty unless the `--debug` is present. Then I have `logging.debug()` calls throughout my code which will only log messages when I ask. This is easier than putting `print` statements in your code which you have to remove or comment out when you are done debugging.
+
+## Finding kmers in text
+
+If you followed my advice about breaking down the problem, then you probably created a `kmers` function with the formula for the number of kmers in a given test (`n = l - k + 1`):
+
+````
+>>> def get_kmers(text, k=1):
+...     return [text[i:i + k] for i in range(len(text) - k + 1)]
+...
+````
+
+Using the formula given in the intro for the number of kmers in a string, I use the `range` function to get the start position of each of those kmers and then get the slice of the `text` from that position to the position `k` away.
+
+I can verify it works in the REPL:
+
+````
+>>> get_kmers('abcd', 2)
+['ab', 'bc', 'cd']
+>>> get_kmers('abcd', 3)
+['abc', 'bcd']
+````
+
+But more importantly, I can write a `test_kmers` function that I embed in my code and run with `pytest`!
+
+## Reading the training files
+
+Since I used the `argparse.FileType` to define the `file` with `nargs='+'`, I have a `list` of *open file handles* that can be read. I defined a `read_training` function that iterates over all the words in each file by calling `fh.read().split()`. As this breaks the text on spaces, various bits of punctuation may still be attached:
+
+````
+>>> fh = open('../inputs/spiders.txt')
+>>> fh.read().split()
+['Don’t', 'worry,', 'spiders,', 'I', 'keep', 'house', 'casually.']
+````
+
+So I use a regular expression to remove anything that is *not* in the set of letters "a-z" by defining a negated character class `[^a-z]`. I create a one-line function to `lower` the word and `clean` it:
+
+````
+>>> import re
+>>> clean = lambda word: re.sub('[^a-z]', '', word.lower())
+>>> clean('"Hey!"')
+'hey'
+````
+
+Now I can get cleaned, lowercase text:
+
+````
+>>> fh = open('../inputs/spiders.txt')
+>>> list(map(clean, fh.read().split()))
+['dont', 'worry', 'spiders', 'i', 'keep', 'house', 'casually']
+````
+
+I can now get all the kmers for each word by using my `kmers` function. I put all this into a function called `read_training`. It takes a `list` of open file handles (which I get from `argparse`) and a `k` which defaults to `1`:
+
+````
+>>> def read_training(fhs, k=1):
+...     chains = defaultdict(list)
+...     clean = lambda word: re.sub('[^a-z]', '', word.lower())
+...     for fh in fhs:
+...         for word in map(clean, fh.read().split()):
+...             for kmer in get_kmers(word, k + 1):
+...                 chains[kmer[:-1]].append(kmer[-1])
+...     return chains
+...
+````
+
+Note the handling of the kmers. I actually request `k+1`-mers and then slice `kmer[:-1]` to get the actual `k`-mer (everything up to the penultimate letter) and then `append` `kmer[-1]` (the last letter) to the `chains` for that `k`-mer.
+
+I can verify it works:
+
+````
+>>> from collections import defaultdict
+>>> from pprint import pprint as pp
+>>> pp(read_training([open('../inputs/spiders.txt')], k=5))
+defaultdict(<class 'list'>,
+            {'asual': ['l'],
+             'casua': ['l'],
+             'pider': ['s'],
+             'spide': ['r'],
+             'suall': ['y']})
+````
+
+But, again, *more importantly is that I can write a test that verifies it works*! If you copy in the `test_read_training` function, you have the assurange that you are creating valid chains.
+
+## Making new words
+
+Once I have the chains from all the input files, I need to use a `for` loop for the `range(args.num_words)`. Each time through the loop, I need to choose a starting kmer for a new word and a length
+
+````
+>>> k = 3
+>>> max_word = 12
+>>> chains = read_training([open('../inputs/spiders.txt')], k)
+>>> kmers = list(chains.keys())
+>>> num_words = 3
+>>> for i in range(num_words):
+...     word = random.choice(kmers)
+...     length = random.choice(range(k + 2, max_word))
+...     print('Length "{}" starting with "{}"'.format(length, word))
+...
+Length "9" starting with "pid"
+Length "7" starting with "cas"
+Length "8" starting with "orr"
+````
+
+OK, that's our starting point. Given a starting kmer like `'pid'`, we need to create a `while` loop that will continue as long as the `len(word)` is less than the `length` we chose for the word. Each time through the loop, I'll set the current `kmer` to the last `k` letters of the `word`. I use `random.choice` to select from `chains[kmer]` to find the next `char` (character) and append that to the `word`:
+
+````
+>>> while len(word) < length:
+...     kmer = word[-1 * k:]
+...     if not chains[kmer]: break
+...     char = random.choice(list(chains[kmer]))
+...     word += char
+...
+>>> print(word)
+piders
+````
+
+It can happen sometimes that there are no options for a given `kmer`. That is, `chains[kmer]` is an empty list, so I in my code I add a check to `break` out of the `while` loop if this evaluates to `False`.
+
+Finally I `print` out the number of the word and the word itself using a format string to align the numbers and text:
+
+````
+>>> print('{:3}: {}'.format(i+1, word))
+  3: piders
+````
 \newpage
 
 # Chapter 24: Piggy (Pig Latin)
