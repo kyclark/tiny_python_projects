@@ -6,6 +6,18 @@ I believe you can learn serious things through silly games. I also think you wil
 
 I won't necessarily show you beforehand how to write each program. I'll describe what the program should do and provide some discussion about how to write it. I'll also create an appendix with short examples of how to do things like how to use `argparse`, how to read/write from/to a file, how to process all the files in a directory, how to extract k-mers from a string, etc. I'll provide some building blocks, but I want you to figure out how to put the pieces together.
 
+When you are done with this books you be able to:
+
+* Write command-line Python programs
+* Process a variety of command-line arguments, options, and flags
+* Write and run tests for your programs and functions
+* Manipulate of Python data structures including strings, lists, tuples, sets, dictionaries
+* Use higher-order functions like `map` and `filter`
+* Write and use regular expressions
+* Read, parse, and write various text formats
+* Use and control of randomness
+* Create and use graphs, kmers, Markov chains, Hamming distance, the Soundex algorithm, and more
+
 ## Forking GitHub repo
 
 First use the GitHub interface to "fork" this repository into your own account. Then do `git clone` of *your* repository to get a local copy. Inside that checkout, do:
@@ -51,6 +63,18 @@ Once you have stubbed out your new program, open it in your favorite editor and 
 Your goal is to pass all the tests. The tests are written in an order designed to guide you in how break the problem down, e.g., often a test will ask you to alter one bit of text from the command line, and this it will ask you to read and alter the text from a file. I would suggest you solve the tests in order. The `make test` target in every Makefile executes `pytest -xv test.py` where the `-x` flag will have `pytest` halt testing after it finds one that fails. There's no point in running every test when one fails, so I think this is less frustrating that seeing perhaps hundreds of lines of failing tests shoot by.
 
 A fair number of the program rely on a dictionary of English words. To be sure that you can reproduce my results, I include a copy of mine in `inputs/words.zip`.
+
+## Why Not Notebooks?
+
+Notebooks are great for interactive exploration of data, especially if you want to visualize thing, but the downsides:
+
+* Stored as JSON not line-oriented text, so no good `diff` tools
+* Not easily shared
+* Too easy to run cells out of order
+* Hard to test
+* No way to pass in arguments
+
+As I want you to learn 
 
 ## Author
 
