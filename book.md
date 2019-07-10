@@ -10,6 +10,9 @@ author: Ken Youens-Clark
 
 \setcounter{tocdepth}{2}\tableofcontents
 
+
+\newpage
+
 # Introduction
 
 > "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
@@ -17,6 +20,18 @@ author: Ken Youens-Clark
 I believe you can learn serious things through silly games. I also think you will learn best by *doing*. This is a book of programming exercises. Each chapter includes a description of a program you should write with examples of how the program should work. Most importantly, each program includes tests so that you know if your program is working well enough. 
 
 I won't necessarily show you beforehand how to write each program. I'll describe what the program should do and provide some discussion about how to write it. I'll also create an appendix with short examples of how to do things like how to use `argparse`, how to read/write from/to a file, how to process all the files in a directory, how to extract k-mers from a string, etc. I'll provide some building blocks, but I want you to figure out how to put the pieces together.
+
+When you are done with this books you be able to:
+
+* Write command-line Python programs
+* Process a variety of command-line arguments, options, and flags
+* Write and run tests for your programs and functions
+* Manipulate of Python data structures including strings, lists, tuples, sets, dictionaries
+* Use higher-order functions like `map` and `filter`
+* Write and use regular expressions
+* Read, parse, and write various text formats
+* Use and control of randomness
+* Create and use graphs, kmers, Markov chains, Hamming distance, the Soundex algorithm, and more
 
 ## Forking GitHub repo
 
@@ -63,6 +78,22 @@ Once you have stubbed out your new program, open it in your favorite editor and 
 Your goal is to pass all the tests. The tests are written in an order designed to guide you in how break the problem down, e.g., often a test will ask you to alter one bit of text from the command line, and this it will ask you to read and alter the text from a file. I would suggest you solve the tests in order. The `make test` target in every Makefile executes `pytest -xv test.py` where the `-x` flag will have `pytest` halt testing after it finds one that fails. There's no point in running every test when one fails, so I think this is less frustrating that seeing perhaps hundreds of lines of failing tests shoot by.
 
 A fair number of the program rely on a dictionary of English words. To be sure that you can reproduce my results, I include a copy of mine in `inputs/words.zip`.
+
+## Why Not Notebooks?
+
+Notebooks are great for interactive exploration of data, especially if you want to visualize thing, but the downsides:
+
+* Stored as JSON not line-oriented text, so no good `diff` tools
+* Not easily shared
+* Too easy to run cells out of order
+* Hard to test
+* No way to pass in arguments
+
+I believe you can better learn how to create testable, **reproducible** software by writing command-line programs that always run from beginning to end and have a test suite. It's difficult to achieve that with Notebooks, but I do encourage you to explore Notebooks on your own.
+
+## Code examples, the REPL
+
+I always love when a language has a good REPL (read-evaluate-print-loop) tool. Python and Haskell both excel in this respect. For simplicity's sake, I show the standard REPL when you execute `python3` on the command-line, but you won't be able to copy and paste the same code examples there. For your own purposes, I suggest using the iPython REPL (`ipython`) instead.
 
 ## Author
 
@@ -6242,6 +6273,15 @@ Finally I `print` out the number of the word and the word itself using a format 
 >>> print('{:3}: {}'.format(i+1, word))
   3: piders
 ````
+
+## Machine Learning
+
+If you didn't realize it, you just implemented a basic machine learning algorithm. Your program predicts the next letter after a given sequence based on the frequencies of patterns you "learned" from the training files! The kmers you extracted from the text could become vectors for other machine learning techniques. You could, for instance, train on texts that are labeled by language source (e.g., English, German, French) and then, given a new unlabled text, predict the language by the kmer frequencies.
+
+## What next
+
+Now you can talk the "Markov Chain" problem that moves to the level of words and generates novel texts!
+
 \newpage
 
 # Chapter 24: Piggy (Pig Latin)
@@ -7427,12 +7467,14 @@ In the end, I look to see how many `anagrams` I found using `len(anagrams)`. If 
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
-To play, you will initiate an inifinite loop and keep track of the game state, e.g., the word to guess, the letters already guessed, the letters found, the number of misses. As this is an interactive game, I cannot write an test suite, so you can play my version and then try to write one like it. If the user guesses a letter that is in the word, replace the `_` characters with the letter. If the user guesses the same letter twice, admonish them. If the user guesses a letter that is not in the word, increment the misses and let them know they missed. If the user guesses too many times, exit the game and insult them. If they correctly guess the word, let them know and exit the game.
+The game is intended to be interactive, but I want you to additionally take an `-i|--inputs` option that is a string of letters to use as guesses so that we can write a test.
+
+When run with the `-h|--help` flags, it should present a usage statement:
 
 ````
 $ ./hangman.py -h
 usage: hangman.py [-h] [-l MAXLEN] [-n MINLEN] [-m MISSES] [-s SEED]
-                  [-w WORDLIST]
+                  [-w WORDLIST] [-i INPUTS]
 
 Hangman
 
@@ -7447,200 +7489,548 @@ optional arguments:
   -s SEED, --seed SEED  Random seed (default: None)
   -w WORDLIST, --wordlist WORDLIST
                         Word list (default: /usr/share/dict/words)
-$ ./hangman.py
-_ _ _ _ _ _ _ _ (Misses: 0)
-Your guess? ("?" for hint, "!" to quit) a
-_ _ _ _ _ _ _ _ (Misses: 1)
-Your guess? ("?" for hint, "!" to quit) i
-_ _ _ _ _ _ i _ (Misses: 1)
-Your guess? ("?" for hint, "!" to quit) e
-_ _ _ _ _ _ i _ (Misses: 2)
-Your guess? ("?" for hint, "!" to quit) o
-_ o _ _ _ _ i _ (Misses: 2)
-Your guess? ("?" for hint, "!" to quit) u
-_ o _ _ _ _ i _ (Misses: 3)
-Your guess? ("?" for hint, "!" to quit) y
-_ o _ _ _ _ i _ (Misses: 4)
-Your guess? ("?" for hint, "!" to quit) c
-_ o _ _ _ _ i _ (Misses: 5)
-Your guess? ("?" for hint, "!" to quit) d
-_ o _ _ _ _ i _ (Misses: 6)
-Your guess? ("?" for hint, "!" to quit) p
-_ o _ _ _ _ i p (Misses: 6)
-Your guess? ("?" for hint, "!" to quit) m
-_ o _ _ _ _ i p (Misses: 7)
-Your guess? ("?" for hint, "!" to quit) n
-_ o _ _ _ _ i p (Misses: 8)
-Your guess? ("?" for hint, "!" to quit) s
-_ o s _ s _ i p (Misses: 8)
-Your guess? ("?" for hint, "!" to quit) t
-_ o s t s _ i p (Misses: 8)
-Your guess? ("?" for hint, "!" to quit) h
-You win. You guessed "hostship" with "8" misses!
-$ ./hangman.py -m 2
-_ _ _ _ _ _ _ _ _ _ (Misses: 0)
-Your guess? ("?" for hint, "!" to quit) a
-_ _ _ _ _ _ a _ _ a (Misses: 0)
-Your guess? ("?" for hint, "!" to quit) b
-_ _ _ _ _ _ a _ _ a (Misses: 1)
-Your guess? ("?" for hint, "!" to quit) c
-You lose, loser!  The word was "metromania."
+  -i INPUTS, --inputs INPUTS
+                        Input choices (default: )
 ````
 
+If given a bad `--wordlist`, error out (print the problem and exit with a non-zero status) with a message like so:
+
+````
+$ ./hangman.py -w kdfkj
+usage: hangman.py [-h] [-l MAXLEN] [-n MINLEN] [-m MISSES] [-s SEED]
+                  [-w WORDLIST] [-i INPUTS]
+hangman.py: error: argument -w/--wordlist: can't open 'kdfkj': [Errno 2] \
+No such file or directory: 'kdfkj'
+````
+
+If given a value less than 1 for `--minlen`, error out:
+
+````
+$ ./hangman.py -n -4
+usage: hangman.py [-h] [-l MAXLEN] [-n MINLEN] [-m MISSES] [-s SEED]
+                  [-w WORDLIST] [-i INPUTS]
+hangman.py: error: --minlen "-4" must be positive
+````
+
+If given a `--maxlen` value greater than 20, error out:
+
+````
+$ ./hangman.py -l 30
+usage: hangman.py [-h] [-l MAXLEN] [-n MINLEN] [-m MISSES] [-s SEED]
+                  [-w WORDLIST] [-i INPUTS]
+hangman.py: error: --maxlen "30" must be < 20
+````
+
+Error out if the `--minlen` is greater than the `--maxlen`:
+
+````
+$ ./hangman.py -l 5 -n 10
+usage: hangman.py [-h] [-l MAXLEN] [-n MINLEN] [-m MISSES] [-s SEED]
+                  [-w WORDLIST] [-i INPUTS]
+hangman.py: error: --minlen "10" is greater than --maxlen "5"
+````
+
+To play, you will initiate an inifinite loop and keep track of the game state, e.g., the word to guess, the letters already guessed, the letters found, the number of misses. As this is an interactive game, you will normally use the `input` function to get a letter from the user. If given `--inputs`, bypass the `input` prompt and instead use those letters in turn.
+
+If the user guesses a letter that is in the word, replace the `_` characters with the letter. If the user guesses the same letter twice, admonish them. If the user guesses a letter that is not in the word, increment the misses and let them know they missed. If the user guesses too many times, exit the game and insult them. If they correctly guess the word, let them know and exit the game.
+
+````
+$ ./hangman.py -s 2
+_ _ _ _ _ _ _ (Misses: 0)
+Your guess? ("?" for hint, "!" to quit) a
+There is no "a"
+_ _ _ _ _ _ _ (Misses: 1)
+Your guess? ("?" for hint, "!" to quit) i
+There is no "i"
+_ _ _ _ _ _ _ (Misses: 2)
+Your guess? ("?" for hint, "!" to quit) e
+_ _ _ _ _ _ e (Misses: 2)
+Your guess? ("?" for hint, "!" to quit) o
+o _ o _ _ _ e (Misses: 2)
+Your guess? ("?" for hint, "!" to quit) z
+o z o _ _ _ e (Misses: 2)
+Your guess? ("?" for hint, "!" to quit) t
+o z o t _ _ e (Misses: 2)
+Your guess? ("?" for hint, "!" to quit) p
+o z o t _ p e (Misses: 2)
+Your guess? ("?" for hint, "!" to quit) y
+You win. You guessed "ozotype" with "2" misses!
+````
+
+Play the `solution.py` a few times to get a feel for how the game should work.
+
+Hints:
+
+* Leverage `get_args` and `argparse` to validate inputs. Use `type=argparse.FileType('r')` for the `--wordlist`. Check the value of `--minlen` and `--maxlen` inside `get_args` and use `parser.error` to error out.
 \newpage
 
 ## Solution
 
 ````
      1	#!/usr/bin/env python3
-     2	
-     3	import argparse
-     4	import os
-     5	import random
-     6	import re
-     7	import sys
-     8	from dire import die
+     2	"""Hangman game"""
+     3	
+     4	import argparse
+     5	import io
+     6	import random
+     7	import re
+     8	import sys
      9	
     10	
     11	# --------------------------------------------------
     12	def get_args():
     13	    """parse arguments"""
-    14	    parser = argparse.ArgumentParser(
-    15	        description='Hangman',
-    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    17	
-    18	    parser.add_argument('-l',
-    19	                        '--maxlen',
-    20	                        help='Max word length',
-    21	                        type=int,
-    22	                        default=10)
-    23	
-    24	    parser.add_argument('-n',
-    25	                        '--minlen',
-    26	                        help='Min word length',
-    27	                        type=int,
-    28	                        default=5)
-    29	
-    30	    parser.add_argument('-m',
-    31	                        '--misses',
-    32	                        help='Max number of misses',
-    33	                        type=int,
-    34	                        default=10)
-    35	
-    36	    parser.add_argument('-s',
-    37	                        '--seed',
-    38	                        help='Random seed',
-    39	                        type=str,
-    40	                        default=None)
-    41	
-    42	    parser.add_argument('-w',
-    43	                        '--wordlist',
-    44	                        help='Word list',
-    45	                        type=str,
-    46	                        default='/usr/share/dict/words')
-    47	
-    48	    return parser.parse_args()
-    49	
-    50	
-    51	# --------------------------------------------------
-    52	def bail(msg):
-    53	    """Print a message to STDOUT and quit with no error"""
-    54	    print(msg)
-    55	    sys.exit(0)
+    14	
+    15	    parser = argparse.ArgumentParser(
+    16	        description='Hangman',
+    17	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    18	
+    19	    parser.add_argument('-l',
+    20	                        '--maxlen',
+    21	                        help='Max word length',
+    22	                        type=int,
+    23	                        default=10)
+    24	
+    25	    parser.add_argument('-n',
+    26	                        '--minlen',
+    27	                        help='Min word length',
+    28	                        type=int,
+    29	                        default=5)
+    30	
+    31	    parser.add_argument('-m',
+    32	                        '--misses',
+    33	                        help='Max number of misses',
+    34	                        type=int,
+    35	                        default=10)
+    36	
+    37	    parser.add_argument('-s',
+    38	                        '--seed',
+    39	                        help='Random seed',
+    40	                        type=str,
+    41	                        default=None)
+    42	
+    43	    parser.add_argument('-w',
+    44	                        '--wordlist',
+    45	                        help='Word list',
+    46	                        type=argparse.FileType('r'),
+    47	                        default='/usr/share/dict/words')
+    48	
+    49	    parser.add_argument('-i',
+    50	                        '--inputs',
+    51	                        help='Input choices',
+    52	                        type=str,
+    53	                        default='')
+    54	
+    55	    args = parser.parse_args()
     56	
-    57	
-    58	# --------------------------------------------------
-    59	def main():
-    60	    """main"""
-    61	    args = get_args()
-    62	    max_len = args.maxlen
-    63	    min_len = args.minlen
-    64	    max_misses = args.misses
-    65	    wordlist = args.wordlist
+    57	    if args.minlen < 1:
+    58	        parser.error('--minlen "{}" must be positive'.format(args.minlen))
+    59	
+    60	    if args.maxlen > 20:
+    61	        parser.error('--maxlen "{}" must be < 20'.format(args.maxlen))
+    62	
+    63	    if args.minlen > args.maxlen:
+    64	        parser.error('--minlen "{}" is greater than --maxlen "{}"'.format(
+    65	            args.minlen, args.maxlen))
     66	
-    67	    random.seed(args.seed)
+    67	    return args
     68	
-    69	    if not os.path.isfile(wordlist):
-    70	        die('--wordlist "{}" is not a file.'.format(wordlist))
-    71	
-    72	    if min_len < 1:
-    73	        die('--minlen must be positive')
-    74	
-    75	    if not 3 <= max_len <= 20:
-    76	        die('--maxlen should be between 3 and 20')
+    69	
+    70	# --------------------------------------------------
+    71	def get_words(wordlist, min_len, max_len):
+    72	    """Read wordlist (file handle), return words in range(min_len, max_len)"""
+    73	
+    74	    good = '^[a-z]{' + str(min_len) + ',' + str(max_len) + '}$'
+    75	    is_good = lambda w: re.match(good, w)
+    76	    return list(filter(is_good, wordlist.read().lower().split()))
     77	
-    78	    if min_len > max_len:
-    79	        die('--minlen ({}) is greater than --maxlen ({})'.format(
-    80	            min_len, max_len))
-    81	
-    82	    good_word = re.compile('^[a-z]{' + str(min_len) + ',' + str(max_len) +
-    83	                           '}$')
-    84	    words = [w for w in open(wordlist).read().split() if good_word.match(w)]
-    85	
-    86	    word = random.choice(words)
-    87	    play({'word': word, 'max_misses': max_misses})
+    78	
+    79	# --------------------------------------------------
+    80	def test_get_words():
+    81	    """Test get_words"""
+    82	
+    83	    text = 'Apple banana COW da epinephrine'
+    84	    assert get_words(io.StringIO(text), 1, 20) == text.lower().split()
+    85	    assert get_words(io.StringIO(text), 5, 10) == ['apple', 'banana']
+    86	    assert get_words(io.StringIO(text), 3, 10) == ['apple', 'banana', 'cow']
+    87	
     88	
-    89	
-    90	# --------------------------------------------------
-    91	def play(state):
-    92	    """Loop to play the game"""
-    93	    word = state.get('word') or ''
-    94	
-    95	    if not word: die('No word!')
-    96	
-    97	    guessed = state.get('guessed') or list('_' * len(word))
-    98	    prev_guesses = state.get('prev_guesses') or set()
-    99	    num_misses = state.get('num_misses') or 0
-   100	    max_misses = state.get('max_misses') or 0
+    89	# --------------------------------------------------
+    90	def main():
+    91	    """main"""
+    92	
+    93	    args = get_args()
+    94	    words = get_words(args.wordlist, args.minlen, args.maxlen)
+    95	    random.seed(args.seed)
+    96	    result = play({
+    97	        'word': random.choice(words),
+    98	        'max_misses': args.misses,
+    99	        'inputs': list(args.inputs),
+   100	    })
    101	
-   102	    if ''.join(guessed) == word:
-   103	        msg = 'You win. You guessed "{}" with "{}" miss{}!'
-   104	        bail(msg.format(word, num_misses, '' if num_misses == 1 else 'es'))
-   105	
-   106	    if num_misses >= max_misses:
-   107	        bail('You lose, loser!  The word was "{}."'.format(word))
+   102	    print('You win!' if result else 'You lose, loser!')
+   103	
+   104	
+   105	# --------------------------------------------------
+   106	def play(state):
+   107	    """Play a round given a `dict` of the current state of the game"""
    108	
-   109	    print('{} (Misses: {})'.format(' '.join(guessed), num_misses))
-   110	    new_guess = input('Your guess? ("?" for hint, "!" to quit) ').lower()
-   111	
-   112	    if new_guess == '!':
-   113	        bail('Better luck next time, loser.')
-   114	    elif new_guess == '?':
-   115	        new_guess = random.choice([x for x in word if x not in guessed])
-   116	        num_misses += 1
-   117	
-   118	    if not re.match('^[a-z]$', new_guess):
-   119	        print('"{}" is not a letter'.format(new_guess))
-   120	        num_misses += 1
-   121	    elif new_guess in prev_guesses:
-   122	        print('You already guessed that')
-   123	    elif new_guess in word:
-   124	        prev_guesses.add(new_guess)
-   125	        last_pos = 0
-   126	        while True:
-   127	            pos = word.find(new_guess, last_pos)
-   128	            if pos < 0:
-   129	                break
-   130	            elif pos >= 0:
-   131	                guessed[pos] = new_guess
-   132	                last_pos = pos + 1
-   133	    else:
-   134	        num_misses += 1
-   135	
-   136	    play({
-   137	        'word': word,
-   138	        'guessed': guessed,
-   139	        'num_misses': num_misses,
-   140	        'prev_guesses': prev_guesses,
-   141	        'max_misses': max_misses
-   142	    })
-   143	
-   144	
-   145	# --------------------------------------------------
-   146	if __name__ == '__main__':
-   147	    main()
+   109	    word = state.get('word')
+   110	    if not word:
+   111	        print('No word!')
+   112	        return False
+   113	
+   114	    guessed = state.get('guessed', list('_' * len(word)))
+   115	    prev_guesses = state.get('prev_guesses', set())
+   116	    num_misses = state.get('num_misses', 0)
+   117	    max_misses = state.get('max_misses', 10)
+   118	    inputs = state.get('inputs', [])
+   119	
+   120	    if ''.join(guessed) == word:
+   121	        msg = 'You guessed "{}" with "{}" miss{}.'
+   122	        print(msg.format(word, num_misses, '' if num_misses == 1 else 'es'))
+   123	        return True
+   124	
+   125	    if num_misses >= max_misses:
+   126	        print('The word was "{}."'.format(word))
+   127	        return False
+   128	
+   129	    print('{} (Misses: {})'.format(' '.join(guessed), num_misses))
+   130	
+   131	    get_char = lambda: input('Your guess? ("?" for hint, "!" to quit) ').lower()
+   132	    new_guess = inputs.pop(0) if inputs else get_char()
+   133	
+   134	    if new_guess == '!':
+   135	        print('Better luck next time.')
+   136	        return False
+   137	    elif new_guess == '?':
+   138	        new_guess = random.choice([c for c in word if c not in guessed])
+   139	        num_misses += 1
+   140	
+   141	    if not re.match('^[a-z]$', new_guess):
+   142	        print('"{}" is not a letter.'.format(new_guess))
+   143	        num_misses += 1
+   144	    elif new_guess in prev_guesses:
+   145	        print('You already guessed that.')
+   146	    elif new_guess in word:
+   147	        prev_guesses.add(new_guess)
+   148	        last_pos = 0
+   149	        while True:
+   150	            pos = word.find(new_guess, last_pos)
+   151	            if pos < 0:
+   152	                break
+   153	            elif pos >= 0:
+   154	                guessed[pos] = new_guess
+   155	                last_pos = pos + 1
+   156	    else:
+   157	        print('There is no "{}."'.format(new_guess))
+   158	        num_misses += 1
+   159	
+   160	    return play({
+   161	        'word': word,
+   162	        'guessed': guessed,
+   163	        'num_misses': num_misses,
+   164	        'prev_guesses': prev_guesses,
+   165	        'max_misses': max_misses,
+   166	        'inputs': inputs,
+   167	    })
+   168	
+   169	
+   170	# --------------------------------------------------
+   171	def test_play():
+   172	    """Test play"""
+   173	
+   174	    assert play({'word': 'banana', 'inputs': list('abn')}) == True
+   175	    assert play({'word': 'banana', 'inputs': list('abcdefghijklm')}) == False
+   176	    assert play({'word': 'banana', 'inputs': list('???')}) == True
+   177	    assert play({'word': 'banana', 'inputs': list('!')}) == False
+   178	
+   179	
+   180	# --------------------------------------------------
+   181	if __name__ == '__main__':
+   182	    main()
 ````
 
+\newpage
+
+## Discussion
+
+As suggested in the specs, I put all the validation of user inputs into my `get_args` function, relying on `argparse` to validate that the `--wordlist` is a readable file and using `parser.error` to throw any problems with `--minlen` and `--maxlen`. By the time I have my `args` from `get_args`, I know I have all the right types and values for my inputs. I immediately set `random.seed` with the value of `args.seed` knowing that it is either a valid `int` or the `None` value which is essentially the same as not setting the seed.
+
+## Getting the words
+
+This program assumes a dictionary-type file like the standard `/usr/share/dict/words` file with words and no punctuation, so I use `read().lower().split()` to read the wordlist argument which will be an open file handle because of how I defined it with `argparse`. I decided to write a small function to read the file:
+
+````
+def get_words(wordlist, min_len, max_len):
+    good = '^[a-z]{' + str(min_len) + ',' + str(max_len) + '}$'
+    is_good = lambda w: re.match(good, w)
+    return list(filter(is_good, wordlist.read().lower().split()))
+````
+
+I can run my function to see if it works, faking an open file handle using `io.StringIO`:
+
+````
+>>> import re, io
+>>> text = 'Apple banana COW da epinephrine'
+>>> get_words(io.StringIO(text), 1, 20)
+['apple', 'banana', 'cow', 'da', 'epinephrine']
+>>> get_words(io.StringIO(text), 5, 10)
+['apple', 'banana']
+````
+
+And then I can write a `test_get_words` function:
+
+````
+>>> def test_get_words():
+...     text = 'Apple banana COW da epinephrine'
+...     assert get_words(io.StringIO(text), 1, 20) == text.lower().split()
+...     assert get_words(io.StringIO(text), 5, 10) == ['apple', 'banana']
+...     assert get_words(io.StringIO(text), 3, 10) == ['apple', 'banana', 'cow']
+...
+````
+
+## Selecting a word
+
+Once I have my `words`, I use `random.choice` to make a selection:
+
+````
+>>> import random
+>>> random.seed(1)
+>>> word = random.choice(get_words(io.StringIO(text), 1, 20))
+>>> word
+'banana'
+````
+
+## Recursion vs Infinite Loops
+
+From here, I could use the normal `while True` idiom to create an infinite loop from which I can `break` when the game is over or `continue` when I want to skip to the next iteration. For this example, I wanted to show how to write a *recursive* function -- a function that calls itself, like a snake head eating the head on the opposite side. I have two reasons to do this:
+
+1. I want to avoid using variables outside the loop to maintain the "state" of the program
+2. Recursive functions are cool and it's fun to play with them
+
+For what it's worth, my experience programming web interfaces with the Elm language (a dialect of Haskell that compiles to JavaScript) greatly influenced my decision to write the program this way. In Elm, there is a single `Model` that holds the state of the program where "state" means the values of everything in the program. There is a single `update` function that changes the state which is immediately followed by a `view` function to show the current state of the program.
+
+## Maintaining state
+
+For our "Hangman," we need to keep track of the following:
+
+1. The randomly selected word that is being guessed
+2. The letters of the word which have been correctly guessed
+3. The letters the user guessed which were not found in the word
+4. The number of misses the user had made
+5. The maximum number of misses the user is allowed
+6. Any characters provided for the `inputs`
+
+I *could* create 6 variables outside of a `while` loop and mutate those each time through the loop to know how the game is progressing. Instead, I created the function `play` and pass in a `dict` that holds all these values. It's perhaps the single longest function in the book running just over 60 lines. I usually try to keep every function short enough to fit into 80 characters wide and 50 lines long (the default size of my terminal windows). I strongly believe you should be able to see the entire function in one screen, but this one needs to be just a little longer.
+
+## Shall we play a game?
+
+I wrote `play` to eventually `return` either `True` or `False` to indicate if the user won or not. I want to show you another way to debug a program. If you are in the same directory as your `hangman.py` program (and you created it with the `new.py` so that it has the `if __name__ == '__main__'` bit so that it won't immediately try to execute code), then you can actually `import` your entire program and `play` the game like so:
+
+````
+>>> import hangman
+>>> hangman.play({'word': 'banana'})
+_ _ _ _ _ _ (Misses: 0)
+Your guess? ("?" for hint, "!" to quit) a
+_ a _ a _ a (Misses: 0)
+Your guess? ("?" for hint, "!" to quit) b
+b a _ a _ a (Misses: 0)
+Your guess? ("?" for hint, "!" to quit) n
+You guessed "banana" with "0" misses.
+True
+````
+
+Or pass in the `inputs`:
+
+````
+>>> hangman.play({'word': 'banana', 'inputs': list('ban')})
+_ _ _ _ _ _ (Misses: 0)
+b _ _ _ _ _ (Misses: 0)
+b a _ a _ a (Misses: 0)
+You guessed "banana" with "0" misses.
+True
+````
+
+Now, how can I write a `play` to do that? The function takes just one argument which I call `state` which is a regular `dict` to hold key/value pairs. As I demonstrate above, not all of the 6 variables listed above need to be passed in for it to work. I use the `dict.get` function to return the `value` for a given `key` if the `key` exists, otherwise return a default value passed as the second argument:
+
+````
+>>> state = {'word': 'banana', 'inputs': list('ban')}
+>>> guessed = state.get('guessed', list('_' * len(word)))
+>>> guessed
+['_', '_', '_', '_', '_', '_']
+````
+
+Here I represent the state of those letters that have been guessed or not as a string the same length as the `word` where there are underscores (`_`) for letters not yet guessed and those which have been guessed are present in their correct locations.
+
+The previous guesses I store as a `set` because I only care about the unique letters:
+
+````
+>>> prev_guesses = state.get('prev_guesses', set())
+>>> prev_guesses
+set()
+````
+
+The default value for the number of misses is `0`:
+
+````
+>>> num_misses = state.get('num_misses', 0)
+>>> num_misses
+0
+````
+
+And the upper limit for maximum guesses is `10`:
+
+````
+>>> max_misses = state.get('max_misses', 10)
+>>> max_misses
+10
+````
+
+Finally, the `inputs` will default to an empty `list`:
+
+````
+>>> inputs = state.get('inputs', [])
+>>> inputs
+['b', 'a', 'n']
+````
+
+First I check if the `guessed` is the same as the `word`. If so, the user has won and I can `return True` to indicate this. Right now, this is not so:
+
+````
+>>> ''.join(guessed) == word
+False
+````
+
+Then I check if they have guessed too many times:
+
+````
+>>> num_misses >= max_misses
+False
+````
+
+So far, so good. Now I either want to get some character from the user for the next guessed letter or take it from the `inputs`:
+
+````
+>>> get_char = lambda: input('Your guess? ("?" for hint, "!" to quit) ').lower()
+>>> new_guess = inputs.pop(0) if inputs else get_char()
+>>> new_guess
+'b'
+````
+
+The `lambda` is to create an function that I can call with `get_char()` if I need it. I could have written it all on one line, but I detest lines over 80 characters.
+
+The user is allowed to exit the game early with a `!`, so I check if the `new_guess` is that and `return False` if so. They can also request a free letter with `?`. To select a free letter, I need to choose from the letters in the `word` if they are not present in the ones that have been `guessed`:
+
+````
+>>> new_guess = random.choice([c for c in word if c not in guessed])
+>>> new_guess
+'n'
+````
+
+At this point, I should have something from the user, whether they responded to the `input` or I took it from the `inputs` or they requested a hint. I need to verify that they gave me something that looks like just one character from the set `a-z`. I hope you immediately think of using a regular expression with a character class:
+
+````
+>>> re.match('^[a-z]$', new_guess)
+<re.Match object; span=(0, 1), match='n'>
+````
+
+Where the caret (`^`) will anchor the regex to the start of the string, the `[a-z]` creates a character class comprised only of the lowercase letters from `a` to `z`, and the `$` anchors the pattern to the end of the string. Because I didn't indicate any number of matches with `*` (zero or more) or `+` (one or more) or `{n}` (`n` exactly), etc. it will match only one character. If this *fails* to match, then we do not have a valid input.
+
+I check if `new_guess in prev_guesses` and let the user know if that is so. Then I check if `new_guess in word`. If so, they have guessed a letter correctly! I need to update the `guessed` list with the `new_guess` using the positions of that letter in the `word`. This is a bit tricky, and perhaps you chose to handle this differently. Here's what I do.
+
+Let's say the `word='banana'` and `new_guess='n'`. I need to know the positions of `'n'` in `'banana'`:
+
+````
+>>> word
+'banana'
+>>> word.find('n')
+2
+````
+
+Yes, there is an "n" at index 2:
+
+````
+>>> word[2]
+'n'
+````
+
+So I can update `guessed` with that information:
+
+````
+>>> guessed
+['_', '_', '_', '_', '_', '_']
+>>> guessed[2] = 'n'
+>>> guessed
+['_', '_', 'n', '_', '_', '_']
+````
+
+If I call `word.find('n')` again, I'll get `2` again because it always starts searching from the beginning of the string. Note that `str.index` works the same way. I can pass a second optional argument to indicate the starting search index. Note that this need to be one greater than what we just found:
+
+````
+>>> word.find('n', 3)
+4
+````
+
+I can see this is correct:
+
+````
+>>> word[4]
+'n'
+````
+
+And can update `guessed` again:
+
+````
+>>> guessed[4] = 'n'
+>>> guessed
+['_', '_', 'n', '_', 'n', '_']
+````
+
+When I call `word.find` next, I'll get `-1` to indicate the character is not found:
+
+````
+>>> word.find('n', 5)
+-1
+````
+
+Contrast this with `str.index` to see that it creates an exception which is why we use `find`:
+
+````
+>>> word.index('n', 5)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ValueError: substring not found
+````
+
+If all the previous checks failed, then the `new_guess` was not found in the `word`, so I increment the `num_misses` and let the user know.
+
+Finally, I call `play` again, passing it the new `state` as a new `dict`. Anytime a `return` statement is called, the recursion stops and execution returns to the first place I called `play`. Using the final `return` value which should be a `bool`, I can decide whether to print "You win!" or "You lose, loser!"
+
+## Testing the play
+
+I can test my `play` with a function:
+
+````
+>>> from hangman import play
+>>> def test_play():
+...     assert play({'word': 'banana', 'inputs': list('abn')}) == True
+...     assert play({'word': 'banana', 'inputs': list('abcdefghijklm')}) == False
+...     assert play({'word': 'banana', 'inputs': list('???')}) == True
+...     assert play({'word': 'banana', 'inputs': list('!')}) == False
+...
+>>> test_play()
+...
+````
+
+## Further
+
+Here are some changes you could make to your program:
+
+* Read a wordlist that has punctuation and use only a unique list for your words
+* Add a limit to the number of hints the user can request with `?`
+* Add a random insult every time the user asks for a hint
+* Add a `quiet` flag to keep `play` from executing any `print` statements
 \newpage
 
 # Chapter 28: First Bank of Change

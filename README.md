@@ -74,7 +74,11 @@ Notebooks are great for interactive exploration of data, especially if you want 
 * Hard to test
 * No way to pass in arguments
 
-As I want you to learn 
+I believe you can better learn how to create testable, **reproducible** software by writing command-line programs that always run from beginning to end and have a test suite. It's difficult to achieve that with Notebooks, but I do encourage you to explore Notebooks on your own.
+
+## Code examples, the REPL
+
+I always love when a language has a good REPL (read-evaluate-print-loop) tool. Python and Haskell both excel in this respect. For simplicity's sake, I show the standard REPL when you execute `python3` on the command-line, but you won't be able to copy and paste the same code examples there. For your own purposes, I suggest using the iPython REPL (`ipython`) instead.
 
 ## Author
 
