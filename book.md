@@ -4938,10 +4938,65 @@ W    375 ###
 
 # Chapter 19: Modeling the Pareto Principle
 
-Model the 80/20 rule.
 
-https://en.wikipedia.org/wiki/Pareto_principle
+Vilfredi Pareto was an Italian economist who noted in the late 1800s that roughly 80% of the land in Italy was owned by about 20% of the population. This 80/20 rule has been noted in many other contexts, but it stands out in wealth inequalities where it has tilted ever further to 90/10 or even 99/1. This exercise is designed to simulate the move of resources to an ever shrinking segment of a population through random events.
 
+In our exercise, we will create variables to represent the following:
+
+1. The number of actors in the simulation
+2. The number of units of some resource
+3. The percent of unequal distribution to stop the simulation
+4. The number of iterations of the simulation to run
+
+Create a program called `pareto.py` that accepts options for the number of `-a|--actors` (default `50`), the number of `-u|--units` (default `500`), the target `-d|--distribution` (default `0.8`), the number of `-r|--rounds` to simulate (default `10`). You also need to accept a `-s|--seed` option to pass to `random.seed` (default `None`) and an option to `-g|--graph` the result of each simulation as a text histogram to some file base name (default `None`).
+
+The "resource" at play could be thought of as some measure of wealth or some resource like food. Ours is a zero-sum simulation where all the actors are randomly paired with each other and a coin is flipped to determine a winner. Each loser gives up one unit to the winner. Actors with no more units can no longer participate, so they cannot go into negative values ("debt") but neither can they ever re-enter the game. 
+
+## The simulation
+
+At the beginning of each simulation, the `--units` should evenly distributed to all the `--actors`. Create an infinite loop where the actors are shuffled and then paired up. I suggest you represent the actors as a `list` that you can pass to the `random.shuffle` function. To create the pairs, think about using the `range` function with a step value of `2` to get the position of every other actor, and then the mate for each will be the one just after it. "Flip" a coin by using `random.choice([True, False])`. If `True`, give the first player one unit and subtract one unit from the second; if `False,` vice versa. Consider using a `dict` to keep track of the number of units for each actor.
+
+Each simulation is done when the designated `distribution` (default `0.8` or 80%) is controlled by `1 - distribution` (`0.2` or 20%). So when 80% of the units are controlled by 20% of the actors, return the number of iterations through the infinite loop it took to reach the target.
+
+## Calculating the distribution
+
+If there are 10 actors and 10 units, the distribution starts out looking like this:
+
+````
+>>> units = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+````
+
+You should stop when 2 actors control all the assets, so something like this:
+
+````
+>>> units = [0, 0, 7, 0, 0, 3, 0, 0, 0, 0]
+````
+
+Think about sorting the units from largest to smallest and then checking cumulative sums starting from the start. When the sum is greater than the target percentage, divide the number of values that went in by the total number of values to find the percentage controlling the target amount.
+
+Consider adding a test, e.g., if the function is called `get_dist` then you can create the following to run with `pytest`:
+
+````
+def test_get_dist():
+    """Test get_dist"""
+
+    tests = [
+        ([1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 0.8, 0.8),
+        ([2, 2, 2, 1, 0, 0, 0, 0, 0, 0], 0.8, 0.3),
+        ([2, 2, 2, 2, 2, 0, 0, 0, 0, 0], 1.0, 0.5),
+        ([0, 0, 7, 0, 0, 3, 0, 0, 0, 0], 0.8, 0.2),
+        ([0, 0, 9, 0, 0, 1, 0, 0, 0, 0], 0.9, 0.1),
+    ]
+
+    for vals, perc, target in tests:
+        dist = {k:v for k,v in enumerate(vals, 1)}
+        assert get_dist(dist, perc) == target
+````
+
+Hints:
+
+* For the `--graph` option, you should be able to use your `histy` code exactly.
+* Consider make a function that runs one simulation, then call that function for the number in `--rounds`
 \newpage
 
 ## Solution
@@ -5002,7 +5057,7 @@ https://en.wikipedia.org/wiki/Pareto_principle
     53	                        help='Plot histograms to file',
     54	                        metavar='FILE',
     55	                        type=str,
-    56	                        default='')
+    56	                        default=None)
     57	
     58	    return parser.parse_args()
     59	
@@ -5063,29 +5118,221 @@ https://en.wikipedia.org/wiki/Pareto_principle
    114	
    115	
    116	# --------------------------------------------------
-   117	def get_dist(dist, percentile=.8):
+   117	def get_dist(dist, percentile):
    118	    """Calculate the distribution of units to actors"""
    119	
-   120	    # 1 - (x_m / x) ** alpha
-   121	    # return 1 - (scale / percentile) ** alpha
-   122	
-   123	    values = sorted(list(dist.values()), reverse=True)
-   124	    total = sum(values)
-   125	    assert total > 0
-   126	    num_actors = len(values)
-   127	    for i in range(1, num_actors + 1):
-   128	        cum_sum = sum(values[:i])
-   129	        if cum_sum / total >= percentile:
-   130	            return i / num_actors
-   131	
-   132	    return 0
+   120	    values = sorted(list(dist.values()), reverse=True)
+   121	    total = sum(values)
+   122	    assert total > 0
+   123	    num_actors = len(values)
+   124	
+   125	    for i in range(1, num_actors + 1):
+   126	        cum_sum = sum(values[:i])
+   127	        perc_actors = i / num_actors
+   128	        if cum_sum / total >= percentile:
+   129	            return i / num_actors
+   130	
+   131	    return 0
+   132	
    133	
-   134	
-   135	# --------------------------------------------------
-   136	if __name__ == '__main__':
-   137	    main()
+   134	# --------------------------------------------------
+   135	def test_get_dist():
+   136	    """Test get_dist"""
+   137	
+   138	    tests = [
+   139	        ([1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 0.8, 0.8),
+   140	        ([2, 2, 2, 1, 0, 0, 0, 0, 0, 0], 0.8, 0.3),
+   141	        ([2, 2, 2, 2, 2, 0, 0, 0, 0, 0], 1.0, 0.5),
+   142	        ([0, 0, 7, 0, 0, 3, 0, 0, 0, 0], 0.8, 0.2),
+   143	        ([0, 0, 9, 0, 0, 1, 0, 0, 0, 0], 0.9, 0.1),
+   144	    ]
+   145	
+   146	    for vals, perc, target in tests:
+   147	        dist = {k:v for k,v in enumerate(vals, 1)}
+   148	        assert get_dist(dist, perc) == target
+   149	
+   150	
+   151	# --------------------------------------------------
+   152	if __name__ == '__main__':
+   153	    main()
 ````
 
+\newpage
+
+## Discussion
+
+As usual, I use `argparse` to validate all the user arguments and provide reasonable defaults such that the program can run with no input from the user. I pass the `--seed` argumnt directly to `random.seed` and then can worry about how to create and run my simulations.
+
+I decided to create a function `sim` that I would call the correct number of `--round` using a `for` loop. The `sim` function needs to be passed the number of actors, the number of resources, and the target distribution to stop the simulation and will return the number of times through the simulation necessary to reach that target inequality of resource distribution. That is, if there are 10 actors and 10 units, then I stop when 8 units are controlled by no more than 2 actors.
+
+## The simulation
+
+As suggested in the description, I make a `list` to represent the actors:
+
+````
+>>> num_actors = 10
+>>> num_units = 10
+>>> distribution = .8
+>>> actors = list(range(1, num_actors + 1))
+>>> actors
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+````
+
+I need to figure out how many units to initially give each actor:
+
+````
+>>> units_per_actor = int(num_units / num_actors)
+>>> units_per_actor
+1
+````
+
+And then `assert` that there is something to distribute:
+
+````
+>>> assert units_per_actor > 0, 'Not enough units per actor'
+````
+
+I use a dictionary comprehension to create a `dict` that tracks the number of units for each actor:
+
+````
+>>> dist
+{1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1}
+````
+
+And then set up a `while True` infinite loop. Each time through the loop, I shuffle the actors:
+
+````
+>>> random.shuffle(actors)
+>>> actors
+[7, 1, 9, 2, 10, 3, 5, 6, 8, 4]
+````
+
+To create pairs, I use `range` to get every other position and then add `1` to that for the next actor:
+
+````
+>>> for i in range(0, len(actors), 2):
+...     print(actors[i], actors[i + 1])
+...
+7 1
+9 2
+10 3
+5 6
+8 4
+````
+
+Actors can never go into negative values, so I need to ensure both actors still have units:
+
+````
+>>> all([dist[a1], dist[a2]])
+True
+````
+
+If one has no more units, I simply move to the next pair. If they both have assests, I use `random.choice([True, False])` and give 1 unit to the first actor and take 1 from the second if `True`, vice versa if not.
+
+## The distribution
+
+After doing this for all the pairs, I then check the resource distribution with a function called `get_dist` that takes the `dict` of actors/units and the target distribution. Suppose a distribution looks like this:
+
+````
+>>> dist
+{1: 0, 2: 0, 3: 7, 4: 0, 5: 0, 6: 3, 7: 0, 8: 0, 9: 0, 10: 0}
+````
+
+I sort the `values` of the `dict` and find the `sum`
+
+````
+>>> values = sorted(list(dist.values()), reverse=True)
+>>> values
+[7, 3, 0, 0, 0, 0, 0, 0, 0, 0]
+>>> total = sum(values)
+>>> total
+10
+````
+
+I figure out how many actors there are and start creating cumulative sums from the beginning of my sorted `values` list, counting how many actors are needed to account for whatever percentage of the total are present:
+
+````
+>>> percentile = .8
+>>> num_actors = len(values)
+>>> for i in range(1, num_actors + 1):
+...     cum_sum = sum(values[:i])
+...     perc_actors = i / num_actors
+...     if cum_sum / total >= percentile:
+...         print(i / num_actors)
+...         break
+...
+0.2
+````
+
+I can put this into a function:
+
+````
+>>> import pareto, inspect
+>>> print(inspect.getsource(pareto.get_dist))
+def get_dist(dist, percentile):
+    """Calculate the distribution of units to actors"""
+
+    values = sorted(list(dist.values()), reverse=True)
+    total = sum(values)
+    assert total > 0
+    num_actors = len(values)
+
+    for i in range(1, num_actors + 1):
+        cum_sum = sum(values[:i])
+        perc_actors = i / num_actors
+        if cum_sum / total >= percentile:
+            return i / num_actors
+
+    return 0
+````
+
+And test it using the `test_get_dist` function shown earlier.
+
+## Graphing the distribution
+
+Data visualization is a vital part of checking the accuracy of your work. You can use the code you wrote for `histy` to see that, indeed, 80% of the actors have nothing while 20% control everything all due to nothing more than random coin flips:
+
+````
+$ ./pareto.py -r 1 -a 10 -u 10 -g graph
+  1: 50 iterations
+Average = 50 iterations
+$ cat graph-1.txt
+  1:   0
+  2:   0
+  4:   0
+  5:   0
+  6:   0
+  7:   0
+  8:   0
+ 10:   0
+  9:   2 ##
+  3:   8 ########
+````
+
+If you run it again, you will most like see that some other two actors were the winners:
+
+````
+$ ./pareto.py -r 1 -a 10 -u 10 -g graph
+  1: 97 iterations
+Average = 97 iterations
+$ cat graph-1.txt
+  1:   0
+  3:   0
+  4:   0
+  6:   0
+  7:   0
+  8:   0
+  9:   0
+ 10:   0
+  5:   2 ##
+  2:   8 ########
+````
+
+It doesn't take long for an even distribution to become very skewed. Imagine how much more quickly the imbalance would be achieved if the resources were unevenly distributed at the beginning!
+
+## More
+
+* Find a way to animate the changes to the histogram during each challenge inside the simulation; e.g., `matplotlib.animation` or create a series of GIFs or PNGs that you stitch together to create a short movie to visualize how the resource distribution changes over time.
 \newpage
 
 # Chapter 20: Mommy's Little (Crossword) Helper

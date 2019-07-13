@@ -53,7 +53,7 @@ def get_args():
                         help='Plot histograms to file',
                         metavar='FILE',
                         type=str,
-                        default='')
+                        default=None)
 
     return parser.parse_args()
 
@@ -114,22 +114,38 @@ def sim(num_actors, num_units, distribution):
 
 
 # --------------------------------------------------
-def get_dist(dist, percentile=.8):
+def get_dist(dist, percentile):
     """Calculate the distribution of units to actors"""
-
-    # 1 - (x_m / x) ** alpha
-    # return 1 - (scale / percentile) ** alpha
 
     values = sorted(list(dist.values()), reverse=True)
     total = sum(values)
     assert total > 0
     num_actors = len(values)
+
     for i in range(1, num_actors + 1):
         cum_sum = sum(values[:i])
+        perc_actors = i / num_actors
         if cum_sum / total >= percentile:
             return i / num_actors
 
     return 0
+
+
+# --------------------------------------------------
+def test_get_dist():
+    """Test get_dist"""
+
+    tests = [
+        ([1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 0.8, 0.8),
+        ([2, 2, 2, 1, 0, 0, 0, 0, 0, 0], 0.8, 0.3),
+        ([2, 2, 2, 2, 2, 0, 0, 0, 0, 0], 1.0, 0.5),
+        ([0, 0, 7, 0, 0, 3, 0, 0, 0, 0], 0.8, 0.2),
+        ([0, 0, 9, 0, 0, 1, 0, 0, 0, 0], 0.9, 0.1),
+    ]
+
+    for vals, perc, target in tests:
+        dist = {k:v for k,v in enumerate(vals, 1)}
+        assert get_dist(dist, perc) == target
 
 
 # --------------------------------------------------
