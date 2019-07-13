@@ -4936,7 +4936,93 @@ W    375 ###
 
 \newpage
 
-# Chapter 19: Mommy's Little (Crossword) Helper
+# Chapter 19: Modeling the Pareto Principle
+
+Model the 80/20 rule.
+
+https://en.wikipedia.org/wiki/Pareto_principle
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""
+     3	Author : kyclark
+     4	Date   : 2019-07-12
+     5	Purpose: Rock the Casbah
+     6	"""
+     7	
+     8	import argparse
+     9	import os
+    10	import random
+    11	import sys
+    12	
+    13	
+    14	# --------------------------------------------------
+    15	def get_args():
+    16	    """Get command-line arguments"""
+    17	
+    18	    parser = argparse.ArgumentParser(
+    19	        description='Argparse Python script',
+    20	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    21	
+    22	    parser.add_argument('-a',
+    23	                        '--actors',
+    24	                        help='Number of actors',
+    25	                        metavar='int',
+    26	                        type=int,
+    27	                        default=50)
+    28	
+    29	    parser.add_argument('-u',
+    30	                        '--units',
+    31	                        help='Number of units',
+    32	                        metavar='int',
+    33	                        type=int,
+    34	                        default=500)
+    35	
+    36	    parser.add_argument('-r',
+    37	                        '--rounds',
+    38	                        help='Number of rounds',
+    39	                        metavar='int',
+    40	                        type=int,
+    41	                        default=100)
+    42	
+    43	    return parser.parse_args()
+    44	
+    45	
+    46	# --------------------------------------------------
+    47	def main():
+    48	    """Make a jazz noise here"""
+    49	
+    50	    args = get_args()
+    51	    actors = list(range(1, args.actors + 1))
+    52	    units = args.units
+    53	    rounds = args.rounds
+    54	    units_per_actor = int(units / len(actors))
+    55	    dist = {actor: units_per_actor for actor in actors}
+    56	
+    57	    for i in range(rounds):
+    58	        random.shuffle(actors)
+    59	        for i in range(0, len(actors), 2):
+    60	            a1, a2 = actors[i], actors[i+1]
+    61	            if dist[a1] and dist[a2]:
+    62	                res = random.choice([0,1])
+    63	                dist[a1] += 1 if res else -1
+    64	                dist[a2] += 1 if res else -1
+    65	
+    66	    for units, actor in sorted([(v,k) for k,v in dist.items()]):
+    67	        print('{:3}: {:3} {}'.format(actor, units, '#' * units))
+    68	
+    69	# --------------------------------------------------
+    70	if __name__ == '__main__':
+    71	    main()
+````
+
+\newpage
+
+# Chapter 20: Mommy's Little (Crossword) Helper
 
 Write a Python program called `helper.py` that finds all words matching a given `-p|--pattern` such as one might use to complete a crossword puzzle to find words matching from a given `-w|--wordlist` (default `/usr/share/dict/words`). E.g., all 5-letter words with a "t" as the second character and ending in "ed". I could do this on the command line like so:
 
@@ -5188,7 +5274,7 @@ If both conditions are `True` (same length, all characters the same), then I `ap
 All that is left is to check if any words matched. If so, we print them out, numbered and nicely aligned; otherwise, we let the user know that no matches were found. I hope you tried solving this problem with and without regular expressions as there is much to learn by each method.
 \newpage
 
-# Chapter 20: Kentucky Friar
+# Chapter 21: Kentucky Friar
 
 Write a Python program called `friar.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
@@ -5368,7 +5454,7 @@ Finally we need to apply our `fry` function to all the pieces we got from splitt
 ````
 \newpage
 
-# Chapter 21: Mad Libs
+# Chapter 22: Mad Libs
 
 ![This definitely not a copyright infringment.](images/mad_libs.png)
 
@@ -5680,7 +5766,7 @@ The `count=1` is necessary to prevent `re.sub` from replacing *every* instance o
 
 \newpage
 
-# Chapter 22: License Plates
+# Chapter 23: License Plates
 
 Write a Python program called `license.py` that will create a regular expression for a license plate that accounts for characters and numbers which might be confused according to the following list:
 
@@ -5813,7 +5899,7 @@ In creating all the possible plates from your regular expression, you are making
 
 \newpage
 
-# Chapter 23: Gibberish Generator
+# Chapter 24: Gibberish Generator
 
 Write a Python program called `gibberish.py` that uses the Markov chain algorithm to generate new words from the words in a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
@@ -6284,7 +6370,7 @@ Now you can talk the "Markov Chain" problem that moves to the level of words and
 
 \newpage
 
-# Chapter 24: Piggy (Pig Latin)
+# Chapter 25: Piggy (Pig Latin)
 
 Write a Python program named `piggy.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
@@ -6694,7 +6780,7 @@ That is the crux of the program. All that is left is to report to the user how m
 
 \newpage
 
-# Chapter 25: Soundex Rhymer
+# Chapter 26: Soundex Rhymer
 
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, you sometimes want to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part, so the program should have an optional flag `-s|--stem` to indicate that the given word and the words you compare should both be trimmed to the "stem". The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons and should respond, as always, to `-h|--help` for usage.
 
@@ -7013,7 +7099,7 @@ Once I have the `stemmer` function, I can apply it to the given `word` and every
 
 \newpage
 
-# Chapter 26: Anagram
+# Chapter 27: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -7463,7 +7549,7 @@ In the end, I look to see how many `anagrams` I found using `len(anagrams)`. If 
 
 \newpage
 
-# Chapter 27: Hangman
+# Chapter 28: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -8033,7 +8119,7 @@ Here are some changes you could make to your program:
 * Add a `quiet` flag to keep `play` from executing any `print` statements
 \newpage
 
-# Chapter 28: First Bank of Change
+# Chapter 29: First Bank of Change
 
 Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100. It should provide a usage if given no arguments or the `-h|--help` flag:
 
@@ -8275,7 +8361,7 @@ The `plural` version of each name is made by adding `s` except for `penny`, so l
 Finally lines 39-43 are left to formatting the report to the user, being sure to provide feedback that includes the original `value` ("If you give me ...") and an enumerated list of all the possible ways we could make change. The test suite does not bother to check the order in which you return the combinations, only that the correct number are present and they are in the correct format.
 \newpage
 
-# Chapter 29: Runny Babbit
+# Chapter 30: Runny Babbit
 
 Are you familiar with Spoonerisms where the initial consonant sounds of two words are switched? According to Wikipedia, they get their name from William Archibald Spooner who did this often. The author Shel Silverstein wrote a wonderful book called _Runny Babbit_ ("bunny rabbit") based on this. So, let's write a Python program called `runny_babbit.py` that will read some text or an input file given as a single positional argument and finds neighboring words with initial consonant sounds to swap. As we'll need to look at pairs of words and in such as way that it will make it difficult to remember the original formatting of the text, let's also take a `-w|--width` (default `70`) to format the output text to a maximum width.
 
@@ -8559,7 +8645,7 @@ The runny babbit is cute.
 ````
 \newpage
 
-# Chapter 30: Markov Chain
+# Chapter 31: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -8820,7 +8906,7 @@ But there will be spaces in between each word, so I account for them by adding o
 At this point, the `words` list needs to be turned into text. It would be ugly to just `print` out one long string, so I use the `textwrap.wrap` to break up the long string into lines that are no longer than the given `text_width`. That function returns a list of lines that need to be joined on newlines to print.
 \newpage
 
-# Chapter 31: Hamming Chain
+# Chapter 32: Hamming Chain
 
 Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
 
@@ -9023,7 +9109,7 @@ Failed to find more words!
 
 \newpage
 
-# Chapter 32: Morse Encoder/Decoder
+# Chapter 33: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -9241,7 +9327,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 33: ROT13 (Rotate 13)
+# Chapter 34: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -9406,7 +9492,7 @@ The quick brown fox jumps over the lazy dog.
 
 \newpage
 
-# Chapter 34: Word Search
+# Chapter 35: Word Search
 
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 

@@ -50,8 +50,10 @@ def get_args():
 
     parser.add_argument('-g',
                         '--graph',
-                        help='Show histograms',
-                        action='store_true')
+                        help='Plot histograms to file',
+                        metavar='FILE',
+                        type=str,
+                        default='')
 
     return parser.parse_args()
 
@@ -65,42 +67,48 @@ def main():
 
     results = []
     for i in range(args.rounds):
-        res = sim(num_actors=args.actors,
-                  num_units=args.units,
-                  distribution=args.distribution,
-                  graph=args.graph)
+        res, dist = sim(num_actors=args.actors,
+                        num_units=args.units,
+                        distribution=args.distribution)
 
-        print('{:3}: {}'.format(i + 1, res))
+        if args.graph:
+            fh = open(args.graph + '-{}.txt'.format(i+1), 'wt')
+            for units, actor in sorted([(v, k) for k, v in dist.items()]):
+                fh.write('{:3}: {:3} {}\n'.format(actor, units, '#' * units))
+            fh.close()
+
+        print('{:3}: {} iterations'.format(i + 1, res))
         results.append(res)
 
-    print('Average = {}'.format(sum(results) / len(results)))
+    print('Average = {:,d} iterations'.format(int(sum(results) /
+                                                  len(results))))
 
 
 # --------------------------------------------------
-def sim(num_actors, num_units, distribution, graph=False):
+def sim(num_actors, num_units, distribution):
     """Run a simulation"""
 
     actors = list(range(1, num_actors + 1))
     units_per_actor = int(num_units / num_actors)
+    assert units_per_actor > 0, 'Not enough units per actor'
     dist = {actor: units_per_actor for actor in actors}
+    rounds = 0
 
     while True:
+        rounds += 1
         random.shuffle(actors)
         for i in range(0, len(actors), 2):
             a1, a2 = actors[i], actors[i + 1]
-            if dist[a1] and dist[a2]:
-                res = random.choice([0, 1])
-                dist[a1] += 1 if res else -1
-                dist[a2] += 1 if res else -1
+            if all([dist[a1], dist[a2]]):
+                if random.choice([True, False]):
+                    dist[a1] += 1
+                    dist[a2] -= 1
+                else:
+                    dist[a1] -= 1
+                    dist[a2] += 1
 
-            if get_dist(dist, percentile=distribution) <= 1 - distribution:
-                print('Reached {} in {}'.format(distribution, i + 1))
-                if graph:
-                    for units, actor in sorted([(v, k)
-                                                for k, v in dist.items()]):
-                        print('{:3}: {:3} {}'.format(actor, units,
-                                                     '#' * units))
-                return i + 1
+        if get_dist(dist, percentile=distribution) <= 1 - distribution:
+            return rounds, dist
 
     return 0
 
@@ -114,6 +122,7 @@ def get_dist(dist, percentile=.8):
 
     values = sorted(list(dist.values()), reverse=True)
     total = sum(values)
+    assert total > 0
     num_actors = len(values)
     for i in range(1, num_actors + 1):
         cum_sum = sum(values[:i])

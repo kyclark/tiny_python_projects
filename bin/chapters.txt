@@ -19,6 +19,7 @@ blackjack
 family_tree
 gematria
 histy
+pareto
 #guess
 mommys_little_helper
 kentucky_friar

@@ -132,7 +132,14 @@ def get_args():
                         default=0)
 
     parser.add_argument('-f',
-                        '--flag',
+                        '--file',
+                        help='A readable file',
+                        metavar='FILE',
+                        type=argparse.FileType('r'),
+                        default=0)
+
+    parser.add_argument('-o',
+                        '--on',
                         help='A boolean flag',
                         action='store_true')
 
