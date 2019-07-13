@@ -4948,76 +4948,142 @@ https://en.wikipedia.org/wiki/Pareto_principle
 
 ````
      1	#!/usr/bin/env python3
-     2	"""
-     3	Author : kyclark
-     4	Date   : 2019-07-12
-     5	Purpose: Rock the Casbah
-     6	"""
+     2	"""Simulation of Pareto distribution through random simulation"""
+     3	
+     4	import argparse
+     5	import random
+     6	
      7	
-     8	import argparse
-     9	import os
-    10	import random
-    11	import sys
-    12	
-    13	
-    14	# --------------------------------------------------
-    15	def get_args():
-    16	    """Get command-line arguments"""
-    17	
-    18	    parser = argparse.ArgumentParser(
-    19	        description='Argparse Python script',
-    20	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    21	
-    22	    parser.add_argument('-a',
-    23	                        '--actors',
-    24	                        help='Number of actors',
-    25	                        metavar='int',
-    26	                        type=int,
-    27	                        default=50)
-    28	
-    29	    parser.add_argument('-u',
-    30	                        '--units',
-    31	                        help='Number of units',
-    32	                        metavar='int',
-    33	                        type=int,
-    34	                        default=500)
-    35	
-    36	    parser.add_argument('-r',
-    37	                        '--rounds',
-    38	                        help='Number of rounds',
-    39	                        metavar='int',
-    40	                        type=int,
-    41	                        default=100)
-    42	
-    43	    return parser.parse_args()
-    44	
-    45	
-    46	# --------------------------------------------------
-    47	def main():
-    48	    """Make a jazz noise here"""
-    49	
-    50	    args = get_args()
-    51	    actors = list(range(1, args.actors + 1))
-    52	    units = args.units
-    53	    rounds = args.rounds
-    54	    units_per_actor = int(units / len(actors))
-    55	    dist = {actor: units_per_actor for actor in actors}
-    56	
-    57	    for i in range(rounds):
-    58	        random.shuffle(actors)
-    59	        for i in range(0, len(actors), 2):
-    60	            a1, a2 = actors[i], actors[i+1]
-    61	            if dist[a1] and dist[a2]:
-    62	                res = random.choice([0,1])
-    63	                dist[a1] += 1 if res else -1
-    64	                dist[a2] += 1 if res else -1
-    65	
-    66	    for units, actor in sorted([(v,k) for k,v in dist.items()]):
-    67	        print('{:3}: {:3} {}'.format(actor, units, '#' * units))
-    68	
-    69	# --------------------------------------------------
-    70	if __name__ == '__main__':
-    71	    main()
+     8	# --------------------------------------------------
+     9	def get_args():
+    10	    """Get command-line arguments"""
+    11	
+    12	    parser = argparse.ArgumentParser(
+    13	        description='Argparse Python script',
+    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    15	
+    16	    parser.add_argument('-a',
+    17	                        '--actors',
+    18	                        help='Number of actors',
+    19	                        metavar='int',
+    20	                        type=int,
+    21	                        default=50)
+    22	
+    23	    parser.add_argument('-u',
+    24	                        '--units',
+    25	                        help='Number of units',
+    26	                        metavar='int',
+    27	                        type=int,
+    28	                        default=500)
+    29	
+    30	    parser.add_argument('-d',
+    31	                        '--distribution',
+    32	                        help='Target distribution',
+    33	                        metavar='float',
+    34	                        type=float,
+    35	                        default=0.8)
+    36	
+    37	    parser.add_argument('-r',
+    38	                        '--rounds',
+    39	                        help='Number of rounds',
+    40	                        metavar='int',
+    41	                        type=int,
+    42	                        default=10)
+    43	
+    44	    parser.add_argument('-s',
+    45	                        '--seed',
+    46	                        help='Random seed',
+    47	                        metavar='int',
+    48	                        type=int,
+    49	                        default=None)
+    50	
+    51	    parser.add_argument('-g',
+    52	                        '--graph',
+    53	                        help='Plot histograms to file',
+    54	                        metavar='FILE',
+    55	                        type=str,
+    56	                        default='')
+    57	
+    58	    return parser.parse_args()
+    59	
+    60	
+    61	# --------------------------------------------------
+    62	def main():
+    63	    """Make a jazz noise here"""
+    64	
+    65	    args = get_args()
+    66	    random.seed(args.seed)
+    67	
+    68	    results = []
+    69	    for i in range(args.rounds):
+    70	        res, dist = sim(num_actors=args.actors,
+    71	                        num_units=args.units,
+    72	                        distribution=args.distribution)
+    73	
+    74	        if args.graph:
+    75	            fh = open(args.graph + '-{}.txt'.format(i+1), 'wt')
+    76	            for units, actor in sorted([(v, k) for k, v in dist.items()]):
+    77	                fh.write('{:3}: {:3} {}\n'.format(actor, units, '#' * units))
+    78	            fh.close()
+    79	
+    80	        print('{:3}: {} iterations'.format(i + 1, res))
+    81	        results.append(res)
+    82	
+    83	    print('Average = {:,d} iterations'.format(int(sum(results) /
+    84	                                                  len(results))))
+    85	
+    86	
+    87	# --------------------------------------------------
+    88	def sim(num_actors, num_units, distribution):
+    89	    """Run a simulation"""
+    90	
+    91	    actors = list(range(1, num_actors + 1))
+    92	    units_per_actor = int(num_units / num_actors)
+    93	    assert units_per_actor > 0, 'Not enough units per actor'
+    94	    dist = {actor: units_per_actor for actor in actors}
+    95	    rounds = 0
+    96	
+    97	    while True:
+    98	        rounds += 1
+    99	        random.shuffle(actors)
+   100	        for i in range(0, len(actors), 2):
+   101	            a1, a2 = actors[i], actors[i + 1]
+   102	            if all([dist[a1], dist[a2]]):
+   103	                if random.choice([True, False]):
+   104	                    dist[a1] += 1
+   105	                    dist[a2] -= 1
+   106	                else:
+   107	                    dist[a1] -= 1
+   108	                    dist[a2] += 1
+   109	
+   110	        if get_dist(dist, percentile=distribution) <= 1 - distribution:
+   111	            return rounds, dist
+   112	
+   113	    return 0
+   114	
+   115	
+   116	# --------------------------------------------------
+   117	def get_dist(dist, percentile=.8):
+   118	    """Calculate the distribution of units to actors"""
+   119	
+   120	    # 1 - (x_m / x) ** alpha
+   121	    # return 1 - (scale / percentile) ** alpha
+   122	
+   123	    values = sorted(list(dist.values()), reverse=True)
+   124	    total = sum(values)
+   125	    assert total > 0
+   126	    num_actors = len(values)
+   127	    for i in range(1, num_actors + 1):
+   128	        cum_sum = sum(values[:i])
+   129	        if cum_sum / total >= percentile:
+   130	            return i / num_actors
+   131	
+   132	    return 0
+   133	
+   134	
+   135	# --------------------------------------------------
+   136	if __name__ == '__main__':
+   137	    main()
 ````
 
 \newpage
