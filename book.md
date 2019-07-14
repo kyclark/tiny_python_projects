@@ -2424,7 +2424,148 @@ And add them to the stem of the word, being sure to avoid any prefix that was th
 ````
 \newpage
 
-# Chapter 11: Abuse
+# Chapter 11: Rock, Paper, Scissors
+
+Write a Python program called `rps.py` that will play the ever-popular "Rock, Paper, Scissors" game. As often as possible, insult the player by combining an adjective and a noun from the following lists:
+
+Adjectives =
+truculent fatuous vainglorious fatuous petulant moribund jejune
+feckless antiquated rambunctious mundane misshapen glib dreary
+dopey devoid deleterious degrading clammy brazen indiscreet
+indecorous imbecilic dysfunctional dubious drunken disreputable
+dismal dim deficient deceitful damned daft contrary churlish
+catty banal asinine infantile lurid morbid repugnant unkempt
+vapid decrepit malevolent impertinent decrepit grotesque puerile
+
+Nouns =
+abydocomist bedswerver bespawler bobolyne cumberworld dalcop
+dew-beater dorbel drate-poke driggle-draggle fopdoodle fustylugs
+fustilarian gillie-wet-foot gnashgab gobermouch
+gowpenful-o’-anything klazomaniac leasing-monger loiter-sack
+lubberwort muck-spout mumblecrust quisby raggabrash rakefire
+roiderbanks saddle-goose scobberlotcher skelpie-limmer
+smell-feast smellfungus snoutband sorner stampcrab stymphalist
+tallowcatch triptaker wandought whiffle-whaffle yaldson zoilist
+
+The program should accept a `-s|--seed` to pass to `random`.
+
+````
+$ ./rps.py
+1-2-3-Go! [rps|q] r
+You: Rock
+Me : Scissors
+You win. You are a clammy drate-poke.
+1-2-3-Go! [rps|q] t
+You dysfunctional dew-beater! Please choose from: p, r, s.
+1-2-3-Go! [rps|q] p
+You: Paper
+Me : Rock
+You win. You are a dismal gillie-wet-foot.
+1-2-3-Go! [rps|q] q
+Bye, you imbecilic fopdoodle!
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Rock, Paper, Scissors"""
+     3	
+     4	import argparse
+     5	import os
+     6	import random
+     7	import sys
+     8	
+     9	
+    10	# --------------------------------------------------
+    11	def get_args():
+    12	    """Get command-line arguments"""
+    13	
+    14	    parser = argparse.ArgumentParser(
+    15	        description='Rock, Paper, Scissors',
+    16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    17	
+    18	    parser.add_argument('-s',
+    19	                        '--seed',
+    20	                        help='Random seed',
+    21	                        metavar='int',
+    22	                        type=int,
+    23	                        default=None)
+    24	
+    25	    return parser.parse_args()
+    26	
+    27	
+    28	# --------------------------------------------------
+    29	def insult():
+    30	    adjective = """
+    31	    truculent fatuous vainglorious fatuous petulant moribund jejune
+    32	    feckless antiquated rambunctious mundane misshapen glib dreary
+    33	    dopey devoid deleterious degrading clammy brazen indiscreet
+    34	    indecorous imbecilic dysfunctional dubious drunken disreputable
+    35	    dismal dim deficient deceitful damned daft contrary churlish
+    36	    catty banal asinine infantile lurid morbid repugnant unkempt
+    37	    vapid decrepit malevolent impertinent decrepit grotesque puerile
+    38	    """.split()
+    39	
+    40	    noun = """
+    41	    abydocomist bedswerver bespawler bobolyne cumberworld dalcop
+    42	    dew-beater dorbel drate-poke driggle-draggle fopdoodle fustylugs
+    43	    fustilarian gillie-wet-foot gnashgab gobermouch
+    44	    gowpenful-o’-anything klazomaniac leasing-monger loiter-sack
+    45	    lubberwort muck-spout mumblecrust quisby raggabrash rakefire
+    46	    roiderbanks saddle-goose scobberlotcher skelpie-limmer
+    47	    smell-feast smellfungus snoutband sorner stampcrab stymphalist
+    48	    tallowcatch triptaker wandought whiffle-whaffle yaldson zoilist
+    49	    """.split()
+    50	
+    51	    return ' '.join([random.choice(adjective), random.choice(noun)])
+    52	
+    53	
+    54	# --------------------------------------------------
+    55	def main():
+    56	    """Make a jazz noise here"""
+    57	
+    58	    args = get_args()
+    59	    random.seed(args.seed)
+    60	
+    61	    valid = set('rps')
+    62	    beats = {'r': 's', 's': 'p', 'p': 'r'}
+    63	    display = {'r': 'Rock', 'p': 'Paper', 's': 'Scissors'}
+    64	
+    65	    while True:
+    66	        play = input('1-2-3-Go! [rps|q] ').lower()
+    67	
+    68	        if play.startswith('q'):
+    69	            print('Bye, you {}!'.format(insult()))
+    70	            sys.exit(0)
+    71	
+    72	        if play not in valid:
+    73	            print('You {}! Please choose from: {}.'.format(
+    74	                insult(), ', '.join(sorted(valid))))
+    75	            continue
+    76	
+    77	        computer = random.choice(list(valid))
+    78	
+    79	        print('You: {}\nMe : {}'.format(display[play], display[computer]))
+    80	
+    81	        if beats[play] == computer:
+    82	            print('You win. You are a {}.'.format(insult()))
+    83	        elif beats[computer] == play:
+    84	            print('You lose, {}!'.format(insult()))
+    85	        else:
+    86	            print('Draw, you {}.'.format(insult()))
+    87	
+    88	
+    89	# --------------------------------------------------
+    90	if __name__ == '__main__':
+    91	    main()
+````
+
+\newpage
+
+# Chapter 12: Dial-A-Curse
 
 Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default `3`) by randomly combining some number of `-a|--adjectives` (default `2`) with a noun (see below). Be sure your program accepts a `-s|--seed` argument (default `None`) to pass to `random.seed`.
 
@@ -2707,7 +2848,7 @@ And now you have a handy way to make enemies and influence people.
 
 \newpage
 
-# Chapter 12: Scrambler
+# Chapter 13: Scrambler
 
 Write a Python program called `scrambler.py` that will take a single position positional argument that is text or a text file and then convert each word into a scrambled version. The scrambling should only work on words greater than 3 characters in length and should only scramble the letters in the middle, leaving the first and last characters unchanged. The program should take a `-s|--seed` argument (default `None`) to pass to `random.seed`.
 
@@ -3004,7 +3145,7 @@ If you don't like `map`, you can accomplish the same thing with a list comprehen
 ````
 \newpage
 
-# Chapter 13: Bacronym
+# Chapter 14: Bacronym
 
 Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--num` (default `5`) of acronyms by reading a `-w|--wordlist` argument (default `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
 
@@ -3611,7 +3752,7 @@ Additionally, you have been provided a test suite that checks that the program w
 As you write your own programs, you should think about writing very small functions that do *one thing* and then writing tests to be sure they actually do the thing you think and always continue to do that thing as you change your program. Additionally, you need to write tests to make sure that all the parts work together to accomplish the larger task at hand. While writing and refactoring this program, I repeatedly updated and used my test suite to ensure I wasn't introducing bugs!
 \newpage
 
-# Chapter 14: Workout Of (the) Day (WOD)
+# Chapter 15: Workout Of (the) Day (WOD)
 
 Write a Python program called `wod.py` that will create a Workout Of (the) Day (WOD) from a list of exercises provided in CSV format (default `wod.csv`). Accept a `-n|--num_exercises` argument (default `4`) to determine the sample size from your exercise list. Also accept a `-e|--easy` flag to indicate that the reps should be cut in half. Finally accept a `-s|--seed` argument to pass to `random.seed` for testing purposes. You should use the `tabulate` module to format the output as expected.
 
@@ -3855,7 +3996,7 @@ Then I can `append` to the `table` a new tuple containing the `name` of the exer
 
 \newpage
 
-# Chapter 15: Blackjack 
+# Chapter 16: Blackjack 
 
 What's a games book without a card game? Let's write a Python program called `blackjack.py` that plays an abbreviated game of Blackjack. Your program should accept a `-S|--stand` option (default `18`) for the value to "stand" on (not "hit" or take another card). Your program should also accept two flags (Boolean values) for `-p|--player_hits` and `-d|--dealer_hits` which will be explained shortly. You will need to accept a `-s|--seed` (default `None`) to set `random.seed`. As usual, you will also have a `-h|--help` option for usage statement:
 
@@ -4087,7 +4228,7 @@ Hints:
 
 \newpage
 
-# Chapter 16: Family Tree
+# Chapter 17: Family Tree
 
 ![Partial Tudor family tree](family_tree/tudor.txt.gv.pdf)
 
@@ -4425,7 +4566,7 @@ The `graphviz` module is an interface to the `graphviz` program which is a stand
 To make a more complicated graph, I added the full names from my `nodes` dictionary, and then use those full names to expand the initials from the `edges`, if present. In the end, the code isn't much more complicated that these few lines.
 \newpage
 
-# Chapter 17: Gematria: Numeric encoding of text
+# Chapter 18: Gematria: Numeric encoding of text
 
 Write a Python program called `gematria.py` that will numerically encode each word in a given text. The name of this program comes from gematria, a system for assigning a number to a word by summing the numeric values of each of the letters as defined by the Mispar godol (https://en.wikipedia.org/wiki/Gematria). For English characters, we can use the ASCII table (https://en.wikipedia.org/wiki/ASCII). Python provides these value throug the `ord` function to convert a character to its "ordinal" (order in the ASCII table) value as well as the `chr` function to convert a number to its "character."
 
@@ -4761,16 +4902,18 @@ All that is left is to `print` the encoded words back out:
 ````
 \newpage
 
-# Chapter 18: Histogram
+# Chapter 19: I Get Histy
 
-Write a Python program called `histy.py` that takes a single positional argument that may be plain text or the name of a file to read for the text. Count the frequency of each character (not spaces) and print a histogram of the data. By default, you should order the histogram by the characters but include `-f|--frequency_sort` option to sort by the frequency (in descending order). Also include a `-c|--character` option (default `|`) to represent a mark in the histogram, a `-m|--minimum` option (default `1`) to include a character in the output, a `-w|--width` option (default `70`) to limit the size of the histogram, and a `-i|--case_insensitive` flag to force all input to uppercase.
+Write a Python program called `histy.py` that takes a single positional argument that may be plain text or the name of a file to read for the text. Count the frequency of each character (not spaces) and print a histogram of the data. By default, you should order the histogram by the characters but include `-f|--frequency_sort` option to sort by the frequency (in descending order). Also include a `-s|--symbol` option (default `|`) to represent a mark in the histogram, a `-m|--minimum` option (default `1`) to include a character in the output, a `-w|--width` option (default `70`) to limit the size of the histogram, and a `-i|--case_insensitive` flag to force all input to uppercase.
+
+When run with no arguments or the `-h|--help` flag, print a usage:
 
 ````
 $ ./histy.py
-usage: histy.py [-h] [-c str] [-m int] [-w int] [-i] [-f] str
+usage: histy.py [-h] [-s str] [-m int] [-w int] [-i] [-f] str
 histy.py: error: the following arguments are required: str
 $ ./histy.py -h
-usage: histy.py [-h] [-c str] [-m int] [-w int] [-i] [-f] str
+usage: histy.py [-h] [-s str] [-m int] [-w int] [-i] [-f] str
 
 Histogrammer
 
@@ -4779,66 +4922,114 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -c str, --character str
-                        Character for marks (default: |)
+  -s str, --symbol str  Symbol for marks (default: |)
   -m int, --minimum int
                         Minimum frequency to print (default: 1)
   -w int, --width int   Maximum width of output (default: 70)
   -i, --case_insensitive
                         Case insensitive search (default: False)
   -f, --frequency_sort  Sort by frequency (default: False)
-$ ./histy.py ../inputs/fox.txt
-T      1 |
-a      1 |
-b      1 |
-c      1 |
-d      1 |
-e      3 |||
-f      1 |
-g      1 |
-h      2 ||
-i      1 |
-j      1 |
-k      1 |
-l      1 |
-m      1 |
-n      1 |
-o      4 ||||
-p      1 |
-q      1 |
-r      2 ||
-s      1 |
-t      1 |
-u      2 ||
-v      1 |
-w      1 |
-x      1 |
-y      1 |
-z      1 |
-$ ./histy.py ../inputs/const.txt -fim 100 -w 50 -c '#'
-E   5107 ##################################################
-T   3751 ####################################
-O   2729 ##########################
-S   2676 ##########################
-A   2675 ##########################
-N   2630 #########################
-I   2433 #######################
-R   2206 #####################
-H   2029 ###################
-L   1490 ##############
-D   1230 ############
-C   1164 ###########
-F   1021 #########
-U    848 ########
-P    767 #######
-M    730 #######
-B    612 #####
-Y    504 ####
-V    460 ####
-G    444 ####
-W    375 ###
 ````
 
+Error out if the `--symbol` is not a single character:
+
+````
+$ ./histy.py -s XX foobar
+usage: histy.py [-h] [-s str] [-m int] [-w int] [-i] [-f] str
+histy.py: error: --symbol "XX" must be one character
+````
+
+Accept text on the command line. Note that the default sorting should be *case-insensitive* so that `I` follows immediately here after `h`:
+
+````
+$ ./histy.py "I don't want the world, I just want your half."
+a      3 |||
+d      2 ||
+e      1 |
+f      1 |
+h      2 ||
+I      2 ||
+j      1 |
+l      2 ||
+n      3 |||
+o      3 |||
+r      2 ||
+s      1 |
+t      5 |||||
+u      2 ||
+w      3 |||
+y      1 |
+````
+
+Or an input file:
+
+````
+$ ./histy.py -i ../inputs/fox.txt -m 2
+E      3 |||
+H      2 ||
+O      4 ||||
+R      2 ||
+T      2 ||
+U      2 ||
+````
+
+Note that short flags can be combined:
+
+````
+$ ./histy.py ../inputs/const.txt -fim 100 -w 50 -s '#'
+E     50 ##################################################
+T     36 ####################################
+S     26 ##########################
+O     26 ##########################
+A     26 ##########################
+N     25 #########################
+I     23 #######################
+R     21 #####################
+H     19 ###################
+L     14 ##############
+D     12 ############
+C     11 ###########
+F      9 #########
+U      8 ########
+P      7 #######
+M      7 #######
+B      5 #####
+Y      4 ####
+V      4 ####
+G      4 ####
+W      3 ###
+````
+
+## Counting, filtering, scaling and sorting text
+
+I chose to create a single function called `count(text, minimum=0, width=0, frequency_sort=False)` that filters the input text to only characters, counts the letter frequencies, filters by a minimum count, scales the numbers down by a maximum width, and sorts the values by the character or by the frequency. I put the following function inside my `histy.py` program that verifies that I get expected results. I encourage you to do the same and then run `pytest -v histy.py` on your program to check your function:
+
+````
+def test_count():
+    """Test count"""
+
+    text = '"ab,Bc CC: dd_d-d"'
+    assert count(text) == [('a', 1), ('B', 1), ('b', 1), ('C', 2), ('c', 1),
+                           ('d', 4)]
+
+    assert count(text, minimum=2) == [('C', 2), ('d', 4)]
+
+    assert count(text, frequency_sort=True) == [('d', 4), ('C', 2), ('c', 1),
+                                                ('b', 1), ('a', 1), ('B', 1)]
+
+    assert count(text, frequency_sort=True, minimum=2) == [('d', 4), ('C', 2)]
+
+    assert count(text, width=3) == [('a', 0), ('B', 0), ('b', 0), ('C', 1),
+                                    ('c', 0), ('d', 3)]
+````
+
+Once you have the results of this, you need to create the histogram by printing the `--symbol` the number of times shown for each character.
+
+## Hints
+
+* Put all your input validation into `get_args` and use `parser.error` to error out
+* A regular expression plus the `filter` function can help you remove any characters from the input text that are not in the set of ASCII characters "a-zA-Z"
+* Look at `collections.Counter` for counting the characters
 \newpage
 
 ## Solution
@@ -4851,21 +5042,21 @@ W    375 ###
      5	import os
      6	import re
      7	from collections import Counter
-     8	from dire import die
+     8	
      9	
-    10	
-    11	# --------------------------------------------------
-    12	def get_args():
-    13	    """get command-line arguments"""
+    10	# --------------------------------------------------
+    11	def get_args():
+    12	    """get command-line arguments"""
+    13	
     14	    parser = argparse.ArgumentParser(
     15	        description='Histogrammer',
     16	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     17	
     18	    parser.add_argument('text', metavar='str', help='Input text or file')
     19	
-    20	    parser.add_argument('-c',
-    21	                        '--character',
-    22	                        help='Character for marks',
+    20	    parser.add_argument('-s',
+    21	                        '--symbol',
+    22	                        help='Symbol for marks',
     23	                        metavar='str',
     24	                        type=str,
     25	                        default='|')
@@ -4894,445 +5085,185 @@ W    375 ###
     48	                        help='Sort by frequency',
     49	                        action='store_true')
     50	
-    51	    return parser.parse_args()
+    51	    args = parser.parse_args()
     52	
-    53	
-    54	# --------------------------------------------------
-    55	def main():
-    56	    """Make a jazz noise here"""
-    57	
-    58	    args = get_args()
-    59	    text = args.text
-    60	    char = args.character
-    61	    width = args.width
-    62	    min_val = args.minimum
+    53	    if os.path.isfile(args.text):
+    54	        args.text = open(args.text).read()
+    55	
+    56	    if args.case_insensitive:
+    57	        args.text = args.text.upper()
+    58	
+    59	    if len(args.symbol) != 1:
+    60	        parser.error('--symbol "{}" must be one character'.format(args.symbol))
+    61	
+    62	    return args
     63	
-    64	    if len(char) != 1:
-    65	        die('--character "{}" must be one character'.format(char))
-    66	
-    67	    if os.path.isfile(text):
-    68	        text = open(text).read()
-    69	    if args.case_insensitive:
-    70	        text = text.upper()
-    71	
-    72	    freqs = Counter(filter(lambda c: re.match(r'\w', c), list(text)))
-    73	    high = max(freqs.values())
-    74	    scale = high / width if high > width else 1
-    75	    items = map(lambda t: (t[1], t[0]),
-    76	                sorted([(v, k) for k, v in freqs.items()],
-    77	                       reverse=True)) if args.frequency_sort else sorted(
-    78	                           freqs.items())
-    79	
-    80	    for c, num in items:
-    81	        if num < min_val:
-    82	            continue
-    83	        print('{} {:6} {}'.format(c, num, char * int(num / scale)))
-    84	
-    85	
-    86	# --------------------------------------------------
-    87	if __name__ == '__main__':
-    88	    main()
-````
-
-\newpage
-
-# Chapter 19: Modeling the Pareto Principle
-
-
-Vilfredi Pareto was an Italian economist who noted in the late 1800s that roughly 80% of the land in Italy was owned by about 20% of the population. This 80/20 rule has been noted in many other contexts, but it stands out in wealth inequalities where it has tilted ever further to 90/10 or even 99/1. This exercise is designed to simulate the move of resources to an ever shrinking segment of a population through random events.
-
-In our exercise, we will create variables to represent the following:
-
-1. The number of actors in the simulation
-2. The number of units of some resource
-3. The percent of unequal distribution to stop the simulation
-4. The number of iterations of the simulation to run
-
-Create a program called `pareto.py` that accepts options for the number of `-a|--actors` (default `50`), the number of `-u|--units` (default `500`), the target `-d|--distribution` (default `0.8`), the number of `-r|--rounds` to simulate (default `10`). You also need to accept a `-s|--seed` option to pass to `random.seed` (default `None`) and an option to `-g|--graph` the result of each simulation as a text histogram to some file base name (default `None`).
-
-The "resource" at play could be thought of as some measure of wealth or some resource like food. Ours is a zero-sum simulation where all the actors are randomly paired with each other and a coin is flipped to determine a winner. Each loser gives up one unit to the winner. Actors with no more units can no longer participate, so they cannot go into negative values ("debt") but neither can they ever re-enter the game. 
-
-## The simulation
-
-At the beginning of each simulation, the `--units` should evenly distributed to all the `--actors`. Create an infinite loop where the actors are shuffled and then paired up. I suggest you represent the actors as a `list` that you can pass to the `random.shuffle` function. To create the pairs, think about using the `range` function with a step value of `2` to get the position of every other actor, and then the mate for each will be the one just after it. "Flip" a coin by using `random.choice([True, False])`. If `True`, give the first player one unit and subtract one unit from the second; if `False,` vice versa. Consider using a `dict` to keep track of the number of units for each actor.
-
-Each simulation is done when the designated `distribution` (default `0.8` or 80%) is controlled by `1 - distribution` (`0.2` or 20%). So when 80% of the units are controlled by 20% of the actors, return the number of iterations through the infinite loop it took to reach the target.
-
-## Calculating the distribution
-
-If there are 10 actors and 10 units, the distribution starts out looking like this:
-
-````
->>> units = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-````
-
-You should stop when 2 actors control all the assets, so something like this:
-
-````
->>> units = [0, 0, 7, 0, 0, 3, 0, 0, 0, 0]
-````
-
-Think about sorting the units from largest to smallest and then checking cumulative sums starting from the start. When the sum is greater than the target percentage, divide the number of values that went in by the total number of values to find the percentage controlling the target amount.
-
-Consider adding a test, e.g., if the function is called `get_dist` then you can create the following to run with `pytest`:
-
-````
-def test_get_dist():
-    """Test get_dist"""
-
-    tests = [
-        ([1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 0.8, 0.8),
-        ([2, 2, 2, 1, 0, 0, 0, 0, 0, 0], 0.8, 0.3),
-        ([2, 2, 2, 2, 2, 0, 0, 0, 0, 0], 1.0, 0.5),
-        ([0, 0, 7, 0, 0, 3, 0, 0, 0, 0], 0.8, 0.2),
-        ([0, 0, 9, 0, 0, 1, 0, 0, 0, 0], 0.9, 0.1),
-    ]
-
-    for vals, perc, target in tests:
-        dist = {k:v for k,v in enumerate(vals, 1)}
-        assert get_dist(dist, perc) == target
-````
-
-Hints:
-
-* For the `--graph` option, you should be able to use your `histy` code exactly.
-* Consider make a function that runs one simulation, then call that function for the number in `--rounds`
-\newpage
-
-## Solution
-
-````
-     1	#!/usr/bin/env python3
-     2	"""Simulation of Pareto distribution through random simulation"""
-     3	
-     4	import argparse
-     5	import random
-     6	
-     7	
-     8	# --------------------------------------------------
-     9	def get_args():
-    10	    """Get command-line arguments"""
-    11	
-    12	    parser = argparse.ArgumentParser(
-    13	        description='Argparse Python script',
-    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    15	
-    16	    parser.add_argument('-a',
-    17	                        '--actors',
-    18	                        help='Number of actors',
-    19	                        metavar='int',
-    20	                        type=int,
-    21	                        default=50)
-    22	
-    23	    parser.add_argument('-u',
-    24	                        '--units',
-    25	                        help='Number of units',
-    26	                        metavar='int',
-    27	                        type=int,
-    28	                        default=500)
-    29	
-    30	    parser.add_argument('-d',
-    31	                        '--distribution',
-    32	                        help='Target distribution',
-    33	                        metavar='float',
-    34	                        type=float,
-    35	                        default=0.8)
-    36	
-    37	    parser.add_argument('-r',
-    38	                        '--rounds',
-    39	                        help='Number of rounds',
-    40	                        metavar='int',
-    41	                        type=int,
-    42	                        default=10)
-    43	
-    44	    parser.add_argument('-s',
-    45	                        '--seed',
-    46	                        help='Random seed',
-    47	                        metavar='int',
-    48	                        type=int,
-    49	                        default=None)
-    50	
-    51	    parser.add_argument('-g',
-    52	                        '--graph',
-    53	                        help='Plot histograms to file',
-    54	                        metavar='FILE',
-    55	                        type=str,
-    56	                        default=None)
-    57	
-    58	    return parser.parse_args()
-    59	
-    60	
-    61	# --------------------------------------------------
-    62	def main():
-    63	    """Make a jazz noise here"""
     64	
-    65	    args = get_args()
-    66	    random.seed(args.seed)
-    67	
-    68	    results = []
-    69	    for i in range(args.rounds):
-    70	        res, dist = sim(num_actors=args.actors,
-    71	                        num_units=args.units,
-    72	                        distribution=args.distribution)
+    65	# --------------------------------------------------
+    66	def count(text, minimum=0, width=0, frequency_sort=False):
+    67	    """Count characters in text"""
+    68	
+    69	    freqs = Counter(re.findall(r'[a-zA-Z]', text))
+    70	
+    71	    if minimum > 1:
+    72	        freqs = {k:v for k,v in freqs.items() if v >= minimum}
     73	
-    74	        if args.graph:
-    75	            fh = open(args.graph + '-{}.txt'.format(i+1), 'wt')
-    76	            for units, actor in sorted([(v, k) for k, v in dist.items()]):
-    77	                fh.write('{:3}: {:3} {}\n'.format(actor, units, '#' * units))
-    78	            fh.close()
-    79	
-    80	        print('{:3}: {} iterations'.format(i + 1, res))
-    81	        results.append(res)
-    82	
-    83	    print('Average = {:,d} iterations'.format(int(sum(results) /
-    84	                                                  len(results))))
-    85	
-    86	
-    87	# --------------------------------------------------
-    88	def sim(num_actors, num_units, distribution):
-    89	    """Run a simulation"""
-    90	
-    91	    actors = list(range(1, num_actors + 1))
-    92	    units_per_actor = int(num_units / num_actors)
-    93	    assert units_per_actor > 0, 'Not enough units per actor'
-    94	    dist = {actor: units_per_actor for actor in actors}
-    95	    rounds = 0
+    74	    high = max(freqs.values())
+    75	    if width > 0 and high > width:
+    76	        scale = width / high
+    77	        freqs = {k:int(v * scale) for k,v in freqs.items()}
+    78	
+    79	    if frequency_sort:
+    80	        return list(
+    81	            map(lambda t: (t[1], t[0]),
+    82	                sorted([(v, k) for k, v in freqs.items()], reverse=True)))
+    83	    else:
+    84	        return list(
+    85	            map(lambda t: (t[1], t[2]),
+    86	                sorted([(k.lower(), k, v) for k, v in freqs.items()])))
+    87	
+    88	
+    89	# --------------------------------------------------
+    90	def test_count():
+    91	    """Test count"""
+    92	
+    93	    text = '"ab,Bc CC: dd_d-d"'
+    94	    assert count(text) == [('a', 1), ('B', 1), ('b', 1), ('C', 2), ('c', 1),
+    95	                           ('d', 4)]
     96	
-    97	    while True:
-    98	        rounds += 1
-    99	        random.shuffle(actors)
-   100	        for i in range(0, len(actors), 2):
-   101	            a1, a2 = actors[i], actors[i + 1]
-   102	            if all([dist[a1], dist[a2]]):
-   103	                if random.choice([True, False]):
-   104	                    dist[a1] += 1
-   105	                    dist[a2] -= 1
-   106	                else:
-   107	                    dist[a1] -= 1
-   108	                    dist[a2] += 1
-   109	
-   110	        if get_dist(dist, percentile=distribution) <= 1 - distribution:
-   111	            return rounds, dist
-   112	
-   113	    return 0
+    97	    assert count(text, minimum=2) == [('C', 2), ('d', 4)]
+    98	
+    99	    assert count(text, frequency_sort=True) == [('d', 4), ('C', 2), ('c', 1),
+   100	                                                ('b', 1), ('a', 1), ('B', 1)]
+   101	
+   102	    assert count(text, frequency_sort=True, minimum=2) == [('d', 4), ('C', 2)]
+   103	
+   104	    assert count(text, width=3) == [('a', 0), ('B', 0), ('b', 0), ('C', 1),
+   105	                                    ('c', 0), ('d', 3)]
+   106	
+   107	
+   108	# --------------------------------------------------
+   109	def main():
+   110	    """Make a jazz noise here"""
+   111	
+   112	    args = get_args()
+   113	    freqs = count(args.text, args.minimum, args.width, args.frequency_sort)
    114	
-   115	
-   116	# --------------------------------------------------
-   117	def get_dist(dist, percentile):
-   118	    """Calculate the distribution of units to actors"""
-   119	
-   120	    values = sorted(list(dist.values()), reverse=True)
-   121	    total = sum(values)
-   122	    assert total > 0
-   123	    num_actors = len(values)
-   124	
-   125	    for i in range(1, num_actors + 1):
-   126	        cum_sum = sum(values[:i])
-   127	        perc_actors = i / num_actors
-   128	        if cum_sum / total >= percentile:
-   129	            return i / num_actors
-   130	
-   131	    return 0
-   132	
-   133	
-   134	# --------------------------------------------------
-   135	def test_get_dist():
-   136	    """Test get_dist"""
-   137	
-   138	    tests = [
-   139	        ([1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 0.8, 0.8),
-   140	        ([2, 2, 2, 1, 0, 0, 0, 0, 0, 0], 0.8, 0.3),
-   141	        ([2, 2, 2, 2, 2, 0, 0, 0, 0, 0], 1.0, 0.5),
-   142	        ([0, 0, 7, 0, 0, 3, 0, 0, 0, 0], 0.8, 0.2),
-   143	        ([0, 0, 9, 0, 0, 1, 0, 0, 0, 0], 0.9, 0.1),
-   144	    ]
-   145	
-   146	    for vals, perc, target in tests:
-   147	        dist = {k:v for k,v in enumerate(vals, 1)}
-   148	        assert get_dist(dist, perc) == target
-   149	
-   150	
-   151	# --------------------------------------------------
-   152	if __name__ == '__main__':
-   153	    main()
+   115	    for c, num in freqs:
+   116	        print('{} {:6} {}'.format(c, num, args.symbol * num))
+   117	
+   118	
+   119	# --------------------------------------------------
+   120	if __name__ == '__main__':
+   121	    main()
 ````
 
 \newpage
 
 ## Discussion
 
-As usual, I use `argparse` to validate all the user arguments and provide reasonable defaults such that the program can run with no input from the user. I pass the `--seed` argumnt directly to `random.seed` and then can worry about how to create and run my simulations.
+As suggested, I wrote my `get_args` to handle all the user input validation. It's easy enough to check, for instance, if the `text` argument is actually a file and `open`/`read` it so as to return exactly what the rest of the program requires. I can also see if the `--symbol` is not exactly one character and use `parser.error` to print an error with the usage and then exit with a non-zero status.
 
-I decided to create a function `sim` that I would call the correct number of `--round` using a `for` loop. The `sim` function needs to be passed the number of actors, the number of resources, and the target distribution to stop the simulation and will return the number of times through the simulation necessary to reach that target inequality of resource distribution. That is, if there are 10 actors and 10 units, then I stop when 8 units are controlled by no more than 2 actors.
+Inside my `main`, I pass most of the arguments to the `count` function I described in the intro which is where most of the logic of the program is contained. If you wrote several functions to do each part or if you simply put all the logic in the `main`, that's fine (as long as you are passing the test suite). The advantage to me is that I can write a `test_count` function where I pass in some known text and ensure that I'm getting back the filtered, sorted results I expect. 
 
-## The simulation
-
-As suggested in the description, I make a `list` to represent the actors:
+The first thing to notice about the `test_count` function is the text that it passes in:
 
 ````
->>> num_actors = 10
->>> num_units = 10
->>> distribution = .8
->>> actors = list(range(1, num_actors + 1))
->>> actors
-[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+>>> text = '"ab,Bc CC: dd_d-d"'
 ````
 
-I need to figure out how many units to initially give each actor:
+I only want to count the alphabetic characters, so how can I remove all the other stuff? I love to use regular expressions for this. I create a character class with `r'[a-zA-Z]'` (where `r''` creates a "raw" string), the brackets `[]` enclose the class, and `a-z` is the range of letters from lowercase `a` to lowercase `z` and then `A-Z` is the uppercase letters. The `re.findall` method will return a `list` of matching characters:
 
 ````
->>> units_per_actor = int(num_units / num_actors)
->>> units_per_actor
-1
+>>> import re
+>>> re.findall(r'[a-zA-Z]', text)
+['a', 'b', 'B', 'c', 'C', 'C', 'd', 'd', 'd', 'd']
 ````
 
-And then `assert` that there is something to distribute:
+Which is exactly what we need for `collections.Counter`:
 
 ````
->>> assert units_per_actor > 0, 'Not enough units per actor'
+>>> freqs = Counter(re.findall(r'[a-zA-Z]', text))
+>>> freqs
+Counter({'d': 4, 'C': 2, 'a': 1, 'b': 1, 'B': 1, 'c': 1})
 ````
 
-I use a dictionary comprehension to create a `dict` that tracks the number of units for each actor:
+So, in one line of code we filtered and counted the input text. Next, we can remove letters that are found too infrequently. A dictionary comprehension works well if we use `freq.items()` to get a list of tuples and only take those above the minimum:
 
 ````
->>> dist
-{1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1}
+>>> minimum = 2
+>>> freqs = {k:v for k,v in freqs.items() if v >= minimum}
+>>> freqs
+{'C': 2, 'd': 4}
 ````
 
-And then set up a `while True` infinite loop. Each time through the loop, I shuffle the actors:
+We need to find the highest value which is what the `max` function will do. Note that you should not call your variable `max` as it will then *overwrite the actual function* called `max`!
 
 ````
->>> random.shuffle(actors)
->>> actors
-[7, 1, 9, 2, 10, 3, 5, 6, 8, 4]
+>>> high = max(freqs.values())
+>>> highest
+4
 ````
 
-To create pairs, I use `range` to get every other position and then add `1` to that for the next actor:
+If the `highest` value is greater than the `width` argument, we should scale the values down. Again a dictionary comprehension works well:
 
 ````
->>> for i in range(0, len(actors), 2):
-...     print(actors[i], actors[i + 1])
+>>> freqs = {k:int(v * scale) for k,v in freqs.items()}
+>>> freqs
+{'C': 1, 'd': 3}
+````
+
+Finally we need to sort the values either by the characters (which are the `keys`) or their frequencies (which are the `values`). We can use the `sorted` function on the `freqs.items()` to sort by key and value, but that would be case-senstive. To sort without regard to case, we need to convert the keys to upper- or lowercase first, but we still want to display the proper case. Note that `dict.items` returns a list of tuples:
+
+````
+>>> freqs.items()
+dict_items([('C', 1), ('d', 3)])
+````
+
+We could add another field to the tuple that is the first value in lowercase:
+
+````
+>>> s = list(map(lambda t: (t[0].lower(), t[0], t[1]), freqs.items()))
+>>> s
+[('c', 'C', 1), ('d', 'd', 3)]
+````
+
+Then call `sorted` on that. We can then remove the first field from each tuple:
+
+````
+>>> list(map(lambda t: (t[1], t[2]), s))
+[('C', 1), ('d', 3)]
+````
+
+The other sort is by values, so we can use a dictionary comprehension to reverse the keys and values before calling `sorted`:
+
+````
+>>> s = sorted([(v, k) for k, v in freqs.items()], reverse=True)
+>>> s
+[(3, 'd'), (1, 'C')]
+````
+
+And then reverse the tuples to put them back with `(character, count)`:
+
+````
+>>> list(map(lambda t: (t[1], t[0]), s))
+[('d', 3), ('C', 1)]
+````
+
+Now it's a matter to `print` each item. I can use the `*` operator to repeat the `symbol` argument by the scaled count:
+
+````
+>>> symbol = '|'
+>>> for c, num in freqs:
+...     print('{} {:6} {}'.format(c, num, symbol * num))
 ...
-7 1
-9 2
-10 3
-5 6
-8 4
+d      3 |||
+C      1 |
 ````
 
-Actors can never go into negative values, so I need to ensure both actors still have units:
+## Further
 
-````
->>> all([dist[a1], dist[a2]])
-True
-````
-
-If one has no more units, I simply move to the next pair. If they both have assests, I use `random.choice([True, False])` and give 1 unit to the first actor and take 1 from the second if `True`, vice versa if not.
-
-## The distribution
-
-After doing this for all the pairs, I then check the resource distribution with a function called `get_dist` that takes the `dict` of actors/units and the target distribution. Suppose a distribution looks like this:
-
-````
->>> dist
-{1: 0, 2: 0, 3: 7, 4: 0, 5: 0, 6: 3, 7: 0, 8: 0, 9: 0, 10: 0}
-````
-
-I sort the `values` of the `dict` and find the `sum`
-
-````
->>> values = sorted(list(dist.values()), reverse=True)
->>> values
-[7, 3, 0, 0, 0, 0, 0, 0, 0, 0]
->>> total = sum(values)
->>> total
-10
-````
-
-I figure out how many actors there are and start creating cumulative sums from the beginning of my sorted `values` list, counting how many actors are needed to account for whatever percentage of the total are present:
-
-````
->>> percentile = .8
->>> num_actors = len(values)
->>> for i in range(1, num_actors + 1):
-...     cum_sum = sum(values[:i])
-...     perc_actors = i / num_actors
-...     if cum_sum / total >= percentile:
-...         print(i / num_actors)
-...         break
-...
-0.2
-````
-
-I can put this into a function:
-
-````
->>> import pareto, inspect
->>> print(inspect.getsource(pareto.get_dist))
-def get_dist(dist, percentile):
-    """Calculate the distribution of units to actors"""
-
-    values = sorted(list(dist.values()), reverse=True)
-    total = sum(values)
-    assert total > 0
-    num_actors = len(values)
-
-    for i in range(1, num_actors + 1):
-        cum_sum = sum(values[:i])
-        perc_actors = i / num_actors
-        if cum_sum / total >= percentile:
-            return i / num_actors
-
-    return 0
-````
-
-And test it using the `test_get_dist` function shown earlier.
-
-## Graphing the distribution
-
-Data visualization is a vital part of checking the accuracy of your work. You can use the code you wrote for `histy` to see that, indeed, 80% of the actors have nothing while 20% control everything all due to nothing more than random coin flips:
-
-````
-$ ./pareto.py -r 1 -a 10 -u 10 -g graph
-  1: 50 iterations
-Average = 50 iterations
-$ cat graph-1.txt
-  1:   0
-  2:   0
-  4:   0
-  5:   0
-  6:   0
-  7:   0
-  8:   0
- 10:   0
-  9:   2 ##
-  3:   8 ########
-````
-
-If you run it again, you will most like see that some other two actors were the winners:
-
-````
-$ ./pareto.py -r 1 -a 10 -u 10 -g graph
-  1: 97 iterations
-Average = 97 iterations
-$ cat graph-1.txt
-  1:   0
-  3:   0
-  4:   0
-  6:   0
-  7:   0
-  8:   0
-  9:   0
- 10:   0
-  5:   2 ##
-  2:   8 ########
-````
-
-It doesn't take long for an even distribution to become very skewed. Imagine how much more quickly the imbalance would be achieved if the resources were unevenly distributed at the beginning!
-
-## More
-
-* Find a way to animate the changes to the histogram during each challenge inside the simulation; e.g., `matplotlib.animation` or create a series of GIFs or PNGs that you stitch together to create a short movie to visualize how the resource distribution changes over time.
+* Turn the histogram 90 degrees so that the characters are listed on the bottom and the bars go up
 \newpage
 
 # Chapter 20: Mommy's Little (Crossword) Helper
@@ -7412,7 +7343,237 @@ Once I have the `stemmer` function, I can apply it to the given `word` and every
 
 \newpage
 
-# Chapter 27: Anagram
+# Chapter 27: Tic-Tac-Toe Outcome
+
+Create a Python program called `outcome.py` that takes a given Tic-Tac-Toe state as it's only (positional) argument and reports if X or O has won or if there is no winner. The state should only contain the characters ".", "O", and "X", and must be exactly 9 characters long. If there is not exactly one argument, print a "usage" statement.
+
+````
+$ ./outcome.py
+Usage: outcome.py STATE
+$ ./outcome.py ..X.OA..X
+State "..X.OA..X" must be 9 characters of only ., X, O
+$ ./outcome.py ..X.OX...
+No winner
+$ ./outcome.py ..X.OX..X
+X has won
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	
+     3	import os
+     4	import re
+     5	import sys
+     6	
+     7	
+     8	# --------------------------------------------------
+     9	def main():
+    10	    args = sys.argv[1:]
+    11	
+    12	    if len(args) != 1:
+    13	        print('Usage: {} STATE'.format(os.path.basename(sys.argv[0])))
+    14	        sys.exit(1)
+    15	
+    16	    state = args[0]
+    17	
+    18	    if not re.search('^[.XO]{9}$', state):
+    19	        print('State "{}" must be 9 characters of only ., X, O'.format(state),
+    20	              file=sys.stderr)
+    21	        sys.exit(1)
+    22	
+    23	    winning = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7],
+    24	               [2, 5, 8], [0, 4, 8], [2, 4, 6]]
+    25	
+    26	    winner = 'No winner'
+    27	
+    28	    # for player in ['X', 'O']:
+    29	    #     for combo in winning:
+    30	    #         i, j, k = combo
+    31	    #         if state[i] == player and state[j] == player and state[k] == player:
+    32	    #             winner = player
+    33	    #             break
+    34	
+    35	    # for player in ['X', 'O']:
+    36	    #     for combo in winning:
+    37	    #         chars = []
+    38	    #         for i in combo:
+    39	    #             chars.append(state[i])
+    40	
+    41	    #         if ''.join(chars) == player * 3:
+    42	    #             winner = player
+    43	    #             break
+    44	
+    45	    # for player in ['X', 'O']:
+    46	    #     for i, j, k in winning:
+    47	    #         chars = ''.join([state[i], state[j], state[k]])
+    48	    #         if ''.join(chars) == '{}{}{}'.format(player, player, player):
+    49	    #             winner = player
+    50	    #             break
+    51	
+    52	    for player in ['X', 'O']:
+    53	        for i, j, k in winning:
+    54	            combo = [state[i], state[j], state[k]]
+    55	            if combo == [player, player, player]:
+    56	                winner = '{} has won'.format(player)
+    57	                break
+    58	
+    59	    # for combo in winning:
+    60	    #     group = list(map(lambda i: state[i], combo))
+    61	    #     for player in ['X', 'O']:
+    62	    #         if all(x == player for x in group):
+    63	    #             winner = player
+    64	    #             break
+    65	
+    66	    print(winner)
+    67	
+    68	
+    69	# --------------------------------------------------
+    70	if __name__ == '__main__':
+    71	    main()
+````
+
+\newpage
+
+# Chapter 28: Twelve Days of Christmas
+
+Write a Python program called `twelve_days.py` that will generate the "Twelve Days of Christmas" song up to the `-n|--number_days` argument (default `12`), writing the resulting text to the `-o|--outfile` argument (default STDOUT).
+
+````
+$ ./twelve_days.py -h
+usage: twelve_days.py [-h] [-o str] [-n int]
+
+Twelve Days of Christmas
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o str, --outfile str
+                        Outfile (STDOUT) (default: )
+  -n int, --number_days int
+                        Number of days to sing (default: 12)
+$ ./twelve_days.py -n 1
+On the first day of Christmas,
+My true love gave to me,
+A partridge in a pear tree.
+
+$ ./twelve_days.py -n 3
+On the first day of Christmas,
+My true love gave to me,
+A partridge in a pear tree.
+
+On the second day of Christmas,
+My true love gave to me,
+Two turtle doves,
+And a partridge in a pear tree.
+
+On the third day of Christmas,
+My true love gave to me,
+Three French hens,
+Two turtle doves,
+And a partridge in a pear tree.
+
+$ ./twelve_days.py -o out
+$ wc -l out
+     113 out
+````
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	
+     3	import argparse
+     4	import sys
+     5	from dire import die
+     6	
+     7	
+     8	# --------------------------------------------------
+     9	def get_args():
+    10	    """get command-line arguments"""
+    11	    parser = argparse.ArgumentParser(
+    12	        description='Twelve Days of Christmas',
+    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    14	
+    15	    parser.add_argument('-o',
+    16	                        '--outfile',
+    17	                        help='Outfile (STDOUT)',
+    18	                        metavar='str',
+    19	                        type=str,
+    20	                        default='')
+    21	
+    22	    parser.add_argument('-n',
+    23	                        '--number_days',
+    24	                        help='Number of days to sing',
+    25	                        metavar='int',
+    26	                        type=int,
+    27	                        default=12)
+    28	
+    29	    return parser.parse_args()
+    30	
+    31	
+    32	# --------------------------------------------------
+    33	def main():
+    34	    """Make a jazz noise here"""
+    35	
+    36	    args = get_args()
+    37	    out_file = args.outfile
+    38	    num_days = args.number_days
+    39	    out_fh = open(out_file, 'wt') if out_file else sys.stdout
+    40	
+    41	    days = {
+    42	        12: 'Twelve drummers drumming',
+    43	        11: 'Eleven pipers piping',
+    44	        10: 'Ten lords a leaping',
+    45	        9: 'Nine ladies dancing',
+    46	        8: 'Eight maids a milking',
+    47	        7: 'Seven swans a swimming',
+    48	        6: 'Six geese a laying',
+    49	        5: 'Five gold rings',
+    50	        4: 'Four calling birds',
+    51	        3: 'Three French hens',
+    52	        2: 'Two turtle doves',
+    53	        1: 'a partridge in a pear tree',
+    54	    }
+    55	
+    56	    ordinal = {
+    57	        12: 'twelfth', 11: 'eleven', 10: 'tenth',
+    58	        9: 'ninth', 8: 'eighth', 7: 'seventh',
+    59	        6: 'sixth', 5: 'fifth', 4: 'fourth',
+    60	        3: 'third', 2: 'second', 1: 'first',
+    61	    }
+    62	
+    63	    if not num_days in days:
+    64	        die('Cannot sing "{}" days'.format(num_days))
+    65	
+    66	    for i in range(1, num_days + 1):
+    67	        first = 'On the {} day of Christmas,\nMy true love gave to me,'
+    68	        out_fh.write(first.format(ordinal[i]) + '\n')
+    69	        for j in reversed(range(1, i + 1)):
+    70	            if j == 1:
+    71	                if i == 1:
+    72	                    out_fh.write('{}.\n'.format(days[j].title()))
+    73	                else:
+    74	                    out_fh.write('And {}.\n'.format(days[j]))
+    75	            else:
+    76	                out_fh.write('{},\n'.format(days[j]))
+    77	
+    78	        if i < max(days.keys()):
+    79	            out_fh.write('\n')
+    80	
+    81	
+    82	# --------------------------------------------------
+    83	if __name__ == '__main__':
+    84	    main()
+````
+
+\newpage
+
+# Chapter 29: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -7862,7 +8023,7 @@ In the end, I look to see how many `anagrams` I found using `len(anagrams)`. If 
 
 \newpage
 
-# Chapter 28: Hangman
+# Chapter 30: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -8432,7 +8593,7 @@ Here are some changes you could make to your program:
 * Add a `quiet` flag to keep `play` from executing any `print` statements
 \newpage
 
-# Chapter 29: First Bank of Change
+# Chapter 31: First Bank of Change
 
 Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100. It should provide a usage if given no arguments or the `-h|--help` flag:
 
@@ -8674,7 +8835,406 @@ The `plural` version of each name is made by adding `s` except for `penny`, so l
 Finally lines 39-43 are left to formatting the report to the user, being sure to provide feedback that includes the original `value` ("If you give me ...") and an enumerated list of all the possible ways we could make change. The test suite does not bother to check the order in which you return the combinations, only that the correct number are present and they are in the correct format.
 \newpage
 
-# Chapter 30: Runny Babbit
+# Chapter 32: Modeling the Pareto Principle
+
+
+Vilfredi Pareto was an Italian economist who noted in the late 1800s that roughly 80% of the land in Italy was owned by about 20% of the population. This 80/20 rule has been noted in many other contexts, but it stands out in wealth inequalities where it has tilted ever further to 90/10 or even 99/1. This exercise is designed to simulate the move of resources to an ever shrinking segment of a population through random events.
+
+In our exercise, we will create variables to represent the following:
+
+1. The number of actors in the simulation
+2. The number of units of some resource
+3. The percent of unequal distribution to stop the simulation
+4. The number of iterations of the simulation to run
+
+Create a program called `pareto.py` that accepts options for the number of `-a|--actors` (default `50`), the number of `-u|--units` (default `500`), the target `-d|--distribution` (default `0.8`), the number of `-r|--rounds` to simulate (default `10`). You also need to accept a `-s|--seed` option to pass to `random.seed` (default `None`) and an option to `-g|--graph` the result of each simulation as a text histogram to some file base name (default `None`).
+
+The "resource" at play could be thought of as some measure of wealth or some resource like food. Ours is a zero-sum simulation where all the actors are randomly paired with each other and a coin is flipped to determine a winner. Each loser gives up one unit to the winner. Actors with no more units can no longer participate, so they cannot go into negative values ("debt") but neither can they ever re-enter the game. 
+
+## The simulation
+
+At the beginning of each simulation, the `--units` should evenly distributed to all the `--actors`. Create an infinite loop where the actors are shuffled and then paired up. I suggest you represent the actors as a `list` that you can pass to the `random.shuffle` function. To create the pairs, think about using the `range` function with a step value of `2` to get the position of every other actor, and then the mate for each will be the one just after it. "Flip" a coin by using `random.choice([True, False])`. If `True`, give the first player one unit and subtract one unit from the second; if `False,` vice versa. Consider using a `dict` to keep track of the number of units for each actor.
+
+Each simulation is done when the designated `distribution` (default `0.8` or 80%) is controlled by `1 - distribution` (`0.2` or 20%). So when 80% of the units are controlled by 20% of the actors, return the number of iterations through the infinite loop it took to reach the target.
+
+## Calculating the distribution
+
+If there are 10 actors and 10 units, the distribution starts out looking like this:
+
+````
+>>> units = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+````
+
+You should stop when 2 actors control all the assets, so something like this:
+
+````
+>>> units = [0, 0, 7, 0, 0, 3, 0, 0, 0, 0]
+````
+
+Think about sorting the units from largest to smallest and then checking cumulative sums starting from the start. When the sum is greater than the target percentage, divide the number of values that went in by the total number of values to find the percentage controlling the target amount.
+
+Consider adding a test, e.g., if the function is called `get_dist` then you can create the following to run with `pytest`:
+
+````
+def test_get_dist():
+    """Test get_dist"""
+
+    tests = [
+        ([1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 0.8, 0.8),
+        ([2, 2, 2, 1, 0, 0, 0, 0, 0, 0], 0.8, 0.3),
+        ([2, 2, 2, 2, 2, 0, 0, 0, 0, 0], 1.0, 0.5),
+        ([0, 0, 7, 0, 0, 3, 0, 0, 0, 0], 0.8, 0.2),
+        ([0, 0, 9, 0, 0, 1, 0, 0, 0, 0], 0.9, 0.1),
+    ]
+
+    for vals, perc, target in tests:
+        dist = {k:v for k,v in enumerate(vals, 1)}
+        assert get_dist(dist, perc) == target
+````
+
+Hints:
+
+* For the `--graph` option, you should be able to use your `histy` code exactly.
+* Consider make a function that runs one simulation, then call that function for the number in `--rounds`
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Simulation of Pareto distribution through random simulation"""
+     3	
+     4	import argparse
+     5	import random
+     6	
+     7	
+     8	# --------------------------------------------------
+     9	def get_args():
+    10	    """Get command-line arguments"""
+    11	
+    12	    parser = argparse.ArgumentParser(
+    13	        description='Argparse Python script',
+    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    15	
+    16	    parser.add_argument('-a',
+    17	                        '--actors',
+    18	                        help='Number of actors',
+    19	                        metavar='int',
+    20	                        type=int,
+    21	                        default=50)
+    22	
+    23	    parser.add_argument('-u',
+    24	                        '--units',
+    25	                        help='Number of units',
+    26	                        metavar='int',
+    27	                        type=int,
+    28	                        default=500)
+    29	
+    30	    parser.add_argument('-d',
+    31	                        '--distribution',
+    32	                        help='Target distribution',
+    33	                        metavar='float',
+    34	                        type=float,
+    35	                        default=0.8)
+    36	
+    37	    parser.add_argument('-r',
+    38	                        '--rounds',
+    39	                        help='Number of rounds',
+    40	                        metavar='int',
+    41	                        type=int,
+    42	                        default=10)
+    43	
+    44	    parser.add_argument('-s',
+    45	                        '--seed',
+    46	                        help='Random seed',
+    47	                        metavar='int',
+    48	                        type=int,
+    49	                        default=None)
+    50	
+    51	    parser.add_argument('-g',
+    52	                        '--graph',
+    53	                        help='Plot histograms to file',
+    54	                        metavar='FILE',
+    55	                        type=str,
+    56	                        default=None)
+    57	
+    58	    return parser.parse_args()
+    59	
+    60	
+    61	# --------------------------------------------------
+    62	def main():
+    63	    """Make a jazz noise here"""
+    64	
+    65	    args = get_args()
+    66	    random.seed(args.seed)
+    67	
+    68	    results = []
+    69	    for i in range(args.rounds):
+    70	        res, dist = sim(num_actors=args.actors,
+    71	                        num_units=args.units,
+    72	                        distribution=args.distribution)
+    73	
+    74	        if args.graph:
+    75	            fh = open(args.graph + '-{}.txt'.format(i+1), 'wt')
+    76	            for units, actor in sorted([(v, k) for k, v in dist.items()]):
+    77	                fh.write('{:3}: {:3} {}\n'.format(actor, units, '#' * units))
+    78	            fh.close()
+    79	
+    80	        print('{:3}: {} iterations'.format(i + 1, res))
+    81	        results.append(res)
+    82	
+    83	    print('Average = {:,d} iterations'.format(int(sum(results) /
+    84	                                                  len(results))))
+    85	
+    86	
+    87	# --------------------------------------------------
+    88	def sim(num_actors, num_units, distribution):
+    89	    """Run a simulation"""
+    90	
+    91	    actors = list(range(1, num_actors + 1))
+    92	    units_per_actor = int(num_units / num_actors)
+    93	    assert units_per_actor > 0, 'Not enough units per actor'
+    94	    dist = {actor: units_per_actor for actor in actors}
+    95	    rounds = 0
+    96	
+    97	    while True:
+    98	        rounds += 1
+    99	        random.shuffle(actors)
+   100	        for i in range(0, len(actors), 2):
+   101	            a1, a2 = actors[i], actors[i + 1]
+   102	            if all([dist[a1], dist[a2]]):
+   103	                if random.choice([True, False]):
+   104	                    dist[a1] += 1
+   105	                    dist[a2] -= 1
+   106	                else:
+   107	                    dist[a1] -= 1
+   108	                    dist[a2] += 1
+   109	
+   110	        if get_dist(dist, percentile=distribution) <= 1 - distribution:
+   111	            return rounds, dist
+   112	
+   113	    return 0
+   114	
+   115	
+   116	# --------------------------------------------------
+   117	def get_dist(dist, percentile):
+   118	    """Calculate the distribution of units to actors"""
+   119	
+   120	    values = sorted(list(dist.values()), reverse=True)
+   121	    total = sum(values)
+   122	    assert total > 0
+   123	    num_actors = len(values)
+   124	
+   125	    for i in range(1, num_actors + 1):
+   126	        cum_sum = sum(values[:i])
+   127	        perc_actors = i / num_actors
+   128	        if cum_sum / total >= percentile:
+   129	            return i / num_actors
+   130	
+   131	    return 0
+   132	
+   133	
+   134	# --------------------------------------------------
+   135	def test_get_dist():
+   136	    """Test get_dist"""
+   137	
+   138	    tests = [
+   139	        ([1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 0.8, 0.8),
+   140	        ([2, 2, 2, 1, 0, 0, 0, 0, 0, 0], 0.8, 0.3),
+   141	        ([2, 2, 2, 2, 2, 0, 0, 0, 0, 0], 1.0, 0.5),
+   142	        ([0, 0, 7, 0, 0, 3, 0, 0, 0, 0], 0.8, 0.2),
+   143	        ([0, 0, 9, 0, 0, 1, 0, 0, 0, 0], 0.9, 0.1),
+   144	    ]
+   145	
+   146	    for vals, perc, target in tests:
+   147	        dist = {k:v for k,v in enumerate(vals, 1)}
+   148	        assert get_dist(dist, perc) == target
+   149	
+   150	
+   151	# --------------------------------------------------
+   152	if __name__ == '__main__':
+   153	    main()
+````
+
+\newpage
+
+## Discussion
+
+As usual, I use `argparse` to validate all the user arguments and provide reasonable defaults such that the program can run with no input from the user. I pass the `--seed` argumnt directly to `random.seed` and then can worry about how to create and run my simulations.
+
+I decided to create a function `sim` that I would call the correct number of `--round` using a `for` loop. The `sim` function needs to be passed the number of actors, the number of resources, and the target distribution to stop the simulation and will return the number of times through the simulation necessary to reach that target inequality of resource distribution. That is, if there are 10 actors and 10 units, then I stop when 8 units are controlled by no more than 2 actors.
+
+## The simulation
+
+As suggested in the description, I make a `list` to represent the actors:
+
+````
+>>> num_actors = 10
+>>> num_units = 10
+>>> distribution = .8
+>>> actors = list(range(1, num_actors + 1))
+>>> actors
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+````
+
+I need to figure out how many units to initially give each actor:
+
+````
+>>> units_per_actor = int(num_units / num_actors)
+>>> units_per_actor
+1
+````
+
+And then `assert` that there is something to distribute:
+
+````
+>>> assert units_per_actor > 0, 'Not enough units per actor'
+````
+
+I use a dictionary comprehension to create a `dict` that tracks the number of units for each actor:
+
+````
+>>> dist
+{1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1, 8: 1, 9: 1, 10: 1}
+````
+
+And then set up a `while True` infinite loop. Each time through the loop, I shuffle the actors:
+
+````
+>>> random.shuffle(actors)
+>>> actors
+[7, 1, 9, 2, 10, 3, 5, 6, 8, 4]
+````
+
+To create pairs, I use `range` to get every other position and then add `1` to that for the next actor:
+
+````
+>>> for i in range(0, len(actors), 2):
+...     print(actors[i], actors[i + 1])
+...
+7 1
+9 2
+10 3
+5 6
+8 4
+````
+
+Actors can never go into negative values, so I need to ensure both actors still have units:
+
+````
+>>> all([dist[a1], dist[a2]])
+True
+````
+
+If one has no more units, I simply move to the next pair. If they both have assests, I use `random.choice([True, False])` and give 1 unit to the first actor and take 1 from the second if `True`, vice versa if not.
+
+## The distribution
+
+After doing this for all the pairs, I then check the resource distribution with a function called `get_dist` that takes the `dict` of actors/units and the target distribution. Suppose a distribution looks like this:
+
+````
+>>> dist
+{1: 0, 2: 0, 3: 7, 4: 0, 5: 0, 6: 3, 7: 0, 8: 0, 9: 0, 10: 0}
+````
+
+I sort the `values` of the `dict` and find the `sum`
+
+````
+>>> values = sorted(list(dist.values()), reverse=True)
+>>> values
+[7, 3, 0, 0, 0, 0, 0, 0, 0, 0]
+>>> total = sum(values)
+>>> total
+10
+````
+
+I figure out how many actors there are and start creating cumulative sums from the beginning of my sorted `values` list, counting how many actors are needed to account for whatever percentage of the total are present:
+
+````
+>>> percentile = .8
+>>> num_actors = len(values)
+>>> for i in range(1, num_actors + 1):
+...     cum_sum = sum(values[:i])
+...     perc_actors = i / num_actors
+...     if cum_sum / total >= percentile:
+...         print(i / num_actors)
+...         break
+...
+0.2
+````
+
+I can put this into a function:
+
+````
+>>> import pareto, inspect
+>>> print(inspect.getsource(pareto.get_dist))
+def get_dist(dist, percentile):
+    """Calculate the distribution of units to actors"""
+
+    values = sorted(list(dist.values()), reverse=True)
+    total = sum(values)
+    assert total > 0
+    num_actors = len(values)
+
+    for i in range(1, num_actors + 1):
+        cum_sum = sum(values[:i])
+        perc_actors = i / num_actors
+        if cum_sum / total >= percentile:
+            return i / num_actors
+
+    return 0
+````
+
+And test it using the `test_get_dist` function shown earlier.
+
+## Graphing the distribution
+
+Data visualization is a vital part of checking the accuracy of your work. You can use the code you wrote for `histy` to see that, indeed, 80% of the actors have nothing while 20% control everything all due to nothing more than random coin flips:
+
+````
+$ ./pareto.py -r 1 -a 10 -u 10 -g graph
+  1: 50 iterations
+Average = 50 iterations
+$ cat graph-1.txt
+  1:   0
+  2:   0
+  4:   0
+  5:   0
+  6:   0
+  7:   0
+  8:   0
+ 10:   0
+  9:   2 ##
+  3:   8 ########
+````
+
+If you run it again, you will most like see that some other two actors were the winners:
+
+````
+$ ./pareto.py -r 1 -a 10 -u 10 -g graph
+  1: 97 iterations
+Average = 97 iterations
+$ cat graph-1.txt
+  1:   0
+  3:   0
+  4:   0
+  6:   0
+  7:   0
+  8:   0
+  9:   0
+ 10:   0
+  5:   2 ##
+  2:   8 ########
+````
+
+It doesn't take long for an even distribution to become very skewed. Imagine how much more quickly the imbalance would be achieved if the resources were unevenly distributed at the beginning!
+
+## More
+
+* Find a way to animate the changes to the histogram during each challenge inside the simulation; e.g., `matplotlib.animation` or create a series of GIFs or PNGs that you stitch together to create a short movie to visualize how the resource distribution changes over time.
+\newpage
+
+# Chapter 33: Runny Babbit
 
 Are you familiar with Spoonerisms where the initial consonant sounds of two words are switched? According to Wikipedia, they get their name from William Archibald Spooner who did this often. The author Shel Silverstein wrote a wonderful book called _Runny Babbit_ ("bunny rabbit") based on this. So, let's write a Python program called `runny_babbit.py` that will read some text or an input file given as a single positional argument and finds neighboring words with initial consonant sounds to swap. As we'll need to look at pairs of words and in such as way that it will make it difficult to remember the original formatting of the text, let's also take a `-w|--width` (default `70`) to format the output text to a maximum width.
 
@@ -8958,7 +9518,7 @@ The runny babbit is cute.
 ````
 \newpage
 
-# Chapter 31: Markov Chain
+# Chapter 34: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -9219,7 +9779,7 @@ But there will be spaces in between each word, so I account for them by adding o
 At this point, the `words` list needs to be turned into text. It would be ugly to just `print` out one long string, so I use the `textwrap.wrap` to break up the long string into lines that are no longer than the given `text_width`. That function returns a list of lines that need to be joined on newlines to print.
 \newpage
 
-# Chapter 32: Hamming Chain
+# Chapter 35: Hamming Chain
 
 Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
 
@@ -9422,7 +9982,7 @@ Failed to find more words!
 
 \newpage
 
-# Chapter 33: Morse Encoder/Decoder
+# Chapter 36: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -9640,7 +10200,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 34: ROT13 (Rotate 13)
+# Chapter 37: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -9805,7 +10365,7 @@ The quick brown fox jumps over the lazy dog.
 
 \newpage
 
-# Chapter 35: Word Search
+# Chapter 38: Word Search
 
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 

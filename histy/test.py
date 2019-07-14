@@ -8,6 +8,15 @@ import string
 from subprocess import getstatusoutput
 
 prg = './histy.py'
+sonnet = '../inputs/sonnet-29.txt'
+fox = '../inputs/fox.txt'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
@@ -21,12 +30,21 @@ def test_usage():
 
 
 # --------------------------------------------------
+def test_bad_symbol():
+    """test bad symbol"""
+
+    rv, out = getstatusoutput('{} -s XX {}'.format(prg, fox))
+    assert rv != 0
+    assert re.search('--symbol "XX" must be one character', out)
+
+
+# --------------------------------------------------
 def run(file, args, expected_out):
     """test"""
 
-    in_file = os.path.join('../inputs', '{}'.format(file))
+    assert os.path.isfile(file)
     expected = open(os.path.join('test-outs', expected_out)).read().rstrip()
-    rv, out = getstatusoutput('{} {} {}'.format(prg, args, in_file))
+    rv, out = getstatusoutput('{} {} {}'.format(prg, args, file))
     assert rv == 0
     assert expected == out.rstrip()
 
@@ -35,30 +53,34 @@ def run(file, args, expected_out):
 def test_01():
     """test"""
 
-    run('fox.txt', '', 'fox.txt.1')
+    run(fox, '', 'fox.txt.1')
 
 
 # --------------------------------------------------
 def test_02():
     """test"""
 
-    run('fox.txt', '-i', 'fox.txt.2')
+    run(fox, '-i', 'fox.txt.2')
 
 
 # --------------------------------------------------
 def test_03():
     """test"""
 
-    run('fox.txt', "-c '!'", 'fox.txt.3')
+    run(fox, "-s '!'", 'fox.txt.3')
+
 
 # --------------------------------------------------
 def test_04():
     """test"""
 
-    run('sonnet-29.txt', "-m 2", 'sonnet-29.txt.1')
+    run(sonnet, "-m 2", 'sonnet-29.txt.1')
+
 
 # --------------------------------------------------
 def test_05():
     """test"""
 
-    run('sonnet-29.txt', "-w 50 -m 2 -f -c '$'", 'sonnet-29.txt.2')
+    run(sonnet,
+        "--width 50 --minimum 2 --frequency_sort --symbol '$'",
+        'sonnet-29.txt.2')

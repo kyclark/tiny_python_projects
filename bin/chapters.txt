@@ -10,7 +10,7 @@ gashlycrumb
 #palindromes
 ransom_note
 rhymer
-#rock_paper_scissors
+rock_paper_scissors
 abuse
 scrambler
 bacronym
@@ -19,7 +19,6 @@ blackjack
 family_tree
 gematria
 histy
-pareto
 #guess
 mommys_little_helper
 kentucky_friar
@@ -29,12 +28,13 @@ gibberish
 piggy
 soundex_rhymer
 #substring
-#tictactoe
-#twelve_days_of_christmas
+tictactoe
+twelve_days_of_christmas
 #war
 anagram
 hangman
 first_bank_of_change
+pareto
 runny_babbit
 markov_chain
 hamming_chain
