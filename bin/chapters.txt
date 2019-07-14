@@ -1,6 +1,7 @@
 article
 jump_the_five
 picnic
+wc
 howler
 apples_and_bananas
 telephone
