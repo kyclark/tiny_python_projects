@@ -1,0 +1,1 @@
+Encode and decode text by rotating the characters through a list.

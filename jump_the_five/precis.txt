@@ -1,0 +1,1 @@
+Encode all numbers in a given text using a Jump-The-Five algorithm.

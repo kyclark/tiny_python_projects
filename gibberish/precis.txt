@@ -1,0 +1,1 @@
+Use a Markov chain to create new words from a set of training files.

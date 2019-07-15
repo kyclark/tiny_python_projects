@@ -80,6 +80,16 @@ I believe you can better learn how to create testable, **reproducible** software
 
 I always love when a language has a good REPL (read-evaluate-print-loop) tool. Python and Haskell both excel in this respect. For simplicity's sake, I show the standard REPL when you execute `python3` on the command-line, but you won't be able to copy and paste the same code examples there. For your own purposes, I suggest using the iPython REPL (`ipython`) instead.
 
+## Code formatting and linting
+
+Every program included has been automatically formatted with `yapf` (Yet Another Python Formatter), a tool from Google that can be customized with a configuration file. I encourage you to adopt and regularly a formatter (see also `black`) *after every modification to your program*. Sometimes I even set up the formatter to format every time I save my program.
+
+I would also encourage you to look at code "linters" like `pylint` to find potential errors in your code that the Python interpreter itself will not compalain about. The `mypy` program can also be used as we introduce type hints.
+
+## Organization
+
+The exercises are roughly arranged from easier to harder. 
+
 ## Author
 
 Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz at the University of Arizona. He started college as a music major at the University of North Texas but changed to English lit for his BA in 1995. He started programming at his first job out of college, working through several languages and companies before landing in bioinformatics in 2001. In 2019 he earned his MS in Biosystems Engineering, and enjoys helping people learn programming. When he's not working, he likes playing music, riding bikes, cooking, and being with his wife and children.

@@ -1,0 +1,1 @@
+Retreive a line of text from a file by the first letter.

@@ -1,0 +1,1 @@
+Write an interactive terminal game where the user guesses a word.

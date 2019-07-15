@@ -58,6 +58,22 @@ def get_args():
 
     return parser.parse_args()
 
+# --------------------------------------------------
+def make_outline(dir_name, chapters):
+    """Find all the precis.txt files and make OUTLINE.md"""
+
+    assert os.path.isdir(dir_name)
+
+    outline = open(os.path.join(dir_name, 'OUTLINE.md'), 'wt')
+    outline.write(f'## Outline\n')
+
+    for i, chapter in enumerate(chapters, start=1):
+        precis = os.path.join(dir_name, chapter, 'precis.txt')
+        assert os.path.isfile(precis)
+        text = open(precis).read()
+        outline.write(f'{i}. **{chapter}**: {text}')
+
+    outline.close()
 
 # --------------------------------------------------
 def main():
@@ -83,6 +99,9 @@ def main():
         die('--appendix "{}" is not a file'.format(appendix))
 
     book_file = os.path.join(out_dir, 'book.md')
+    chapter_list = list(map(str.rstrip, filter(lambda s: s[0] != '#', open(chapters))))
+
+    make_outline(in_dir, chapter_list)
 
     with open(book_file, 'wt') as fh:
         #fh.write('\\setcounter{tocdepth}{2}\\tableofcontents\n\\newpage\n\n')
@@ -105,7 +124,7 @@ def main():
             fh.write(open(outline).read())
             fh.write('\n\\newpage\n\n')
 
-        for i, dir_name in enumerate(map(str.rstrip, filter(lambda s: s[0] != '#', open(chapters))), 1):
+        for i, dir_name in enumerate(chapter_list, 1):
             print('Chapter {}: {}'.format(i, dir_name))
             readme = os.path.join(in_dir, dir_name, 'README.md')
             if os.path.isfile(readme):

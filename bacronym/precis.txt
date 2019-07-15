@@ -1,0 +1,1 @@
+Use dictionaries to organize words by first letter, then randomly choose words to create "meanings" for a given acronym.

@@ -1,0 +1,1 @@
+Write a program to count the lines, words, and characters in text.

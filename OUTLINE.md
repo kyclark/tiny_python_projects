@@ -1,68 +1,40 @@
-# Outline
-
-I aim to have 40-50 programs complete with specs, examples, inputs, and test suites. They won't necessarily have a specific order, but they will be grouped into easiest/harder/hardest categories. As many programs use common ideas (e.g., regular expressions, graphs, infinite loops), there will be an appendix section with explanations of how to explore those ideas. 
-
-I have in mind a layout where each program gets four pages:
-
-        1        2               3        4
-    +--------+--------+      +--------+--------+
-    |        |        |      |        |        |
-    |        |        |      |        |        |
-    |        |        |      |        |        |
-    | illus/ | specs  |      |solution| notes  |
-    | info   |        |      |        |        |
-    |        |        |      |        |        |
-    |        |        |      |        |        |
-    +--------+--------+      +--------+--------+
-
-1. If a short program, perhaps an illustration; if longer, maybe some background or hints.
-2. The `README.md` information (specs, example output)
-3. The `solution.py` contents
-4. Annotation of the solution with comments on lines, sections
-
-## Programs
-
-
-The goal is to get the reader to become a *writer* -- to try to solve the problems. One technique in teaching is to first present a problem without showing how to solve it. Once the student engages with the problem, they find they want and need the object of the lesson. Each program is intended to flex some programming technique or idea like playing with lists or contemplating regular expressions or using dictionaries. By using `argparse` for the programs, we also cover validation of user input.
-
-### Easiest
-
-* **article**: Select "a" or "an" depending on the given argument
-* **howler**: Uppercase input text so they YELL AT YOU LIKE "HOWLER" MESSAGES IN HARRY POTTER. (Could also be called "OWEN MEANY"?)
-* **jump_the_five**: Numeric encryption based on "The Wire."
-* **bottles_of_beer**: Produce the "Bottle of Beer on the Wall" song. Explores the basic idea of an algorithm and challenges the programmer to format strings.
-* **picnic**: Write the picnic game. Uses input, lists.
-* **apples_and_bananas**: Substitute vowels in text, e.g., "bananas" -> "bononos". While the concept is substitution of characters in a string which is actually trivial, it turns out there are many (at least 7) decent ways to accomplish this task!
-* **gashlycrumb**: Create a morbid lookup table from text. Naturual use of dictionaries.
-* **movie_reader**: Print text character-by-character with pauses like in the movies. How to read text by character, use STDOUT/flush, and pause the program.
-* **palindromes**: Find palindromes in text. Reading input, manipulation of strings.
-* **ransom_note**: Transform input text into "RaNSom cASe". Manipulation of text.
-* **rhymer**: Produce rhyming "words" from input text. 
-* **rock_paper_scissors**: Write Rock, Paper, Scissors game. Infinite loops, dictionaries.
-
-### Harder
-
-* **abuse**: Generate insults from lists of adjectives and nouns. Use of randomness, sampling, and lists.
-* **bacronym**: Retrofit words onto acronyms. Use of randomness and dictionaries.
-* **blackjack**: Play Blackjack (card game). Use of randomness, combinations, dictionaries.
-* **family_tree**: Use GraphViz to visualize a family tree from text. Parsing text, creating graph structures, creating visual output.
-* **gematria**: Calculate numeric values of words from characters. Manipulation of text, use of higher-order functions.
-* **guess**: Write a number-guessing game. Use of randomness, validation/coercion of inputs, use of exceptions.
-* **kentucky_fryer**: Turn text into Southern American English. Parsing, manipulation of text.
-* **mad_libs**: TBD
-* **markov_words**: Markov chain to generate words. Use of n-grams/k-mers, graphs, randomness, logging.
-* **piggie**: Encode text in Pig Latin. Use of regular expressions, text manipulation.
-* **sound**: Use Soundex to find rhyming words from a word list.
-* **substring**: Write a game to guess words sharing a common substring. Dictionaries, k-mers/n-grams.
-* **tictactoe**: Write a Tic-Tac-Toe game. Randomness, state.
-* **twelve_days_of_christmas**: Produce the "12 Days of Christmas" song. Algorihtms, loops.
-* **war**: Play the War card game. Combinations, randomness.
-* **license_plates**: Explore how a regular expression engine works by creating alternate forms of license plates.
-
-### Hardest
-
-* **anagram**: Find anagrams of text. Combinations, permutations, dictionaries.
-* **hangman**: Write a Hangman (word/letter-guessing game). Randomness, game state, infinite loops, user input, validation.
-* **markov_chain**: Markov chain to generate text. N-grams at word level, parsing text, list manipulations.
-* **morse**: Write a Morse encoder/decoder. Dictionaries, text manipulation.
-* **rot13**: ROT13-encode input text. Lists, encryption.
+## Outline
+1. **article**: Choose the correct article for a given word.
+2. **jump_the_five**: Encode all numbers in a given text using a Jump-The-Five algorithm.
+3. **picnic**: Manipulate strings and lists based on the number of items present.
+4. **wc**: Write a program to count the lines, words, and characters in text.
+5. **howler**: Convert all input text to uppercase.
+6. **apples_and_bananas**: Substitute vowels in text.
+7. **telephone**: Introduce mutations in a string over a given number of iterations.
+8. **bottles_of_beer**: Write the "99 Bottles of Beer On The Wall" song.
+9. **gashlycrumb**: Retreive a line of text from a file by the first letter.
+10. **ransom_note**: Randomly alternate the case of input text to simulate a ransom note.
+11. **rhymer**: Substitute alternate consonant prefixes onto a stem to find rhyming "words."
+12. **rock_paper_scissors**: Write the "Rock, Paper, Scissors" game.
+13. **abuse**: Creating insults by randomly choosing from lists of words.
+14. **scrambler**: Randomly shuffle the middle letters of every word in a text leaving the first and last letters in place.
+15. **bacronym**: Use dictionaries to organize words by first letter, then randomly choose words to create "meanings" for a given acronym.
+16. **wod**: Generate a Workout-Of-the-Day (WOD) from a list of possible exercises.
+17. **blackjack**: An abbreviated version of the card game "Blackjack" (AKA "Twenty-One").
+18. **family_tree**: Parse a text file containing the description of family trees, visualize the resulting graphs using GraphViz.
+19. **gematria**: Numerically encode each word of text by summing the ordinal values of the characters.
+20. **histy**: Create a textual histogram showing the frequency of letters in text.
+21. **mommys_little_helper**: Find words matching a given pattern to help solve a crossword puzzle. Explores manually finding words and using regular expressions.
+22. **kentucky_friar**: Drop the "g" from two-syllable words ending in "-ing"; convert "you" to "y'all."
+23. **mad_libs**: Create an interative terminal version of "Mad Libs." Hilarity is sure to ensue.
+24. **license_plates**: Find all possible permutations of a licence plate given a confusion matrix. Explore how and verify that regular expressions work.
+25. **gibberish**: Use a Markov chain to create new words from a set of training files.
+26. **piggy**: Encode text using the Pig Latin algorithm.
+27. **soundex_rhymer**: Using the Soundex function to find words ending with a given sound.
+28. **tictactoe**: Play a round of Tic-Tac-Toe.
+29. **twelve_days_of_christmas**: Write a program that will print the "Twelve Days of Christmas" song up to a given day.
+30. **anagram**: Finding anagrams of words.
+31. **hangman**: Write an interactive terminal game where the user guesses a word.
+32. **first_bank_of_change**: Find all possible combinations of pennies, nickels, dimes, and quarters for an amount between 1 and 100.
+33. **pareto**: Model how random events of zero-sum encounters led to inequitable distributions.
+34. **runny_babbit**: Introduce Spoonerisms into text by switching the initial consonant sounds of neighboring words.
+35. **markov_chain**: Use the Markov chain algorithm to generate novel texts based on training sets.
+36. **hamming_chain**: Find paths through words that are separated by a given Hamming distance.
+37. **morse**: Encrypt and decrypt text to and from two versions of Morse code.
+38. **rot13**: Encode and decode text by rotating the characters through a list.
+39. **word_search**: Find all the words hidden in the rows, columns, and diagonals in a block of text.

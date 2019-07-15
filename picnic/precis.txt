@@ -1,0 +1,1 @@
+Manipulate strings and lists based on the number of items present.

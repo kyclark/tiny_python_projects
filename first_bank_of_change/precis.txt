@@ -1,0 +1,1 @@
+Find all possible combinations of pennies, nickels, dimes, and quarters for an amount between 1 and 100.

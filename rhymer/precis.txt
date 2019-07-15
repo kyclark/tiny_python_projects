@@ -1,0 +1,1 @@
+Substitute alternate consonant prefixes onto a stem to find rhyming "words."

@@ -1,0 +1,1 @@
+Use the Markov chain algorithm to generate novel texts based on training sets.

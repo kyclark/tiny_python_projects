@@ -100,3 +100,4 @@ C      1 |
 ## Further
 
 * Turn the histogram 90 degrees so that the characters are listed on the bottom and the bars go up
+* You will use this code in the Pareto exercise to plot the distribution of resources over a given set of actors.

@@ -1,5 +1,7 @@
 # License Plates
 
+Imagine you are an eye-witness to a hit-and-run accident where the driver at fault flees the scene. You try to remember the car's license plate, but can you be positive that was a `5` or an `S`. How far away were you? How long did you have to study the plate? How difficult is it to read the typography on the plate?
+
 Write a Python program called `license.py` that will create a regular expression for a license plate that accounts for characters and numbers which might be confused according to the following list:
 
 * 5 S
