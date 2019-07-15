@@ -1,5 +1,7 @@
 # Piggy (Pig Latin)
 
+> "Sucks to your assmar" -- William Golding
+
 Write a Python program named `piggy.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
 If an argument names a non-existent file, print a warning to STDERR and skip that file. If the output directory does not exist, create it.

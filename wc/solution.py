@@ -2,6 +2,7 @@
 """Emulate wc (word count)"""
 
 import argparse
+import sys
 
 
 # --------------------------------------------------
@@ -14,7 +15,8 @@ def get_args():
 
     parser.add_argument('file',
                         metavar='FILE',
-                        nargs='+',
+                        nargs='*',
+                        default=[sys.stdin],
                         type=argparse.FileType('r'),
                         help='Input file(s)')
 

@@ -570,25 +570,32 @@ Depending on your version of Python, you may be able to use *f-strings*:
 
 # Chapter 4: Words Count
 
-Write a Python program called `wc.py` that will emulate the venerable `wc` program in Unix that counts the lines, words, and characters in the given file arguments.
+Write a Python program called `wc.py` that will emulate the venerable `wc` program in Unix that counts the lines, words, and characters in the given file arguments. If run with the `-h|--help` flag, the program should print usage:
 
 ````
-$ ./wc.py
-usage: wc.py [-h] FILE [FILE ...]
-wc.py: error: the following arguments are required: FILE
 $ ./wc.py -h
-usage: wc.py [-h] FILE [FILE ...]
+usage: wc.py [-h] [FILE [FILE ...]]
 
 Argparse Python script
 
 positional arguments:
-  FILE        Input file(s)
+  FILE        Input file(s) (default: [<_io.TextIOWrapper name='<stdin>'
+              mode='r' encoding='UTF-8'>])
 
 optional arguments:
   -h, --help  show this help message and exit
 ````
 
+Given a non-existent file, it should print an error message and exit with a non-zero exit value:
 
+````
+$ ./wc.py foo
+usage: wc.py [-h] FILE [FILE ...]
+wc.py: error: argument FILE: can't open 'foo': \
+[Errno 2] No such file or directory: 'foo'
+````
+
+Given one or more valid files, it should print the number of lines, words, and characters, each in columns 8 characters wide, followed by a space and then the name of the file:
 
 ````
 $ ./wc.py ../inputs/scarlet.txt
@@ -612,6 +619,20 @@ $ ./wc.py ../inputs/*.txt
    37842   48990  369949 ../inputs/uscities.txt
      176    1340    8685 ../inputs/usdeclar.txt
 ````
+
+Given no positional arguments, it should read from STDIN:
+
+````
+$ ./wc.py < ../inputs/fox.txt
+       1       9      45 <stdin>
+$ cat ../inputs/fox.txt | ./wc.py
+       1       9      45 <stdin>
+````
+
+Hints:
+
+* Use the `argparse` to validate the input files and use `nargs='*'` to indicate zero or more positional arguments; use `sys.stdin` for the default.
+* Compare the results of your version to the `wc` installed on your system. Note that not every Unix-like system has the same `wc`, so results may vary.
 \newpage
 
 ## Solution
@@ -621,46 +642,72 @@ $ ./wc.py ../inputs/*.txt
      2	"""Emulate wc (word count)"""
      3	
      4	import argparse
-     5	
+     5	import sys
      6	
-     7	# --------------------------------------------------
-     8	def get_args():
-     9	    """Get command-line arguments"""
-    10	
-    11	    parser = argparse.ArgumentParser(
-    12	        description='Argparse Python script',
-    13	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    14	
-    15	    parser.add_argument('file',
-    16	                        metavar='FILE',
-    17	                        nargs='+',
-    18	                        type=argparse.FileType('r'),
-    19	                        help='Input file(s)')
-    20	
-    21	    return parser.parse_args()
+     7	
+     8	# --------------------------------------------------
+     9	def get_args():
+    10	    """Get command-line arguments"""
+    11	
+    12	    parser = argparse.ArgumentParser(
+    13	        description='Argparse Python script',
+    14	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    15	
+    16	    parser.add_argument('file',
+    17	                        metavar='FILE',
+    18	                        nargs='*',
+    19	                        default=[sys.stdin],
+    20	                        type=argparse.FileType('r'),
+    21	                        help='Input file(s)')
     22	
-    23	
-    24	# --------------------------------------------------
-    25	def main():
-    26	    """Make a jazz noise here"""
-    27	
-    28	    args = get_args()
+    23	    return parser.parse_args()
+    24	
+    25	
+    26	# --------------------------------------------------
+    27	def main():
+    28	    """Make a jazz noise here"""
     29	
-    30	    for fh in args.file:
-    31	        lines, words, chars = 0, 0, 0
-    32	        for line in fh:
-    33	            lines += 1
-    34	            chars += len(line)
-    35	            words += len(line.split())
-    36	
-    37	        print('{:8}{:8}{:8} {}'.format(lines, words, chars, fh.name))
+    30	    args = get_args()
+    31	
+    32	    for fh in args.file:
+    33	        lines, words, chars = 0, 0, 0
+    34	        for line in fh:
+    35	            lines += 1
+    36	            chars += len(line)
+    37	            words += len(line.split())
     38	
-    39	
-    40	# --------------------------------------------------
-    41	if __name__ == '__main__':
-    42	    main()
+    39	        print('{:8}{:8}{:8} {}'.format(lines, words, chars, fh.name))
+    40	
+    41	
+    42	# --------------------------------------------------
+    43	if __name__ == '__main__':
+    44	    main()
 ````
 
+\newpage
+
+## Discussion
+
+This program is rather short and seems rather simple, but it's definitely not exactly easy. The point of the exercise is to really get familiar with `argparse` and the trouble it can save you. The key is in defining the `file` positional arguments. If you use `nargs='*'` to indicate zero or more arguments, then you know `argparse` is going to give you back a `list` with zero or more elements. If you use `type=argparse.FileType('r')` then any arguments given must be readable files. The `list` that `argparse` returns will be a `list` of *open file handles*. Lastly, if you use `default=[sys.stdin]`, then you understand that `sys.stdin` is essentially an open file handle to read from "standard in" (AKA `STDIN`), and you are letting `argparse` know that you want the default to be a `list` containing `sys.stdin`.
+
+I can fake `args.file` in the REPL, and then use a `for` loop to iterate through them. On each one, I initialize three variables with zeros to hold the count of lines, characters, and words. I then use another `for` loop to iterate over each line in the file handle (`fh`). I can add `1` on each iteration to increment the `lines` variable. The length of the line (`len(line)`) is the number of characters which can be added to `chars`. Lastly `line.split()` will break the line on whitespace which is close enough to "words", and the length of the resulting `list` is the number of words on the line which is added to `words`. The `for` loop ends when the end of the file is reached, and that is when I can `print` out the counts and the file name using `{:8}` placeholders in the print template to indicate a text field 8 characters wide:
+
+````
+>>> files = [open('../inputs/fox.txt')]
+>>> for fh in files:
+...     lines, words, chars = 0, 0, 0
+...     for line in fh:
+...         lines += 1
+...         chars += len(line)
+...         words += len(line.split())
+...     print('{:8}{:8}{:8} {}'.format(lines, words, chars, fh.name))
+...
+       1       9      45 ../inputs/fox.txt
+````
+
+## Further
+
+Implement other system tools like `cat` and `head`.
 \newpage
 
 # Chapter 5: Howler
@@ -1290,6 +1337,8 @@ But I find that fairly hard to read.
 \newpage
 
 # Chapter 7: Telephone
+
+> "What we have here is a failure to communicate." -- Captain
 
 Perhaps you remember the game of "Telephone" where a message is secretly passed through a series of intermediaries and then the result at the end of the chain is compared with how it started? This is like that, only we're going to take some `text` (from the command line or a file) and mutate it by some percentage `-m|--mutations` (a number between 0 and 1, default `0.1` or 10%) and then print out the resulting text.
 
@@ -6711,6 +6760,8 @@ Now you can talk the "Markov Chain" problem that moves to the level of words and
 
 # Chapter 26: Piggy (Pig Latin)
 
+> "Sucks to your assmar" -- William Golding
+
 Write a Python program named `piggy.py` that takes one or more file names as positional arguments and converts all the words in them into "Pig Latin" (see rules below). Write the output to a directory given with the flags `-o|--outdir` (default `out-yay`) using the same basename as the input file, e.g., `input/foo.txt` would be written to `out-yay/foo.txt`. 
 
 If an argument names a non-existent file, print a warning to STDERR and skip that file. If the output directory does not exist, create it.
@@ -7120,6 +7171,8 @@ That is the crux of the program. All that is left is to report to the user how m
 \newpage
 
 # Chapter 27: Soundex Rhymer
+
+> "What words rhyme with 'buried alive'?" -- TMBG
 
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, you sometimes want to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part, so the program should have an optional flag `-s|--stem` to indicate that the given word and the words you compare should both be trimmed to the "stem". The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons and should respond, as always, to `-h|--help` for usage.
 

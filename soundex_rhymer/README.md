@@ -1,5 +1,7 @@
 # Soundex Rhymer
 
+> "What words rhyme with 'buried alive'?" -- TMBG
+
 Write a Python program called `rhymer.py` that uses the Soundex algorithm/module to find words that rhyme with a given input word. When comparing words, you sometimes want to discount any leading consonants, e.g., the words "listen" and "glisten" rhyme but only if you compare the "isten" part, so the program should have an optional flag `-s|--stem` to indicate that the given word and the words you compare should both be trimmed to the "stem". The program should take an optional `-w|--wordlist` argument (default `/usr/share/dict/words`) for the comparisons and should respond, as always, to `-h|--help` for usage.
 
 For more background on the Soundex algorithm, I recommend the Wikipedia page and the PyPi module documentation for `soundex`.

@@ -48,6 +48,35 @@ def test_bad_file():
 
 
 # --------------------------------------------------
+def test_empty():
+    """Test on empty"""
+
+    rv, out = getstatusoutput('{} ./empty.txt'.format(prg))
+
+    assert rv == 0
+    assert out.rstrip() == '       0       0       0 ./empty.txt'
+
+# --------------------------------------------------
+def test_one():
+    """Test on one"""
+
+    rv, out = getstatusoutput('{} ./one.txt'.format(prg))
+
+    assert rv == 0
+    assert out.rstrip() == '       1       1       2 ./one.txt'
+
+
+# --------------------------------------------------
+def test_two():
+    """Test on two"""
+
+    rv, out = getstatusoutput('{} ./two.txt'.format(prg))
+
+    assert rv == 0
+    assert out.rstrip() == '       2       2       4 ./two.txt'
+
+
+# --------------------------------------------------
 def test_fox():
     """Test on fox"""
 
@@ -67,3 +96,12 @@ def test_more():
                 '      17     118     661 ../inputs/sonnet-29.txt')
     assert rv == 0
     assert out.rstrip() == expected
+
+# --------------------------------------------------
+def test_stdin():
+    """Test on stdin"""
+
+    rv, out = getstatusoutput('{} < {}'.format(prg, fox))
+
+    assert rv == 0
+    assert out.rstrip() == '       1       9      45 <stdin>'
