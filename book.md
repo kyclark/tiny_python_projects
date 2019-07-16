@@ -155,6 +155,7 @@ Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz
 37. **morse**: Encrypt and decrypt text to and from two versions of Morse code.
 38. **rot13**: Encode and decode text by rotating the characters through a list.
 39. **word_search**: Find all the words hidden in the rows, columns, and diagonals in a block of text.
+40. **set**: Program the Set card game.
 
 \newpage
 
@@ -10869,6 +10870,127 @@ I know then end is:
 I can use that information to iterate over the elements in the `combo` to extract the cell numbers which are in the `snd` position of the tuple because ultimately what I need to print is the original puzzle grid with the cells showing the hidden words and all the others masked. I can extract a list slice using `combo[start:end]`, `map` those elements through `snd` to get the `cell` and `add` those to the `reveal` set. I can also note that I `found` the `word`.
 
 At line 157, I start the work of printing the revealed puzzle, iterating over the original rows in the puzzle and over each cell in the row. If the cell number is in the `reveal` set, I chose the character (in the first position of the tuple); otherwise I use a period (`.`). Finally I note any missing words by looking to see if any of the original words were not in the `found` set.
+
+\newpage
+
+# Chapter 40: Ready, Set, Go!
+
+Write a Python program called `set.py` that plays the Set card game.
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Set card game"""
+     3	
+     4	import argparse
+     5	import os
+     6	import random
+     7	import sys
+     8	from itertools import product, combinations
+     9	from card import Card
+    10	from typing import List
+    11	
+    12	
+    13	# --------------------------------------------------
+    14	def get_args():
+    15	    """Get command-line arguments"""
+    16	
+    17	    parser = argparse.ArgumentParser(
+    18	        description='Argparse Python script',
+    19	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    20	
+    21	    parser.add_argument('-s',
+    22	                        '--seed',
+    23	                        help='Random seed',
+    24	                        metavar='int',
+    25	                        type=int,
+    26	                        default=None)
+    27	
+    28	    return parser.parse_args()
+    29	
+    30	
+    31	# --------------------------------------------------
+    32	def make_deck() -> List[Card]:
+    33	    """Make Set deck"""
+    34	
+    35	    colors = ['Red', 'Purple', 'Green']
+    36	    shapes = ['Oval', 'Squiggle', 'Diamond']
+    37	    number = ['1', '2', '3']
+    38	    shading = ['Solid', 'Striped', 'Outlined']
+    39	
+    40	    return list(
+    41	        map(lambda t: Card(color=t[0], shape=t[1], number=t[2], shading=t[3]),
+    42	            product(colors, shapes, number, shading)))
+    43	
+    44	
+    45	# --------------------------------------------------
+    46	def test_make_deck():
+    47	    """Test make_deck"""
+    48	
+    49	    deck = make_deck()
+    50	    assert len(deck) == 81
+    51	
+    52	
+    53	# --------------------------------------------------
+    54	def add(bits: List[list]) -> int:
+    55	    """Add the bits"""
+    56	
+    57	    assert isinstance(bits, list)
+    58	    assert isinstance(bits[0], list)
+    59	
+    60	    num_recs = len(bits)
+    61	    num_bits = len(bits[0])
+    62	
+    63	    ret = []
+    64	    for i in range(num_bits):
+    65	        ret.append(1 if any(map(lambda n: bits[n][i], range(num_recs))) else 0)
+    66	
+    67	    return sum(ret)
+    68	
+    69	
+    70	# --------------------------------------------------
+    71	def find_set(cards: List[Card]) -> List[tuple]:
+    72	    """Find a 'set' in a hand of cards"""
+    73	
+    74	    colors = list(map(lambda c: c.encode_color(), cards))
+    75	    shapes = list(map(lambda c: c.encode_shape(), cards))
+    76	    numbers = list(map(lambda c: c.encode_number(), cards))
+    77	    shadings = list(map(lambda c: c.encode_shading(), cards))
+    78	
+    79	    sets = []
+    80	    for combo in combinations(range(len(cards)), 3):
+    81	        color = add(list(map(lambda i: colors[i], combo)))
+    82	        shape = add(list(map(lambda i: shapes[i], combo)))
+    83	        number = add(list(map(lambda i: numbers[i], combo)))
+    84	        shading = add(list(map(lambda i: shadings[i], combo)))
+    85	
+    86	        if all([x in [1, 3] for x in [color, shape, number, shading]]):
+    87	            sets.append(combo)
+    88	
+    89	    return sets
+    90	
+    91	# --------------------------------------------------
+    92	def main():
+    93	    """Make a jazz noise here"""
+    94	
+    95	    args = get_args()
+    96	    deck: List[Card] = make_deck()
+    97	
+    98	    random.seed(args.seed)
+    99	    cards: List[Card] = random.sample(deck, k=12)
+   100	
+   101	    for combo in find_set(cards):
+   102	        print(combo)
+   103	        print('\n'.join(map(lambda i: str(cards[i]), combo)))
+   104	
+   105	
+   106	# --------------------------------------------------
+   107	if __name__ == '__main__':
+   108	    main()
+````
 
 \newpage
 

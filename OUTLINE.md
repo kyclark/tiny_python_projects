@@ -38,3 +38,4 @@
 37. **morse**: Encrypt and decrypt text to and from two versions of Morse code.
 38. **rot13**: Encode and decode text by rotating the characters through a list.
 39. **word_search**: Find all the words hidden in the rows, columns, and diagonals in a block of text.
+40. **set**: Program the Set card game.
