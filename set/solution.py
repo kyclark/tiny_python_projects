@@ -2,12 +2,39 @@
 """Set card game"""
 
 import argparse
-import os
 import random
-import sys
+import logging
 from itertools import product, combinations
-from card import Card
 from typing import List
+from dataclasses import dataclass
+
+
+# --------------------------------------------------
+@dataclass
+class Card:
+    """Represent a card"""
+
+    color: str; shape: str; number: str; shading: str
+
+    def __str__(self):
+        """How to print"""
+        return ' '.join([self.number, self.color, self.shading, self.shape])
+
+    def encode_color(self):
+        colors = ['Red', 'Purple', 'Green']
+        return [1 if self.color == c else 0 for c in colors]
+
+    def encode_shape(self):
+        shapes = ['Oval', 'Squiggle', 'Diamond']
+        return [1 if self.shape == s else 0 for s in shapes]
+
+    def encode_number(self):
+        numbers = ['1', '2', '3']
+        return [1 if self.number == n else 0 for n in numbers]
+
+    def encode_shading(self):
+        shadings = ['Solid', 'Striped', 'Outlined']
+        return [1 if self.shading == s else 0 for s in shadings]
 
 
 # --------------------------------------------------
@@ -25,6 +52,8 @@ def get_args():
                         type=int,
                         default=None)
 
+    parser.add_argument('-d', '--debug', help='Debug', action='store_true')
+
     return parser.parse_args()
 
 
@@ -37,9 +66,11 @@ def make_deck() -> List[Card]:
     number = ['1', '2', '3']
     shading = ['Solid', 'Striped', 'Outlined']
 
-    return list(
+    deck = list(
         map(lambda t: Card(color=t[0], shape=t[1], number=t[2], shading=t[3]),
             product(colors, shapes, number, shading)))
+
+    return list(map(lambda t: t[1], sorted(map(lambda c: (str(c), c), deck))))
 
 
 # --------------------------------------------------
@@ -48,6 +79,8 @@ def test_make_deck():
 
     deck = make_deck()
     assert len(deck) == 81
+    assert str(deck[0]) == '1 Green Outlined Diamond'
+    assert str(deck[-1]) == '3 Red Striped Squiggle'
 
 
 # --------------------------------------------------
@@ -83,24 +116,38 @@ def find_set(cards: List[Card]) -> List[tuple]:
         number = add(list(map(lambda i: numbers[i], combo)))
         shading = add(list(map(lambda i: shadings[i], combo)))
 
-        if all([x in [1, 3] for x in [color, shape, number, shading]]):
+        if all([n in [1, 3] for n in [color, shape, number, shading]]):
             sets.append(combo)
 
     return sets
+
 
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
 
     args = get_args()
+    logging.basicConfig(
+        filename='.log',
+        filemode='w',
+        level=logging.DEBUG if args.debug else logging.CRITICAL)
+
     deck: List[Card] = make_deck()
+    logging.debug('deck =\n%s', '\n'.join(map(str, deck)))
 
     random.seed(args.seed)
-    cards: List[Card] = random.sample(deck, k=12)
+    logging.debug('seed = %s', args.seed)
 
-    for combo in find_set(cards):
-        print(combo)
-        print('\n'.join(map(lambda i: str(cards[i]), combo)))
+    random.shuffle(deck)
+    logging.debug('shuffled deck =\n%s', '\n'.join(map(str, deck)))
+
+    hand: List[Card] = random.sample(deck, k=12)
+    logging.debug('hand =\n%s', '\n'.join(map(str, hand)))
+
+    for i, combo in enumerate(find_set(hand), start=1):
+        print(f'Set {i}')
+        for j in combo:
+            print(f'{j:3}: {hand[j]}')
 
 
 # --------------------------------------------------

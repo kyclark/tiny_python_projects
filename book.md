@@ -10875,8 +10875,86 @@ At line 157, I start the work of printing the revealed puzzle, iterating over th
 
 # Chapter 40: Ready, Set, Go!
 
-Write a Python program called `set.py` that plays the Set card game.
+We programmed "Blackjack," a card game using a standard deck of 52 playing cards which differed in two attributes: the suites (e.g., "Hearts"), and the card value (e.g., "10" or "Jack"). Now we're going to look at another card game that uses 81 cards which differ in 4 attributes each of which can have 3 values:
 
+1. Color (red, green, purple)
+2. Shape (oval, squiggle, diamond)
+3. Number (1, 2, 3)
+4. Shading (solid, striped, outlined)
+
+Look up the game online to see examples of the cards. Even better, get a deck and play with your friends!
+
+In this exercise, we'll write a Python program called `set.py` that plays the Set card game. The only argument your program needs to take is a `-s|--seed` to pass to `random.seed`. My version additionally takes a `-d|--debug` flag to log messages to `.log` to help you see how it works. When run with the `-h|--help` flag, it should print a usage:
+
+````
+$ ./set.py -h
+usage: set.py [-h] [-s int] [-d]
+
+Argparse Python script
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -s int, --seed int  Random seed (default: None)
+  -d, --debug         Debug (default: False)
+````
+
+Otherwise, your program will need to create a deck of 81 cards by crossing all 4 attributes with each of the 3 values (`3 ** 4 == 81`), draw 12 at random, and find sets which are defined as any three cards where each of the 4 attributes above is the *same* among all 3 cards or *different* in every one. For instance, either there are the same number of shapes on all 3 cards or there is a different number on each. In the following example, the first set has different values for the number, color, and shape but the same value for the shading:
+
+````
+$ ./set.py -s 1
+Set 1
+  2: 1 Green Outlined Diamond
+  6: 3 Purple Outlined Squiggle
+  8: 2 Red Outlined Oval
+Set 2
+  4: 2 Red Outlined Squiggle
+  6: 3 Purple Outlined Squiggle
+  9: 1 Green Outlined Squiggle
+````
+
+## Creating and sorting the deck
+
+There are dozens of ways you could chose to solve this, and it's unlikely you would stumble upon my particular solution. In order to pass the test suite, we will have to do a couple of things the same way. For one this, we both need to use the same method to sort and shuffle our decks and then select the 12 cards. 
+
+To create the deck, you could manually enter all 81 cards, but that way lies madness. I suggest you use `itertools.product` to cross four lists, one for each of the numbered attributes above and each containing their the three values. The problem comes in sorting the deck, and so let's just agree to sort the cards by the string representation which, as shown above, will be `number color shading shape`, e.g., "3 Purple Outlined Squiggle." 
+
+There are many ways you could represent the idea of a "card" in your program. You could use a `tuple` of four strings which would sort properly and allow you to access each individual field for purposes of comparing cards. You'll have to remember the location of each field which is not too onerous, but still you might rather choose to use a `dict` with named fields and a full string of the values for sorting. I happened to choose a `class` with the `@dataclass` decorator that has a special `__str__` method to stringify the `Card` class. 
+
+Consider making a function called `make_deck` that will create the deck (however you represent it) and return it sorted properly. Then add this function to run with `pytest`:
+
+````
+def test_make_deck():
+    """Test make_deck"""
+
+    deck = make_deck()
+    assert len(deck) == 81
+    assert str(deck[0]) == '1 Green Outlined Diamond'
+    assert str(deck[-1]) == '3 Red Striped Squiggle'
+````
+
+Once you have a sorted deck, use `random.shuffle` to sort it, then use `random.sample` to select 12 cards. With that, we should both have identical cards for the tests.
+
+## Finding a set
+
+If you run `solution.py -d`, you can see a sample hand of 12 cards:
+
+````
+DEBUG:root:hand =
+1 Red Outlined Oval
+1 Red Outlined Squiggle
+1 Green Outlined Diamond
+3 Red Striped Diamond
+2 Red Outlined Squiggle
+3 Green Outlined Oval
+3 Purple Outlined Squiggle
+1 Purple Solid Oval
+2 Red Outlined Oval
+1 Green Outlined Squiggle
+1 Purple Solid Squiggle
+2 Green Solid Diamond
+````
+
+Your job is to look at all possible combinations of 3 cards, and I suggest you use `itertools.combinations` for this. Any 3 cards form a set if each attribute is exactly the same or entirely different. This particular has 2 sets. Can you find them manually? How will you write code to determine if cards are a set? How will you represent each attribute?
 \newpage
 
 ## Solution
@@ -10886,112 +10964,166 @@ Write a Python program called `set.py` that plays the Set card game.
      2	"""Set card game"""
      3	
      4	import argparse
-     5	import os
-     6	import random
-     7	import sys
-     8	from itertools import product, combinations
-     9	from card import Card
-    10	from typing import List
+     5	import random
+     6	import logging
+     7	from itertools import product, combinations
+     8	from typing import List
+     9	from dataclasses import dataclass
+    10	
     11	
-    12	
-    13	# --------------------------------------------------
-    14	def get_args():
-    15	    """Get command-line arguments"""
+    12	# --------------------------------------------------
+    13	@dataclass
+    14	class Card:
+    15	    """Represent a card"""
     16	
-    17	    parser = argparse.ArgumentParser(
-    18	        description='Argparse Python script',
-    19	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    20	
-    21	    parser.add_argument('-s',
-    22	                        '--seed',
-    23	                        help='Random seed',
-    24	                        metavar='int',
-    25	                        type=int,
-    26	                        default=None)
-    27	
-    28	    return parser.parse_args()
-    29	
+    17	    color: str; shape: str; number: str; shading: str
+    18	
+    19	    def __str__(self):
+    20	        """How to print"""
+    21	        return ' '.join([self.number, self.color, self.shading, self.shape])
+    22	
+    23	    def encode_color(self):
+    24	        colors = ['Red', 'Purple', 'Green']
+    25	        return [1 if self.color == c else 0 for c in colors]
+    26	
+    27	    def encode_shape(self):
+    28	        shapes = ['Oval', 'Squiggle', 'Diamond']
+    29	        return [1 if self.shape == s else 0 for s in shapes]
     30	
-    31	# --------------------------------------------------
-    32	def make_deck() -> List[Card]:
-    33	    """Make Set deck"""
+    31	    def encode_number(self):
+    32	        numbers = ['1', '2', '3']
+    33	        return [1 if self.number == n else 0 for n in numbers]
     34	
-    35	    colors = ['Red', 'Purple', 'Green']
-    36	    shapes = ['Oval', 'Squiggle', 'Diamond']
-    37	    number = ['1', '2', '3']
-    38	    shading = ['Solid', 'Striped', 'Outlined']
+    35	    def encode_shading(self):
+    36	        shadings = ['Solid', 'Striped', 'Outlined']
+    37	        return [1 if self.shading == s else 0 for s in shadings]
+    38	
     39	
-    40	    return list(
-    41	        map(lambda t: Card(color=t[0], shape=t[1], number=t[2], shading=t[3]),
-    42	            product(colors, shapes, number, shading)))
+    40	# --------------------------------------------------
+    41	def get_args():
+    42	    """Get command-line arguments"""
     43	
-    44	
-    45	# --------------------------------------------------
-    46	def test_make_deck():
-    47	    """Test make_deck"""
-    48	
-    49	    deck = make_deck()
-    50	    assert len(deck) == 81
-    51	
-    52	
-    53	# --------------------------------------------------
-    54	def add(bits: List[list]) -> int:
-    55	    """Add the bits"""
+    44	    parser = argparse.ArgumentParser(
+    45	        description='Argparse Python script',
+    46	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    47	
+    48	    parser.add_argument('-s',
+    49	                        '--seed',
+    50	                        help='Random seed',
+    51	                        metavar='int',
+    52	                        type=int,
+    53	                        default=None)
+    54	
+    55	    parser.add_argument('-d', '--debug', help='Debug', action='store_true')
     56	
-    57	    assert isinstance(bits, list)
-    58	    assert isinstance(bits[0], list)
+    57	    return parser.parse_args()
+    58	
     59	
-    60	    num_recs = len(bits)
-    61	    num_bits = len(bits[0])
-    62	
-    63	    ret = []
-    64	    for i in range(num_bits):
-    65	        ret.append(1 if any(map(lambda n: bits[n][i], range(num_recs))) else 0)
-    66	
-    67	    return sum(ret)
+    60	# --------------------------------------------------
+    61	def make_deck() -> List[Card]:
+    62	    """Make Set deck"""
+    63	
+    64	    colors = ['Red', 'Purple', 'Green']
+    65	    shapes = ['Oval', 'Squiggle', 'Diamond']
+    66	    number = ['1', '2', '3']
+    67	    shading = ['Solid', 'Striped', 'Outlined']
     68	
-    69	
-    70	# --------------------------------------------------
-    71	def find_set(cards: List[Card]) -> List[tuple]:
-    72	    """Find a 'set' in a hand of cards"""
-    73	
-    74	    colors = list(map(lambda c: c.encode_color(), cards))
-    75	    shapes = list(map(lambda c: c.encode_shape(), cards))
-    76	    numbers = list(map(lambda c: c.encode_number(), cards))
-    77	    shadings = list(map(lambda c: c.encode_shading(), cards))
-    78	
-    79	    sets = []
-    80	    for combo in combinations(range(len(cards)), 3):
-    81	        color = add(list(map(lambda i: colors[i], combo)))
-    82	        shape = add(list(map(lambda i: shapes[i], combo)))
-    83	        number = add(list(map(lambda i: numbers[i], combo)))
-    84	        shading = add(list(map(lambda i: shadings[i], combo)))
+    69	    deck = list(
+    70	        map(lambda t: Card(color=t[0], shape=t[1], number=t[2], shading=t[3]),
+    71	            product(colors, shapes, number, shading)))
+    72	
+    73	    return list(map(lambda t: t[1], sorted(map(lambda c: (str(c), c), deck))))
+    74	
+    75	
+    76	# --------------------------------------------------
+    77	def test_make_deck():
+    78	    """Test make_deck"""
+    79	
+    80	    deck = make_deck()
+    81	    assert len(deck) == 81
+    82	    assert str(deck[0]) == '1 Green Outlined Diamond'
+    83	    assert str(deck[-1]) == '3 Red Striped Squiggle'
+    84	
     85	
-    86	        if all([x in [1, 3] for x in [color, shape, number, shading]]):
-    87	            sets.append(combo)
-    88	
-    89	    return sets
-    90	
-    91	# --------------------------------------------------
-    92	def main():
-    93	    """Make a jazz noise here"""
-    94	
-    95	    args = get_args()
-    96	    deck: List[Card] = make_deck()
-    97	
-    98	    random.seed(args.seed)
-    99	    cards: List[Card] = random.sample(deck, k=12)
-   100	
-   101	    for combo in find_set(cards):
-   102	        print(combo)
-   103	        print('\n'.join(map(lambda i: str(cards[i]), combo)))
-   104	
-   105	
-   106	# --------------------------------------------------
-   107	if __name__ == '__main__':
-   108	    main()
+    86	# --------------------------------------------------
+    87	def add(bits: List[list]) -> int:
+    88	    """Add the bits"""
+    89	
+    90	    assert isinstance(bits, list)
+    91	    assert isinstance(bits[0], list)
+    92	
+    93	    num_recs = len(bits)
+    94	    num_bits = len(bits[0])
+    95	
+    96	    ret = []
+    97	    for i in range(num_bits):
+    98	        ret.append(1 if any(map(lambda n: bits[n][i], range(num_recs))) else 0)
+    99	
+   100	    return sum(ret)
+   101	
+   102	
+   103	# --------------------------------------------------
+   104	def find_set(cards: List[Card]) -> List[tuple]:
+   105	    """Find a 'set' in a hand of cards"""
+   106	
+   107	    colors = list(map(lambda c: c.encode_color(), cards))
+   108	    shapes = list(map(lambda c: c.encode_shape(), cards))
+   109	    numbers = list(map(lambda c: c.encode_number(), cards))
+   110	    shadings = list(map(lambda c: c.encode_shading(), cards))
+   111	
+   112	    sets = []
+   113	    for combo in combinations(range(len(cards)), 3):
+   114	        color = add(list(map(lambda i: colors[i], combo)))
+   115	        shape = add(list(map(lambda i: shapes[i], combo)))
+   116	        number = add(list(map(lambda i: numbers[i], combo)))
+   117	        shading = add(list(map(lambda i: shadings[i], combo)))
+   118	
+   119	        if all([n in [1, 3] for n in [color, shape, number, shading]]):
+   120	            sets.append(combo)
+   121	
+   122	    return sets
+   123	
+   124	
+   125	# --------------------------------------------------
+   126	def main():
+   127	    """Make a jazz noise here"""
+   128	
+   129	    args = get_args()
+   130	    logging.basicConfig(
+   131	        filename='.log',
+   132	        filemode='w',
+   133	        level=logging.DEBUG if args.debug else logging.CRITICAL)
+   134	
+   135	    deck: List[Card] = make_deck()
+   136	    logging.debug('deck =\n%s', '\n'.join(map(str, deck)))
+   137	
+   138	    random.seed(args.seed)
+   139	    logging.debug('seed = %s', args.seed)
+   140	
+   141	    random.shuffle(deck)
+   142	    logging.debug('shuffled deck =\n%s', '\n'.join(map(str, deck)))
+   143	
+   144	    hand: List[Card] = random.sample(deck, k=12)
+   145	    logging.debug('hand =\n%s', '\n'.join(map(str, hand)))
+   146	
+   147	    for i, combo in enumerate(find_set(hand), start=1):
+   148	        print(f'Set {i}')
+   149	        for j in combo:
+   150	            print(f'{j:3}: {hand[j]}')
+   151	
+   152	
+   153	# --------------------------------------------------
+   154	if __name__ == '__main__':
+   155	    main()
 ````
 
+\newpage
+
+## Discussion
+
+There's very little to see in `get_args`, just defining the `-s|--seed` and `-d|--debug` options, the former of which gets passed to `random.seed`. As in many other programs, I set up `logging.basicConfig` to log to a `filename='.log'` (so it will normally be hidden from view) using `filemode='w'` (so it will overwrite each time it runs), and setting the `level` either to `logging.DEBUG` or `logging.CRITICAL` depending on the presence of the `--debug` flag.
+
+As stated in the introduction, I chose to use a `class` to represent the idea of a "card" in my program. I'm not actually a huge fan of object-oriented programming (OOP). I wrote object-oriented software for many years, and I find it can be rather bloated and confusing after a time. I prefer function-oriented programming these days and tend to be more influenced in my style by languages like Haskell, Elm, and Rust. The `@dataclass` decorator for a `class` makes it very easy to write an object in Python as it creates  
 \newpage
 
 # Appendix 1: argparse
