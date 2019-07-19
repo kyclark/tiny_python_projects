@@ -10920,7 +10920,7 @@ Set 2
 
 There are dozens of ways you could chose to solve this, but, in order to pass the test suite, we will have to do a couple of things the same way. For one, we both need to use the same method to sort and shuffle our decks and then select the 12 cards. 
 
-To create the deck, you could manually enter all 81 cards, but that way lies madness. I suggest you use `itertools.product` to cross four lists, one for each of the numbered attributes above and each containing their the three values. This returns a `list` of `tuple` values, which seems like a perfect way to model the cards:
+To create the deck, you could manually enter all 81 cards, but that way lies madness. I suggest you use `itertools.product` to cross four lists, one for each of the numbered attributes above and each containing their three values. This returns a `list` of `tuple` values, which seems like a perfect way to model the cards:
 
 ````
 >>> from itertools import product
@@ -10928,7 +10928,7 @@ To create the deck, you could manually enter all 81 cards, but that way lies mad
 [('A', '1'), ('A', '2'), ('B', '1'), ('B', '2')]
 ````
 
-However you chose to represent each card, the `list` of cards should be sorted for number color, shading, and shape. Consider making a function called `make_deck` that will create the deck and return it sorted properly. Then add something like this function to run with `pytest`. That is, I chose to use tuples for each card, so I'm checking that the first and last values in the `deck` are my expected tuples:
+However you chose to represent each card, the `list` of cards should be sorted by number color, shading, and shape. Consider making a function called `make_deck` that will create the deck and return it sorted properly. Then add something like this function to run with `pytest`. That is, I chose to use tuples for each card, so I'm checking that the first and last values in the `deck` are my expected tuples:
 
 ````
 def test_make_deck():
@@ -10975,6 +10975,7 @@ If you represent your cards as strings, dictionaries, sets, or some other object
 Once you have that function job, you need to examine all possible combinations of 3 cards. I suggest you use `itertools.combinations` for this. Then you can `filter` the combinations for those where `is_set` is `True`.
 
 Print out each set of cards with "Set N" and then the three cards in the set each on a new line. The test suite doesn't card what order the sets are printed, but the cards need to be `sorted`.
+
 \newpage
 
 ## Solution
