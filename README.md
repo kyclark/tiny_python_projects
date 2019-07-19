@@ -1,5 +1,7 @@
 # Introduction
 
+> "Codes are a puzzle. A game, just like any other game." - Alan Turing
+
 > "The only way to learn a new programming language is by writing programs in it." - Dennis Ritchie
 
 I believe you can learn serious things through silly games. I also think you will learn best by *doing*. This is a book of programming exercises. Each chapter includes a description of a program you should write with examples of how the program should work. Most importantly, each program includes tests so that you know if your program is working well enough. 

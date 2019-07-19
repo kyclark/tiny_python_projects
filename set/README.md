@@ -2,10 +2,10 @@
 
 We programmed "Blackjack," a card game using a standard deck of 52 playing cards which differed in two attributes: the suites (e.g., "Hearts"), and the card value (e.g., "10" or "Jack"). Now we're going to look at another card game that uses 81 cards which differ in 4 attributes each of which can have 3 values:
 
-1. Color (red, green, purple)
-2. Shape (oval, squiggle, diamond)
-3. Number (1, 2, 3)
-4. Shading (solid, striped, outlined)
+1. Number (1, 2, 3)
+2. Color (Red, Green, Purple)
+3. Shading (Solid, Striped, Putlined)
+4. Shape (Oval, Squiggle, Diamond)
 
 Look up the game online to see examples of the cards. Even better, get a deck and play with your friends!
 
@@ -28,24 +28,28 @@ Otherwise, your program will need to create a deck of 81 cards by crossing all 4
 ````
 $ ./set.py -s 1
 Set 1
-  2: 1 Green Outlined Diamond
-  6: 3 Purple Outlined Squiggle
-  8: 2 Red Outlined Oval
+1 Green Outlined Diamond
+2 Red Outlined Oval
+3 Purple Outlined Squiggle
 Set 2
-  4: 2 Red Outlined Squiggle
-  6: 3 Purple Outlined Squiggle
-  9: 1 Green Outlined Squiggle
+1 Green Outlined Squiggle
+2 Red Outlined Squiggle
+3 Purple Outlined Squiggle
 ````
 
 ## Creating and sorting the deck
 
-There are dozens of ways you could chose to solve this, and it's unlikely you would stumble upon my particular solution. In order to pass the test suite, we will have to do a couple of things the same way. For one this, we both need to use the same method to sort and shuffle our decks and then select the 12 cards. 
+There are dozens of ways you could chose to solve this, but, in order to pass the test suite, we will have to do a couple of things the same way. For one, we both need to use the same method to sort and shuffle our decks and then select the 12 cards. 
 
-To create the deck, you could manually enter all 81 cards, but that way lies madness. I suggest you use `itertools.product` to cross four lists, one for each of the numbered attributes above and each containing their the three values. The problem comes in sorting the deck, and so let's just agree to sort the cards by the string representation which, as shown above, will be `number color shading shape`, e.g., "3 Purple Outlined Squiggle." 
+To create the deck, you could manually enter all 81 cards, but that way lies madness. I suggest you use `itertools.product` to cross four lists, one for each of the numbered attributes above and each containing their the three values. This returns a `list` of `tuple` values, which seems like a perfect way to model the cards:
 
-There are many ways you could represent the idea of a "card" in your program. You could use a `tuple` of four strings which would sort properly and allow you to access each individual field for purposes of comparing cards. You'll have to remember the location of each field which is not too onerous, but still you might rather choose to use a `dict` with named fields and a full string of the values for sorting. I happened to choose a `class` with the `@dataclass` decorator that has a special `__str__` method to stringify the `Card` class. 
+````
+>>> from itertools import product
+>>> list(product('AB', '12'))
+[('A', '1'), ('A', '2'), ('B', '1'), ('B', '2')]
+````
 
-Consider making a function called `make_deck` that will create the deck (however you represent it) and return it sorted properly. Then add this function to run with `pytest`:
+However you chose to represent each card, the `list` of cards should be sorted for number color, shading, and shape. Consider making a function called `make_deck` that will create the deck and return it sorted properly. Then add something like this function to run with `pytest`. That is, I chose to use tuples for each card, so I'm checking that the first and last values in the `deck` are my expected tuples:
 
 ````
 def test_make_deck():
@@ -53,30 +57,42 @@ def test_make_deck():
 
     deck = make_deck()
     assert len(deck) == 81
-    assert str(deck[0]) == '1 Green Outlined Diamond'
-    assert str(deck[-1]) == '3 Red Striped Squiggle'
+    assert deck[0] == ('1', 'Green', 'Outlined', 'Diamond')
+    assert deck[-1] == ('3', 'Red', 'Striped', 'Squiggle')
 ````
 
 Once you have a sorted deck, use `random.shuffle` to sort it, then use `random.sample` to select 12 cards. With that, we should both have identical cards for the tests.
 
 ## Finding a set
 
-If you run `solution.py -d`, you can see a sample hand of 12 cards:
+Think about how you might decide if any three of cards forms a set. I would suggest thinking backwards from this test function which I suggest you include in your program:
 
 ````
-DEBUG:root:hand =
-1 Red Outlined Oval
-1 Red Outlined Squiggle
-1 Green Outlined Diamond
-3 Red Striped Diamond
-2 Red Outlined Squiggle
-3 Green Outlined Oval
-3 Purple Outlined Squiggle
-1 Purple Solid Oval
-2 Red Outlined Oval
-1 Green Outlined Squiggle
-1 Purple Solid Squiggle
-2 Green Solid Diamond
-````
+def test_is_set():
+    """Test is_set"""
 
-Your job is to look at all possible combinations of 3 cards, and I suggest you use `itertools.combinations` for this. Any 3 cards form a set if each attribute is exactly the same or entirely different. This particular has 2 sets. Can you find them manually? How will you write code to determine if cards are a set? How will you represent each attribute?
+    assert is_set([tuple('ABCD'), tuple('ABCD'), tuple('ABCD')])
+    assert is_set([tuple('ABCD'), tuple('EFGH'), tuple('IJKL')])
+    assert not is_set([tuple('ABCD'), tuple('ABCD'), tuple('ABCE')])
+    assert is_set([
+        ('1', 'Green', 'Outlined', 'Diamond', '1'),
+        ('Green', 'Outlined', 'Squiggle'),
+        ('1', 'Green', 'Outlined', 'Oval')
+    ])
+    assert is_set([
+        ('1', 'Green', 'Outlined', 'Diamond'),
+        ('2', 'Red', 'Striped', 'Squiggle'),
+        ('3', 'Purple', 'Solid', 'Oval')
+    ])
+    assert not is_set([
+        ('1', 'Green', 'Outlined', 'Diamond'),
+        ('2', 'Red', 'Striped', 'Squiggle'),
+        ('3', 'Green', 'Solid', 'Oval')
+    ])
+```` 
+
+If you represent your cards as strings, dictionaries, sets, or some other object, you should modify the test to reflect your design decisisons. Still, the ideas are the same. The first test assumes that I pass in 3 identical structures have the same 4 elements, `A`, `B`, `C`, and `D`. That should be a set. In the second test, all 3 structures are entirely different, so that's a set. In the third, the fourth element of the last structure is composed of the values `D`, `D`, and `E`, so that's not a set. Can you write the function `is_set` that will return a `bool` that indicates whether or not the list is a set?
+
+Once you have that function job, you need to examine all possible combinations of 3 cards. I suggest you use `itertools.combinations` for this. Then you can `filter` the combinations for those where `is_set` is `True`.
+
+Print out each set of cards with "Set N" and then the three cards in the set each on a new line. The test suite doesn't card what order the sets are printed, but the cards need to be `sorted`.

@@ -139,4 +139,6 @@ If you didn't realize it, you just implemented a basic machine learning algorith
 
 ## What next
 
-Now you can talk the "Markov Chain" problem that moves to the level of words and generates novel texts!
+* Use the two rhyming programs (`rhymer` and `soundex_rhymer`) to create a list of words that sound similar that you use for the input to `gibberish.py` to create novel words that (might) sound like the inputs, then use those to create Suess-ish texts.
+* Tackel the "Markov Chain" problem where you work at the level of words to generates novel texts.
+

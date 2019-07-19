@@ -4,7 +4,7 @@
 import argparse
 import random
 from itertools import product, combinations
-from typing import List
+from typing import List, Tuple
 
 
 # --------------------------------------------------
@@ -26,15 +26,14 @@ def get_args():
 
 
 # --------------------------------------------------
-def make_deck() -> List[str]:
+def make_deck() -> List[Tuple[str, str, str, str]]:
     """Make Set deck"""
 
-    colors = ['Red', 'Purple', 'Green']
-    shapes = ['Oval', 'Squiggle', 'Diamond']
-    numbers = ['1', '2', '3']
-    shadings = ['Solid', 'Striped', 'Outlined']
-
-    return sorted(map(' '.join, product(numbers, colors, shadings, shapes)))
+    numbers = ('1', '2', '3')
+    colors = ('Red', 'Purple', 'Green')
+    shadings = ('Solid', 'Striped', 'Outlined')
+    shapes = ('Oval', 'Squiggle', 'Diamond')
+    return sorted(product(numbers, colors, shadings, shapes))
 
 
 # --------------------------------------------------
@@ -43,37 +42,34 @@ def test_make_deck():
 
     deck = make_deck()
     assert len(deck) == 81
-    assert deck[0] == '1 Green Outlined Diamond'
-    assert deck[-1] == '3 Red Striped Squiggle'
+    assert deck[0] == ('1', 'Green', 'Outlined', 'Diamond')
+    assert deck[-1] == ('3', 'Red', 'Striped', 'Squiggle')
 
 
 # --------------------------------------------------
-def is_set(cards: List[str]) -> bool:
+def is_set(cards: List[tuple]) -> bool:
     """Decide if cards form a set"""
 
-    bits = map(set, zip(*[c.split() for c in cards]))
-    return all([len(b) in [1,3] for b in bits])
+    sets = map(set, zip(*cards))
+    return all([len(s) in [1, 3] for s in sets])
 
 
 # --------------------------------------------------
 def test_is_set():
     """Test is_set"""
 
-    assert is_set(['A B C D'] * 3)
-    assert is_set(['A B C D'], ['E F G H'], ['I J K L']])
-    assert not is_set(['A B C D', 'A B C D', 'A B C E'])
-    assert is_set([
-        '1 Green Outlined Diamond', '1 Green Outlined Squiggle',
-        '1 Green Outlined Oval'
-    ])
-    assert is_set([
-        '1 Green Outlined Diamond', '2 Red Striped Squiggle',
-        '3 Purple Solid Oval'
-    ])
-    assert not is_set([
-        '1 Green Outlined Diamond', '2 Red Striped Squiggle',
-        '3 Green Solid Oval'
-    ])
+    assert is_set([tuple('ABCD'), tuple('ABCD'), tuple('ABCD')])
+    assert is_set([tuple('ABCD'), tuple('EFGH'), tuple('IJKL')])
+    assert not is_set([tuple('ABCD'), tuple('ABCD'), tuple('ABCE')])
+    assert is_set([('1', 'Green', 'Outlined', 'Diamond', '1'),
+                   ('Green', 'Outlined', 'Squiggle'),
+                   ('1', 'Green', 'Outlined', 'Oval')])
+    assert is_set([('1', 'Green', 'Outlined', 'Diamond'),
+                   ('2', 'Red', 'Striped', 'Squiggle'),
+                   ('3', 'Purple', 'Solid', 'Oval')])
+    assert not is_set([('1', 'Green', 'Outlined', 'Diamond'),
+                       ('2', 'Red', 'Striped', 'Squiggle'),
+                       ('3', 'Green', 'Solid', 'Oval')])
 
 
 # --------------------------------------------------
@@ -91,7 +87,7 @@ def main():
 
     for i, combo in enumerate(sets, start=1):
         print(f'Set {i}')
-        print('\n'.join(sorted(combo)))
+        print('\n'.join(sorted(map(' '.join, combo))))
 
 
 # --------------------------------------------------
