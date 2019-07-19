@@ -157,7 +157,7 @@ Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz
 37. **morse**: Encrypt and decrypt text to and from two versions of Morse code.
 38. **rot13**: Encode and decode text by rotating the characters through a list.
 39. **word_search**: Find all the words hidden in the rows, columns, and diagonals in a block of text.
-40. **set**: Program the Set card game.
+40. **set**: Find "set" of cards from a deck of 81 where each of 4 attributes can have each of 3 values and a "set" of 3 cards is either the same or entirely different for each of the 4 attributes.
 
 \newpage
 

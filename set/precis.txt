@@ -1,1 +1,1 @@
-Program the Set card game.
+Find "set" of cards from a deck of 81 where each of 4 attributes can have each of 3 values and a "set" of 3 cards is either the same or entirely different for each of the 4 attributes.
