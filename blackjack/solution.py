@@ -77,7 +77,7 @@ def test_card_value():
 def make_deck():
     """Make a deck of cards"""
 
-    suites = list('HDSC')
+    suites =  list('♥♠♣♦') #list('HDSC')
     values = list(range(2, 11)) + list('AJQK')
     cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
     random.shuffle(cards)
@@ -91,10 +91,12 @@ def test_make_deck():
     deck = make_deck()
     assert len(deck) == 52
 
-    for suite in 'HDSC':
+    num_card = re.compile(r'\d+$')
+    for suite in '♥♠♣♦':
         cards = list(filter(lambda c: c[0] == suite, deck))
         assert len(cards) == 13
-        num_cards = list(filter(lambda c: re.match('\d+', c[1:]), deck))
+        num_cards = list(filter(num_card.search, cards))
+        assert len(num_cards) == 9
 
 
 # --------------------------------------------------
@@ -103,6 +105,7 @@ def main():
 
     args = get_args()
     stand_on = args.stand
+
     random.seed(args.seed)
     cards = make_deck()
 
