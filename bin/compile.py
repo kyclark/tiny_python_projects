@@ -127,31 +127,31 @@ def main():
         for i, dir_name in enumerate(chapter_list, 1):
             print('Chapter {}: {}'.format(i, dir_name))
             readme = os.path.join(in_dir, dir_name, 'README.md')
-            if os.path.isfile(readme):
-                print('\tREADME')
-                chapter = 'Chapter {}: '.format(i)
-                text = open(readme).read()
-                text = re.sub(r'^#\s+', '# ' + chapter, text)
-                fh.write(text + '\n\\newpage\n\n')
+            assert os.path.isfile(readme)
+
+            print('\tREADME')
+            chapter = 'Chapter {}: '.format(i)
+            text = open(readme).read()
+            text = re.sub(r'^#\s+', '# ' + chapter, text)
+            fh.write(text + '\n\\newpage\n\n')
 
             solution_py = os.path.join(in_dir, dir_name, 'solution.py')
-            if os.path.isfile(solution_py):
-                print('\tSOLUTION')
-                fh.write('## Solution\n\n')
-                fh.write('````\n')
-                numbered = getoutput('cat -n {}'.format(solution_py))
-                fh.write(numbered)
-                #fh.write(open(solution_py).read())
-                fh.write('\n````\n')
-                fh.write('\n\\newpage\n\n')
-            else:
-                print('\t>>>>>>> MISSING SOLUTION <<<<<<<<\n\n')
+            assert os.path.isfile(solution_py)
 
-            solution_md = os.path.join(in_dir, dir_name, 'discussion.md')
-            if os.path.isfile(solution_md):
+            print('\tSOLUTION')
+            fh.write('## Solution\n\n')
+            fh.write('````\n')
+            numbered = getoutput('cat -n {}'.format(solution_py))
+            fh.write(numbered)
+            #fh.write(open(solution_py).read())
+            fh.write('\n````\n')
+            fh.write('\n\\newpage\n\n')
+
+            discussion = os.path.join(in_dir, dir_name, 'discussion.md')
+            if os.path.isfile(discussion):
                 print('\tDISCUSSION')
                 fh.write('## Discussion\n\n')
-                fh.write(open(solution_md).read())
+                fh.write(open(discussion).read())
                 fh.write('\n\\newpage\n\n')
 
         if appendix:

@@ -4143,16 +4143,56 @@ optional arguments:
   -s int, --seed int   Random seed (default: None)
 ````
 
-The program will create a deck of cards by combining symbols "H," "D," "S", and "C" for the suites "hearts," "diamonds," "spades," and "clubs," respectively, with the numbers 2-10 and the letters "A", "J", "Q," and "K". In order to pass the tests, you will need to sort your deck and then use the `random.shuffle` method so that your cards will be in the order the tests expect. 
+If run with a `--stand` value less than 1, it should create an error:
+
+````
+$ ./blackjack.py -S 0
+usage: blackjack.py [-h] [-d] [-p] [-S int] [-s int]
+blackjack.py: error: --stand "0" must be greater than 0
+````
+
+The program will create a deck of cards by combining symbols Unicode symbols ♥ (heart), ♠ (club), ♣ (spade), and ♦ (diamond) with the numbers 2-10 and the letters "A", "J", "Q," and "K". In order to pass the tests, you will need to first sort your deck by suite and value before you use the `random.shuffle` method.
+
+Consider making a function called `make_deck` that does nothing but create the 52 cards. You may chose to model a "card" as a simple string as I did, e.g., `♥4`, or you may prefer to use a `tuple`, e.g., `('♥', '4')`, or even a `dict`, e.g., `{'suite': '♥', 'value': '4'}`. However you define a card, add and modify this function `test_make_deck` to ensure you get back a reasonable deck:
+
+````
+def test_make_deck():
+    """Test for make_deck"""
+
+    deck = make_deck()
+    assert len(deck) == 52
+
+    num_card = re.compile(r'\d+$')
+    for suite in '♥♠♣♦':
+        cards = list(filter(lambda c: c[0] == suite, deck))
+        assert len(cards) == 13
+        num_cards = list(filter(num_card.search, cards))
+        assert len(num_cards) == 9
+````
 
 To deal, keep in mind how cards are actually dealt -- first one card to each of the players, then one to the dealer, then the players, then the dealer, etc. You might be tempted to use `random.choice` or something like that to select your cards, but you need to keep in mind that you are modeling an actual deck and so selected cards should no longer be present in the deck. If the `--player_hits` flag is present, deal an additional card to the player; likewise with the `--dealer_hits` flag.
 
-When the program runs with no arguments, display the dealer and players hand along with a sum of the values of the cards. In Blackjack, number cards are worth their value, face cards are worth 10, and the Ace will be worth 1 for our game (though in the real game it can alternate between 1 and 11).
+In Blackjack, number cards are worth their numeric value, face cards are worth 10, and the Ace will be worth 1 for our game (though in the real game it can alternate between 1 and 11). Consider writing a function called `card_value` will return a `int` value of the card's worth. Add this `test_card_value` function:
+
+````
+def test_card_value():
+    """Test card_value"""
+
+    assert card_value('♥A') == 1
+
+    for face in 'JQK':
+        assert card_value('♦' + face) == 10
+
+    for num in range(2, 11):
+        assert card_value('♠' + str(num)) == num
+````
+
+When the program runs with no arguments, display the dealer and players hand along with a sum of the values of the cards. 
 
 ````
 $ ./blackjack.py -s 1
-Dealer [15]: HJ C5
-Player [10]: C9 SA
+Dealer [15]: ♥J ♠5
+Player [10]: ♠9 ♦A
 Dealer should hit.
 Player should hit.
 ````
@@ -4161,8 +4201,8 @@ Here we see that both the dealer and player fall below the `--stand` value of `1
 
 ````
 $ ./blackjack.py -s 1 -d -p
-Dealer [23]: HJ C5 C8
-Player [14]: C9 SA D4
+Dealer [23]: ♥J ♠5 ♠8
+Player [14]: ♠9 ♦A ♣4
 Dealer busts.
 ````
 
@@ -4172,8 +4212,8 @@ If we run with a different seed, we see different results:
 
 ````
 $ ./blackjack.py -s 3
-Dealer [19]: HK C9
-Player [12]: D3 H9
+Dealer [19]: ♥K ♠9
+Player [12]: ♣3 ♥9
 Player should hit.
 ````
 
@@ -4181,14 +4221,13 @@ Here the dealer is recommended to stand because they have more than 18. Run with
 
 ````
 $ ./blackjack.py -s 3 -S 20
-Dealer [19]: HK C9
-Player [12]: D3 H9
+Dealer [19]: ♥K ♠9
+Player [12]: ♣3 ♥9
 Dealer should hit.
 Player should hit.
 ````
 
 Now the dealer is recommended to hit, which seems unwise.
-
 
 After dealing all the required cards and displaying the hands, the code should do (in order):
 
@@ -4200,8 +4239,8 @@ After dealing all the required cards and displaying the hands, the code should d
 
 Hints:
 
+* Use `parser.error` in `argparse` to create the error for a bad `--stand` value
 * Use `itertools.product` to combine the suites and cards to make your deck.
-
 \newpage
 
 ## Solution
@@ -4249,112 +4288,331 @@ Hints:
     40	                        type=int,
     41	                        default=None)
     42	
-    43	    return parser.parse_args()
+    43	    args = parser.parse_args()
     44	
-    45	
-    46	# --------------------------------------------------
-    47	def bail(msg):
-    48	    """print() and exit(0)"""
+    45	    if args.stand < 1:
+    46	        parser.error('--stand "{}" must be greater than 0'.format(args.stand))
+    47	
+    48	    return args
     49	
-    50	    print(msg)
-    51	    sys.exit(0)
-    52	
+    50	# --------------------------------------------------
+    51	def bail(msg):
+    52	    """print() and exit(0)"""
     53	
-    54	# --------------------------------------------------
-    55	def card_value(card):
-    56	    """card to numeric value"""
+    54	    print(msg)
+    55	    sys.exit(0)
+    56	
     57	
-    58	    val = card[1:]
-    59	    faces = {'A': 1, 'J': 10, 'Q': 10, 'K': 10}
-    60	    return int(val) if val.isdigit() else faces[val] if val in faces else None
+    58	# --------------------------------------------------
+    59	def card_value(card):
+    60	    """card to numeric value"""
     61	
-    62	
-    63	# --------------------------------------------------
-    64	def test_card_value():
-    65	    """Test card_value"""
-    66	
-    67	    assert card_value('HA') == 1
+    62	    vals = {str(i): i for i in range(2, 11)}
+    63	    vals.update({'A': 1, 'J': 10, 'Q': 10, 'K': 10})
+    64	    val = card[1:]
+    65	    assert val in vals
+    66	    return vals[val]
+    67	
     68	
-    69	    for face in 'JQK':
-    70	        assert card_value('D' + face) == 10
-    71	
-    72	    for num in range(1, 11):
-    73	        assert card_value('S' + str(num)) == num
+    69	# --------------------------------------------------
+    70	def test_card_value():
+    71	    """Test card_value"""
+    72	
+    73	    assert card_value('♥A') == 1
     74	
-    75	
-    76	# --------------------------------------------------
-    77	def make_deck():
-    78	    """Make a deck of cards"""
-    79	
-    80	    suites = list('HDSC')
-    81	    values = list(range(2, 11)) + list('AJQK')
-    82	    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
-    83	    random.shuffle(cards)
-    84	    return cards
+    75	    for face in 'JQK':
+    76	        assert card_value('♦' + face) == 10
+    77	
+    78	    for num in range(2, 11):
+    79	        assert card_value('♠' + str(num)) == num
+    80	
+    81	
+    82	# --------------------------------------------------
+    83	def make_deck():
+    84	    """Make a deck of cards"""
     85	
-    86	
-    87	# --------------------------------------------------
-    88	def test_make_deck():
-    89	    """Test for make_deck"""
-    90	
-    91	    deck = make_deck()
-    92	    assert len(deck) == 52
-    93	
-    94	    for suite in 'HDSC':
-    95	        cards = list(filter(lambda c: c[0] == suite, deck))
-    96	        assert len(cards) == 13
-    97	        num_cards = list(filter(lambda c: re.match('\d+', c[1:]), deck))
-    98	
+    86	    suites = list('♥♠♣♦')
+    87	    values = list(map(str, range(2, 11))) + list('AJQK')
+    88	    cards = sorted(map(''.join, product(suites, values)))
+    89	    random.shuffle(cards)
+    90	    return cards
+    91	
+    92	
+    93	# --------------------------------------------------
+    94	def test_make_deck():
+    95	    """Test for make_deck"""
+    96	
+    97	    deck = make_deck()
+    98	    assert len(deck) == 52
     99	
-   100	# --------------------------------------------------
-   101	def main():
-   102	    """Make a jazz noise here"""
-   103	
-   104	    args = get_args()
-   105	    stand_on = args.stand
-   106	    random.seed(args.seed)
-   107	    cards = make_deck()
-   108	
-   109	    p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
-   110	    player = [p1, p2]
-   111	    dealer = [d1, d2]
-   112	
-   113	    if args.player_hits:
-   114	        player.append(cards.pop())
-   115	    if args.dealer_hits:
-   116	        dealer.append(cards.pop())
+   100	    num_card = re.compile(r'\d+$')
+   101	    for suite in '♥♠♣♦':
+   102	        cards = list(filter(lambda c: c[0] == suite, deck))
+   103	        assert len(cards) == 13
+   104	        num_cards = list(filter(num_card.search, cards))
+   105	        assert len(num_cards) == 9
+   106	
+   107	
+   108	# --------------------------------------------------
+   109	def main():
+   110	    """Make a jazz noise here"""
+   111	
+   112	    args = get_args()
+   113	    stand_on = args.stand
+   114	
+   115	    random.seed(args.seed)
+   116	    cards = make_deck()
    117	
-   118	    player_hand = sum(map(card_value, player))
-   119	    dealer_hand = sum(map(card_value, dealer))
-   120	
-   121	    print('Dealer [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
-   122	    print('Player [{:2}]: {}'.format(player_hand, ' '.join(player)))
-   123	
-   124	    blackjack = 21
-   125	    if player_hand > blackjack:
-   126	        bail('Player busts! You lose, loser!')
-   127	
-   128	    if dealer_hand > blackjack:
-   129	        bail('Dealer busts.')
-   130	
-   131	    if player_hand == blackjack:
-   132	        bail('Player wins. You probably cheated.')
-   133	
-   134	    if dealer_hand == blackjack:
-   135	        bail('Dealer wins!')
+   118	    p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
+   119	    player = [p1, p2]
+   120	    dealer = [d1, d2]
+   121	
+   122	    if args.player_hits:
+   123	        player.append(cards.pop())
+   124	    if args.dealer_hits:
+   125	        dealer.append(cards.pop())
+   126	
+   127	    player_hand = sum(map(card_value, player))
+   128	    dealer_hand = sum(map(card_value, dealer))
+   129	
+   130	    print('Dealer [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
+   131	    print('Player [{:2}]: {}'.format(player_hand, ' '.join(player)))
+   132	
+   133	    blackjack = 21
+   134	    if player_hand > blackjack:
+   135	        bail('Player busts! You lose, loser!')
    136	
-   137	    if dealer_hand < stand_on:
-   138	        print('Dealer should hit.')
+   137	    if dealer_hand > blackjack:
+   138	        bail('Dealer busts.')
    139	
-   140	    if player_hand < stand_on:
-   141	        print('Player should hit.')
+   140	    if player_hand == blackjack:
+   141	        bail('Player wins. You probably cheated.')
    142	
-   143	
-   144	# --------------------------------------------------
-   145	if __name__ == '__main__':
-   146	    main()
+   143	    if dealer_hand == blackjack:
+   144	        bail('Dealer wins!')
+   145	
+   146	    if dealer_hand < stand_on:
+   147	        print('Dealer should hit.')
+   148	
+   149	    if player_hand < stand_on:
+   150	        print('Player should hit.')
+   151	
+   152	
+   153	# --------------------------------------------------
+   154	if __name__ == '__main__':
+   155	    main()
 ````
 
+\newpage
+
+## Discussion
+
+By using `argparse`, we can define all the parameters for the program along with reasonable defaults. The two flags for `--dealer_hits` and `--player_hits` will be `False` by default. The defaults for `--stand` and `--seed` will be 18 and `None`, respetively, and any values the user provides must be `int` values. 
+
+## Making a deck
+
+As mentioned in the intro, I chose to model my cards as strings where the suite is the first character and the value is the rest of the string, e.g., `♣10` is the 10 of clubs. I can create a `list` with the four Unicode strings for the suites:
+
+````
+>>> suites = list('♥♠♣♦')
+>>> suites
+['♥', '♠', '♣', '♦']
+````
+
+For the number values 2-10, I can use `range(2, 11)` (remembering that the upper limit is not inclusive), but I need to turn all these into `str` values, so I can `map` them into that function:
+
+````
+>>> list(map(str, range(2, 11)))
+['2', '3', '4', '5', '6', '7', '8', '9', '10']
+````
+
+I can use the `+` operator to join that `list` to one with the face cards "A" (Ace), "J" (Jack), "Q" (Queen), and "K" ("King"):
+
+
+This will produce a `list` of 52 tuples like ()
+
+````
+>>> values = list(map(str, range(2, 11))) + list('AJQK')
+>>> values
+['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A', 'J', 'Q', 'K']
+````
+
+I use `itertools.product` to cross the `suites` and `values` and get a `list` of 52 (4 suites times 13 values) which are tuples containing the suite and value:
+
+````
+>>> from itertools import product
+>>> cards = list(product(suites, values))
+>>> len(cards)
+52
+>>> cards[0]
+('♥', '2')
+````
+
+Since I want those to be strings, I can `map` them into the function `''.join` to make them strings:
+
+````
+>>> cards = list(map(''.join, product(suites, values)))
+>>> cards[0]
+'♥2'
+````
+
+Finally I can put `sorted` around all this to order them before shuffling. (This is only for the purposes of testing so that our decks will be in the same order so that we will draw the same cards.)
+
+````
+>>> cards = list(sorted(map(''.join, product(suites, values))))
+>>> cards[0]
+'♠10'
+````
+
+I chose to call `random.shuffle` in my `make_deck` function. It's important to note the difference between how `sorted` *returns a new list* and `random.shuffle` *mutates the list in-place
+
+````
+>>> random.shuffle(cards)
+>>> cards[0]
+'♥J'
+````
+
+As suggested, all this code goes into a function called `make_deck` and I use the `test_make_deck` function in the intro to check it with `pytest`.
+
+## Playing the game
+
+To start the game, I need to deal one card to the player, one to the dealer, one to the player, one to the dealer. Since the `cards` is a `list`, will use `pop` to remove a card from the deck. You cannot use the `random` module's `choice` or `sample` functions because the card would not be removed from the deck and so could be dealt again. 
+
+````
+>>> p1, d1, p2, d2 = cards.pop(), cards.pop(), cards.pop(), cards.pop()
+````
+
+Note that `list.pop` by default removes elements from the *end* of the list. If you want to remove those at another position, you can provide an index, e.g., `0` to indicate the beginning of the list. It doesn't matter which end of `cards` we draw from, just so long as we both agree to draw from the same side.
+
+I use a `list` to model each players "hand":
+
+````
+>>> player = [p1, p2]
+>>> dealer = [d1, d2]
+>>> player
+['♦10', '♣6']
+>>> dealer
+['♥2', '♠10']
+````
+
+If the flags to hit the player or dealer are present, I `append` the results of using `pop` on the deck
+
+````
+>>> player_hits = True
+>>> dealer_hits = False
+>>> if player_hits:
+...     player.append(cards.pop())
+...
+>>> if dealer_hits:
+...     dealer.append(cards.pop())
+...
+>>> player
+['♦10', '♣6', '♦7']
+>>> dealer
+['♥2', '♠10']
+````
+
+## Figuring hand value
+
+So, given a list like `['♦10', '♣6', '♦7']` how do we add up the values of the cards? I chose to create a `card_value` function that gives me the value of any one card. I start off using a dictionary comprehension to associtate the string value of the integer cards to their integer values:
+
+````
+>>> vals = {str(i): i for i in range(2, 11)}
+>>> vals
+{'2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10}
+````
+
+I can then `update` the dictionary with *another dictionary* of the face values, which is pretty cool:
+
+````
+>>> vals.update({'A': 1, 'J': 10, 'Q': 10, 'K': 10})
+>>> from pprint import pprint as pp
+>>> pp(vals)
+{'10': 10,
+ '2': 2,
+ '3': 3,
+ '4': 4,
+ '5': 5,
+ '6': 6,
+ '7': 7,
+ '8': 8,
+ '9': 9,
+ 'A': 1,
+ 'J': 10,
+ 'K': 10,
+ 'Q': 10}
+````
+
+I expect the card has the suite as the first character, so the "value" of the card is anything *after* the first character:
+
+````
+>>> card = '♦10'
+>>> val = card[1:]
+>>> val
+'10'
+````
+
+I then `assert` that the value is something in my `vals` dict:
+
+````
+>>> assert val in vals
+````
+
+The `assert` function returns nothing when it works; otherwise it throws an exception that would halt the program completely, which I actually want. If I were to have passed something that's not actually a "card" to the program, something is definitely wrong and needs to be fixed!
+
+````
+>>> assert 'X' in vals
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AssertionError
+````
+
+If all goes well, I can `return` the value:
+
+````
+>>> def card_value(card):
+...     vals = {str(i): i for i in range(2, 11)}
+...     vals.update({'A': 1, 'J': 10, 'Q': 10, 'K': 10})
+...     val = card[1:]
+...     assert val in vals
+...     return vals[val]
+...
+````
+
+I can test it manually and with the `test_card_value` provided in the intro:
+
+````
+>>> card_value('♦10')
+10
+>>> card_value('♦A')
+1
+````
+
+## Adding the card values
+
+So to return to our question of how to add the values in a hand like `['♦10', '♣6', '♦7']`, we can `map` each card into our `card_value` function and then `sum` them:
+
+````
+>>> player
+['♦10', '♣6', '♦7']
+>>> sum(map(card_value, player))
+23
+````
+
+## Printing the hands and outcomes
+
+I can print out each of the hands and their values:
+
+````
+>>> player_hand = sum(map(card_value, player))
+>>> dealer_hand = sum(map(card_value, dealer))
+>>> print('Dealer [{:2}]: {}'.format(dealer_hand, ' '.join(dealer)))
+Dealer [12]: ♥2 ♠10
+>>> print('Player [{:2}]: {}'.format(player_hand, ' '.join(player)))
+Player [23]: ♦10 ♣6 ♦7
+````
+
+After printing the hands, I go through the checklist in the intro, checking who went "bust," who got 21, who should hit, and so forth.
 \newpage
 
 # Chapter 18: Family Tree

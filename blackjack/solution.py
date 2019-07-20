@@ -40,8 +40,12 @@ def get_args():
                         type=int,
                         default=None)
 
-    return parser.parse_args()
+    args = parser.parse_args()
 
+    if args.stand < 1:
+        parser.error('--stand "{}" must be greater than 0'.format(args.stand))
+
+    return args
 
 # --------------------------------------------------
 def bail(msg):
@@ -55,31 +59,33 @@ def bail(msg):
 def card_value(card):
     """card to numeric value"""
 
+    vals = {str(i): i for i in range(2, 11)}
+    vals.update({'A': 1, 'J': 10, 'Q': 10, 'K': 10})
     val = card[1:]
-    faces = {'A': 1, 'J': 10, 'Q': 10, 'K': 10}
-    return int(val) if val.isdigit() else faces[val] if val in faces else None
+    assert val in vals
+    return vals[val]
 
 
 # --------------------------------------------------
 def test_card_value():
     """Test card_value"""
 
-    assert card_value('HA') == 1
+    assert card_value('♥A') == 1
 
     for face in 'JQK':
-        assert card_value('D' + face) == 10
+        assert card_value('♦' + face) == 10
 
-    for num in range(1, 11):
-        assert card_value('S' + str(num)) == num
+    for num in range(2, 11):
+        assert card_value('♠' + str(num)) == num
 
 
 # --------------------------------------------------
 def make_deck():
     """Make a deck of cards"""
 
-    suites =  list('♥♠♣♦') #list('HDSC')
-    values = list(range(2, 11)) + list('AJQK')
-    cards = sorted(map(lambda t: '{}{}'.format(*t), product(suites, values)))
+    suites = list('♥♠♣♦')
+    values = list(map(str, range(2, 11))) + list('AJQK')
+    cards = sorted(map(''.join, product(suites, values)))
     random.shuffle(cards)
     return cards
 

@@ -27,6 +27,16 @@ def test_usage():
 
 
 # --------------------------------------------------
+def test_bad_stand():
+    """bad_stand"""
+
+    for _ in range(2):
+        bad = random.choice(range(-10, 1))
+        rv, out = getstatusoutput('{} --stand {}'.format(prg, bad))
+        assert rv != 0
+        assert re.search('--stand "{}" must be greater than 0'.format(bad), out)
+
+# --------------------------------------------------
 def test_play01():
     out = getoutput('{} {} 42'.format(prg, seed_flag()))
     expected = """

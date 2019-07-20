@@ -16,16 +16,56 @@ optional arguments:
   -s int, --seed int   Random seed (default: None)
 ````
 
-The program will create a deck of cards by combining symbols "H," "D," "S", and "C" for the suites "hearts," "diamonds," "spades," and "clubs," respectively, with the numbers 2-10 and the letters "A", "J", "Q," and "K". In order to pass the tests, you will need to sort your deck and then use the `random.shuffle` method so that your cards will be in the order the tests expect. 
+If run with a `--stand` value less than 1, it should create an error:
+
+````
+$ ./blackjack.py -S 0
+usage: blackjack.py [-h] [-d] [-p] [-S int] [-s int]
+blackjack.py: error: --stand "0" must be greater than 0
+````
+
+The program will create a deck of cards by combining symbols Unicode symbols ♥ (heart), ♠ (club), ♣ (spade), and ♦ (diamond) with the numbers 2-10 and the letters "A", "J", "Q," and "K". In order to pass the tests, you will need to first sort your deck by suite and value before you use the `random.shuffle` method.
+
+Consider making a function called `make_deck` that does nothing but create the 52 cards. You may chose to model a "card" as a simple string as I did, e.g., `♥4`, or you may prefer to use a `tuple`, e.g., `('♥', '4')`, or even a `dict`, e.g., `{'suite': '♥', 'value': '4'}`. However you define a card, add and modify this function `test_make_deck` to ensure you get back a reasonable deck:
+
+````
+def test_make_deck():
+    """Test for make_deck"""
+
+    deck = make_deck()
+    assert len(deck) == 52
+
+    num_card = re.compile(r'\d+$')
+    for suite in '♥♠♣♦':
+        cards = list(filter(lambda c: c[0] == suite, deck))
+        assert len(cards) == 13
+        num_cards = list(filter(num_card.search, cards))
+        assert len(num_cards) == 9
+````
 
 To deal, keep in mind how cards are actually dealt -- first one card to each of the players, then one to the dealer, then the players, then the dealer, etc. You might be tempted to use `random.choice` or something like that to select your cards, but you need to keep in mind that you are modeling an actual deck and so selected cards should no longer be present in the deck. If the `--player_hits` flag is present, deal an additional card to the player; likewise with the `--dealer_hits` flag.
 
-When the program runs with no arguments, display the dealer and players hand along with a sum of the values of the cards. In Blackjack, number cards are worth their value, face cards are worth 10, and the Ace will be worth 1 for our game (though in the real game it can alternate between 1 and 11).
+In Blackjack, number cards are worth their numeric value, face cards are worth 10, and the Ace will be worth 1 for our game (though in the real game it can alternate between 1 and 11). Consider writing a function called `card_value` will return a `int` value of the card's worth. Add this `test_card_value` function:
+
+````
+def test_card_value():
+    """Test card_value"""
+
+    assert card_value('♥A') == 1
+
+    for face in 'JQK':
+        assert card_value('♦' + face) == 10
+
+    for num in range(2, 11):
+        assert card_value('♠' + str(num)) == num
+````
+
+When the program runs with no arguments, display the dealer and players hand along with a sum of the values of the cards. 
 
 ````
 $ ./blackjack.py -s 1
-Dealer [15]: HJ C5
-Player [10]: C9 SA
+Dealer [15]: ♥J ♠5
+Player [10]: ♠9 ♦A
 Dealer should hit.
 Player should hit.
 ````
@@ -34,8 +74,8 @@ Here we see that both the dealer and player fall below the `--stand` value of `1
 
 ````
 $ ./blackjack.py -s 1 -d -p
-Dealer [23]: HJ C5 C8
-Player [14]: C9 SA D4
+Dealer [23]: ♥J ♠5 ♠8
+Player [14]: ♠9 ♦A ♣4
 Dealer busts.
 ````
 
@@ -45,8 +85,8 @@ If we run with a different seed, we see different results:
 
 ````
 $ ./blackjack.py -s 3
-Dealer [19]: HK C9
-Player [12]: D3 H9
+Dealer [19]: ♥K ♠9
+Player [12]: ♣3 ♥9
 Player should hit.
 ````
 
@@ -54,14 +94,13 @@ Here the dealer is recommended to stand because they have more than 18. Run with
 
 ````
 $ ./blackjack.py -s 3 -S 20
-Dealer [19]: HK C9
-Player [12]: D3 H9
+Dealer [19]: ♥K ♠9
+Player [12]: ♣3 ♥9
 Dealer should hit.
 Player should hit.
 ````
 
 Now the dealer is recommended to hit, which seems unwise.
-
 
 After dealing all the required cards and displaying the hands, the code should do (in order):
 
@@ -73,4 +112,5 @@ After dealing all the required cards and displaying the hands, the code should d
 
 Hints:
 
+* Use `parser.error` in `argparse` to create the error for a bad `--stand` value
 * Use `itertools.product` to combine the suites and cards to make your deck.
