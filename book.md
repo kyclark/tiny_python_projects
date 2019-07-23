@@ -21,8 +21,6 @@ author: Ken Youens-Clark
 
 I believe you can learn serious things through silly games. I also think you will learn best by *doing*. This is a book of programming exercises. Each chapter includes a description of a program you should write with examples of how the program should work. Most importantly, each program includes tests so that you know if your program is working well enough. 
 
-I won't necessarily show you beforehand how to write each program. I'll describe what the program should do and provide some discussion about how to write it. I'll also create an appendix with short examples of how to do things like how to use `argparse`, how to read/write from/to a file, how to process all the files in a directory, how to extract k-mers from a string, etc. I'll provide some building blocks, but I want you to figure out how to put the pieces together.
-
 When you are done with this books you be able to:
 
 * Write command-line Python programs
@@ -35,6 +33,8 @@ When you are done with this books you be able to:
 * Use and control of randomness
 * Create and use graphs, kmers, Markov chains, Hamming distance, the Soundex algorithm, and more
 
+The first chapter will briefly introduce some aspects of the Python language, but I will assume some basic profiency with Python or some similar language. If you are coming from any other c-based language (even if it uses braces for blocks), I don't think you'll have any problem picking up Python.
+
 ## Forking GitHub repo
 
 First use the GitHub interface to "fork" this repository into your own account. Then do `git clone` of *your* repository to get a local copy. Inside that checkout, do:
@@ -45,41 +45,6 @@ git remote add upstream https://github.com/kyclark/playful_python.git
 
 This will allow you to `git pull upstream master` in order to get updates. When you create new files, `git add/commit/push` them to *your* repository. (Please do not create pull requests on *my* repository -- unless, of course, you have suggestions for improving my repo!).
 
-
-## new.py
-
-I provide some useful programs in the `bin` directory including one called `new.py` that will help you stub out new Python programs using the `argparse` module to parse the command line arguments and options for your programs. I recommend you start every new program with this program. For example, in the `article` directory the `README.md` wants you to create a program called `article.py`. You should do this:
-
-````
-$ cd article
-$ new.py article
-````
-
-This will create a new file called `article.py` (that has been made executable with `chmod +x`, if your operating system supports that) that has example code for you to start writing your program. 
-
-## $PATH
-
-Your `$PATH` is a list of directories where your operating system will look for programs. To see what your `$PATH` looks like, do:
-
-````
-$ echo $PATH
-````
-
-Probably each directory is separated by a colon (`:`). *The order of the directories matters!* For instance, it's common to have more than one version of Python installed. When you type `python` on the command line, the directories in your `$PATH` are searched in order, and the first `python` found is the one that is used (and it's probably Python version 2!)
-
-You could execute `new.py` by giving the full path to the program, e.g., `$HOME/work/playful_python/bin/new.py`, but that's really tedious. It's best to put `new.py` into one of the directories that is already in your `$PATH` like maybe `/usr/local/bin`. The problem is that you probably need administrator privileges to write to most of the directories that are in your `$PATH`. If you are working on your laptop, this is probably not a problem, but if you are on a shared system, you probably won't be able to copy the program into your `$PATH` directories. 
-
-An alternative is to alter your `$PATH` to include the directory where `new.py` is located. E.g., if `new.py` is in `$HOME/work/playful_python/bin/`, then add this directory to your `$PATH` -- probably by editing  `.bashrc` or `.bash_profile` located in your `$HOME` directory (if you use `bash`). See the documentation for your shell of choice to understand how to edit and persist your `$PATH`.
-
-For what it's worth, I always create a `$HOME/.local` directory for local installations of software I need, so I add `$HOME/.local/bin` to my `$PATH`. Then I copy programs like `new.py` there and they are available to me anywhere on the system.
-
-## Testing your programs
-
-Once you have stubbed out your new program, open it in your favorite editor and change the example arguments in `get_args` to suit the needs of your app, then add your code to `main` to accomplish the task described in the README. To run the test suite using `make`, you can type `make test` in the same directory as the `test.py` and `article.py` program. If your system does not have `make` or you just don't want to use it, type `pytest -v test.py`. 
-
-Your goal is to pass all the tests. The tests are written in an order designed to guide you in how break the problem down, e.g., often a test will ask you to alter one bit of text from the command line, and this it will ask you to read and alter the text from a file. I would suggest you solve the tests in order. The `make test` target in every Makefile executes `pytest -xv test.py` where the `-x` flag will have `pytest` halt testing after it finds one that fails. There's no point in running every test when one fails, so I think this is less frustrating that seeing perhaps hundreds of lines of failing tests shoot by.
-
-A fair number of the program rely on a dictionary of English words. To be sure that you can reproduce my results, I include a copy of mine in `inputs/words.zip`.
 
 ## Why Not Notebooks?
 
@@ -118,51 +83,813 @@ Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz
 \newpage
 
 ## Outline
-1. **article**: Choose the correct article for a given word.
-2. **jump_the_five**: Encode all numbers in a given text using a Jump-The-Five algorithm.
-3. **picnic**: Manipulate strings and lists based on the number of items present.
-4. **wc**: Write a program to count the lines, words, and characters in text.
-5. **howler**: Convert all input text to uppercase.
-6. **apples_and_bananas**: Substitute vowels in text.
-7. **telephone**: Introduce mutations in a string over a given number of iterations.
-8. **bottles_of_beer**: Write the "99 Bottles of Beer On The Wall" song.
-9. **gashlycrumb**: Retreive a line of text from a file by the first letter.
-10. **ransom_note**: Randomly alternate the case of input text to simulate a ransom note.
-11. **rhymer**: Substitute alternate consonant prefixes onto a stem to find rhyming "words."
-12. **rock_paper_scissors**: Write the "Rock, Paper, Scissors" game.
-13. **abuse**: Creating insults by randomly choosing from lists of words.
-14. **scrambler**: Randomly shuffle the middle letters of every word in a text leaving the first and last letters in place.
-15. **bacronym**: Use dictionaries to organize words by first letter, then randomly choose words to create "meanings" for a given acronym.
-16. **wod**: Generate a Workout-Of-the-Day (WOD) from a list of possible exercises.
-17. **blackjack**: An abbreviated version of the card game "Blackjack" (AKA "Twenty-One").
-18. **family_tree**: Parse a text file containing the description of family trees, visualize the resulting graphs using GraphViz.
-19. **gematria**: Numerically encode each word of text by summing the ordinal values of the characters.
-20. **histy**: Create a textual histogram showing the frequency of letters in text.
-21. **mommys_little_helper**: Find words matching a given pattern to help solve a crossword puzzle. Explores manually finding words and using regular expressions.
-22. **kentucky_friar**: Drop the "g" from two-syllable words ending in "-ing"; convert "you" to "y'all."
-23. **mad_libs**: Create an interative terminal version of "Mad Libs." Hilarity is sure to ensue.
-24. **license_plates**: Find all possible permutations of a licence plate given a confusion matrix. Explore how and verify that regular expressions work.
-25. **gibberish**: Use a Markov chain to create new words from a set of training files.
-26. **piggy**: Encode text using the Pig Latin algorithm.
-27. **soundex_rhymer**: Using the Soundex function to find words ending with a given sound.
-28. **tictactoe**: Play a round of Tic-Tac-Toe.
-29. **twelve_days_of_christmas**: Write a program that will print the "Twelve Days of Christmas" song up to a given day.
-30. **anagram**: Finding anagrams of words.
-31. **hangman**: Write an interactive terminal game where the user guesses a word.
-32. **first_bank_of_change**: Find all possible combinations of pennies, nickels, dimes, and quarters for an amount between 1 and 100.
-33. **pareto**: Model how random events of zero-sum encounters led to inequitable distributions.
-34. **runny_babbit**: Introduce Spoonerisms into text by switching the initial consonant sounds of neighboring words.
-35. **markov_chain**: Use the Markov chain algorithm to generate novel texts based on training sets.
-36. **hamming_chain**: Find paths through words that are separated by a given Hamming distance.
-37. **morse**: Encrypt and decrypt text to and from two versions of Morse code.
-38. **rot13**: Encode and decode text by rotating the characters through a list.
-39. **word_search**: Find all the words hidden in the rows, columns, and diagonals in a block of text.
-40. **set**: Find "set" of cards from a deck of 81 where each of 4 attributes can have each of 3 values and a "set" of 3 cards is either the same or entirely different for each of the 4 attributes.
-41. **scrabble**: Find all possible words you could make from a random set of seven characters.
+1. **getting_started**: Introduction to Python language basics, the `argparse` module, and the `new.py` program for creating new programs using `argparse`.
+2. **article**: Choose the correct article for a given word.
+3. **jump_the_five**: Encode all numbers in a given text using a Jump-The-Five algorithm.
+4. **picnic**: Manipulate strings and lists based on the number of items present.
+5. **wc**: Write a program to count the lines, words, and characters in text.
+6. **howler**: Convert all input text to uppercase.
+7. **apples_and_bananas**: Substitute vowels in text.
+8. **telephone**: Introduce mutations in a string over a given number of iterations.
+9. **bottles_of_beer**: Write the "99 Bottles of Beer On The Wall" song.
+10. **gashlycrumb**: Retreive a line of text from a file by the first letter.
+11. **ransom_note**: Randomly alternate the case of input text to simulate a ransom note.
+12. **rhymer**: Substitute alternate consonant prefixes onto a stem to find rhyming "words."
+13. **rock_paper_scissors**: Write the "Rock, Paper, Scissors" game.
+14. **abuse**: Creating insults by randomly choosing from lists of words.
+15. **scrambler**: Randomly shuffle the middle letters of every word in a text leaving the first and last letters in place.
+16. **bacronym**: Use dictionaries to organize words by first letter, then randomly choose words to create "meanings" for a given acronym.
+17. **wod**: Generate a Workout-Of-the-Day (WOD) from a list of possible exercises.
+18. **blackjack**: An abbreviated version of the card game "Blackjack" (AKA "Twenty-One").
+19. **family_tree**: Parse a text file containing the description of family trees, visualize the resulting graphs using GraphViz.
+20. **gematria**: Numerically encode each word of text by summing the ordinal values of the characters.
+21. **histy**: Create a textual histogram showing the frequency of letters in text.
+22. **mommys_little_helper**: Find words matching a given pattern to help solve a crossword puzzle. Explores manually finding words and using regular expressions.
+23. **kentucky_friar**: Drop the "g" from two-syllable words ending in "-ing"; convert "you" to "y'all."
+24. **mad_libs**: Create an interative terminal version of "Mad Libs." Hilarity is sure to ensue.
+25. **license_plates**: Find all possible permutations of a licence plate given a confusion matrix. Explore how and verify that regular expressions work.
+26. **gibberish**: Use a Markov chain to create new words from a set of training files.
+27. **piggy**: Encode text using the Pig Latin algorithm.
+28. **soundex_rhymer**: Using the Soundex function to find words ending with a given sound.
+29. **tictactoe**: Play a round of Tic-Tac-Toe.
+30. **twelve_days_of_christmas**: Write a program that will print the "Twelve Days of Christmas" song up to a given day.
+31. **anagram**: Finding anagrams of words.
+32. **hangman**: Write an interactive terminal game where the user guesses a word.
+33. **first_bank_of_change**: Find all possible combinations of pennies, nickels, dimes, and quarters for an amount between 1 and 100.
+34. **pareto**: Model how random events of zero-sum encounters led to inequitable distributions.
+35. **runny_babbit**: Introduce Spoonerisms into text by switching the initial consonant sounds of neighboring words.
+36. **markov_chain**: Use the Markov chain algorithm to generate novel texts based on training sets.
+37. **hamming_chain**: Find paths through words that are separated by a given Hamming distance.
+38. **morse**: Encrypt and decrypt text to and from two versions of Morse code.
+39. **rot13**: Encode and decode text by rotating the characters through a list.
+40. **word_search**: Find all the words hidden in the rows, columns, and diagonals in a block of text.
+41. **set**: Find "set" of cards from a deck of 81 where each of 4 attributes can have each of 3 values and a "set" of 3 cards is either the same or entirely different for each of the 4 attributes.
+42. **scrabble**: Find all possible words you could make from a random set of seven characters.
 
 \newpage
 
-# Chapter 1: Article Selector
+# Chapter 1: Getting Started
+
+## Python Variables
+
+Like most programming languages, Python has the idea of *one* of something and *many* of somethings, and these go into variables. Many are truly variable in Python, meaning we can neither keep them from changing nor enforce a *type* on them such as the idea that some variable can only ever contain an integer value. Some types are naturally immutable like strings and tuples. You'll learn which is which as we go.
+
+Python variables can have a type like `int` for a integer value or `str` for "strings" which have one or more characters. When you create a variable, how you write the value determines it's type. Values in single or double quotes are strings (`str`):
+
+````
+>>> thing = 'chair'
+>>> type(thing)
+<class 'str'>
+````
+
+Bare numbers are either integers (`int`) if they are just numerals:
+
+````
+>>> thing = 10
+>>> type(thing)
+<class 'int'>
+````
+
+Or floating-pointing numbers (`float`) if they have fractional components:
+
+````
+>>> thing = 3.14
+>>> type(thing)
+<class 'float'>
+>>> thing = 4.32e-10
+>>> type(thing)
+<class 'float'>
+````
+
+Each `type` of variable in Python has many helpful *methods* that can do things to the variable like `upper` (uppercase) a `str` or `append` to a `list`. In the REPL, you can use `help(str)` to see the documention on strings, for instance. Often you can use `help` directly on a variable and Python will show you the docs on the type of the variable.  
+
+## Lists, Strings, and Tuples
+
+A `list` in Python is an ordered sequencing of values. Python does not require them to be homogenous, so you can mix any sort of values you like. You can create a `list` by putting values in square brackets (`[]`):
+
+````
+>>> my_things = [3.14, 'banana', 42]
+>>> type(my_things)
+<class 'list'>
+````
+
+Like so many other programming languages, Python starts counting at zero `0`. You use the square brackets and the index to retrieve an element, so the first element of a `list` is found at `[0]`:
+
+````
+>>> my_things[0]
+3.14
+````
+
+You can get multiple elements of a `list`, called a "slice", by using `[start:stop]` where both `start` and `stop` are optional. If you leave out `start`, it will be `0`; if you leave out `stop`, it will go to the end of the list. Note that the `stop` value is not inclusive:
+
+````
+>>> my_things[1:2]
+['banana']
+>>> my_things[1:]
+['banana', 42]
+>>> my_things[:2]
+[3.14, 'banana']
+````
+
+Python uses the exact same notation to get elements from strings, which, if you squint a bit, a "string" is really just a `list` of characters:
+
+````
+>>> thing = 'orange'
+>>> thing[1]
+'r'
+>>> thing[3:]
+'nge'
+````
+
+Note that you can alter an element in a `list`:
+
+````
+>>> my_things[0] = 'cow'
+>>> my_things
+['cow', 'banana', 42]
+````
+
+But you cannot alter a string in the same way:
+
+````
+>>> thing[0] = 's'
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'str' object does not support item assignment
+````
+
+You can turn a `str` into a `list` using the `list()` function. This is handier than it might seem:
+
+````
+>>> list('apple')
+['a', 'p', 'p', 'l', 'e']
+````
+
+Tuples are immutable lists and are created using parentheses (`()`) to enclose the items rather than square brackets. They are indexed in the same way as a `list` or `str` value.
+
+````
+>>> t = ('toast', 'butter', 'jam')
+>>> t[1]
+'butter'
+````
+
+## Dictionaries
+
+If you need to associate some *thing* (a "key") to another *thing* (a "value"), generally you use a `dict` (dictionary). The key is unique in the `dict` and can be most any value as long as it is "hashable"; practically speaking, you can use a `str`, `int`, `float`, or `tuple` containing those kinds of values. You use curly brackets (`{}`) or the `dict()` function to create a new dictionary:
+
+````
+>>> d = {'name': 'Arthur', 'favorite color': 'blue'}
+````
+
+But you use square brackets (`[]`) to access members using a key:
+
+````
+>>> d['name']
+'Arthur'
+````
+
+If you ask for a key that doesn't exist, bad things happen:
+
+````
+>>> d['quest']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 'quest'
+````
+
+We'll talk later about types of dictionaries that don't blow up or that give you special powers like how to count all the elements in a `list`:
+
+````
+>>> from collections import Counter
+>>> Counter('foobar')
+Counter({'o': 2, 'f': 1, 'b': 1, 'a': 1, 'r': 1})
+````
+
+## Sets
+
+A `set` is in between a `list` and a `dict`. Items in a `set` are unique like the keys of a `dict`, but they are in no particular order unlike a `list`. If you ever want the unique elements of a `list`, create a `set()`:
+
+````
+>>> set('foobar')
+{'o', 'a', 'b', 'f', 'r'}
+````
+
+
+## Truthiness
+
+While it would seem Python has an actual Boolean (Yes/No, True/False) type, this idea can be seriously abused in many odd and confusing ways. First off, there are actual `True` and `False` values:
+
+````
+>>> True == True
+True
+>>> False == False
+True
+````
+
+But they are equivalent to integers:
+
+````
+>>> True == 1
+True
+>>> False == 0
+True
+````
+
+Which means, oddly, that you can add them:
+
+````
+>>> True + True
+2
+>>> True + True + False
+2
+````
+
+Lots of things are `False`-ey when they are evaluated in a Boolean context. The `int` `0`, the `float` `0.0`, the empty string, an empty list, and the special value `None` are all considered `False`-ey:
+
+````
+>>> 'Hooray!' if 0 else 'Shucks!'
+'Shucks!'
+>>> 'Hooray!' if 0. else 'Shucks!'
+'Shucks!'
+>>> 'Hooray!' if [] else 'Shucks!'
+'Shucks!'
+>>> 'Hooray!' if '' else 'Shucks!'
+'Shucks!'
+>>> 'Hooray!' if None else 'Shucks!'
+'Shucks!'
+````
+
+But note:
+
+````
+>>> 'Hooray!' if 'None' else 'Shucks!'
+'Hooray!'
+````
+
+There are quotes around `'None'` so it's the literal string "None" and not the special value `None`, and, since this is not an empty string, it evaluates *in a Boolean context* to not-`False` which is basically `True`.
+
+This behavior can introduce extremely subtle logical bugs into your programs that the Python compiler and linters cannot uncover. Consider the `dict.get` method that will safely return the value for a given key in a dictionary, returning `None` if the key does not exist. Given this dictionary:
+
+````
+>>> d = {'foo': 0, 'bar': None}
+````
+
+If we access a key that doesn't exist, Python generates an exception that, if not caught in our code, would immediately crash the program:
+
+````
+>>> d['baz']
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+KeyError: 'baz'
+````
+
+But we can use `d.get()` to do this safely:
+
+````
+>>> d.get('baz')
+````
+
+Hmm, that seems unhelpful! What did we get back?
+
+````
+>>> type(d.get('baz'))
+<class 'NoneType'>
+````
+
+Ah, we got `None`! 
+
+We could use an `or` to define a default value:
+
+````
+>>> d.get('baz') or 'NA'
+'NA'
+````
+
+It turns out the `get` method accepts a second, optional argument of the default value to return:
+
+````
+>>> d.get('baz', 'NA')
+'NA'
+````
+
+Great! So let's use that on the other values:
+
+````
+>>> d.get('foo', 'NA')
+0
+>>> d.get('bar', 'NA')
+````
+
+The call for `bar` returned nothing because we put an actual `None` as the value:
+
+````
+>>> type(d.get('bar', 'NA'))
+<class 'NoneType'>
+````
+
+The key `bar` didn't fail because that key exists in the dictionary. The `dict.get` method only returns the second, default argument *if the key does not exist in the dictionary* which is entirely different from checking the *value* of the key in the dictionary. OK, so we go back to this:
+
+````
+>>> d.get('bar') or 'NA'
+'NA'
+````
+
+Which seems to work, but notice this:
+
+````
+>>> d.get('foo') or 'NA'
+'NA'
+````
+
+The value for `foo` is actually `0` which evaluates to `False` given the Boolean evaluation of the `or`. If this were a measurement of some value like the amount of sodium in water, then the string `NA` would indicate that no value was recorded whereas `0` indicates that sodium was measured and none detected. If some sort of important analysis rested on our interpretation of the strings in a spreadsheet, we might inadvertently introduce missing values because of the way Python coerces various non-Boolean values into Boolean values.
+
+Perhaps a safer way to access these values would be:
+
+````
+>>> for key in ['foo', 'bar', 'baz']:
+...   val = d[key] if key in d else 'NA'
+...   val = 'NA' if val is None else val
+...   print(key, val)
+...
+foo 0
+bar NA
+baz NA
+````
+
+## Loops
+
+In Python, you can use `for` to iterate through all the values in a sequence. You can use `continue` to skip to the next iteration of a loop:
+
+````
+>>> for char in 'foobar':
+...     if char in 'aeiou':
+...         continue
+...     print(char.upper())
+...
+F
+B
+R
+````
+
+A `while` loop will execute as long as some condition is "truthy." 
+
+````
+>>> i = 2
+>>> while i:
+...     print(i)
+...     i -= 1
+...
+2
+1
+````
+
+You can use `break` to exit a `for` or `while` loop:
+
+````
+>>> for i in range(1, 10):
+...     print(i)
+...     if i % 3 == 0:
+...         break
+...
+1
+2
+3
+````
+
+## Functions
+
+The style I would teach is heavy on functions, even if they are only one line. In my opinion, no function should exceed 50 lines with the exception of the `get_args` to define your programs arguments and possibly the `main`. A function is defined using the `def` keyword:
+
+````
+>>> def say_goodnight_gracie():
+...     print("Good night, Gracie!")
+...
+````
+
+And called using the function name plus `()`:
+
+````
+>>> say_goodnight_gracie()
+Good night, Gracie!
+````
+
+Without the parentheses, it's just the *idea* of the function:
+
+````
+>>> say_goodnight_gracie
+<function say_goodnight_gracie at 0x100d737b8>
+````
+
+This will become important as we talk about "higher-order functions" later when we 
+
+The *arguments* to a function are given in the parentheses in the `def`:
+
+````
+>>> def greet(name):
+...     print('Hello, {}!'.format(name))
+...
+````
+
+And you pass them inside the parentheses when you call the function:
+
+````
+>>> greet('Ilsa')
+Hello, Ilsa!
+````
+
+## Parsing command-line arguments with argparse
+
+The central tenet of this work is that you will write *command-line* programs. The reason is that we can pass in all the parameters to the program as *arguments* in order to change how the program works. This makes it fairly easy to *test* our programs, which is another fundamental aspect of the text. I strongly encourage you to use the `argparse` module to interpret all the command-line arguments for every program in this book.
+
+### Types of arguments
+
+Command-line arguments come in a variety of flavors:
+
+* Positional: The order and number of the arguments is what determines their meaning. Some programs might expect, for instance, a file name as the first argument and an output directory as the second. 
+* Named options: Standard Unix format allows for a "short" name like `-f` (one dash and a single character) or a "long" name like `--file` (two dashes and a string of characters) followed by some value like a file name or a number. This allows for arguments to be provided in any order or not provided in which case the program can use a reasonable default value.
+* Flag: A "Boolean" value like "yes"/"no" or `True`/`False` usually indicated by something that looks like a named option but without a value, e.g., `-d` or `--debug` to turn on debugging. Typically the presence of the flag indicates a `True` value for the argument; therefore, it's absence would mean `False`, so `--debug` turns *on* debugging while no `--debug` flag means there should not no debugging.
+
+### Datatypes of values
+
+The `argparse` module can save you enormous amounts of time by forcing the user to provide arguments of a particular type. If you run `new.py`, all of the above types of arguments are present along with suggestions for how to get string or integer values:
+
+````
+# --------------------------------------------------
+def get_args():
+    """Get command-line arguments"""
+
+    parser = argparse.ArgumentParser(
+        description='Argparse Python script',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('positional',
+                        metavar='str',
+                        help='A positional argument')
+
+    parser.add_argument('-a',
+                        '--arg',
+                        help='A named string argument',
+                        metavar='str',
+                        type=str,
+                        default='')
+
+    parser.add_argument('-i',
+                        '--int',
+                        help='A named integer argument',
+                        metavar='int',
+                        type=int,
+                        default=0)
+
+    parser.add_argument('-f',
+                        '--flag',
+                        help='A boolean flag',
+                        action='store_true')
+
+    return parser.parse_args()
+````
+
+You should change the `description` to a short sentence describing your program. The `formatter_class` argument tells `argparse` to show the default values in the the standard help documentation. 
+
+The `positional` argument's definition indicates we expect exactly one positional argument. The `-a` argument's `type` must be a `str` while the `-i` option must be something that Python can convert to the `int` type (you can also use `float`). Both of these arguments have `default` values which means the user is not required to provide them. You could instead define them with `required=True` to force the user to provide values themselves.
+
+The `-f` flag notes that the `action` is to `store_true` which means the value's default with be `True` if the argument is present and `False` otherwise. 
+
+The `type` of the argument can be something much richer than simple Python types like strings or numbers. You can indicate that an argument must be a existing, readable file. Here is a simple implementation in Python of `cat -n`:
+
+````
+#!/usr/bin/env python3
+"""Python version of `cat -n`"""
+
+import argparse
+
+
+# --------------------------------------------------
+def get_args():
+    """Get command-line arguments"""
+
+    parser = argparse.ArgumentParser(
+        description='Argparse Python script',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('file',
+                        metavar='FILE',
+                        type=argparse.FileType('r'),
+                        help='Input file')
+
+    return parser.parse_args()
+
+
+# --------------------------------------------------
+def main():
+    """Make a jazz noise here"""
+
+    args = get_args()
+    fh = args.file
+
+    print('Reading "{}"'.format(fh.name))
+    for i, line in enumerate(fh):
+        print(i, line, end='')
+
+
+# --------------------------------------------------
+if __name__ == '__main__':
+    main()
+````
+
+The `type` of the input `file` argument is an *open file handle* which we can directly read line-by-line with a `for` loop! Because it's a file *handle* and not a file *name*, I chose to call the variable `fh` to help me remember what it is. You can access the file's name via `fh.name`. 
+
+````
+$ ./cat_n.py ../../inputs/the-bustle.txt
+Reading "../../inputs/the-bustle.txt"
+0 The bustle in a house
+1 The morning after death
+2 Is solemnest of industries
+3 Enacted upon earth,--
+4
+5 The sweeping up the heart,
+6 And putting love away
+7 We shall not want to use again
+8 Until eternity.
+````
+
+### Number of arguments
+
+If you want one positional argument, you can define them like so:
+
+````
+#!/usr/bin/env python3
+"""One positional argument"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='One positional argument',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('first', metavar='str', help='First argument')
+args = parser.parse_args()
+print('first =', args.first)
+````
+
+If the user provides anything other exactly one argument, they get a help message:
+
+````
+$ ./one_arg.py
+usage: one_arg.py [-h] str
+one_arg.py: error: the following arguments are required: str
+$ ./one_arg.py foo bar
+usage: one_arg.py [-h] str
+one_arg.py: error: unrecognized arguments: bar
+$ ./one_arg.py foo
+first = foo
+````
+
+If you want two different positional arguments:
+
+````
+#!/usr/bin/env python3
+"""Two positional arguments"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='Two positional arguments',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('first', metavar='str', help='First argument')
+
+parser.add_argument('second', metavar='int', help='Second argument')
+
+return parser.parse_args()
+
+print('first =', args.first)
+print('second =', args.second)
+````
+
+Again, the user must provide exactly this number of positional arguments:
+
+````
+$ ./two_args.py
+usage: two_args.py [-h] str str
+two_args.py: error: the following arguments are required: str, str
+$ ./two_args.py foo
+usage: two_args.py [-h] str str
+two_args.py: error: the following arguments are required: str
+$ ./two_args.py foo bar
+first = foo
+second = bar
+````
+
+You can also use the `nargs=N` option to specify some number of arguments. It only makes sense if the arguments are the same thing like two files:
+
+````
+#!/usr/bin/env python3
+"""nargs=2"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='nargs=2',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('files', metavar='FILE', nargs=2, help='Two files')
+
+args = parser.parse_args()
+
+file1, file2 = args.files
+print('file1 =', file1)
+print('file2 =', file2)
+````
+
+The help indicates we want two files:
+
+````
+$ ./nargs2.py foo
+usage: nargs2.py [-h] FILE FILE
+nargs2.py: error: the following arguments are required: FILE
+````
+
+And we can unpack the two file arguments and use them:
+
+````
+$ ./nargs2.py foo bar
+file1 = foo
+file2 = bar
+````
+
+If you want one or more of some argument, you can use `nargs='+'`:
+
+````
+$ cat nargs+.py
+#!/usr/bin/env python3
+"""nargs=+"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='nargs=+',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('files', metavar='FILE', nargs='+', help='Some files')
+
+args = parser.parse_args()
+files = args.files
+
+print('number = {}'.format(len(files)))
+print('files  = {}'.format(', '.join(files)))
+````
+
+Note that this will return a `list` -- even a single argument will become a `list` of one value:
+
+````
+$ ./nargs+.py
+usage: nargs+.py [-h] FILE [FILE ...]
+nargs+.py: error: the following arguments are required: FILE
+$ ./nargs+.py foo
+number = 1
+files  = foo
+$ ./nargs+.py foo bar
+number = 2
+files  = foo, bar
+````
+
+### Choices
+
+Sometimes you want to limit the values of an argument. You can pass in a `list` of valid values to the `choices` option. 
+
+````
+$ cat appendix/argparse/choices.py
+#!/usr/bin/env python3
+"""Choices"""
+
+import argparse
+
+parser = argparse.ArgumentParser(
+    description='Choices',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('color', metavar='str', help='Color', choices=['red', 'yellow', 'blue'])
+
+args = parser.parse_args()
+
+print('color =', args.color)
+````
+
+Any value not present in the list will be rejected and the user will be shown the valid choices:
+
+````
+$ ./choices.py
+usage: choices.py [-h] str
+choices.py: error: the following arguments are required: str
+$ ./choices.py purple
+usage: choices.py [-h] str
+choices.py: error: argument str: invalid choice: 'purple' (choose from 'red', 'yellow', 'blue')
+````
+
+### Automatic help
+
+The `argparse` module reserves the `-h` and `--help` flags for generating help documentation. You do not need to add these nor are you allowed to use these flags for other purposes. Using the above definition, this is the help that `argparse` will generate:
+
+````
+$ ./foo.py
+usage: foo.py [-h] [-a str] [-i int] [-f] str
+foo.py: error: the following arguments are required: str
+[cholla@~/work/python/playful_python/article]$ ./foo.py -h
+usage: foo.py [-h] [-a str] [-i int] [-f] str
+
+Argparse Python script
+
+positional arguments:
+  str                A positional argument
+
+optional arguments:
+  -h, --help         show this help message and exit
+  -a str, --arg str  A named string argument (default: )
+  -i int, --int int  A named integer argument (default: 0)
+  -f, --flag         A boolean flag (default: False)
+````
+
+Notice how unhelpful a name like `positional` is? 
+
+### Getting the argument values
+
+The values for the arguments will be accessible through the "long" name you define and will have been coerced to the Python data type you indicated. If I change `main` to this:
+
+````
+# --------------------------------------------------
+def main():
+    """Make a jazz noise here"""
+
+    args = get_args()
+    str_arg = args.arg
+    int_arg = args.int
+    flag_arg = args.flag
+    pos_arg = args.positional
+
+    print('str_arg = "{}" ({})'.format(str_arg, type(str_arg)))
+    print('int_arg = "{}" ({})'.format(int_arg, type(int_arg)))
+    print('flag_arg = "{}" ({})'.format(flag_arg, type(flag_arg)))
+    print('positional = "{}" ({})'.format(pos_arg, type(pos_arg)))
+````
+
+And then run it:
+
+````
+$ ./foo.py -a foo -i 4 -f bar
+str_arg = "foo" (<class 'str'>)
+int_arg = "4" (<class 'int'>)
+flag_arg = "True" (<class 'bool'>)
+positional = "bar" (<class 'str'>)
+````
+
+Notice how we might think that `-f` takes the argument `bar`, but it is defined as a `flag` and the `argparse` knows that the program take
+
+````
+$ ./foo.py foo -a bar -i 4 -f
+str_arg = "bar" (<class 'str'>)
+int_arg = "4" (<class 'int'>)
+flag_arg = "True" (<class 'bool'>)
+positional = "foo" (<class 'str'>)
+````
+
+## new.py
+
+In my own practice, I almost never start writing a Python program from an empty page.
+I have provided some useful programs in the `bin` directory of the GitHub repository including one called `new.py` that I use to stub out new Python programs using the `argparse` module to parse the command line arguments and options for your programs. I recommend you start every new program with this program. For example, in the `article` directory the `README.md` wants you to create a program called `article.py`. You should do this:
+
+````
+$ cd article
+$ new.py article
+````
+
+This will create a new file called `article.py` (that has been made executable with `chmod +x`, if your operating system supports that) that has example code for you to start writing your program. 
+
+## $PATH
+
+Your `$PATH` is a list of directories where your operating system will look for programs. To see what your `$PATH` looks like, do:
+
+````
+$ echo $PATH
+````
+
+Probably each directory is separated by a colon (`:`). *The order of the directories matters!* For instance, it's common to have more than one version of Python installed. When you type `python` on the command line, the directories in your `$PATH` are searched in order, and the first `python` found is the one that is used (and it's probably Python version 2!)
+
+You could execute `new.py` by giving the full path to the program, e.g., `$HOME/work/playful_python/bin/new.py`, but that's really tedious. It's best to put `new.py` into one of the directories that is already in your `$PATH` like maybe `/usr/local/bin`. The problem is that you probably need administrator privileges to write to most of the directories that are in your `$PATH`. If you are working on your laptop, this is probably not a problem, but if you are on a shared system, you probably won't be able to copy the program into your `$PATH` directories. 
+
+An alternative is to alter your `$PATH` to include the directory where `new.py` is located. E.g., if `new.py` is in `$HOME/work/playful_python/bin/`, then add this directory to your `$PATH` -- probably by editing  `.bashrc` or `.bash_profile` located in your `$HOME` directory (if you use `bash`). See the documentation for your shell of choice to understand how to edit and persist your `$PATH`.
+
+For what it's worth, I always create a `$HOME/.local` directory for local installations of software I need, so I add `$HOME/.local/bin` to my `$PATH`. Then I copy programs like `new.py` there and they are available to me anywhere on the system.
+
+## Testing your programs
+
+Once you have stubbed out your new program, open it in your favorite editor and change the example arguments in `get_args` to suit the needs of your app, then add your code to `main` to accomplish the task described in the README. To run the test suite using `make`, you can type `make test` in the same directory as the `test.py` and `article.py` program. If your system does not have `make` or you just don't want to use it, type `pytest -v test.py`. 
+
+Your goal is to pass all the tests. The tests are written in an order designed to guide you in how break the problem down, e.g., often a test will ask you to alter one bit of text from the command line, and this it will ask you to read and alter the text from a file. I would suggest you solve the tests in order. The `make test` target in every Makefile executes `pytest -xv test.py` where the `-x` flag will have `pytest` halt testing after it finds one that fails. There's no point in running every test when one fails, so I think this is less frustrating that seeing perhaps hundreds of lines of failing tests shoot by.
+
+A fair number of the program rely on a dictionary of English words. To be sure that you can reproduce my results, I include a copy of mine in `inputs/words.zip`.
+\newpage
+
+# Chapter 2: Article Selector
 
 Write a Python program called `article.py` that will select `a` or `an` for a given word depending on whether the word starts with a consonant or vowel, respectively.
 
@@ -311,7 +1038,7 @@ Cf. appendices: argparse, Truthiness
 
 \newpage
 
-# Chapter 2: Jump the Five
+# Chapter 3: Jump the Five
 
 !["When I get up, nothing gets me down." - D. L. Roth](images/jump.png)
 
@@ -431,7 +1158,7 @@ Another way you could have solved this would be to use the `str.translate` metho
 Note that you could *not* use `str.replace` to change each number in turn as you would first change `1` to `9` and then you'd get to the `9`s that were in the original string and the `9`s that you changed from `1`s and you'd change them back to `1`s!
 \newpage
 
-# Chapter 3: Picnic
+# Chapter 4: Picnic
 
 Write a Python program called `picnic.py` that accepts one or more positional arguments as the items to bring on a picnic. In response, print "You are bringing ..." where "..." should be replaced according to the number of items where:
 
@@ -554,7 +1281,7 @@ Depending on your version of Python, you may be able to use *f-strings*:
 ````
 \newpage
 
-# Chapter 4: Words Count
+# Chapter 5: Words Count
 
 Write a Python program called `wc.py` that will emulate the venerable `wc` program in Unix that counts the lines, words, and characters in the given file arguments. If run with the `-h|--help` flag, the program should print usage:
 
@@ -696,7 +1423,7 @@ I can fake `args.file` in the REPL, and then use a `for` loop to iterate through
 Implement other system tools like `cat` and `head`.
 \newpage
 
-# Chapter 5: Howler
+# Chapter 6: Howler
 
 Write a Python program `howler.py` that will uppercase all the text from the command line or from a file. The program should also take a named option of `-o|--outfile` to write the output. The default output should be *standard out* (STDOUT).
 
@@ -806,7 +1533,7 @@ On line 39, we decide where to put the output of our program. The `if` expressio
 To get uppercase, we can use the `text.upper` method. You can either `out_fh.write` this new text or use `print(..., file=...)`, noting which needs a newline and which does not. You can use `fh.close()` to close the file handle, but it's not entirely necessary as the program immediately ends after this. Still, it's good practice to close your file handles.
 \newpage
 
-# Chapter 6: Apples and Bananas
+# Chapter 7: Apples and Bananas
 
 Perhaps you remember the children's song "Apples and Bananas"?
 
@@ -1322,7 +2049,7 @@ Or do it in one step:
 But I find that fairly hard to read.
 \newpage
 
-# Chapter 7: Telephone
+# Chapter 8: Telephone
 
 > "What we have here is a failure to communicate." -- Captain
 
@@ -1557,7 +2284,7 @@ Mutations (that don't result in the demise of the organism) occur at a fairly st
 
 \newpage
 
-# Chapter 8: Bottles of Beer Song
+# Chapter 9: Bottles of Beer Song
 
 Write a Python program called `bottles.py` that takes a single option `-n|--num` which is an positive integer (default `10`) and prints the "<N> bottles of beer on the wall song." The program should also respond to `-h|--help` with a usage statement:
 
@@ -1750,7 +2477,7 @@ I'd like to stress that there are literally hundreds of ways to solve this probl
 
 \newpage
 
-# Chapter 9: Gashlycrumb
+# Chapter 10: Gashlycrumb
 
 Write a Python program called `gashlycrumb.py` that takes a letter of the alphabet as an argument and looks up the line in a `-f|--file` argument (default `gashlycrumb.txt`) and prints the line starting with that letter. It should generate usage with no arguments or for `-h|--help`:
 
@@ -2013,7 +2740,7 @@ Hint: Use `while True` to set up an infinite loop and keep using `input` to get 
 
 \newpage
 
-# Chapter 10: Ransom
+# Chapter 11: Ransom
 
 ![A ransom note.](images/ransom.png)
 
@@ -2235,7 +2962,7 @@ It may seem silly to spend so much time working through five ways to solve what 
 
 \newpage
 
-# Chapter 11: Simple Rhymer
+# Chapter 12: Simple Rhymer
 
 Write a Python program called `rhymer.py` that will create new words by removing the consonant(s) from the beginning (if any) of a given word and then create new words by prefixing the remainder with all the consonants and clusters that were not at the beginning. That is, prefix with all the consonants in the alphabet plus these clusters:
 
@@ -2554,7 +3281,7 @@ And add them to the stem of the word, being sure to avoid any prefix that was th
 ````
 \newpage
 
-# Chapter 12: Rock, Paper, Scissors
+# Chapter 13: Rock, Paper, Scissors
 
 Write a Python program called `rps.py` that will play the ever-popular "Rock, Paper, Scissors" game. As often as possible, insult the player by combining an adjective and a noun from the following lists:
 
@@ -2695,7 +3422,7 @@ Bye, you imbecilic fopdoodle!
 
 \newpage
 
-# Chapter 13: Dial-A-Curse
+# Chapter 14: Dial-A-Curse
 
 Write a Python program called `abuse.py` that generates some `-n|--number` of insults (default `3`) by randomly combining some number of `-a|--adjectives` (default `2`) with a noun (see below). Be sure your program accepts a `-s|--seed` argument (default `None`) to pass to `random.seed`.
 
@@ -2978,7 +3705,7 @@ And now you have a handy way to make enemies and influence people.
 
 \newpage
 
-# Chapter 14: Scrambler
+# Chapter 15: Scrambler
 
 Write a Python program called `scrambler.py` that will take a single position positional argument that is text or a text file and then convert each word into a scrambled version. The scrambling should only work on words greater than 3 characters in length and should only scramble the letters in the middle, leaving the first and last characters unchanged. The program should take a `-s|--seed` argument (default `None`) to pass to `random.seed`.
 
@@ -3275,7 +4002,7 @@ If you don't like `map`, you can accomplish the same thing with a list comprehen
 ````
 \newpage
 
-# Chapter 15: Bacronym
+# Chapter 16: Bacronym
 
 Write a Python program called `bacronym.py` that takes a string like "FBI" and retrofits some `-n|--num` (default `5`) of acronyms by reading a `-w|--wordlist` argument (default `/usr/share/dict/words`), skipping over words to `-e|--exclude` (default `a, an, the`) and randomly selecting words that start with each of the letters. Be sure to include a `-s|--seed` argument (default `None`) to pass to `random.seed` for the test suite.
 
@@ -3882,7 +4609,7 @@ Additionally, you have been provided a test suite that checks that the program w
 As you write your own programs, you should think about writing very small functions that do *one thing* and then writing tests to be sure they actually do the thing you think and always continue to do that thing as you change your program. Additionally, you need to write tests to make sure that all the parts work together to accomplish the larger task at hand. While writing and refactoring this program, I repeatedly updated and used my test suite to ensure I wasn't introducing bugs!
 \newpage
 
-# Chapter 16: Workout Of (the) Day (WOD)
+# Chapter 17: Workout Of (the) Day (WOD)
 
 Write a Python program called `wod.py` that will create a Workout Of (the) Day (WOD) from a list of exercises provided in CSV format (default `wod.csv`). Accept a `-n|--num_exercises` argument (default `4`) to determine the sample size from your exercise list. Also accept a `-e|--easy` flag to indicate that the reps should be cut in half. Finally accept a `-s|--seed` argument to pass to `random.seed` for testing purposes. You should use the `tabulate` module to format the output as expected.
 
@@ -4126,7 +4853,7 @@ Then I can `append` to the `table` a new tuple containing the `name` of the exer
 
 \newpage
 
-# Chapter 17: Blackjack 
+# Chapter 18: Blackjack 
 
 What's a games book without a card game? Let's write a Python program called `blackjack.py` that plays an abbreviated game of Blackjack. Your program should accept a `-S|--stand` option (default `18`) for the value to "stand" on (not "hit" or take another card). Your program should also accept two flags (Boolean values) for `-p|--player_hits` and `-d|--dealer_hits` which will be explained shortly. You will need to accept a `-s|--seed` (default `None`) to set `random.seed`. As usual, you will also have a `-h|--help` option for usage statement:
 
@@ -4616,7 +5343,7 @@ Player [23]: ♦10 ♣6 ♦7
 After printing the hands, I go through the checklist in the intro, checking who went "bust," who got 21, who should hit, and so forth.
 \newpage
 
-# Chapter 18: Family Tree
+# Chapter 19: Family Tree
 
 ![Partial Tudor family tree](family_tree/tudor.txt.gv.pdf)
 
@@ -4954,7 +5681,7 @@ The `graphviz` module is an interface to the `graphviz` program which is a stand
 To make a more complicated graph, I added the full names from my `nodes` dictionary, and then use those full names to expand the initials from the `edges`, if present. In the end, the code isn't much more complicated that these few lines.
 \newpage
 
-# Chapter 19: Gematria: Numeric encoding of text
+# Chapter 20: Gematria: Numeric encoding of text
 
 Write a Python program called `gematria.py` that will numerically encode each word in a given text. The name of this program comes from gematria, a system for assigning a number to a word by summing the numeric values of each of the letters as defined by the Mispar godol (https://en.wikipedia.org/wiki/Gematria). For English characters, we can use the ASCII table (https://en.wikipedia.org/wiki/ASCII). Python provides these value throug the `ord` function to convert a character to its "ordinal" (order in the ASCII table) value as well as the `chr` function to convert a number to its "character."
 
@@ -5290,7 +6017,7 @@ All that is left is to `print` the encoded words back out:
 ````
 \newpage
 
-# Chapter 20: I Get Histy
+# Chapter 21: I Get Histy
 
 Write a Python program called `histy.py` that takes a single positional argument that may be plain text or the name of a file to read for the text. Count the frequency of each character (not spaces) and print a histogram of the data. By default, you should order the histogram by the characters but include `-f|--frequency_sort` option to sort by the frequency (in descending order). Also include a `-s|--symbol` option (default `|`) to represent a mark in the histogram, a `-m|--minimum` option (default `1`) to include a character in the output, a `-w|--width` option (default `70`) to limit the size of the histogram, and a `-i|--case_insensitive` flag to force all input to uppercase.
 
@@ -5656,7 +6383,7 @@ C      1 |
 
 \newpage
 
-# Chapter 21: Mommy's Little (Crossword) Helper
+# Chapter 22: Mommy's Little (Crossword) Helper
 
 Write a Python program called `helper.py` that finds all words matching a given `-p|--pattern` such as one might use to complete a crossword puzzle to find words matching from a given `-w|--wordlist` (default `/usr/share/dict/words`). E.g., all 5-letter words with a "t" as the second character and ending in "ed". I could do this on the command line like so:
 
@@ -5908,7 +6635,7 @@ If both conditions are `True` (same length, all characters the same), then I `ap
 All that is left is to check if any words matched. If so, we print them out, numbered and nicely aligned; otherwise, we let the user know that no matches were found. I hope you tried solving this problem with and without regular expressions as there is much to learn by each method.
 \newpage
 
-# Chapter 22: Kentucky Friar
+# Chapter 23: Kentucky Friar
 
 Write a Python program called `friar.py` that reads some input text from a single positional argument on the command line (which could be a file to read) and transforms the text by dropping the "g" from words two-syllable words ending in "-ing" and also changes "you" to "y'all". Be mindful to keep the case the same on the first letter, e.g, "You" should become "Y'all," "Hunting" should become "Huntin'".
 
@@ -6088,7 +6815,7 @@ Finally we need to apply our `fry` function to all the pieces we got from splitt
 ````
 \newpage
 
-# Chapter 23: Mad Libs
+# Chapter 24: Mad Libs
 
 ![This definitely not a copyright infringment.](images/mad_libs.png)
 
@@ -6400,7 +7127,7 @@ The `count=1` is necessary to prevent `re.sub` from replacing *every* instance o
 
 \newpage
 
-# Chapter 24: License Plates
+# Chapter 25: License Plates
 
 Imagine you are an eye-witness to a hit-and-run accident where the driver at fault flees the scene. You try to remember the car's license plate, but can you be positive that was a `5` or an `S`. How far away were you? How long did you have to study the plate? How difficult is it to read the typography on the plate?
 
@@ -6535,7 +7262,7 @@ In creating all the possible plates from your regular expression, you are making
 
 \newpage
 
-# Chapter 25: Gibberish Generator
+# Chapter 26: Gibberish Generator
 
 Write a Python program called `gibberish.py` that uses the Markov chain algorithm to generate new words from the words in a set of training files. The program should take one or more positional arguments which are files that you read, word-by-word, and note the options of letters after a given `-k|--kmer_size` (default `2`) grouping of letters. E.g., in the word "alabama" with `k=1`, the frequency table will look like:
 
@@ -7008,7 +7735,7 @@ If you didn't realize it, you just implemented a basic machine learning algorith
 
 \newpage
 
-# Chapter 26: Piggy (Pig Latin)
+# Chapter 27: Piggy (Pig Latin)
 
 > "Sucks to your assmar" -- William Golding
 
@@ -7420,7 +8147,7 @@ That is the crux of the program. All that is left is to report to the user how m
 
 \newpage
 
-# Chapter 27: Soundex Rhymer
+# Chapter 28: Soundex Rhymer
 
 > "What words rhyme with 'buried alive'?" -- TMBG
 
@@ -7741,7 +8468,7 @@ Once I have the `stemmer` function, I can apply it to the given `word` and every
 
 \newpage
 
-# Chapter 28: Tic-Tac-Toe Outcome
+# Chapter 29: Tic-Tac-Toe Outcome
 
 Create a Python program called `outcome.py` that takes a given Tic-Tac-Toe state as it's only (positional) argument and reports if X or O has won or if there is no winner. The state should only contain the characters ".", "O", and "X", and must be exactly 9 characters long. If there is not exactly one argument, print a "usage" statement.
 
@@ -7836,7 +8563,7 @@ X has won
 
 \newpage
 
-# Chapter 29: Twelve Days of Christmas
+# Chapter 30: Twelve Days of Christmas
 
 Write a Python program called `twelve_days.py` that will generate the "Twelve Days of Christmas" song up to the `-n|--number_days` argument (default `12`), writing the resulting text to the `-o|--outfile` argument (default STDOUT).
 
@@ -7971,7 +8698,7 @@ $ wc -l out
 
 \newpage
 
-# Chapter 30: Anagram
+# Chapter 31: Anagram
 
 Write a program called `presto.py` that will find anagrams of a given positional argument. The program should take an optional `-w|--wordlist` (default `/usr/share/dict/words`) and produce output that includes combinations of `-n|num_combos` words (default `1`) that are anagrams of the given input.
 
@@ -8421,7 +9148,7 @@ In the end, I look to see how many `anagrams` I found using `len(anagrams)`. If 
 
 \newpage
 
-# Chapter 31: Hangman
+# Chapter 32: Hangman
 
 Write a Python program called `hangman.py` that will play a game of Hangman which is a bit like "Wheel of Fortune" where you present the user with a number of elements indicating the length of a word. For our game, use the underscore `_` to indicate a letter that has not been guessed. The program should take `-n|--minlen` minimum length (default `5`) and `-l|--maxlen` maximum length options (default `10`) to indicate the minimum and maximum lengths of the randomly chosen word taken from the `-w|--wordlist` option (default `/usr/share/dict/words`). It also needs to take `-s|--seed` to for the random seed and the `-m|--misses` number of misses to allow the player.
 
@@ -8991,7 +9718,7 @@ Here are some changes you could make to your program:
 * Add a `quiet` flag to keep `play` from executing any `print` statements
 \newpage
 
-# Chapter 32: First Bank of Change
+# Chapter 33: First Bank of Change
 
 Write a Python program called `fboc.py` that will figure out all the different combinations of pennies, nickels, dimes, and quarters in a given `value` provided as a single positional argument. The value must be greater than 0 and less than or equal to 100. It should provide a usage if given no arguments or the `-h|--help` flag:
 
@@ -9233,7 +9960,7 @@ The `plural` version of each name is made by adding `s` except for `penny`, so l
 Finally lines 39-43 are left to formatting the report to the user, being sure to provide feedback that includes the original `value` ("If you give me ...") and an enumerated list of all the possible ways we could make change. The test suite does not bother to check the order in which you return the combinations, only that the correct number are present and they are in the correct format.
 \newpage
 
-# Chapter 33: Modeling the Pareto Principle
+# Chapter 34: Modeling the Pareto Principle
 
 
 Vilfredi Pareto was an Italian economist who noted in the late 1800s that roughly 80% of the land in Italy was owned by about 20% of the population. This 80/20 rule has been noted in many other contexts, but it stands out in wealth inequalities where it has tilted ever further to 90/10 or even 99/1. This exercise is designed to simulate the move of resources to an ever shrinking segment of a population through random events.
@@ -9632,7 +10359,7 @@ It doesn't take long for an even distribution to become very skewed. Imagine how
 * Find a way to animate the changes to the histogram during each challenge inside the simulation; e.g., `matplotlib.animation` or create a series of GIFs or PNGs that you stitch together to create a short movie to visualize how the resource distribution changes over time.
 \newpage
 
-# Chapter 34: Runny Babbit
+# Chapter 35: Runny Babbit
 
 Are you familiar with Spoonerisms where the initial consonant sounds of two words are switched? According to Wikipedia, they get their name from William Archibald Spooner who did this often. The author Shel Silverstein wrote a wonderful book called _Runny Babbit_ ("bunny rabbit") based on this. So, let's write a Python program called `runny_babbit.py` that will read some text or an input file given as a single positional argument and finds neighboring words with initial consonant sounds to swap. As we'll need to look at pairs of words and in such as way that it will make it difficult to remember the original formatting of the text, let's also take a `-w|--width` (default `70`) to format the output text to a maximum width.
 
@@ -9916,7 +10643,7 @@ The runny babbit is cute.
 ````
 \newpage
 
-# Chapter 35: Markov Chain
+# Chapter 36: Markov Chain
 
 Write a Python program called `markov.py` that takes one or more text files as positional arguments for training. Use the `-n|--num_words` argument (default `2`) to find clusters of words and the words that follow them, e.g., in "The Bustle" by Emily Dickinson:
 
@@ -10177,7 +10904,7 @@ But there will be spaces in between each word, so I account for them by adding o
 At this point, the `words` list needs to be turned into text. It would be ugly to just `print` out one long string, so I use the `textwrap.wrap` to break up the long string into lines that are no longer than the given `text_width`. That function returns a list of lines that need to be joined on newlines to print.
 \newpage
 
-# Chapter 36: Hamming Chain
+# Chapter 37: Hamming Chain
 
 Write a Python program called `chain.py` that takes a `-s|--start` word and searches a `-w|--wordlist` argument (default `/usr/local/share/dict`) for words no more than `-d|--max_distance` Hamming distance for some number of `-i|--iteration` (default `20`). Be sure to accept a `-S|--seed` for `random.seed`. 
 
@@ -10380,7 +11107,7 @@ Failed to find more words!
 
 \newpage
 
-# Chapter 37: Morse Encoder/Decoder
+# Chapter 38: Morse Encoder/Decoder
 
 Write a Python program called `morse.py` that will encrypt/decrypt text to/from Morse code. The program should expect a single positional argument which is either the name of a file to read for the input or the character `-` to indicate reading from STDIN. The program should also take a `-c|--coding` option to indicate use of the `itu` or standard `morse` tables, `-o|--outfile` for writing the output (default STDOUT), and a `-d|--decode` flag to indicate that the action is to decode the input (the default is to encode it).
 
@@ -10598,7 +11325,7 @@ THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.
 
 \newpage
 
-# Chapter 38: ROT13 (Rotate 13)
+# Chapter 39: ROT13 (Rotate 13)
 
 Write a Python program called `rot13.py` that will encrypt/decrypt input text by shifting the text by a given `-s|--shift` argument or will move each character halfway through the alphabet, e.g., "a" becomes "n," "b" becomes "o," etc. The text to rotate should be provided as a single positional argument to your program and can either be a text file, text on the command line, or `-` to indicate STDIN so that you can round-trip data through your program to ensure you are encrypting and decrypting properly.
 
@@ -10763,7 +11490,7 @@ The quick brown fox jumps over the lazy dog.
 
 \newpage
 
-# Chapter 39: Word Search
+# Chapter 40: Word Search
 
 Write a Python program called `search.py` that takes a file name as the single positional argument and finds the words hidden in the puzzle grid. 
 
@@ -11136,7 +11863,7 @@ At line 157, I start the work of printing the revealed puzzle, iterating over th
 
 \newpage
 
-# Chapter 40: Ready, Set, Go!
+# Chapter 41: Ready, Set, Go!
 
 We programmed "Blackjack," a card game using a standard deck of 52 playing cards which differed in two attributes: the suites (e.g., "Hearts"), and the card value (e.g., "10" or "Jack"). Now we're going to look at another card game that uses 81 cards which differ in 4 attributes each of which can have 3 values:
 
@@ -11445,7 +12172,7 @@ A big leap was in thinking of sets as `ABCD` rather than `3 Purple Outlined Squi
 
 \newpage
 
-# Chapter 41: Scrabble Helper
+# Chapter 42: Scrabble Helper
 
 Write a program called `scrabble.py` that will find all the possible words you can make from a set of Scrabble tiles.
 
@@ -11633,623 +12360,6 @@ Write a program called `scrabble.py` that will find all the possible words you c
    149	if __name__ == '__main__':
    150	    main()
 ````
-
-\newpage
-
-# Appendix 1: argparse
-
-The `argparse` module will interpret all the command-line arguments to your program. I suggest you use `argparse` for every command-line program you write so that you always have a standard way to get arguments and present help.
-
-## Types of arguments
-
-Command-line arguments come in a variety of flavors:
-
-* Positional: The order and number of the arguments is what determines their meaning. Some programs might expect, for instance, a file name as the first argument and an output directory as the second. 
-* Named options: Standard Unix format allows for a "short" name like `-f` (one dash and a single character) or a "long" name like `--file` (two dashes and a string of characters) followed by some value like a file name or a number. This allows for arguments to be provided in any order or not provided in which case the program can use a reasonable default value.
-* Flag: A "Boolean" value like "yes"/"no" or `True`/`False` usually indicated by something that looks like a named option but without a value, e.g., `-d` or `--debug` to turn on debugging. Typically the presence of the flag indicates a `True` value for the argument; therefore, it's absence would mean `False`, so `--debug` turns *on* debugging while no `--debug` flag means there should not no debugging.
-
-## Datatypes of values
-
-The `argparse` module can save you enormous amounts of time by forcing the user to provide arguments of a particular type. If you run `new.py`, all of the above types of arguments are present along with suggestions for how to get string or integer values:
-
-````
-# --------------------------------------------------
-def get_args():
-    """Get command-line arguments"""
-
-    parser = argparse.ArgumentParser(
-        description='Argparse Python script',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('positional',
-                        metavar='str',
-                        help='A positional argument')
-
-    parser.add_argument('-a',
-                        '--arg',
-                        help='A named string argument',
-                        metavar='str',
-                        type=str,
-                        default='')
-
-    parser.add_argument('-i',
-                        '--int',
-                        help='A named integer argument',
-                        metavar='int',
-                        type=int,
-                        default=0)
-
-    parser.add_argument('-f',
-                        '--flag',
-                        help='A boolean flag',
-                        action='store_true')
-
-    return parser.parse_args()
-````
-
-You should change the `description` to a short sentence describing your program. The `formatter_class` argument tells `argparse` to show the default values in the the standard help documentation. 
-
-The `positional` argument's definition indicates we expect exactly one positional argument. The `-a` argument's `type` must be a `str` while the `-i` option must be something that Python can convert to the `int` type (you can also use `float`). Both of these arguments have `default` values which means the user is not required to provide them. You could instead define them with `required=True` to force the user to provide values themselves.
-
-The `-f` flag notes that the `action` is to `store_true` which means the value's default with be `True` if the argument is present and `False` otherwise. 
-
-The `type` of the argument can be something much richer than simple Python types like strings or numbers. You can indicate that an argument must be a existing, readable file. Here is a simple implementation in Python of `cat -n`:
-
-````
-#!/usr/bin/env python3
-"""Python version of `cat -n`"""
-
-import argparse
-
-
-# --------------------------------------------------
-def get_args():
-    """Get command-line arguments"""
-
-    parser = argparse.ArgumentParser(
-        description='Argparse Python script',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('file',
-                        metavar='FILE',
-                        type=argparse.FileType('r'),
-                        help='Input file')
-
-    return parser.parse_args()
-
-
-# --------------------------------------------------
-def main():
-    """Make a jazz noise here"""
-
-    args = get_args()
-    fh = args.file
-
-    print('Reading "{}"'.format(fh.name))
-    for i, line in enumerate(fh):
-        print(i, line, end='')
-
-
-# --------------------------------------------------
-if __name__ == '__main__':
-    main()
-````
-
-The `type` of the input `file` argument is an *open file handle* which we can directly read line-by-line with a `for` loop! Because it's a file *handle* and not a file *name*, I chose to call the variable `fh` to help me remember what it is. You can access the file's name via `fh.name`. 
-
-````
-$ ./cat_n.py ../../inputs/the-bustle.txt
-Reading "../../inputs/the-bustle.txt"
-0 The bustle in a house
-1 The morning after death
-2 Is solemnest of industries
-3 Enacted upon earth,--
-4
-5 The sweeping up the heart,
-6 And putting love away
-7 We shall not want to use again
-8 Until eternity.
-````
-
-## Number of arguments
-
-If you want one positional argument, you can define them like so:
-
-````
-#!/usr/bin/env python3
-"""One positional argument"""
-
-import argparse
-
-parser = argparse.ArgumentParser(
-    description='One positional argument',
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-parser.add_argument('first', metavar='str', help='First argument')
-args = parser.parse_args()
-print('first =', args.first)
-````
-
-If the user provides anything other exactly one argument, they get a help message:
-
-````
-$ ./one_arg.py
-usage: one_arg.py [-h] str
-one_arg.py: error: the following arguments are required: str
-$ ./one_arg.py foo bar
-usage: one_arg.py [-h] str
-one_arg.py: error: unrecognized arguments: bar
-$ ./one_arg.py foo
-first = foo
-````
-
-If you want two different positional arguments:
-
-````
-#!/usr/bin/env python3
-"""Two positional arguments"""
-
-import argparse
-
-parser = argparse.ArgumentParser(
-    description='Two positional arguments',
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-parser.add_argument('first', metavar='str', help='First argument')
-
-parser.add_argument('second', metavar='int', help='Second argument')
-
-return parser.parse_args()
-
-print('first =', args.first)
-print('second =', args.second)
-````
-
-Again, the user must provide exactly this number of positional arguments:
-
-````
-$ ./two_args.py
-usage: two_args.py [-h] str str
-two_args.py: error: the following arguments are required: str, str
-$ ./two_args.py foo
-usage: two_args.py [-h] str str
-two_args.py: error: the following arguments are required: str
-$ ./two_args.py foo bar
-first = foo
-second = bar
-````
-
-You can also use the `nargs=N` option to specify some number of arguments. It only makes sense if the arguments are the same thing like two files:
-
-````
-#!/usr/bin/env python3
-"""nargs=2"""
-
-import argparse
-
-parser = argparse.ArgumentParser(
-    description='nargs=2',
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-parser.add_argument('files', metavar='FILE', nargs=2, help='Two files')
-
-args = parser.parse_args()
-
-file1, file2 = args.files
-print('file1 =', file1)
-print('file2 =', file2)
-````
-
-The help indicates we want two files:
-
-````
-$ ./nargs2.py foo
-usage: nargs2.py [-h] FILE FILE
-nargs2.py: error: the following arguments are required: FILE
-````
-
-And we can unpack the two file arguments and use them:
-
-````
-$ ./nargs2.py foo bar
-file1 = foo
-file2 = bar
-````
-
-If you want one or more of some argument, you can use `nargs='+'`:
-
-````
-$ cat nargs+.py
-#!/usr/bin/env python3
-"""nargs=+"""
-
-import argparse
-
-parser = argparse.ArgumentParser(
-    description='nargs=+',
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-parser.add_argument('files', metavar='FILE', nargs='+', help='Some files')
-
-args = parser.parse_args()
-files = args.files
-
-print('number = {}'.format(len(files)))
-print('files  = {}'.format(', '.join(files)))
-````
-
-Note that this will return a `list` -- even a single argument will become a `list` of one value:
-
-````
-$ ./nargs+.py
-usage: nargs+.py [-h] FILE [FILE ...]
-nargs+.py: error: the following arguments are required: FILE
-$ ./nargs+.py foo
-number = 1
-files  = foo
-$ ./nargs+.py foo bar
-number = 2
-files  = foo, bar
-````
-
-## Choices
-
-Sometimes you want to limit the values of an argument. You can pass in a `list` of valid values to the `choices` option. 
-
-````
-$ cat appendix/argparse/choices.py
-#!/usr/bin/env python3
-"""Choices"""
-
-import argparse
-
-parser = argparse.ArgumentParser(
-    description='Choices',
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-parser.add_argument('color', metavar='str', help='Color', choices=['red', 'yellow', 'blue'])
-
-args = parser.parse_args()
-
-print('color =', args.color)
-````
-
-Any value not present in the list will be rejected and the user will be shown the valid choices:
-
-````
-$ ./choices.py
-usage: choices.py [-h] str
-choices.py: error: the following arguments are required: str
-$ ./choices.py purple
-usage: choices.py [-h] str
-choices.py: error: argument str: invalid choice: 'purple' (choose from 'red', 'yellow', 'blue')
-````
-
-## Automatic help
-
-The `argparse` module reserves the `-h` and `--help` flags for generating help documentation. You do not need to add these nor are you allowed to use these flags for other purposes. Using the above definition, this is the help that `argparse` will generate:
-
-````
-$ ./foo.py
-usage: foo.py [-h] [-a str] [-i int] [-f] str
-foo.py: error: the following arguments are required: str
-[cholla@~/work/python/playful_python/article]$ ./foo.py -h
-usage: foo.py [-h] [-a str] [-i int] [-f] str
-
-Argparse Python script
-
-positional arguments:
-  str                A positional argument
-
-optional arguments:
-  -h, --help         show this help message and exit
-  -a str, --arg str  A named string argument (default: )
-  -i int, --int int  A named integer argument (default: 0)
-  -f, --flag         A boolean flag (default: False)
-````
-
-Notice how unhelpful a name like `positional` is? 
-
-## Getting the argument values
-
-The values for the arguments will be accessible through the "long" name you define and will have been coerced to the Python data type you indicated. If I change `main` to this:
-
-````
-# --------------------------------------------------
-def main():
-    """Make a jazz noise here"""
-
-    args = get_args()
-    str_arg = args.arg
-    int_arg = args.int
-    flag_arg = args.flag
-    pos_arg = args.positional
-
-    print('str_arg = "{}" ({})'.format(str_arg, type(str_arg)))
-    print('int_arg = "{}" ({})'.format(int_arg, type(int_arg)))
-    print('flag_arg = "{}" ({})'.format(flag_arg, type(flag_arg)))
-    print('positional = "{}" ({})'.format(pos_arg, type(pos_arg)))
-````
-
-And then run it:
-
-````
-$ ./foo.py -a foo -i 4 -f bar
-str_arg = "foo" (<class 'str'>)
-int_arg = "4" (<class 'int'>)
-flag_arg = "True" (<class 'bool'>)
-positional = "bar" (<class 'str'>)
-````
-
-Notice how we might think that `-f` takes the argument `bar`, but it is defined as a `flag` and the `argparse` knows that the program take
-
-````
-$ ./foo.py foo -a bar -i 4 -f
-str_arg = "bar" (<class 'str'>)
-int_arg = "4" (<class 'int'>)
-flag_arg = "True" (<class 'bool'>)
-positional = "foo" (<class 'str'>)
-````
-
-\newpage
-
-# Appendix 2: Truthiness
-
-While it would seem Python has an actual Boolean (Yes/No, True/False) type, this idea can be seriously abused in many odd and confusing ways. First off, there are actual `True` and `False` values:
-
-````
->>> True == True
-True
->>> False == False
-True
-````
-
-But they are equivalent to integers:
-
-````
->>> True == 1
-True
->>> False == 0
-True
-````
-
-Which means, oddly, that you can add them:
-
-````
->>> True + True
-2
->>> True + True + False
-2
-````
-
-Lots of things are `False`-ey when they are evaluated in a Boolean context. The `int` `0`, the `float` `0.0`, the empty string, an empty list, and the special value `None` are all considered `False`-ey:
-
-````
->>> 'Hooray!' if 0 else 'Shucks!'
-'Shucks!'
->>> 'Hooray!' if 0. else 'Shucks!'
-'Shucks!'
->>> 'Hooray!' if [] else 'Shucks!'
-'Shucks!'
->>> 'Hooray!' if '' else 'Shucks!'
-'Shucks!'
->>> 'Hooray!' if None else 'Shucks!'
-'Shucks!'
-````
-
-But note:
-
-````
->>> 'Hooray!' if 'None' else 'Shucks!'
-'Hooray!'
-````
-
-There are quotes around `'None'` so it's the literal string "None" and not the special value `None`, and, since this is not an empty string, it evaluates *in a Boolean context* to not-`False` which is basically `True`.
-
-This behavior can introduce extremely subtle logical bugs into your programs that the Python compiler and linters cannot uncover. Consider the `dict.get` method that will safely return the value for a given key in a dictionary, returning `None` if the key does not exist. Given this dictionary:
-
-````
->>> d = {'foo': 0, 'bar': None}
-````
-
-If we access a key that doesn't exist, Python generates an exception that, if not caught in our code, would immediately crash the program:
-
-````
->>> d['baz']
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-KeyError: 'baz'
-````
-
-But we can use `d.get()` to do this safely:
-
-````
->>> d.get('baz')
-````
-
-Hmm, that seems unhelpful! What did we get back?
-
-````
->>> type(d.get('baz'))
-<class 'NoneType'>
-````
-
-Ah, we got `None`! 
-
-We could use an `or` to define a default value:
-
-````
->>> d.get('baz') or 'NA'
-'NA'
-````
-
-It turns out the `get` method accepts a second, optional argument of the default value to return:
-
-````
->>> d.get('baz', 'NA')
-'NA'
-````
-
-Great! So let's use that on the other values:
-
-````
->>> d.get('foo', 'NA')
-0
->>> d.get('bar', 'NA')
-````
-
-The call for `bar` returned nothing because we put an actual `None` as the value:
-
-````
->>> type(d.get('bar', 'NA'))
-<class 'NoneType'>
-````
-
-The key `bar` didn't fail because that key exists in the dictionary. The `dict.get` method only returns the second, default argument *if the key does not exist in the dictionary* which is entirely different from checking the *value* of the key in the dictionary. OK, so we go back to this:
-
-````
->>> d.get('bar') or 'NA'
-'NA'
-````
-
-Which seems to work, but notice this:
-
-````
->>> d.get('foo') or 'NA'
-'NA'
-````
-
-The value for `foo` is actually `0` which evaluates to `False` given the Boolean evaluation of the `or`. If this were a measurement of some value like the amount of sodium in water, then the string `NA` would indicate that no value was recorded whereas `0` indicates that sodium was measured and none detected. If some sort of important analysis rested on our interpretation of the strings in a spreadsheet, we might inadvertently introduce missing values because of the way Python coerces various non-Boolean values into Boolean values.
-
-Perhaps a safer way to access these values would be:
-
-````
->>> for key in ['foo', 'bar', 'baz']:
-...   val = d[key] if key in d else 'NA'
-...   val = 'NA' if val is None else val
-...   print(key, val)
-...
-foo 0
-bar NA
-baz NA
-````
-
-\newpage
-
-# Appendix 3: File Handles
-
-A file's name is a string like `'nobody.txt'`. To read or write the contents of the file, you need a *file handle* which you can get from `open`. Think of a file name as the address of your house. It's where your house can be found, but I can't know what's in your house unless I go there and open the door. That's what `open` does -- it finds the file's bits on disk and opens the door to read or write the file.
-
-## File Modes
-
-By default, a file is opened in *read* mode which means that it can't be altered. Also, the default is to open for reading *text*.  The only required argument to `open` is the file name, but a second optional argument is a combination of characters to explain how to open the file. From the documentation for `open`:
-
-````
-========= ===============================================================
-Character Meaning
---------- ---------------------------------------------------------------
-'r'       open for reading (default)
-'w'       open for writing, truncating the file first
-'x'       create a new file and open it for writing
-'a'       open for writing, appending to the end of the file if it exists
-'b'       binary mode
-'t'       text mode (default)
-'+'       open a disk file for updating (reading and writing)
-'U'       universal newline mode (deprecated)
-========= ===============================================================
-````
-
-So if you do:
-
-````
-fh = open('out.txt')
-````
-
-It's the same as doing:
-
-````
-fh = open('out.txt', 'wt')
-````
-
-Where the combination of `wt` means `write text`. We can also read and write raw bits in `binary`, e.g., if you wanted to read the bit values of the pixels in an image.
-
-I always make a distinction in the variable names for the `file` or `filename` and the *file handle* which I usually call `fh` if there's just one or maybe `in_fh` and `out_fh` if there is one for reading and one for writing, etc.
-
-## STDIN, STDOUT, STDERR
-
-Unix has three standard files or channels called *standard in*, *standard out*, and *standard error* which are normally written as STDIN, STDOUT, and STDERR. When you `print`, the default is that the text goes to STDOUT which you see in your terminal or REPL.
-
-The `print` function takes some optional keyword arguments, one of which is `file` which has the default value of `sys.stdout`. If you wish to `print` to *standard error* (STDERR), you can use the `sys.stderr` file:
-
-````
-print('This is an error!', file=sys.stderr)
-````
-
-Note that you *do not* have to `open` these two special file handles. They are always available to you. 
-
-If you wish to write to a file on disc, you can `open` a file for writing and pass that:
-
-````
-print('This is an error!', file=open('error.txt', 'wt'))
-````
-
-Note that if each time you `open` a file for writing, you overwrite any existing data. If you wanted to `print` repeatedly in a program, you would either need to `open` in append mode:
-
-````
-print('This is an error!', file=open('error.txt', 'at'))
-print('This is an also error!', file=open('error.txt', 'at'))
-````
-
-Or, better yet, `open` the file at the beginning of the program, `print` as often as you like, and then `close` the file:
-
-````
-fh = open('out.txt', 'wt')
-print('Writing some text.', file=fh)
-print('Adding more text.', file=fh)
-fh.close()
-````
-
-Or use the `write` method of the file handle:
-
-````
-fh = open('out.txt', 'wt')
-fh.write('Writing some text.\n')
-fh.write('Adding more text.\n')
-fh.close()
-````
-
-Note that `print` automatically adds a newline to the end of the text whereas `write` does not so you need to add it yourself.
-
-You can only *read* from STDIN. Again, you do not need to `open` it as it is always available. Treat it exactly like a file handle you've opened for reading, e.g., to read lines from STDIN until you recieve EOF (end of file):
-
-````
-for line in sys.stdin:
-````
-
-\newpage
-
-# Appendix 4: N-grams, K-mers, and Markov Chains
-
-Read about Markov chains:
-
-* Claude Shannon's 1948 MS thesis, "A Mathematical Theory of Communication" (https://onlinelibrary.wiley.com/doi/abs/10.1002/j.1538-7305.1948.tb01338.x)
-* https://en.wikipedia.org/wiki/Markov_chain 
-* Chapter 3 of _The Practice of Programming_ by Brian Kernighan and Rob Pike where they discuss implementations in C, C++, Java, awk, and Perl
-* "Computer Recreations", A. K. Dewdney, Scientific American, 1989 (https://archive.org/details/ComputerRecreationsMarkovChainer)
-
-I'd like you to consider how a Markov chain creates a graph structure. Consult the three PDFs (generated by the `mk-graphs.sh` program) that visualize the graphs created by k-mer sizes of 1, 2, 3, and 4 when given this input:
-
-````
-$ cat words.txt
-maamselle
-mabi
-mabolo
-mac
-macaasim
-macabre
-````
-
-Notice that sometimes the branches terminate and sometimes you can find multiple paths through the graphs. As `k` grows, there are fewer options.
 
 \newpage
 

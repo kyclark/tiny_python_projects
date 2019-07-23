@@ -6,3 +6,6 @@ clean:
 
 book:
 	./bin/compile.py
+
+toc:
+	perl -ne '/^[#]{1,3}\s+(?!-)/ && print' book.md > toc.txt

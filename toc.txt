@@ -1,0 +1,227 @@
+# Introduction
+## Forking GitHub repo
+## Why Not Notebooks?
+## Code examples, the REPL
+## Code formatting and linting
+## Organization
+## Author
+## Copyright
+## Outline
+# Chapter 1: Getting Started
+## Python Variables
+## Lists, Strings, and Tuples
+## Dictionaries
+## Sets
+## Truthiness
+## Loops
+## Functions
+## Parsing command-line arguments with argparse
+### Types of arguments
+### Datatypes of values
+### Number of arguments
+### Choices
+### Automatic help
+### Getting the argument values
+## new.py
+## $PATH
+## Testing your programs
+# Chapter 2: Article Selector
+## Solution
+## Discussion
+# Chapter 3: Jump the Five
+## Solution
+## Discussion
+# Chapter 4: Picnic
+## Solution
+## Discussion
+# Chapter 5: Words Count
+## Solution
+## Discussion
+## Further
+# Chapter 6: Howler
+## Solution
+## Discussion
+# Chapter 7: Apples and Bananas
+## Solution
+## Discussion
+## Method 1: Iterate every character
+## Method 2: str.replace
+## Method 3: str.translate
+## Method 4: List comprehension
+## Method 5: List comprehension with function
+## Method 6: `map` with a `lambda`
+## Method 7: `map` with `new_char`
+## Method 8: Regular expressions
+# Chapter 8: Telephone
+## Solution
+## Discussion
+## Mutations in DNA
+# Chapter 9: Bottles of Beer Song
+## Counting down
+## Solution
+## Discussion
+# Chapter 10: Gashlycrumb
+## Solution
+## Discussion
+## Edward Gorey
+## Alternate text
+## Interactive version
+# Chapter 11: Ransom
+## Solution
+## Discussion
+# Chapter 12: Simple Rhymer
+## Solution
+## Discussion
+# Chapter 13: Rock, Paper, Scissors
+## Solution
+# Chapter 14: Dial-A-Curse
+## Solution
+## Discussion
+## get_args
+## main
+# Chapter 15: Scrambler
+## Solution
+## Discussion
+## Scrambling one word
+## Scrambling all the words
+# Chapter 16: Bacronym
+## Solution
+## Discussion
+## Handling arguments
+## Grouping words by first letters
+## Making definitions
+## Putting it together
+## Testing
+# Chapter 17: Workout Of (the) Day (WOD)
+## Solution
+## Discussion
+### Reading the WOD file
+### Choosing the exercises
+### Printing the table
+# Chapter 18: Blackjack 
+## Solution
+## Discussion
+## Making a deck
+## Playing the game
+## Figuring hand value
+## Adding the card values
+## Printing the hands and outcomes
+# Chapter 19: Family Tree
+## Graphs
+## Solution
+## Discussion
+## Parsing input file
+### Parsing name line
+### Parsing married line
+### Parsing begat line
+## Building the graph
+## Using graphviz
+# Chapter 20: Gematria: Numeric encoding of text
+## Solution
+## Discussion
+## Reading lines of text
+## List comprehensions vs map
+## Encoding one word
+## Finding the words
+## Encoding all words
+# Chapter 21: I Get Histy
+## Counting, filtering, scaling and sorting text
+## Hints
+## Solution
+## Discussion
+## Further
+# Chapter 22: Mommy's Little (Crossword) Helper
+## Hints
+## Solution
+## Discussion
+## Regular Expressions
+## Manual Matching
+## Summary
+# Chapter 23: Kentucky Friar
+## Solution
+## Discussion
+# Chapter 24: Mad Libs
+## Solution
+## Discussion
+# Chapter 25: License Plates
+## Solution
+# Chapter 26: Gibberish Generator
+## Kmers
+## Chains
+## Making new words
+## Solution
+## Discussion
+## Finding kmers in text
+## Reading the training files
+## Making new words
+## Machine Learning
+## What next
+# Chapter 27: Piggy (Pig Latin)
+## Solution
+## Discussion
+## The Pigifier
+## Pigification of words
+# Chapter 28: Soundex Rhymer
+## Testing the stemmer
+## Solution
+## Discussion
+## Using Soundex
+# Chapter 29: Tic-Tac-Toe Outcome
+## Solution
+# Chapter 30: Twelve Days of Christmas
+## Solution
+# Chapter 31: Anagram
+## Solution
+## Discussion
+## Logging
+## Reading wordlist
+## defaultdict
+## Identifying anagrams
+## Selecting words to compare
+# Chapter 32: Hangman
+## Solution
+## Discussion
+## Getting the words
+## Selecting a word
+## Recursion vs Infinite Loops
+## Maintaining state
+## Shall we play a game?
+## Testing the play
+## Further
+# Chapter 33: First Bank of Change
+## Solution
+## Discussion
+# Chapter 34: Modeling the Pareto Principle
+## The simulation
+## Calculating the distribution
+## Solution
+## Discussion
+## The simulation
+## The distribution
+## Graphing the distribution
+## More
+# Chapter 35: Runny Babbit
+## Solution
+## Discussion
+# Chapter 36: Markov Chain
+## Solution
+## Discussion
+# Chapter 37: Hamming Chain
+## Solution
+# Chapter 38: Morse Encoder/Decoder
+## Solution
+# Chapter 39: ROT13 (Rotate 13)
+## Solution
+# Chapter 40: Word Search
+## Solution
+## Discussion
+### Reading the puzzle input
+### Finding all the strings
+### Solving the puzzle
+# Chapter 41: Ready, Set, Go!
+## Creating and sorting the deck
+## Finding a set
+## Solution
+## Discussion
+# Chapter 42: Scrabble Helper
+## Solution

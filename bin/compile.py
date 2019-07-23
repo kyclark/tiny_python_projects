@@ -136,16 +136,15 @@ def main():
             fh.write(text + '\n\\newpage\n\n')
 
             solution_py = os.path.join(in_dir, dir_name, 'solution.py')
-            assert os.path.isfile(solution_py)
-
-            print('\tSOLUTION')
-            fh.write('## Solution\n\n')
-            fh.write('````\n')
-            numbered = getoutput('cat -n {}'.format(solution_py))
-            fh.write(numbered)
-            #fh.write(open(solution_py).read())
-            fh.write('\n````\n')
-            fh.write('\n\\newpage\n\n')
+            if os.path.isfile(solution_py):
+                print('\tSOLUTION')
+                fh.write('## Solution\n\n')
+                fh.write('````\n')
+                numbered = getoutput('cat -n {}'.format(solution_py))
+                fh.write(numbered)
+                #fh.write(open(solution_py).read())
+                fh.write('\n````\n')
+                fh.write('\n\\newpage\n\n')
 
             discussion = os.path.join(in_dir, dir_name, 'discussion.md')
             if os.path.isfile(discussion):
@@ -154,16 +153,16 @@ def main():
                 fh.write(open(discussion).read())
                 fh.write('\n\\newpage\n\n')
 
-        if appendix:
-            for i, dir_name in enumerate(map(str.rstrip, open(appendix)), 1):
-                print('Appendix {}: {}'.format(i, dir_name))
-                readme = os.path.join(in_dir, 'appendix', dir_name, 'README.md')
-                if os.path.isfile(readme):
-                    print('\tREADME')
-                    header = 'Appendix {}: '.format(i)
-                    text = open(readme).read()
-                    text = re.sub(r'^#\s+', '# ' + header, text)
-                    fh.write(text + '\n\\newpage\n\n')
+        # if appendix:
+        #     for i, dir_name in enumerate(map(str.rstrip, open(appendix)), 1):
+        #         print('Appendix {}: {}'.format(i, dir_name))
+        #         readme = os.path.join(in_dir, 'appendix', dir_name, 'README.md')
+        #         if os.path.isfile(readme):
+        #             print('\tREADME')
+        #             header = 'Appendix {}: '.format(i)
+        #             text = open(readme).read()
+        #             text = re.sub(r'^#\s+', '# ' + header, text)
+        #             fh.write(text + '\n\\newpage\n\n')
 
     cmd = 'pandoc {} --pdf-engine=xelatex -o {}'
     rv, out = getstatusoutput(cmd.format(book_file, args.outfile))
