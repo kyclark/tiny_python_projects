@@ -136,7 +136,7 @@ def get_args():
                         help='A readable file',
                         metavar='FILE',
                         type=argparse.FileType('r'),
-                        default=0)
+                        default=None)
 
     parser.add_argument('-o',
                         '--on',

@@ -158,6 +158,7 @@ Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz
 38. **rot13**: Encode and decode text by rotating the characters through a list.
 39. **word_search**: Find all the words hidden in the rows, columns, and diagonals in a block of text.
 40. **set**: Find "set" of cards from a deck of 81 where each of 4 attributes can have each of 3 values and a "set" of 3 cards is either the same or entirely different for each of the 4 attributes.
+41. **scrabble**: Find all possible words you could make from a random set of seven characters.
 
 \newpage
 
@@ -11441,6 +11442,197 @@ I will confess that my first solution was considerably more complicated involvin
 > Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away. -- Antoine de Saint-Exupery
 
 A big leap was in thinking of sets as `ABCD` rather than `3 Purple Outlined Squiggle` and then realizing that the `list(tuple)` structure returned by `itertools.product` was the simplest data structure that solved 90% of my design. My first implementation was about 1/3 longer than this final version which I think reads considerably better.
+
+\newpage
+
+# Chapter 41: Scrabble Helper
+
+Write a program called `scrabble.py` that will find all the possible words you can make from a set of Scrabble tiles.
+
+* Blank/Wild - 2 tiles
+* A – 9 tiles
+* B – 2 tiles
+* C – 2 tiles
+* D – 4 tiles
+* E - 12 tiles
+* F - 2 tiles
+* G - 3 tiles
+* H - 2 tiles
+* I - 9 tiles
+* J - 1 tile
+* K - 1 tile
+* L - 4 tiles
+* M - 2 tiles
+* N - 6 tiles
+* O - 8 tiles
+* P - 2 tiles
+* Q - 1 tile
+* R - 6 tiles
+* S - 4 tiles
+* T - 6 tiles
+* U - 4 tiles
+* V - 2 tiles
+* W - 2 tiles
+* X - 1 tile
+* Y - 2 tiles
+* Z - 1 tile
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Scrabble simulator"""
+     3	
+     4	import argparse
+     5	import io
+     6	import os
+     7	import random
+     8	import sys
+     9	from collections import defaultdict, Counter
+    10	from itertools import chain, combinations
+    11	from typing import Iterator, Dict, List
+    12	
+    13	
+    14	# --------------------------------------------------
+    15	def get_args():
+    16	    """Get command-line arguments"""
+    17	
+    18	    parser = argparse.ArgumentParser(
+    19	        description='Scrabble',
+    20	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    21	
+    22	    parser.add_argument('-t',
+    23	                        '--tiles',
+    24	                        help='Input tiles',
+    25	                        metavar='str',
+    26	                        type=str,
+    27	                        default='')
+    28	
+    29	    parser.add_argument('-l',
+    30	                        '--length',
+    31	                        help='Word length',
+    32	                        metavar='int',
+    33	                        type=int,
+    34	                        default=0)
+    35	
+    36	    parser.add_argument('-s',
+    37	                        '--seed',
+    38	                        help='Random seed',
+    39	                        metavar='int',
+    40	                        type=int,
+    41	                        default=None)
+    42	
+    43	    parser.add_argument('-w',
+    44	                        '--wordlist',
+    45	                        help='Wordlist',
+    46	                        metavar='FILE',
+    47	                        type=argparse.FileType('r'),
+    48	                        default='/usr/share/dict/words')
+    49	
+    50	    return parser.parse_args()
+    51	
+    52	
+    53	# --------------------------------------------------
+    54	def make_tiles():
+    55	    """Scrabble tile distribution"""
+    56	
+    57	    tile_number = {
+    58	        '_': 2,
+    59	        'A': 9,
+    60	        'B': 2,
+    61	        'C': 2,
+    62	        'D': 4,
+    63	        'E': 12,
+    64	        'F': 2,
+    65	        'G': 3,
+    66	        'H': 2,
+    67	        'I': 9,
+    68	        'J': 1,
+    69	        'K': 1,
+    70	        'L': 4,
+    71	        'M': 2,
+    72	        'N': 6,
+    73	        'O': 8,
+    74	        'P': 2,
+    75	        'Q': 1,
+    76	        'R': 6,
+    77	        'S': 4,
+    78	        'T': 6,
+    79	        'U': 4,
+    80	        'V': 2,
+    81	        'W': 2,
+    82	        'X': 1,
+    83	        'Y': 2,
+    84	        'Z': 1,
+    85	    }
+    86	
+    87	    return list(chain(*[list(tile * num)
+    88	                        for tile, num in tile_number.items()]))
+    89	
+    90	
+    91	# --------------------------------------------------
+    92	def test_make_tiles():
+    93	    """Test make_tiles"""
+    94	
+    95	    tiles = make_tiles()
+    96	    assert len(tiles) == 100
+    97	    assert len(list(filter(lambda c: c == 'A', tiles))) == 9
+    98	
+    99	
+   100	# --------------------------------------------------
+   101	#def get_words(fh: Iterator) -> Dict:
+   102	def get_words(fh):
+   103	    """Return words from file handle grouped by length"""
+   104	
+   105	    words = defaultdict(list)
+   106	    for word in fh.read().upper().split():
+   107	        words[len(word)].append((word, Counter(word)))
+   108	
+   109	    return words
+   110	
+   111	
+   112	# --------------------------------------------------
+   113	def test_get_words():
+   114	    """Test get_words"""
+   115	
+   116	    words = get_words(io.StringIO('apple banana cherry fig'))
+   117	    assert len(words[3]) == 1
+   118	    assert words[3][0] == ('fig', Counter('fig'))
+   119	    assert len(words[5]) == 1
+   120	    assert len(words[6]) == 2
+   121	
+   122	
+   123	# --------------------------------------------------
+   124	def main():
+   125	    """Make a jazz noise here"""
+   126	
+   127	    args = get_args()
+   128	    words = get_words(args.wordlist)
+   129	    bag = make_tiles()
+   130	    random.seed(args.seed)
+   131	    random.shuffle(bag)
+   132	    tiles = args.tiles or random.sample(bag, k=7)
+   133	    print('TILES', tiles)
+   134	
+   135	    search = [args.length - 1] if args.length else list(range(1, 8))
+   136	    i = 0
+   137	    for n in search:
+   138	        combos = list(combinations(tiles, n))
+   139	        for combo in combos:
+   140	            chars = Counter(combo)
+   141	            combo = sorted(combo)
+   142	            for word, char_cnt in words[n + 1]:
+   143	                if all([char_cnt[char] == cnt for char, cnt in chars.items()]):
+   144	                    i += 1
+   145	                    print('{:6}: {} => {}'.format(i, ''.join(combo), word))
+   146	
+   147	
+   148	# --------------------------------------------------
+   149	if __name__ == '__main__':
+   150	    main()
+````
 
 \newpage
 

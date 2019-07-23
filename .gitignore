@@ -7,3 +7,4 @@ __pycache__
 .DS_Store
 tex2pdf*
 .mypy_cache
+.log

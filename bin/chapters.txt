@@ -44,3 +44,4 @@ rot13
 #transpose
 word_search
 set
+scrabble

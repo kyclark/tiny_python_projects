@@ -39,3 +39,4 @@
 38. **rot13**: Encode and decode text by rotating the characters through a list.
 39. **word_search**: Find all the words hidden in the rows, columns, and diagonals in a block of text.
 40. **set**: Find "set" of cards from a deck of 81 where each of 4 attributes can have each of 3 values and a "set" of 3 cards is either the same or entirely different for each of the 4 attributes.
+41. **scrabble**: Find all possible words you could make from a random set of seven characters.
