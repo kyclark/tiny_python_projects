@@ -46,3 +46,4 @@ rot13
 word_search
 set
 scrabble
+rummikub

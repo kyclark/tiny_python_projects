@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Rummikub"""
+"""Boggle"""
 
 import argparse
 import os
-import sys
 import random
-from itertools import product
+import sys
 
 
 # --------------------------------------------------
@@ -13,7 +12,7 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Rummikub',
+        description='Boggle',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     # parser.add_argument('positional',
@@ -50,29 +49,31 @@ def get_args():
 
 
 # --------------------------------------------------
-def make_tiles():
-    """Make tiles"""
-
-    return list(product(list('BYRK'), range(1, 14))) * 2
-
-# --------------------------------------------------
-def test_make_tiles():
-    """Test make_tiles"""
-
-    tiles = make_tiles()
-    assert len(tiles) == 104
-    assert len(list(filter(lambda tile: tile[0] == 'R', tiles))) == 26
-    assert len(list(filter(lambda tile: tile[1] == 1, tiles))) == 8
-
-
-# --------------------------------------------------
 def main():
     """Make a jazz noise here"""
 
     args = get_args()
     random.seed(args.seed)
-    tiles = random.sample(make_tiles(), k=14)
-    print(tiles)
+    dice = ['U Qu H M N I',
+            'O B J A O B',
+            'F F S K A P',
+            'N S I E U E',
+            'E G H W E N',
+            'S O A C H P',
+            'T T R E Y L',
+            'R N Z N H L',
+            'R E V L Y D',
+            'T U I C M O',
+            'T D T Y S I',
+            'O O W T T A',
+            'N A E A E G',
+            'R V T H E W',
+            'L X E D R I',
+            'O T S E S I']
+
+    show = list(map(lambda s: random.choice(s.split()), dice))
+
+    print(len(show))
 
 
 # --------------------------------------------------

@@ -125,6 +125,7 @@ Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz
 40. **word_search**: Find all the words hidden in the rows, columns, and diagonals in a block of text.
 41. **set**: Find "set" of cards from a deck of 81 where each of 4 attributes can have each of 3 values and a "set" of 3 cards is either the same or entirely different for each of the 4 attributes.
 42. **scrabble**: Find all possible words you could make from a random set of seven characters.
+43. **rummikub**: Program the tile-based Rummikub game where you find sets of the same number of different colors or consecutive runs of numbers in the same color.
 
 \newpage
 
@@ -12172,37 +12173,149 @@ A big leap was in thinking of sets as `ABCD` rather than `3 Purple Outlined Squi
 
 \newpage
 
-# Chapter 42: Scrabble Helper
+# Chapter 42: Scrabble From The Apple
 
-Write a program called `scrabble.py` that will find all the possible words you can make from a set of Scrabble tiles.
+Scrabble (tm) is a tile-based spelling game. Each tile has a single letter, and you draw 7 at random to start the game. The first person spells a word entirely using their own tiles, but ever other play in the game requires you to build off existing tiles on the board. We will write a program called `scrabble.py` that will find all the possible words you can make from all possible combinations a set of 7 Scrabble tiles using some other letter. That is, how many 3-letter words can you make using 2 of your own tiles plus an additional letter?
 
-* Blank/Wild - 2 tiles
-* A – 9 tiles
-* B – 2 tiles
-* C – 2 tiles
-* D – 4 tiles
-* E - 12 tiles
-* F - 2 tiles
-* G - 3 tiles
-* H - 2 tiles
-* I - 9 tiles
-* J - 1 tile
-* K - 1 tile
-* L - 4 tiles
-* M - 2 tiles
-* N - 6 tiles
-* O - 8 tiles
-* P - 2 tiles
-* Q - 1 tile
-* R - 6 tiles
-* S - 4 tiles
-* T - 6 tiles
-* U - 4 tiles
-* V - 2 tiles
-* W - 2 tiles
-* X - 1 tile
-* Y - 2 tiles
-* Z - 1 tile
+The program should respond to `-h|--help` for usage.
+
+````
+$ ./scrabble.py -h
+usage: scrabble.py [-h] [-t str] [-l int] [-s int] [-w FILE]
+
+Scrabble
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -t str, --tiles str   Input tiles (default: )
+  -l int, --length int  Word length (default: 0)
+  -s int, --seed int    Random seed (default: None)
+  -w FILE, --wordlist FILE
+                        Wordlist (default: /usr/share/dict/words)
+````
+
+As usual, your program needs to accept a `-s|--seed` argument to pass to `random.seed` for testing purpose. The `-w|--wordlist` is a standard dictionary file of English words but could be any text. All text should be converted to uppercase to match the letter on the tiles. The `-l|--length` option is to have your program only emit words of a particular length. 
+
+Lastly there is a `-t|--tiles` option to give the tiles on the command line. This is to help you cheat. When this is not present, you should randomly sample 7 tiles. The letters are not evenly distributed among the tiles. You will need to encode these letter frequencies into your program:
+
+* Blank: 2
+* A: 9
+* B: 2
+* C: 2
+* D: 4
+* E: 12
+* F: 2
+* G: 3
+* H: 2
+* I: 9
+* J: 1
+* K: 1
+* L: 4
+* M: 2
+* N: 6
+* O: 8
+* P: 2
+* Q: 1
+* R: 6
+* S: 4
+* T: 6
+* U: 4
+* V: 2
+* W: 2
+* X: 1
+* Y: 2
+* Z: 1
+
+When run in normal mode, it should select and show the tiles, then work through all combinations of 1 to 7 letters of the tiles and find all 2- to 8-letter words in the `--wordlist` that could be formed.
+
+````
+$ ./scrabble.py -s 1 > out
+Tiles = "LNSHRAU"
+     1: L => AL
+     2: L => AL
+     3: L => EL
+     4: L => LA
+$ tail -5 out
+  1831: AHLRSU => RASHFUL
+  1832: AHNRSU => RHAMNUS
+  1833: AHNRSU => UNSHARP
+  1834: AHLNRSU => RUSHLAND
+  1835: AHLNRSU => UNLASHER
+````
+
+If given a `--tiles` argument, be sure it's only 7 characters long:
+
+````
+$ ./scrabble.py -t ABCDEFGHIJ
+usage: scrabble.py [-h] [-t str] [-l int] [-s int] [-w FILE]
+scrabble.py: error: --tiles "ABCDEFGHIJ" can only be 7 characters
+````
+\newpage
+
+## Discussion
+
+There's not much to say about `get_args` at this point. The `-t|--tiles` is a `str` which can only be 7 characters maximum, so I check `args.tiles` and use `parser.error` to generate a usage, error, and to exit with an non-zero status.
+
+## Organizing the wordlist
+
+The `--wordlist` file is expected to be a standard dictionary file with single words on  each line, but it might be something else so I use `fh.read().upper().split()` to force all the text to uppercase and break it at whitespace into words. The purpose of the wordlist is to find words I can make from a given set of tiles. If I have 2 tiles, then I want to make 3-letter words; 4 tiles then 5-letter words, etc. Therefore it makes sense to organize all the words by their lengths. I will reach for the `defaultdict` from the `collections` module where the keys will be the length of each word and the values will be a `list` of the words that length.
+
+````
+>>> from collections import defaultdict
+>>> words = defaultdict(list)
+````
+
+For purposes of illustration and testing, I will use a mock file handle with the `io.StringIO` function:
+
+````
+>>> import io
+>>> fh = io.StringIO('apple banana cherry fig')
+````
+
+I will iterate over each word in the file handle and `append` it to the `list` identified by the `len(word)`. Additionally, I decided to use a `Counter` also from the `collections` module to help me identify words
+\newpage
+
+# Chapter 43: Rummikub
+
+Rummikub is a game played with tiles that are very similar to playing cards. There are 4 colors (blue, black, yellow, red) each of which has numbers 1-13 which gives you the standard 52-card "deck." The deck is duplicated so that there are a total of 104 tiles. At the beginning of the game, each player takes 14 tiles and then tries to form sets of tiles where:
+
+1. Three or four tiles are the same number and all different colors
+2. Three or more tiles are consecutive numbers all of the same color
+
+Write a Python program called `rummikub.py` where you create the tiles using `B` for "blue," `K` for "black," `Y` for "yellow," and `R` for "red" crossed with the numeric values 1-13 so that tiles will be displayed like `R10`. Use `random.shuffle` to shuffle the tiles, and then use `random.sample` to draw 14 tiles. Find all possible combinations of 3 or more tiles that create sets as described above. 
+
+The only option your program needs to accept is `-s|--seed` for the `random.seed`. As always, it should respond to `-h|--help` for usage.
+
+````
+$ ./rummikub.py -h
+usage: rummikub.py [-h] [-s int]
+
+Rummikub
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -s int, --seed int  Random seed (default: None)
+````
+
+If no sets are found, let the user know:
+
+````
+$ ./rummikub.py -s 0
+Found no sets.
+````
+
+When printing out the sets, be sure to only print unique sets and that they are sorted by the color and then the numeric value. The test suite does not care what order the sets are printed. You should number the sets as you print them:
+
+````
+$ ./rummikub.py -s 1
+  1: B3 K3 Y3
+$ ./rummikub.py -s 5
+  1: K11 K12 K13
+  2: B2 B3 B4
+  3: B3 B4 B5
+  4: B2 K2 Y2
+  5: B2 B3 B4 B5
+````
 
 \newpage
 
@@ -12210,155 +12323,148 @@ Write a program called `scrabble.py` that will find all the possible words you c
 
 ````
      1	#!/usr/bin/env python3
-     2	"""Scrabble simulator"""
+     2	"""Rummikub"""
      3	
      4	import argparse
-     5	import io
-     6	import os
+     5	import os
+     6	import sys
      7	import random
-     8	import sys
-     9	from collections import defaultdict, Counter
-    10	from itertools import chain, combinations
-    11	from typing import Iterator, Dict, List
-    12	
-    13	
-    14	# --------------------------------------------------
-    15	def get_args():
-    16	    """Get command-line arguments"""
-    17	
-    18	    parser = argparse.ArgumentParser(
-    19	        description='Scrabble',
-    20	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    21	
-    22	    parser.add_argument('-t',
-    23	                        '--tiles',
-    24	                        help='Input tiles',
-    25	                        metavar='str',
-    26	                        type=str,
-    27	                        default='')
+     8	from itertools import combinations, product
+     9	from typing import List
+    10	
+    11	
+    12	# --------------------------------------------------
+    13	def get_args():
+    14	    """Get command-line arguments"""
+    15	
+    16	    parser = argparse.ArgumentParser(
+    17	        description='Rummikub',
+    18	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    19	
+    20	    parser.add_argument('-s',
+    21	                        '--seed',
+    22	                        help='Random seed',
+    23	                        metavar='int',
+    24	                        type=int,
+    25	                        default=None)
+    26	
+    27	    return parser.parse_args()
     28	
-    29	    parser.add_argument('-l',
-    30	                        '--length',
-    31	                        help='Word length',
-    32	                        metavar='int',
-    33	                        type=int,
-    34	                        default=0)
+    29	
+    30	# --------------------------------------------------
+    31	def make_tiles():
+    32	    """Make tiles"""
+    33	
+    34	    return list(product(list('BYRK'), range(1, 14))) * 2
     35	
-    36	    parser.add_argument('-s',
-    37	                        '--seed',
-    38	                        help='Random seed',
-    39	                        metavar='int',
-    40	                        type=int,
-    41	                        default=None)
-    42	
-    43	    parser.add_argument('-w',
-    44	                        '--wordlist',
-    45	                        help='Wordlist',
-    46	                        metavar='FILE',
-    47	                        type=argparse.FileType('r'),
-    48	                        default='/usr/share/dict/words')
+    36	
+    37	# --------------------------------------------------
+    38	def test_make_tiles():
+    39	    """Test make_tiles"""
+    40	
+    41	    tiles = make_tiles()
+    42	    assert len(tiles) == 104
+    43	    assert len(list(filter(lambda tile: tile[0] == 'R', tiles))) == 26
+    44	    assert len(list(filter(lambda tile: tile[1] == 1, tiles))) == 8
+    45	    assert len(
+    46	        list(filter(lambda tile: tile[0] == 'K' and tile[1] == 10,
+    47	                    tiles))) == 2
+    48	
     49	
-    50	    return parser.parse_args()
-    51	
-    52	
-    53	# --------------------------------------------------
-    54	def make_tiles():
-    55	    """Scrabble tile distribution"""
+    50	# --------------------------------------------------
+    51	def fst(t):
+    52	    """Return first element of a tuple"""
+    53	
+    54	    return t[0]
+    55	
     56	
-    57	    tile_number = {
-    58	        '_': 2,
-    59	        'A': 9,
-    60	        'B': 2,
-    61	        'C': 2,
-    62	        'D': 4,
-    63	        'E': 12,
-    64	        'F': 2,
-    65	        'G': 3,
-    66	        'H': 2,
-    67	        'I': 9,
-    68	        'J': 1,
-    69	        'K': 1,
-    70	        'L': 4,
-    71	        'M': 2,
-    72	        'N': 6,
-    73	        'O': 8,
-    74	        'P': 2,
-    75	        'Q': 1,
-    76	        'R': 6,
-    77	        'S': 4,
-    78	        'T': 6,
-    79	        'U': 4,
-    80	        'V': 2,
-    81	        'W': 2,
-    82	        'X': 1,
-    83	        'Y': 2,
-    84	        'Z': 1,
-    85	    }
-    86	
-    87	    return list(chain(*[list(tile * num)
-    88	                        for tile, num in tile_number.items()]))
-    89	
-    90	
-    91	# --------------------------------------------------
-    92	def test_make_tiles():
-    93	    """Test make_tiles"""
-    94	
-    95	    tiles = make_tiles()
-    96	    assert len(tiles) == 100
-    97	    assert len(list(filter(lambda c: c == 'A', tiles))) == 9
-    98	
+    57	# --------------------------------------------------
+    58	def snd(t):
+    59	    """Return second element of a tuple"""
+    60	
+    61	    return t[1]
+    62	
+    63	
+    64	# --------------------------------------------------
+    65	def diffs(a: List[int]) -> List[int]:
+    66	    """Return the pairwise differences between all elements of a list"""
+    67	    a.sort()
+    68	    return [abs(a[n] - a[n + 1]) for n in range(len(a) - 1)]
+    69	
+    70	
+    71	# --------------------------------------------------
+    72	def test_diffs():
+    73	    """Test diffs"""
+    74	
+    75	    assert diffs([1, 2, 3]) == [1, 1]
+    76	    assert diffs([4, 1, 6]) == [3, 2]
+    77	    assert diffs([1, 1, 1]) == [0, 0]
+    78	
+    79	
+    80	# --------------------------------------------------
+    81	def is_set(tiles):
+    82	    """Determine if tiles are a set"""
+    83	
+    84	    num_tiles = len(tiles)
+    85	    colors = set(map(fst, tiles))
+    86	    nums = set(map(snd, tiles))
+    87	
+    88	    # A set of 3-4 tiles all the same number and different colors
+    89	    if (3 <= num_tiles <=
+    90	            4) and (len(colors) == num_tiles) and (len(nums) == 1):
+    91	        return True
+    92	
+    93	    # 3 or more consecutive numbers of the same color 
+    94	    if (num_tiles >= 3) and (len(colors) == 1) and all(
+    95	        map(lambda n: n == 1, diffs(list(map(snd, tiles))))):
+    96	        return True
+    97	
+    98	    return False
     99	
-   100	# --------------------------------------------------
-   101	#def get_words(fh: Iterator) -> Dict:
-   102	def get_words(fh):
-   103	    """Return words from file handle grouped by length"""
+   100	
+   101	# --------------------------------------------------
+   102	def test_is_set():
+   103	    """Test is_set"""
    104	
-   105	    words = defaultdict(list)
-   106	    for word in fh.read().upper().split():
-   107	        words[len(word)].append((word, Counter(word)))
-   108	
-   109	    return words
-   110	
-   111	
-   112	# --------------------------------------------------
-   113	def test_get_words():
-   114	    """Test get_words"""
-   115	
-   116	    words = get_words(io.StringIO('apple banana cherry fig'))
-   117	    assert len(words[3]) == 1
-   118	    assert words[3][0] == ('fig', Counter('fig'))
-   119	    assert len(words[5]) == 1
-   120	    assert len(words[6]) == 2
-   121	
-   122	
-   123	# --------------------------------------------------
-   124	def main():
-   125	    """Make a jazz noise here"""
+   105	    assert is_set([('R', 1), ('Y', 1), ('K', 1)])
+   106	    assert is_set([('B', 7), ('Y', 7), ('K', 7), ('R', 7)])
+   107	    assert not is_set([('Y', 1), ('K', 1)])
+   108	    assert not is_set([('B', 8), ('Y', 7), ('K', 7), ('R', 7)])
+   109	
+   110	    assert is_set([('R', 1), ('R', 2), ('R', 3)])
+   111	    assert is_set([('K', 3), ('K', 4), ('K', 5), ('K', 7), ('K', 6)])
+   112	    assert not is_set([('K', 2), ('K', 4), ('K', 5), ('K', 7), ('K', 6)])
+   113	
+   114	
+   115	# --------------------------------------------------
+   116	def main():
+   117	    """Make a jazz noise here"""
+   118	
+   119	    args = get_args()
+   120	    random.seed(args.seed)
+   121	    tiles = make_tiles()
+   122	    random.shuffle(tiles)
+   123	    tiles = random.sample(tiles, k=14)
+   124	    show = lambda t: '{}{}'.format(*t)
+   125	    seen = set()
    126	
-   127	    args = get_args()
-   128	    words = get_words(args.wordlist)
-   129	    bag = make_tiles()
-   130	    random.seed(args.seed)
-   131	    random.shuffle(bag)
-   132	    tiles = args.tiles or random.sample(bag, k=7)
-   133	    print('TILES', tiles)
-   134	
-   135	    search = [args.length - 1] if args.length else list(range(1, 8))
-   136	    i = 0
-   137	    for n in search:
-   138	        combos = list(combinations(tiles, n))
-   139	        for combo in combos:
-   140	            chars = Counter(combo)
-   141	            combo = sorted(combo)
-   142	            for word, char_cnt in words[n + 1]:
-   143	                if all([char_cnt[char] == cnt for char, cnt in chars.items()]):
-   144	                    i += 1
-   145	                    print('{:6}: {} => {}'.format(i, ''.join(combo), word))
-   146	
-   147	
-   148	# --------------------------------------------------
-   149	if __name__ == '__main__':
-   150	    main()
+   127	    i = 0
+   128	    for n in range(3, len(tiles)):
+   129	        for combo in filter(is_set, combinations(tiles, n)):
+   130	            combo = tuple(sorted(combo))
+   131	            if combo in seen:
+   132	                continue
+   133	            seen.add(combo)
+   134	            i += 1
+   135	            print('{:3}: {}'.format(i, ' '.join(map(show, sorted(combo)))))
+   136	
+   137	    if i == 0:
+   138	        print('Found no sets.')
+   139	
+   140	
+   141	# --------------------------------------------------
+   142	if __name__ == '__main__':
+   143	    main()
 ````
 
 \newpage
