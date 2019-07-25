@@ -47,3 +47,4 @@ word_search
 set
 scrabble
 rummikub
+boggle

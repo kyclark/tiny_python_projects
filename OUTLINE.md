@@ -42,3 +42,4 @@
 41. **set**: Find "set" of cards from a deck of 81 where each of 4 attributes can have each of 3 values and a "set" of 3 cards is either the same or entirely different for each of the 4 attributes.
 42. **scrabble**: Find all possible words you could make from a random set of seven characters.
 43. **rummikub**: Program the tile-based Rummikub game where you find sets of the same number of different colors or consecutive runs of numbers in the same color.
+44. **boggle**: Write a Boggle game.

@@ -126,6 +126,7 @@ Ken Youens-Clark is a Sr. Scientific Programmer in the lab of Dr. Bonnie Hurwitz
 41. **set**: Find "set" of cards from a deck of 81 where each of 4 attributes can have each of 3 values and a "set" of 3 cards is either the same or entirely different for each of the 4 attributes.
 42. **scrabble**: Find all possible words you could make from a random set of seven characters.
 43. **rummikub**: Program the tile-based Rummikub game where you find sets of the same number of different colors or consecutive runs of numbers in the same color.
+44. **boggle**: Write a Boggle game.
 
 \newpage
 
@@ -12252,6 +12253,144 @@ scrabble.py: error: --tiles "ABCDEFGHIJ" can only be 7 characters
 ````
 \newpage
 
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Scrabble simulator"""
+     3	
+     4	import argparse
+     5	import io
+     6	import os
+     7	import random
+     8	import sys
+     9	from collections import defaultdict, Counter
+    10	from itertools import chain, combinations
+    11	from typing import Iterator, Dict, List
+    12	
+    13	
+    14	# --------------------------------------------------
+    15	def get_args():
+    16	    """Get command-line arguments"""
+    17	
+    18	    parser = argparse.ArgumentParser(
+    19	        description='Scrabble',
+    20	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    21	
+    22	    parser.add_argument('-t',
+    23	                        '--tiles',
+    24	                        help='Input tiles',
+    25	                        metavar='str',
+    26	                        type=str,
+    27	                        default='')
+    28	
+    29	    parser.add_argument('-l',
+    30	                        '--length',
+    31	                        help='Word length',
+    32	                        metavar='int',
+    33	                        type=int,
+    34	                        default=0)
+    35	
+    36	    parser.add_argument('-s',
+    37	                        '--seed',
+    38	                        help='Random seed',
+    39	                        metavar='int',
+    40	                        type=int,
+    41	                        default=None)
+    42	
+    43	    parser.add_argument('-w',
+    44	                        '--wordlist',
+    45	                        help='Wordlist',
+    46	                        metavar='FILE',
+    47	                        type=argparse.FileType('r'),
+    48	                        default='/usr/share/dict/words')
+    49	
+    50	    args = parser.parse_args()
+    51	
+    52	    if len(args.tiles) > 7:
+    53	        parser.error('--tiles "{}" can only be 7 characters'.format(args.tiles))
+    54	
+    55	    return args
+    56	
+    57	
+    58	# --------------------------------------------------
+    59	def make_tiles():
+    60	    """Scrabble tile distribution"""
+    61	
+    62	    tile_number = { '_': 2, 'A': 9, 'B': 2, 'C': 2, 'D': 4, 'E': 12,
+    63	        'F': 2, 'G': 3, 'H': 2, 'I': 9, 'J': 1, 'K': 1, 'L': 4, 'M': 2,
+    64	        'N': 6, 'O': 8, 'P': 2, 'Q': 1, 'R': 6, 'S': 4, 'T': 6, 'U': 4,
+    65	        'V': 2, 'W': 2, 'X': 1, 'Y': 2, 'Z': 1,
+    66	    }
+    67	
+    68	    return list(chain(*[list(tile * num)
+    69	                        for tile, num in tile_number.items()]))
+    70	
+    71	
+    72	# --------------------------------------------------
+    73	def test_make_tiles():
+    74	    """Test make_tiles"""
+    75	
+    76	    tiles = make_tiles()
+    77	    assert len(tiles) == 100
+    78	    assert len(list(filter(lambda c: c == 'A', tiles))) == 9
+    79	
+    80	
+    81	# --------------------------------------------------
+    82	#def get_words(fh: Iterator) -> Dict:
+    83	def get_words(fh):
+    84	    """Return words from file handle grouped by length"""
+    85	
+    86	    words = defaultdict(list)
+    87	    for word in fh.read().upper().split():
+    88	        words[len(word)].append((word, Counter(word)))
+    89	
+    90	    return words
+    91	
+    92	
+    93	# --------------------------------------------------
+    94	def test_get_words():
+    95	    """Test get_words"""
+    96	
+    97	    words = get_words(io.StringIO('apple banana cherry fig'))
+    98	    assert len(words[3]) == 1
+    99	    assert words[3][0] == ('fig', Counter('fig'))
+   100	    assert len(words[5]) == 1
+   101	    assert len(words[6]) == 2
+   102	
+   103	
+   104	# --------------------------------------------------
+   105	def main():
+   106	    """Make a jazz noise here"""
+   107	
+   108	    args = get_args()
+   109	    words = get_words(args.wordlist)
+   110	    bag = make_tiles()
+   111	    random.seed(args.seed)
+   112	    random.shuffle(bag)
+   113	    tiles = args.tiles or random.sample(bag, k=7)
+   114	    print('Tiles = "{}"'.format(''.join(tiles)))
+   115	
+   116	    search = [args.length - 1] if args.length else list(range(1, 8))
+   117	    i = 0
+   118	    for n in search:
+   119	        combos = list(combinations(tiles, n))
+   120	        for combo in combos:
+   121	            chars = Counter(combo)
+   122	            combo = sorted(combo)
+   123	            for word, char_cnt in words[n + 1]:
+   124	                if all([char_cnt[char] == cnt for char, cnt in chars.items()]):
+   125	                    i += 1
+   126	                    print('{:6}: {} => {}'.format(i, ''.join(combo), word))
+   127	
+   128	
+   129	# --------------------------------------------------
+   130	if __name__ == '__main__':
+   131	    main()
+````
+
+\newpage
+
 ## Discussion
 
 There's not much to say about `get_args` at this point. The `-t|--tiles` is a `str` which can only be 7 characters maximum, so I check `args.tiles` and use `parser.error` to generate a usage, error, and to exit with an non-zero status.
@@ -12465,6 +12604,135 @@ $ ./rummikub.py -s 5
    141	# --------------------------------------------------
    142	if __name__ == '__main__':
    143	    main()
+````
+
+\newpage
+
+# Chapter 44: Boggle
+
+Write a Boggle game.
+
+\newpage
+
+## Solution
+
+````
+     1	#!/usr/bin/env python3
+     2	"""Boggle"""
+     3	
+     4	import argparse
+     5	import os
+     6	import random
+     7	import sys
+     8	from itertools import combinations
+     9	from collections import defaultdict, Counter
+    10	from pprint import pprint
+    11	
+    12	
+    13	# --------------------------------------------------
+    14	def get_args():
+    15	    """Get command-line arguments"""
+    16	
+    17	    parser = argparse.ArgumentParser(
+    18	        description='Boggle',
+    19	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    20	
+    21	    parser.add_argument('-s',
+    22	                        '--seed',
+    23	                        help='Random seed',
+    24	                        metavar='int',
+    25	                        type=int,
+    26	                        default=None)
+    27	
+    28	    parser.add_argument('-w',
+    29	                        '--wordlist',
+    30	                        help='Wordlist',
+    31	                        metavar='FILE',
+    32	                        type=argparse.FileType('r'),
+    33	                        default='/usr/share/dict/words')
+    34	
+    35	    return parser.parse_args()
+    36	
+    37	
+    38	# --------------------------------------------------
+    39	def main():
+    40	    """Make a jazz noise here"""
+    41	
+    42	    args = get_args()
+    43	    words = get_words(args.wordlist)
+    44	    random.seed(args.seed)
+    45	
+    46	    dice = [
+    47	        'O B J A O B',
+    48	        'F F S K A P',
+    49	        'N S I E U E',
+    50	        'E G H W E N',
+    51	        'S O A C H P',
+    52	        'T T R E Y L',
+    53	        'R N Z N H L',
+    54	        'R E V L Y D',
+    55	        'T U I C M O',
+    56	        'T D T Y S I',
+    57	        'O O W T T A',
+    58	        'N A E A E G',
+    59	        'R V T H E W',
+    60	        'L X E D R I',
+    61	        'O T S E S I',
+    62	        'U QU H M N I',
+    63	    ]
+    64	
+    65	    show = list(map(lambda s: random.choice(s.split()), dice))
+    66	    for i, die in enumerate(show, start=1):
+    67	        print('{:2} '.format(die), end='\n' if i % 4 == 0 else '')
+    68	
+    69	    combos_by_len = defaultdict(set)
+    70	    for n in range(1, 17):
+    71	        for combo in map(lambda c: ''.join(sorted(''.join(c))),
+    72	                         combinations(show, n)):
+    73	
+    74	            combos_by_len[len(combo)].add(combo)
+    75	
+    76	    found = []
+    77	    for n, combos in combos_by_len.items():
+    78	        lookup = defaultdict(set)
+    79	        for word in words[n]:
+    80	            lookup[''.join(sorted(word))].add(word)
+    81	
+    82	        for combo in combos:
+    83	            found.extend(lookup[combo])
+    84	
+    85	    if found:
+    86	        for i, word in enumerate(sorted(found), start=1):
+    87	            print('{:5}: {}'.format(i, word))
+    88	    else:
+    89	        print('Found no words.')
+    90	
+    91	
+    92	# --------------------------------------------------
+    93	def get_words(fh):
+    94	    """Return words from file handle grouped by length"""
+    95	
+    96	    words = defaultdict(list)
+    97	    for word in fh.read().upper().split():
+    98	        words[len(word)].append(word)
+    99	
+   100	    return words
+   101	
+   102	
+   103	# --------------------------------------------------
+   104	def test_get_words():
+   105	    """Test get_words"""
+   106	
+   107	    words = get_words(io.StringIO('apple banana cherry fig'))
+   108	    assert len(words[3]) == 1
+   109	    assert 'fig' in words[3]
+   110	    assert len(words[5]) == 1
+   111	    assert len(words[6]) == 2
+   112	
+   113	
+   114	# --------------------------------------------------
+   115	if __name__ == '__main__':
+   116	    main()
 ````
 
 \newpage
