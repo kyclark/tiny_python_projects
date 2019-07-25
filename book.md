@@ -12610,7 +12610,78 @@ $ ./rummikub.py -s 5
 
 # Chapter 44: Boggle
 
-Write a Boggle game.
+Boggle (tm) is a game where you toss 16 dice, each 6-sided with a single letter on each side with the exception of "Qu." The goal of the game is to spell as many words as possible from the resulting 16 randomly chosen letters. 
+
+The dice have the following composition:
+
+    O  B  J  A  O  B
+    F  F  S  K  A  P
+    N  S  I  E  U  E
+    E  G  H  W  E  N
+    S  O  A  C  H  P
+    T  T  R  E  Y  L
+    R  N  Z  N  H  L
+    R  E  V  L  Y  D
+    T  U  I  C  M  O
+    T  D  T  Y  S  I
+    O  O  W  T  T  A
+    N  A  E  A  E  G
+    R  V  T  H  E  W
+    L  X  E  D  R  I
+    O  T  S  E  S  I
+    U  QU H  M  N  I
+
+Write a Python program called `boggle.py` that randomly chooses one side from each of the dice and displays the Boggle board with the chosen letters, e.g., with the seed `1` it should print:
+
+````
+B  A  N  H
+S  E  N  L
+O  Y  O  N
+H  L  E  M
+````
+
+Then it should find all possible 3- to 16-letter words that can be spelled from these letters that are found in the `-w|--wordlist` file (default `/usr/share/dict/words`)( and print them to STDOUT or `-o|--output` file (default `None` or the empty string). Finally it should print a total of all the points for each word according to the following table:
+
+````
+3   1
+4   1
+5   2
+6   3
+7   5
+8+  11
+`````
+
+Your program will also need to accept a `-s|--seed` option for `random.seed` and should print a usage for `-h|--help`:
+
+````
+$ ./boggle.py -h
+usage: boggle.py [-h] [-s int] [-o FILE] [-w FILE]
+
+Boggle
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -s int, --seed int    Random seed (default: None)
+  -o FILE, --output FILE
+                        Output words to file (default: None)
+  -w FILE, --wordlist FILE
+                        Wordlist (default: /usr/share/dict/words)
+````
+
+The initial board and the point total should always be printed to STDOUT. Only the words themselves should be optionally printed to the `--output` file.
+
+````
+$ ./boggle.py -s 1 -o out
+B  A  N  H
+S  E  N  L
+O  Y  O  N
+H  L  E  M
+Total points = 2208
+$ wc -l out
+    1009 out
+````
+
+Optionally add a `-t|--timer` option (default 180 seconds) to wait for the user to write down their words before displaying the words your program finds.
 
 \newpage
 
@@ -12621,118 +12692,115 @@ Write a Boggle game.
      2	"""Boggle"""
      3	
      4	import argparse
-     5	import os
+     5	import io
      6	import random
      7	import sys
      8	from itertools import combinations
-     9	from collections import defaultdict, Counter
-    10	from pprint import pprint
+     9	from collections import defaultdict
+    10	
     11	
-    12	
-    13	# --------------------------------------------------
-    14	def get_args():
-    15	    """Get command-line arguments"""
-    16	
-    17	    parser = argparse.ArgumentParser(
-    18	        description='Boggle',
-    19	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    20	
-    21	    parser.add_argument('-s',
-    22	                        '--seed',
-    23	                        help='Random seed',
-    24	                        metavar='int',
-    25	                        type=int,
-    26	                        default=None)
-    27	
-    28	    parser.add_argument('-w',
-    29	                        '--wordlist',
-    30	                        help='Wordlist',
-    31	                        metavar='FILE',
-    32	                        type=argparse.FileType('r'),
-    33	                        default='/usr/share/dict/words')
-    34	
-    35	    return parser.parse_args()
-    36	
-    37	
-    38	# --------------------------------------------------
-    39	def main():
-    40	    """Make a jazz noise here"""
-    41	
-    42	    args = get_args()
-    43	    words = get_words(args.wordlist)
-    44	    random.seed(args.seed)
-    45	
-    46	    dice = [
-    47	        'O B J A O B',
-    48	        'F F S K A P',
-    49	        'N S I E U E',
-    50	        'E G H W E N',
-    51	        'S O A C H P',
-    52	        'T T R E Y L',
-    53	        'R N Z N H L',
-    54	        'R E V L Y D',
-    55	        'T U I C M O',
-    56	        'T D T Y S I',
-    57	        'O O W T T A',
-    58	        'N A E A E G',
-    59	        'R V T H E W',
-    60	        'L X E D R I',
-    61	        'O T S E S I',
-    62	        'U QU H M N I',
-    63	    ]
-    64	
-    65	    show = list(map(lambda s: random.choice(s.split()), dice))
-    66	    for i, die in enumerate(show, start=1):
-    67	        print('{:2} '.format(die), end='\n' if i % 4 == 0 else '')
-    68	
-    69	    combos_by_len = defaultdict(set)
-    70	    for n in range(1, 17):
-    71	        for combo in map(lambda c: ''.join(sorted(''.join(c))),
-    72	                         combinations(show, n)):
+    12	# --------------------------------------------------
+    13	def get_args():
+    14	    """Get command-line arguments"""
+    15	
+    16	    parser = argparse.ArgumentParser(
+    17	        description='Boggle',
+    18	        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    19	
+    20	    parser.add_argument('-s',
+    21	                        '--seed',
+    22	                        help='Random seed',
+    23	                        metavar='int',
+    24	                        type=int,
+    25	                        default=None)
+    26	
+    27	    parser.add_argument('-o',
+    28	                        '--output',
+    29	                        help='Output words to file',
+    30	                        metavar='FILE',
+    31	                        type=str,
+    32	                        default=None)
+    33	
+    34	    parser.add_argument('-w',
+    35	                        '--wordlist',
+    36	                        help='Wordlist',
+    37	                        metavar='FILE',
+    38	                        type=argparse.FileType('r'),
+    39	                        default='/usr/share/dict/words')
+    40	
+    41	    return parser.parse_args()
+    42	
+    43	
+    44	# --------------------------------------------------
+    45	def main():
+    46	    """Make a jazz noise here"""
+    47	
+    48	    args = get_args()
+    49	    words = get_words(args.wordlist)
+    50	    random.seed(args.seed)
+    51	
+    52	    dice = ['O B J A O B', 'F F S K A P', 'N S I E U E', 'E G H W E N',
+    53	            'S O A C H P', 'T T R E Y L', 'R N Z N H L', 'R E V L Y D',
+    54	            'T U I C M O', 'T D T Y S I', 'O O W T T A', 'N A E A E G',
+    55	            'R V T H E W', 'L X E D R I', 'O T S E S I', 'U QU H M N I']
+    56	
+    57	    show = list(map(lambda s: random.choice(s.split()), dice))
+    58	    for i, die in enumerate(show, start=1):
+    59	        print('{:2} '.format(die), end='\n' if i % 4 == 0 else '')
+    60	
+    61	    combos_by_len = defaultdict(set)
+    62	    for n in range(3, 17):
+    63	        for combo in map(lambda c: ''.join(sorted(''.join(c))),
+    64	                         combinations(show, n)):
+    65	
+    66	            combos_by_len[len(combo)].add(combo)
+    67	
+    68	    found = []
+    69	    for n, combos in combos_by_len.items():
+    70	        lookup = defaultdict(set)
+    71	        for word in words[n]:
+    72	            lookup[''.join(sorted(word))].add(word)
     73	
-    74	            combos_by_len[len(combo)].add(combo)
-    75	
-    76	    found = []
-    77	    for n, combos in combos_by_len.items():
-    78	        lookup = defaultdict(set)
-    79	        for word in words[n]:
-    80	            lookup[''.join(sorted(word))].add(word)
-    81	
-    82	        for combo in combos:
-    83	            found.extend(lookup[combo])
-    84	
-    85	    if found:
-    86	        for i, word in enumerate(sorted(found), start=1):
-    87	            print('{:5}: {}'.format(i, word))
-    88	    else:
-    89	        print('Found no words.')
-    90	
-    91	
-    92	# --------------------------------------------------
-    93	def get_words(fh):
-    94	    """Return words from file handle grouped by length"""
-    95	
-    96	    words = defaultdict(list)
-    97	    for word in fh.read().upper().split():
-    98	        words[len(word)].append(word)
+    74	        for combo in combos:
+    75	            found.extend(lookup[combo])
+    76	
+    77	    point_value = { 3: 1, 4: 1, 5: 2, 6: 3, 7: 5, 8: 11 }
+    78	    points = 0
+    79	    out_fh = open(args.output, 'wt') if args.output else sys.stdout
+    80	    if found:
+    81	        for i, word in enumerate(sorted(found), start=1):
+    82	            n = len(word)
+    83	            points += point_value[n] if n in point_value else point_value[8]
+    84	            out_fh.write('{:5}: {}\n'.format(i, word))
+    85	        print(f'Total points = {points}')
+    86	    else:
+    87	        print('Found no words.')
+    88	
+    89	
+    90	# --------------------------------------------------
+    91	def get_words(fh):
+    92	    """Return words from file handle grouped by length"""
+    93	
+    94	    words = defaultdict(list)
+    95	    for word in fh.read().upper().split():
+    96	        words[len(word)].append(word)
+    97	    return words
+    98	
     99	
-   100	    return words
-   101	
-   102	
-   103	# --------------------------------------------------
-   104	def test_get_words():
-   105	    """Test get_words"""
-   106	
-   107	    words = get_words(io.StringIO('apple banana cherry fig'))
-   108	    assert len(words[3]) == 1
-   109	    assert 'fig' in words[3]
-   110	    assert len(words[5]) == 1
-   111	    assert len(words[6]) == 2
-   112	
-   113	
-   114	# --------------------------------------------------
-   115	if __name__ == '__main__':
-   116	    main()
+   100	# --------------------------------------------------
+   101	def test_get_words():
+   102	    """Test get_words"""
+   103	
+   104	    words = get_words(io.StringIO('apple banana cherry fig'))
+   105	    assert len(words[3]) == 1
+   106	    assert 'FIG' in words[3]
+   107	    assert len(words[5]) == 1
+   108	    assert len(words[6]) == 2
+   109	
+   110	
+   111	# --------------------------------------------------
+   112	if __name__ == '__main__':
+   113	    main()
 ````
 
 \newpage
