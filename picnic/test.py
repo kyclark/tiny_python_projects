@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 """tests for picnic.py"""
 
+import os
 from subprocess import getoutput
 
 prg = './picnic.py'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
@@ -27,8 +35,8 @@ def test_one():
 def test_two():
     """two items"""
 
-    out = getoutput('{} Coke "french fries"'.format(prg))
-    assert out.strip() == 'You are bringing Coke and french fries.'
+    out = getoutput('{} soda "french fries"'.format(prg))
+    assert out.strip() == 'You are bringing soda and french fries.'
 
 
 # --------------------------------------------------
