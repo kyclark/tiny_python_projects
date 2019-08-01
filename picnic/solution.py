@@ -28,8 +28,13 @@ def main():
     items = args.item
     num = len(items)
 
-    bringing = items[0] if num == 1 else ' and '.join(
-        items) if num == 2 else ', '.join(items[:-1] + ['and ' + items[-1]])
+    bringing = ''
+    if num == 1:
+        bringing = items[0]
+    elif num == 2:
+        bringing = ' and '.join(items)
+    else:
+        bringing = ', '.join(items[:-1] + ['and ' + items[-1]])
 
     print('You are bringing {}.'.format(bringing))
 
