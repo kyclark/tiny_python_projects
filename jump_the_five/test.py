@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 """tests for jump.py"""
 
+import os
 from subprocess import getstatusoutput
 
 prg = './jump.py'
+
+
+# --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
 
 
 # --------------------------------------------------
