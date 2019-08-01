@@ -61,8 +61,8 @@ def test_is_set():
     assert is_set([tuple('ABCD'), tuple('ABCD'), tuple('ABCD')])
     assert is_set([tuple('ABCD'), tuple('EFGH'), tuple('IJKL')])
     assert not is_set([tuple('ABCD'), tuple('ABCD'), tuple('ABCE')])
-    assert is_set([('1', 'Green', 'Outlined', 'Diamond', '1'),
-                   ('Green', 'Outlined', 'Squiggle'),
+    assert is_set([('1', 'Green', 'Outlined', 'Diamond'),
+                   ('1', 'Green', 'Outlined', 'Squiggle'),
                    ('1', 'Green', 'Outlined', 'Oval')])
     assert is_set([('1', 'Green', 'Outlined', 'Diamond'),
                    ('2', 'Red', 'Striped', 'Squiggle'),
