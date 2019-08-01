@@ -27,7 +27,7 @@ def main():
               '6': '4', '7': '3', '8': '2', '9': '1', '0': '5'}
 
     for char in text:
-        print(jumper[char] if char in jumper else char, end='')
+        print(jumper.get(char, char), end='')
 
     print()
 
