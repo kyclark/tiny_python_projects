@@ -27,6 +27,7 @@ def main():
 
     print('{} {}'.format(article, word))
 
+
 # --------------------------------------------------
 if __name__ == '__main__':
     main()
