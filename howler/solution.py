@@ -23,21 +23,22 @@ def get_args():
                         type=str,
                         default='')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if os.path.isfile(args.text):
+        args.text = open(args.text).read().rstrip()
+
+    return args
 
 
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
     text = args.text
-    out_file = args.outfile
-
-    if os.path.isfile(text):
-        text = open(text).read().rstrip()
-
-    out_fh = open(out_file, 'wt') if out_file else sys.stdout
-    print(text.upper(), file=out_fh)
+    out_fh = open(args.outfile, 'wt') if args.outfile else sys.stdout
+    out_fh.write(text.upper())
     out_fh.close()
 
 
