@@ -3,15 +3,37 @@
 
 import argparse
 
-parser = argparse.ArgumentParser(
-    description='Two positional arguments',
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-parser.add_argument('first', metavar='str', help='First argument')
+# --------------------------------------------------
+def get_args():
+    """get args"""
 
-parser.add_argument('second', metavar='str', help='Second argument')
+    parser = argparse.ArgumentParser(
+        description='Two positional arguments',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-args = parser.parse_args()
+    parser.add_argument('color',
+                        metavar='COLOR',
+                        type=str,
+                        help='First argument')
 
-print('first =', args.first)
-print('second =', args.second)
+    parser.add_argument('size',
+                        metavar='SIZE',
+                        type=int,
+                        help='Second argument')
+
+    return parser.parse_args()
+
+
+# --------------------------------------------------
+def main():
+    """main"""
+
+    args = get_args()
+    print('color =', args.color)
+    print('size =', args.size)
+
+
+# --------------------------------------------------
+if __name__ == '__main__':
+    main()

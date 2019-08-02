@@ -66,17 +66,17 @@ def divide(word):
 
     l = len(word)
     mid = 1 if l == 1 else round(l / 2)
-    return (word[:mid], word[mid:])
+    return [word[:mid], word[mid:]]
 
 
 # --------------------------------------------------
 def test_divide():
     """Test divide"""
 
-    assert divide('a') == ('a', '')
-    assert divide('an') == ('a', 'n')
-    assert divide('foo') == ('fo', 'o')
-    assert divide('foobar') == ('foo', 'bar')
+    assert divide('a') == ['a', '']
+    assert divide('an') == ['a', 'n']
+    assert divide('foo') == ['fo', 'o']
+    assert divide('foobar') == ['foo', 'bar']
 
 
 # --------------------------------------------------
@@ -101,7 +101,7 @@ def test_swap():
 def skip(word):
     """Skip-code a word"""
 
-    return ''.join(map(swap, divide(word)))
+    return ''.join(*zip(divide(word)))
 
 
 # --------------------------------------------------
@@ -110,9 +110,9 @@ def test_skip():
 
     assert skip('a') == 'a'
     assert skip('an') == 'an'
-    assert skip('the') == 'the'
-    assert skip('then') == 'then'
-    assert skip('foobar') == 'foobra'
+    assert skip('the') == 'teh'
+    assert skip('then') == 'tehn'
+    assert skip('foobar') == 'fboaor'
 
 
 # --------------------------------------------------

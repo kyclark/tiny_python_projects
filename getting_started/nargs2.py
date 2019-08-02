@@ -3,14 +3,34 @@
 
 import argparse
 
-parser = argparse.ArgumentParser(
-    description='nargs=2',
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-parser.add_argument('files', metavar='FILE', nargs=2, help='Two files')
+# --------------------------------------------------
+def get_args():
+    """get args"""
 
-args = parser.parse_args()
+    parser = argparse.ArgumentParser(
+        description='nargs=2',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-file1, file2 = args.files
-print('file1 =', file1)
-print('file2 =', file2)
+    parser.add_argument('numbers',
+                        metavar='INT',
+                        nargs=2,
+                        type=int,
+                        help='Two numbers')
+
+    return parser.parse_args()
+
+
+# --------------------------------------------------
+def main():
+    """main"""
+
+    args = get_args()
+    n1, n2 = args.numbers
+    print('n1 =', n1)
+    print('n2 =', n2)
+
+
+# --------------------------------------------------
+if __name__ == '__main__':
+    main()

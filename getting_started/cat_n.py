@@ -25,11 +25,9 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    fh = args.file
 
-    print('Reading "{}"'.format(fh.name))
-    for i, line in enumerate(fh):
-        print(i, line, end='')
+    for i, line in enumerate(args.file, start=1):
+        print(f'{i:6}  {line}', end='')
 
 
 # --------------------------------------------------
