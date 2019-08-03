@@ -30,11 +30,25 @@ def get_args():
 
     return args
 
+
 # --------------------------------------------------
 def choose(c):
     """Randomly choose an upper or lowercase letter to return"""
 
     return c.upper() if random.choice([0, 1]) else c.lower()
+
+
+# --------------------------------------------------
+def test_choose():
+    """Test choose"""
+
+    random.seed(1)
+    assert choose('a') == 'a'
+    assert choose('b') == 'b'
+    assert choose('c') == 'C'
+    assert choose('d') == 'd'
+    random.seed(None)
+
 
 # --------------------------------------------------
 def main():
@@ -44,9 +58,9 @@ def main():
     random.seed(args.seed)
 
     # Method 1: Iterate each character, add to list
-    # ransom = []
-    # for char in text:
-    #     ransom.append(char.upper() if random.choice([0, 1]) else char.lower())
+    ransom = []
+    for char in text:
+        ransom.append(char.upper() if random.choice([0, 1]) else char.lower())
 
     # Method 2: List comprehension
     #ransom = [c.upper() if random.choice([0, 1]) else c.lower() for c in text]
@@ -59,7 +73,7 @@ def main():
     #              text)
 
     # Method 5: map with function
-    ransom = map(choose, text)
+    # ransom = map(choose, text)
 
     print(''.join(ransom))
 
