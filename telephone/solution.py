@@ -5,7 +5,6 @@ import argparse
 import os
 import random
 import string
-import sys
 
 
 # --------------------------------------------------
@@ -16,9 +15,7 @@ def get_args():
         description='Telephone',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('input',
-                        metavar='str',
-                        help='Input text or file')
+    parser.add_argument('text', metavar='str', help='Input text or file')
 
     parser.add_argument('-s',
                         '--seed',
@@ -40,6 +37,9 @@ def get_args():
         msg = '--mutations "{}" must be b/w 0 and 1'.format(args.mutations)
         parser.error(msg)
 
+    if os.path.isfile(args.text):
+        args.text = open(args.text).read()
+
     return args
 
 
@@ -48,21 +48,18 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    text = args.input
+    text = args.text
     random.seed(args.seed)
-
-    if os.path.isfile(text):
-        text = open(text).read()
-
     len_text = len(text)
     num_mutations = int(args.mutations * len_text)
     alpha = string.ascii_letters + string.punctuation
 
     for _ in range(num_mutations):
         i = random.choice(range(len_text))
-        text = text[:i] + random.choice(alpha) + text[i+1:]
+        text = text[:i] + random.choice(alpha) + text[i + 1:]
 
     print(text.rstrip())
+
 
 # --------------------------------------------------
 if __name__ == '__main__':
