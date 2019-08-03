@@ -24,7 +24,12 @@ def get_args():
                         default='a',
                         choices=list('aeiou'))
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if os.path.isfile(args.text):
+        args.text = open(args.text).read()
+
+    return args
 
 
 # --------------------------------------------------
@@ -35,19 +40,16 @@ def main():
     text = args.text
     vowel = args.vowel
 
-    if os.path.isfile(text):
-        text = open(text).read()
-
     # Method 1: Iterate every character
-    # new_text = []
-    # for char in text:
-    #     if char in 'aeiou':
-    #         new_text.append(vowel)
-    #     elif char in 'AEIOU':
-    #         new_text.append(vowel.upper())
-    #     else:
-    #         new_text.append(char)
-    # text = ''.join(new_text)
+    new_text = []
+    for char in text:
+        if char in 'aeiou':
+            new_text.append(vowel)
+        elif char in 'AEIOU':
+            new_text.append(vowel.upper())
+        else:
+            new_text.append(char)
+    text = ''.join(new_text)
 
     # Method 2: str.replace
     # for v in 'aeiou':
@@ -65,8 +67,8 @@ def main():
     # text = ''.join(new_text)
 
     # Method 5: Define a function, use list comprehension
-    def new_char(c):
-        return vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
+    # def new_char(c):
+    #     return vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
 
     # text = ''.join([new_char(c) for c in text])
 
@@ -77,7 +79,7 @@ def main():
     #         if c in 'AEIOU' else c, text))
 
     # Method 7: `map` with the function
-    text = ''.join(map(new_char, text))
+    # text = ''.join(map(new_char, text))
 
     # Method 8: Regular expressions
     # text = re.sub('[aeiou]', vowel, text)
