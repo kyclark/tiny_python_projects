@@ -33,7 +33,7 @@ def test_bad_number():
     n = random.choice(range(-10, 0))
     rv, out = getstatusoutput('{} -n {}'.format(prg, n))
     assert rv != 0
-    assert re.search('--number "{}" cannot be less than 1'.format(n), out)
+    assert re.search('--number "{}" must be > 1'.format(n), out)
 
 
 # --------------------------------------------------

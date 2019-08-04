@@ -76,6 +76,7 @@ def test_bad_file():
     expected = "No such file or directory: '{}'".format(bad_file)
     assert re.search(expected, out)
 
+
 # --------------------------------------------------
 def random_string():
     """generate a random string"""

@@ -8,3 +8,4 @@ __pycache__
 tex2pdf*
 .mypy_cache
 .log
+.coverage

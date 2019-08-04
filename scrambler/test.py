@@ -79,4 +79,4 @@ def test_file_spiders():
     """File input"""
 
     out = getoutput('{} --seed 9 {}'.format(prg, spiders))
-    assert out.strip() == 'Don’t wrory, sedrpis,\nI keep huose\ncaslaluy.'
+    assert out.strip() == "Do'nt wrory, sedrpis,\nI keep huose\ncaslaluy."
