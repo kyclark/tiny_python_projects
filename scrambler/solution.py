@@ -48,15 +48,31 @@ def scramble(word):
 
 
 # --------------------------------------------------
+def test_scramble():
+    """Test scramble"""
+
+    random.seed(1)
+    assert scramble("a") == "a"
+    assert scramble("ab") == "ab"
+    assert scramble("abc") == "abc"
+    assert scramble("abcd") == "acbd"
+    assert scramble("abcde") == "acbde"
+    assert scramble("abcdef") == "aecbdf"
+    assert scramble("abcde'f") == "ade'bcf"
+    random.seed(None)
+
+
+# --------------------------------------------------
 def main():
     """Make a jazz noise here"""
 
     args = get_args()
     text = args.text
     random.seed(args.seed)
+    splitter = re.compile("([a-zA-Z](?:[a-zA-Z']*[a-zA-Z])?)")
 
     for line in text.splitlines():
-        print(''.join(map(scramble, re.split(r'\b', line))))
+        print(''.join(map(scramble, splitter.split(line))))
 
 
 # --------------------------------------------------
