@@ -30,11 +30,6 @@ def main():
 
     args = get_args()
     letter = args.letter
-
-    # lookup = {}
-    # for line in args.file:
-    #     lookup[line[0]] = line.rstrip()
-
     lookup = {line[0]: line.rstrip() for line in args.file}
 
     if letter.upper() in lookup:
