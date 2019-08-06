@@ -2,9 +2,8 @@
 """Crossword helper"""
 
 import argparse
-import os
+import io
 import re
-import sys
 from typing import List, TextIO
 
 
@@ -37,20 +36,35 @@ def regex_solution(pattern: str, wordlist: TextIO) -> List[str]:
 
 
 # --------------------------------------------------
+def test_regex_solution():
+    """Test regex_solution"""
+
+    text = lambda: io.StringIO('apple banana cherry date')
+    assert regex_solution('_ppl_', text()) == ['apple']
+    assert regex_solution('c_e_ry', text()) == ['cherry']
+
+
+# --------------------------------------------------
 def manual_solution(pattern: str, wordlist: TextIO) -> List[str]:
     """Not using regular expressions"""
 
-    letters = [t for t in enumerate(pattern) if t[1] != '_']
-    #letters = filter(lambda t: t[1] != '_', enumerate(pattern))
+    letters = filter(lambda t: t[1] != '_', enumerate(pattern))
     wanted_len = len(pattern)
-    words = []
 
-    for word in wordlist.read().split():
-        if len(word) == wanted_len and all(
-            [word[i] == char for i, char in letters]):
-            words.append(word)
+    return list(
+        filter(
+            lambda word: len(word) == wanted_len and all(
+                [word[i] == char for i, char in letters]),
+            wordlist.read().split()))
 
-    return words
+
+# --------------------------------------------------
+def test_manual_solution():
+    """Test manual_solution"""
+
+    text = lambda: io.StringIO('apple banana cherry date')
+    assert manual_solution('_ppl_', text()) == ['apple']
+    assert manual_solution('c_e_ry', text()) == ['cherry']
 
 
 # --------------------------------------------------
