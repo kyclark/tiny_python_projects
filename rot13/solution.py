@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
+"""ROT13"""
 
 import argparse
-import os
+import random
 import re
 import string
-import sys
 
 
 # --------------------------------------------------
@@ -16,7 +16,15 @@ def get_args():
 
     parser.add_argument('text',
                         metavar='str',
+                        type=argparse.FileType('r'),
                         help='Input text, file, or "-" for STDIN')
+
+    parser.add_argument('-p',
+                        '--pad',
+                        help='Pad size',
+                        metavar='int',
+                        type=int,
+                        default=4)
 
     parser.add_argument('-s',
                         '--shift',
@@ -31,34 +39,57 @@ def get_args():
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
-    text = args.text
+    text = re.sub('[^A-Z]', '', args.text.read().upper())
+    letters = list(string.ascii_uppercase)
+    shift = args.shift or int(len(letters) / 2)
+    chars = map(lambda char: rot(char, letters, shift), text)
+    print(pad_out(''.join(chars), args.pad))
 
-    if text == '-':
-        text = sys.stdin.read()
-    elif os.path.isfile(text):
-        text = open(text).read()
 
-    lcase = list(string.ascii_lowercase)
-    ucase = list(string.ascii_uppercase)
-    num_lcase = len(lcase)
-    num_ucase = len(ucase)
-    lcase_shift = args.shift or int(num_lcase / 2)
-    ucase_shift = args.shift or int(num_ucase / 2)
+# --------------------------------------------------
+def rot(char, letters, shift):
+    """Shift a character through a list"""
 
-    def rot13(char):
-        if char in lcase:
-            pos = lcase.index(char)
-            rot = (pos + lcase_shift) % num_lcase
-            return lcase[rot]
-        elif char in ucase:
-            pos = ucase.index(char)
-            rot = (pos + ucase_shift) % num_ucase
-            return ucase[rot]
-        else:
-            return char
+    return letters[(letters.index(char) + shift) %
+                   len(letters)] if char in letters else char
 
-    print(''.join(map(rot13, text)).rstrip())
+
+# --------------------------------------------------
+def test_rot():
+    """Test rot"""
+
+    assert rot('a', 'abcd', 1) == 'b'
+    assert rot('b', 'abcd', 3) == 'a'
+    assert rot('c', 'abcd', 5) == 'd'
+    assert rot('x', 'abcd', 1) == 'x'
+
+
+# --------------------------------------------------
+def pad_out(text, width=4):
+    """Pad output into width-columns"""
+
+    text = re.sub(r'\s+', '', text)
+    while len(text) % width != 0:
+        text += random.choice(text)
+
+    return ''.join(
+        map(lambda t: ' ' + t[1] if t[0] > 0 and t[0] % width == 0 else t[1],
+            enumerate(text)))
+
+
+# --------------------------------------------------
+def test_pad_out():
+    """Test pad_out"""
+
+    random.seed(1)
+    assert pad_out('ab cdef g', 2) == 'ab cd ef gb'
+    assert pad_out('ab cdef g', 3) == 'abc def geb'
+    assert pad_out('ab cdef g', 4) == 'abcd efgc'
+    assert pad_out('ab cdef g', 5) == 'abcde fgaaa'
+    assert pad_out('ab cdef g', 6) == 'abcdef gdgdbd'
+    random.seed(None)
 
 
 # --------------------------------------------------
