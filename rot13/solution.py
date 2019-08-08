@@ -5,9 +5,10 @@ import argparse
 import os
 import random
 import re
-import textwrap
 import string
 import sys
+from textwrap import wrap
+from typing import Any, List, Union
 
 
 # --------------------------------------------------
@@ -70,13 +71,13 @@ def main():
     text = re.sub('[^A-Z]', '', args.text.upper())
     letters = string.ascii_uppercase
     shift = args.shift or int(len(letters) / 2)
-    encrypted = map(lambda char: rot(char, letters, shift), text)
-    padded = pad_out(''.join(encrypted), args.pad)
-    print('\n'.join(textwrap.wrap(padded, width=args.width)))
+    encrypted = [rot(char, letters, shift) for char in text]
+    padded = pad_out(encrypted, args.pad)
+    print('\n'.join(wrap(padded, width=args.width)))
 
 
 # --------------------------------------------------
-def rot(char, letters, shift):
+def rot(char: str, letters: List[str], shift: int) -> str:
     """Shift a character through a list"""
 
     return letters[(letters.index(char) + shift) %
@@ -84,14 +85,24 @@ def rot(char, letters, shift):
 
 
 # --------------------------------------------------
-def pad_out(text, width=4):
+def nth(n: int, a: List[Any]) -> List[int]:
+    """Return the indexes of every `n`-th element of a given list `a`"""
+
+    return list(filter(lambda i: i > 0, range(-1, len(a), n)))
+
+
+# --------------------------------------------------
+def pad_out(text: Union[str, List[str]], pad: int = 4) -> str:
     """Pad output into width-columns"""
 
-    while len(text) % width != 0:
-        text += random.choice(string.ascii_uppercase)
+    text = list(text)
+    while len(text) % pad != 0:
+        text.append(random.choice(string.ascii_uppercase))
 
-    spacer = lambda t: ' ' + t[1] if t[0] > 0 and t[0] % width == 0 else t[1]
-    return ''.join(map(spacer, enumerate(text)))
+    for i in nth(pad, text):
+        text[i] += ' '
+
+    return ''.join(text).rstrip()
 
 
 # --------------------------------------------------
