@@ -3,7 +3,6 @@
 
 import argparse
 import re
-from dire import die
 
 
 # --------------------------------------------------
@@ -41,11 +40,11 @@ def main():
     blanks = list(regex.finditer(text))
 
     if not blanks:
-        die('File "{}" has no placeholders'.format(args.file.name))
+        print('File "{}" has no placeholders'.format(args.file.name))
+        sys.exit(1)
 
     for match in blanks:
-        placeholder = match.group(1)
-        name = match.group(2)
+        placeholder, name = match.groups()
         answer = inputs.pop(0) if inputs else input('{}: '.format(name))
         text = re.sub(placeholder, answer, text, count=1)
 
