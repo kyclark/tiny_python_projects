@@ -61,14 +61,13 @@ def main():
         'eighth', 'ninth', 'tenth', 'eleven', 'twelfth'
     ]
 
-    first = 'On the {} day of Christmas,\nMy true love gave to me,'
+    first = 'On the {} day of Christmas,\nMy true love gave to me,\n'
     for i in range(1, num_days + 1):
-        out_fh.write(first.format(ordinal[i - 1]) + '\n')
+        out_fh.write(first.format(ordinal[i - 1]))
         lines = list(reversed(days[:i]))
         if len(lines) > 1:
             lines[-1] = 'And ' + lines[-1].lower()
-        _ = out_fh.write(',\n'.join(lines) +
-                         ('\n\n' if i < num_days else '\n'))
+        out_fh.write(',\n'.join(lines) + ('\n\n' if i < num_days else '\n'))
 
 
 # --------------------------------------------------
