@@ -28,6 +28,16 @@ def test_usage():
 
 
 # --------------------------------------------------
+def test_bad_num():
+    """test bad_num"""
+
+    for n in [random.choice(r) for r in (range(-10, -1), range(13, 20))]:
+        rv, out = getstatusoutput('{} -n {}'.format(prg, n))
+        assert rv != 0
+        assert re.search(f'Cannot sing "{n}" days', out)
+
+
+# --------------------------------------------------
 def test_one():
     """test"""
 
