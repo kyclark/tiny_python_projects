@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+"""Twelve Days of Christmas"""
 
 import argparse
 import sys
-from dire import die
 
 
 # --------------------------------------------------
@@ -61,7 +61,8 @@ def main():
     }
 
     if not num_days in days:
-        die('Cannot sing "{}" days'.format(num_days))
+        print('Cannot sing "{}" days'.format(num_days))
+        sys.exit(1)
 
     for i in range(1, num_days + 1):
         first = 'On the {} day of Christmas,\nMy true love gave to me,'
