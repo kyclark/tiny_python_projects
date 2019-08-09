@@ -26,7 +26,12 @@ def get_args():
                         type=int,
                         default=12)
 
-    return parser.parse_args()
+    args =  parser.parse_args()
+
+    if args.num not in range(1, 13):
+        parser.error(f'Cannot sing "{args.num}" days')
+
+    return args
 
 
 # --------------------------------------------------
@@ -51,10 +56,6 @@ def main():
         'Eleven pipers piping',
         'Twelve drummers drumming',
     ]
-
-    if not num_days in range(1, len(days) + 1):
-        print('Cannot sing "{}" days'.format(num_days))
-        sys.exit(1)
 
     ordinal = [
         'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh',
