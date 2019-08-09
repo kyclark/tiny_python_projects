@@ -15,6 +15,7 @@ def test_exists():
 
     assert os.path.isfile(prg)
 
+
 # --------------------------------------------------
 def test_usage():
     """usage"""

@@ -7,11 +7,13 @@ from subprocess import getstatusoutput, getoutput
 
 prg = './license.py'
 
+
 # --------------------------------------------------
 def test_exists():
     """exists"""
 
     assert os.path.isfile(prg)
+
 
 # --------------------------------------------------
 def test_usage():

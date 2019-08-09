@@ -11,6 +11,13 @@ prg = './twelve_days.py'
 
 
 # --------------------------------------------------
+def test_exists():
+    """exists"""
+
+    assert os.path.isfile(prg)
+
+
+# --------------------------------------------------
 def test_usage():
     """usage"""
 
@@ -21,15 +28,9 @@ def test_usage():
 
 
 # --------------------------------------------------
-def random_string():
-    """generate a random string"""
+def test_one():
+    """test"""
 
-    k = random.randint(5, 10)
-    return ''.join(random.choices(string.ascii_letters + string.digits, k=k))
-
-
-# --------------------------------------------------
-def test_01():
     out = getoutput('{}'.format(prg)).splitlines()
     assert len(out) == 113
     assert out[0] == 'On the first day of Christmas,'
@@ -37,16 +38,43 @@ def test_01():
 
 
 # --------------------------------------------------
-def test_02():
-    out_file = random_string()
-    if os.path.isfile(out_file):
-        os.remove(out_file)
+def test_all():
+    """Test 1-12"""
 
-    try:
-        out = getoutput('{} -n 4 -o {}'.format(prg, out_file))
-        assert os.path.isfile(out_file)
-        output = open(out_file).read().splitlines()
-        assert len(output) == 22
-    finally:
+    test_out = './test-out'
+    assert os.path.isdir(test_out)
+
+    for n in range(1, 13):
+        print(n)
+        # Normal run (STDOUT)
+        expected_file = os.path.join(test_out, f'{n}.out')
+        assert os.path.isfile(expected_file)
+        expected = open(expected_file).read().rstrip()
+
+        cmd = f'{prg} -n {n}'
+        out = getoutput(cmd).rstrip()
+        assert out == expected
+
+        # Run with --outfile
+        out_file = random_string()
         if os.path.isfile(out_file):
             os.remove(out_file)
+
+        try:
+            out = getoutput(cmd + f' -o {out_file}').rstrip()
+            assert out == ''
+            assert os.path.isfile(out_file)
+            output = open(out_file).read().rstrip()
+            assert len(output.split('\n')) == len(expected.split('\n'))
+            assert output.rstrip() == expected.rstrip()
+        finally:
+            if os.path.isfile(out_file):
+                os.remove(out_file)
+
+
+# --------------------------------------------------
+def random_string():
+    """generate a random string"""
+
+    k = random.randint(5, 10)
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=k))
