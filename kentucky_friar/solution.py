@@ -43,6 +43,17 @@ def fry(word):
 
 
 # --------------------------------------------------
+def test_fry():
+    """Test fry"""
+
+    assert fry('you') == "y'all"
+    assert fry('You') == "Y'all"
+    assert fry('fishing') == "fishin'"
+    assert fry('Hunting') == "Huntin'"
+    assert fry('swing') == "swing"
+
+
+# --------------------------------------------------
 def main():
     """Make a jazz noise here"""
 
