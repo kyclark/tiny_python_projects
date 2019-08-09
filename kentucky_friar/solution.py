@@ -15,7 +15,12 @@ def get_args():
 
     parser.add_argument('text', metavar='str', help='Input text or file')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if os.path.isfile(args.text):
+        args.text = open(args.text).read()
+
+    return args
 
 
 # --------------------------------------------------
@@ -42,12 +47,8 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    text = args.text
 
-    if os.path.isfile(text):
-        text = open(text).read()
-
-    for line in text.splitlines():
+    for line in args.text.splitlines():
         print(''.join(map(fry, re.split(r'(\W+)', line.rstrip()))))
 
 
