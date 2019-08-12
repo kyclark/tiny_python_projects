@@ -4,7 +4,6 @@
 import argparse
 import os
 import re
-from dire import die
 from graphviz import Digraph
 
 
@@ -44,7 +43,8 @@ def main():
     nodes, edges = parse_tree(fh)
 
     if not nodes and not edges:
-        die('No nodes or edges in "{}".'.format(fh.name))
+        print('No nodes or edges in "{}".'.format(fh.name))
+        sys.exit(1)
 
     dot = Digraph(comment='Tree')
 
