@@ -3,7 +3,6 @@
 
 import argparse
 import re
-import sys
 from itertools import product
 
 
@@ -27,23 +26,19 @@ def main():
     mixups = [('5', 'S'), ('X', 'K', 'Y'), ('1', 'I'), ('3', 'E'),
               ('D', '0', 'O', 'Q'), ('M', 'N'), ('U', 'V', 'W'), ('2', '7')]
 
-    chars = []
-    for char in plate:
-        group = list(filter(lambda t: char in t, mixups))
-        if group:
-            chars.append(group[0])
-        else:
-            chars.append((char, ))
+    def find(char):
+        group = list(filter(lambda t: char in t, mixups)) or [(char, )]
+        return group[0]
 
+    chars = list(map(find, plate))
     regex = '^{}$'.format(''.join(
         map(lambda t: '[' + ''.join(t) + ']' if len(t) > 1 else t[0], chars)))
 
     print('plate = "{}"'.format(plate))
     print('regex = "{}"'.format(regex))
 
-    for possible in sorted(product(*chars)):
-        s = ''.join(possible)
-        print(s, 'OK' if re.search(regex, s) else 'NO')
+    for combo in map(''.join, sorted(product(*chars))):
+        print(combo, 'Match' if re.search(regex, combo) else 'Miss')
 
 
 # --------------------------------------------------

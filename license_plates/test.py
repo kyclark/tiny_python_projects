@@ -32,14 +32,14 @@ def test_accept_01():
     expected = """
 plate = "ABC1234"
 regex = "^ABC[1I][27][3E]4$"
-ABC1234 OK
-ABC12E4 OK
-ABC1734 OK
-ABC17E4 OK
-ABCI234 OK
-ABCI2E4 OK
-ABCI734 OK
-ABCI7E4 OK
+ABC1234 Match
+ABC12E4 Match
+ABC1734 Match
+ABC17E4 Match
+ABCI234 Match
+ABCI2E4 Match
+ABCI734 Match
+ABCI7E4 Match
     """.strip()
     assert out.strip() == expected
 
@@ -52,21 +52,21 @@ def test_accept_02():
     expected = """
 plate = "123456"
 regex = "^[1I][27][3E]4[5S]6$"
-123456 OK
-1234S6 OK
-12E456 OK
-12E4S6 OK
-173456 OK
-1734S6 OK
-17E456 OK
-17E4S6 OK
-I23456 OK
-I234S6 OK
-I2E456 OK
-I2E4S6 OK
-I73456 OK
-I734S6 OK
-I7E456 OK
-I7E4S6 OK
+123456 Match
+1234S6 Match
+12E456 Match
+12E4S6 Match
+173456 Match
+1734S6 Match
+17E456 Match
+17E4S6 Match
+I23456 Match
+I234S6 Match
+I2E456 Match
+I2E4S6 Match
+I73456 Match
+I734S6 Match
+I7E456 Match
+I7E4S6 Match
     """.strip()
     assert out.strip() == expected
