@@ -10,7 +10,6 @@ import os
 import subprocess
 import sys
 from datetime import date
-from dire import die
 
 
 # --------------------------------------------------
@@ -33,7 +32,12 @@ def get_args():
                         help='Overwrite existing',
                         action='store_true')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if not args.program.strip():
+        parser.error('program is not a usable filename')
+
+    return args
 
 
 # --------------------------------------------------
@@ -43,9 +47,8 @@ def main():
     args = get_args()
     out_file = args.program.strip().replace('-', '_')
 
-    if not out_file: die('Not a usable filename "{}"'.format(out_file))
-
-    if not out_file.endswith('.py'): out_file += '.py'
+    if not out_file.endswith('.py'):
+        out_file += '.py'
 
     if os.path.isfile(out_file) and not args.force:
         answer = input('"{}" exists.  Overwrite? [yN] '.format(out_file))
