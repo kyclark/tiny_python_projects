@@ -10,7 +10,7 @@ import sys
 def get_args():
     """get command-line arguments"""
     parser = argparse.ArgumentParser(
-        description='Tic-Tac-Toe board',
+        description='Tic-Tac-Toe',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('-s',
@@ -36,19 +36,18 @@ def get_args():
 
     args = parser.parse_args()
 
-    if args.player and args.player not in 'XO':
-        parser.error('Invalid player "{}", must be X or O'.format(args.player))
+    if args.player and not re.match('^[XO]$', args.player):
+        parser.error(f'Invalid player "{args.player}", must be X or O')
 
-    if args.cell is not None and not 1 <= args.cell <= 9:
-        parser.error('Invalid cell "{}", must be 1-9'.format(args.cell))
+    if args.cell and not 1 <= args.cell <= 9:
+        parser.error(f'Invalid cell "{args.cell}", must be 1-9')
 
     if any([args.player, args.cell]) and not all([args.player, args.cell]):
-        parser.error('Must provide both --player and --cell')
+        parser.error('Must provide both or neither --player and --cell')
 
     if not re.search('^[.XO]{9}$', args.state):
-        parser.error(
-            'Invalid state "{}", must be 9 characters of only -, X, O'.format(
-                args.state))
+        msg = 'Invalid state "{}", must be 9 characters of only ., X, O'
+        parser.error(msg.format(args.state))
 
     return args
 
@@ -62,9 +61,6 @@ def main():
     player = args.player
     cell = args.cell
 
-    bar = '-------------'
-    cells_tmpl = '| {} | {} | {} |'
-
     cells = []
     for i, char in enumerate(state, start=1):
         cells.append(str(i) if char == '.' else char)
@@ -76,11 +72,14 @@ def main():
             print('Cell {} already taken'.format(cell))
             sys.exit(1)
 
+    sep = '-------------'
+    tmpl = '| {} | {} | {} |'
+
     print('\n'.join([
-        bar,
-        cells_tmpl.format(cells[0], cells[1], cells[2]), bar,
-        cells_tmpl.format(cells[3], cells[4], cells[5]), bar,
-        cells_tmpl.format(cells[6], cells[7], cells[8]), bar
+        sep,
+        tmpl.format(cells[0], cells[1], cells[2]), sep,
+        tmpl.format(cells[3], cells[4], cells[5]), sep,
+        tmpl.format(cells[6], cells[7], cells[8]), sep
     ]))
 
     winner = get_winner(state)

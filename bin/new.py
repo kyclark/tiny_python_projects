@@ -34,8 +34,8 @@ def get_args():
 
     args = parser.parse_args()
 
-    if not args.out_file.strip():
-        parser.error('--outfile is not a usable filename')
+    if not args.program.strip():
+        parser.error('program is not a usable filename')
 
     return args
 
