@@ -162,7 +162,7 @@ def test_mutate_state2():
 -------------
 | O | O | X |
 -------------
-No winner.
+O won!
 """.strip()
 
     out2 = getoutput('{} --state XXO...OOX --p O -c 5'.format(prg))
@@ -174,10 +174,10 @@ def test_mutate_state_taken():
     """test for a cell already taken"""
 
     out1 = getoutput('{} -s XXO...OOX --player X --cell 9'.format(prg))
-    assert out1.strip() == 'Cell 9 already taken'
+    assert re.search('Cell 9 already taken', out1)
 
     out2 = getoutput('{} --state XXO...OOX --p O -c 1'.format(prg))
-    assert out2.strip() == 'Cell 1 already taken'
+    assert re.search('Cell 1 already taken', out2)
 
 
 # --------------------------------------------------
