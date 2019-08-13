@@ -3,7 +3,6 @@
 
 import argparse
 import re
-import sys
 
 
 # --------------------------------------------------
@@ -49,6 +48,9 @@ def get_args():
         msg = 'Invalid state "{}", must be 9 characters of only ., X, O'
         parser.error(msg.format(args.state))
 
+    if args.player and args.cell and args.state[args.cell - 1] != '.':
+        parser.error(f'Cell {args.cell} already taken')
+
     return args
 
 
@@ -57,78 +59,43 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    state = args.state
-    player = args.player
-    cell = args.cell
+    state = list(args.state)
 
-    cells = []
-    for i, char in enumerate(state, start=1):
-        cells.append(str(i) if char == '.' else char)
+    if args.player and args.cell:
+        state[args.cell - 1] = args.player
 
-    if player and cell:
-        if cells[cell - 1] not in 'XO':
-            cells[cell - 1] = player
-        else:
-            print('Cell {} already taken'.format(cell))
-            sys.exit(1)
-
-    sep = '-------------'
-    tmpl = '| {} | {} | {} |'
-
-    print('\n'.join([
-        sep,
-        tmpl.format(cells[0], cells[1], cells[2]), sep,
-        tmpl.format(cells[3], cells[4], cells[5]), sep,
-        tmpl.format(cells[6], cells[7], cells[8]), sep
-    ]))
-
+    print(make_board(state))
     winner = get_winner(state)
     print(f'{winner} won!' if winner else 'No winner.')
+
+
+# --------------------------------------------------
+def make_board(state):
+    """Make a TicTacToe board from the cells"""
+
+    cells = [str(i) if c == '.' else c for i, c in enumerate(state, start=1)]
+    sep = '-------------'
+    tmpl = '| {} | {} | {} |'
+    return '\n'.join([
+        sep,
+        tmpl.format(*cells[0:3]), sep,
+        tmpl.format(*cells[3:6]), sep,
+        tmpl.format(*cells[6:9]), sep
+    ])
 
 
 # --------------------------------------------------
 def get_winner(state):
     """Return winning player if any"""
 
-    winning = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7],
-               [2, 5, 8], [0, 4, 8], [2, 4, 6]]
-
-    # for player in ['X', 'O']:
-    #     for combo in winning:
-    #         i, j, k = combo
-    #         if state[i] == player and state[j] == player and state[k] == player:
-    #             winner = player
-    #             break
-
-    # for player in ['X', 'O']:
-    #     for combo in winning:
-    #         chars = []
-    #         for i in combo:
-    #             chars.append(state[i])
-
-    #         if ''.join(chars) == player * 3:
-    #             winner = player
-    #             break
-
-    # for player in ['X', 'O']:
-    #     for i, j, k in winning:
-    #         chars = ''.join([state[i], state[j], state[k]])
-    #         if ''.join(chars) == '{}{}{}'.format(player, player, player):
-    #             winner = player
-    #             break
+    winning = [(0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7),
+               (2, 5, 8), (0, 4, 8), (2, 4, 6)]
 
     for player in ['X', 'O']:
         for i, j, k in winning:
-            combo = [state[i], state[j], state[k]]
-            if combo == [player, player, player]:
-                return (player)
-
-    # for combo in winning:
-    #     group = list(map(lambda i: state[i], combo))
-    #     for player in ['X', 'O']:
-    #         if all(x == player for x in group):
-    #             winner = player
-    #             break
+            if [state[i], state[j], state[k]] == [player, player, player]:
+                return player
+    return ''
 
 
 # --------------------------------------------------
