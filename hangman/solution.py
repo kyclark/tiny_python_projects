@@ -77,16 +77,6 @@ def get_words(wordlist, min_len, max_len):
 
 
 # --------------------------------------------------
-def test_get_words():
-    """Test get_words"""
-
-    text = 'Apple banana COW da epinephrine'
-    assert get_words(io.StringIO(text), 1, 20) == text.lower().split()
-    assert get_words(io.StringIO(text), 5, 10) == ['apple', 'banana']
-    assert get_words(io.StringIO(text), 3, 10) == ['apple', 'banana', 'cow']
-
-
-# --------------------------------------------------
 def main():
     """main"""
 
@@ -128,7 +118,8 @@ def play(state):
 
     print('{} (Misses: {})'.format(' '.join(guessed), num_misses))
 
-    get_char = lambda: input('Your guess? ("?" for hint, "!" to quit) ').lower()
+    get_char = lambda: input('Your guess? ("?" for hint, "!" to quit) ').lower(
+    )
     new_guess = inputs.pop(0) if inputs else get_char()
 
     if new_guess == '!':
@@ -165,16 +156,6 @@ def play(state):
         'max_misses': max_misses,
         'inputs': inputs,
     })
-
-
-# --------------------------------------------------
-def test_play():
-    """Test play"""
-
-    assert play({'word': 'banana', 'inputs': list('abn')}) == True
-    assert play({'word': 'banana', 'inputs': list('abcdefghijklm')}) == False
-    assert play({'word': 'banana', 'inputs': list('???')}) == True
-    assert play({'word': 'banana', 'inputs': list('!')}) == False
 
 
 # --------------------------------------------------

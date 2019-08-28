@@ -20,9 +20,9 @@ def get_args():
 
 
 # --------------------------------------------------
+def stemmer(word):
     """Return leading consonants (if any), and 'stem' of word"""
 
-def stemmer(word):
     vowels = 'aeiou'
     consonants = ''.join(
         filter(lambda c: c not in vowels, string.ascii_lowercase))
