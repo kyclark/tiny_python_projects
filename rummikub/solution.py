@@ -35,19 +35,6 @@ def make_tiles():
 
 
 # --------------------------------------------------
-def test_make_tiles():
-    """Test make_tiles"""
-
-    tiles = make_tiles()
-    assert len(tiles) == 104
-    assert len(list(filter(lambda tile: tile[0] == 'R', tiles))) == 26
-    assert len(list(filter(lambda tile: tile[1] == 1, tiles))) == 8
-    assert len(
-        list(filter(lambda tile: tile[0] == 'K' and tile[1] == 10,
-                    tiles))) == 2
-
-
-# --------------------------------------------------
 def fst(t):
     """Return first element of a tuple"""
 
@@ -69,15 +56,6 @@ def diffs(a: List[int]) -> List[int]:
 
 
 # --------------------------------------------------
-def test_diffs():
-    """Test diffs"""
-
-    assert diffs([1, 2, 3]) == [1, 1]
-    assert diffs([4, 1, 6]) == [3, 2]
-    assert diffs([1, 1, 1]) == [0, 0]
-
-
-# --------------------------------------------------
 def is_set(tiles):
     """Determine if tiles are a set"""
 
@@ -90,26 +68,12 @@ def is_set(tiles):
             4) and (len(colors) == num_tiles) and (len(nums) == 1):
         return True
 
-    # 3 or more consecutive numbers of the same color 
+    # 3 or more consecutive numbers of the same color
     if (num_tiles >= 3) and (len(colors) == 1) and all(
-        map(lambda n: n == 1, diffs(list(map(snd, tiles))))):
+            map(lambda n: n == 1, diffs(list(map(snd, tiles))))):
         return True
 
     return False
-
-
-# --------------------------------------------------
-def test_is_set():
-    """Test is_set"""
-
-    assert is_set([('R', 1), ('Y', 1), ('K', 1)])
-    assert is_set([('B', 7), ('Y', 7), ('K', 7), ('R', 7)])
-    assert not is_set([('Y', 1), ('K', 1)])
-    assert not is_set([('B', 8), ('Y', 7), ('K', 7), ('R', 7)])
-
-    assert is_set([('R', 1), ('R', 2), ('R', 3)])
-    assert is_set([('K', 3), ('K', 4), ('K', 5), ('K', 7), ('K', 6)])
-    assert not is_set([('K', 2), ('K', 4), ('K', 5), ('K', 7), ('K', 6)])
 
 
 # --------------------------------------------------

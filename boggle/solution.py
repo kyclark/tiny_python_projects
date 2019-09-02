@@ -49,10 +49,12 @@ def main():
     words = get_words(args.wordlist)
     random.seed(args.seed)
 
-    dice = ['O B J A O B', 'F F S K A P', 'N S I E U E', 'E G H W E N',
-            'S O A C H P', 'T T R E Y L', 'R N Z N H L', 'R E V L Y D',
-            'T U I C M O', 'T D T Y S I', 'O O W T T A', 'N A E A E G',
-            'R V T H E W', 'L X E D R I', 'O T S E S I', 'U QU H M N I']
+    dice = [
+        'O B J A O B', 'F F S K A P', 'N S I E U E', 'E G H W E N',
+        'S O A C H P', 'T T R E Y L', 'R N Z N H L', 'R E V L Y D',
+        'T U I C M O', 'T D T Y S I', 'O O W T T A', 'N A E A E G',
+        'R V T H E W', 'L X E D R I', 'O T S E S I', 'U QU H M N I'
+    ]
 
     show = list(map(lambda s: random.choice(s.split()), dice))
     for i, die in enumerate(show, start=1):
@@ -74,7 +76,7 @@ def main():
         for combo in combos:
             found.extend(lookup[combo])
 
-    point_value = { 3: 1, 4: 1, 5: 2, 6: 3, 7: 5, 8: 11 }
+    point_value = {3: 1, 4: 1, 5: 2, 6: 3, 7: 5, 8: 11}
     points = 0
     out_fh = open(args.output, 'wt') if args.output else sys.stdout
     if found:

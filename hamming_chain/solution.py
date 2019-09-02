@@ -16,7 +16,11 @@ def get_args():
         description='Hamming chain',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-s', '--start', type=str, help='Starting word', default='')
+    parser.add_argument('-s',
+                        '--start',
+                        type=str,
+                        help='Starting word',
+                        default='')
 
     parser.add_argument('-w',
                         '--wordlist',
@@ -103,6 +107,7 @@ def main():
 
     for i, link in enumerate(chain, start=1):
         print('{:3}: {}'.format(i, link))
+
 
 # --------------------------------------------------
 if __name__ == '__main__':

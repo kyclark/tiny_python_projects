@@ -10,7 +10,7 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Argparse Python script',
+        description='Modeling the Pareto distribution',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('-a',
