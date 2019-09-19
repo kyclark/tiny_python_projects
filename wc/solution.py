@@ -10,7 +10,7 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Argparse Python script',
+        description='Emulate wc (word count)',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('file',
@@ -29,6 +29,7 @@ def main():
 
     args = get_args()
 
+    total_lines, total_chars, total_words = 0, 0, 0
     for fh in args.file:
         lines, words, chars = 0, 0, 0
         for line in fh:
@@ -36,7 +37,14 @@ def main():
             chars += len(line)
             words += len(line.split())
 
-        print('{:8}{:8}{:8} {}'.format(lines, words, chars, fh.name))
+        total_lines += lines
+        total_chars += chars
+        total_words += words
+
+        print(f'{lines:8}{words:8}{chars:8} {fh.name}')
+
+    if len(args.file) > 1:
+        print(f'{total_lines:8}{total_words:8}{total_chars:8} total')
 
 
 # --------------------------------------------------

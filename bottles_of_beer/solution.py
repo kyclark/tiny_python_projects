@@ -6,7 +6,7 @@ import argparse
 
 # --------------------------------------------------
 def get_args():
-    """get command-line arguments"""
+    """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
         description='Bottles of beer song',
@@ -28,9 +28,9 @@ def get_args():
 
 
 # --------------------------------------------------
+def verse(bottle):
     """Sing a verse"""
 
-def verse(bottle):
     next_bottle = bottle - 1
     s1 = '' if bottle == 1 else 's'
     s2 = '' if next_bottle == 1 else 's'

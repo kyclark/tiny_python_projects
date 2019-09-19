@@ -78,4 +78,4 @@ def test_file02():
 
     rv, out = getstatusoutput('{} --seed 2 --mutations .6 {}'.format(prg, fox))
     assert rv == 0
-    assert out.rstrip() == 'UheK+u*ckXbrPw~ fox Du*#FT{ver a~e}|Uzy (T?l'
+    assert out.rstrip() == 'UheK+u*ckXbrPw~ fox Du*#FT{ver f~e}|Uzy (T?l'

@@ -27,6 +27,16 @@ def test_usage():
 
 
 # --------------------------------------------------
+def test_bad_adjectives():
+    """bad_adjectives"""
+
+    n = random.choice(range(-10, 0))
+    rv, out = getstatusoutput('{} -a {}'.format(prg, n))
+    assert rv != 0
+    assert re.search('--adjectives "{}" must be > 1'.format(n), out)
+
+
+# --------------------------------------------------
 def test_bad_number():
     """bad_number"""
 

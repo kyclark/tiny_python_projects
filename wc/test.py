@@ -56,6 +56,7 @@ def test_empty():
     assert rv == 0
     assert out.rstrip() == '       0       0       0 ./empty.txt'
 
+
 # --------------------------------------------------
 def test_one():
     """Test on one"""
@@ -93,9 +94,11 @@ def test_more():
     rv, out = getstatusoutput('{} {} {}'.format(prg, fox, sonnet))
 
     expected = ('       1       9      45 ../inputs/fox.txt\n'
-                '      17     118     661 ../inputs/sonnet-29.txt')
+                '      17     118     661 ../inputs/sonnet-29.txt\n'
+                '      18     127     706 total')
     assert rv == 0
     assert out.rstrip() == expected
+
 
 # --------------------------------------------------
 def test_stdin():

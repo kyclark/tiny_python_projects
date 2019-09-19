@@ -38,7 +38,7 @@ def get_args():
         parser.error(msg)
 
     if os.path.isfile(args.text):
-        args.text = open(args.text).read()
+        args.text = open(args.text).read().rstrip()
 
     return args
 
@@ -58,7 +58,7 @@ def main():
         i = random.choice(range(len_text))
         text = text[:i] + random.choice(alpha) + text[i + 1:]
 
-    print(text.rstrip())
+    print(text)
 
 
 # --------------------------------------------------

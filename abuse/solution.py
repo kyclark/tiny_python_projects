@@ -7,7 +7,7 @@ import random
 
 # --------------------------------------------------
 def get_args():
-    """get command-line arguments"""
+    """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
         description='Heap abuse',
@@ -35,6 +35,9 @@ def get_args():
                         default=None)
 
     args = parser.parse_args()
+
+    if args.adjectives < 1:
+        parser.error('--adjectives "{}" must be > 1'.format(args.adjectives))
 
     if args.number < 1:
         parser.error('--number "{}" must be > 1'.format(args.number))
