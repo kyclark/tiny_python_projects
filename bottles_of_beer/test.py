@@ -61,7 +61,7 @@ def test_one():
     expected = ('1 bottle of beer on the wall,\n'
                 '1 bottle of beer,\n'
                 'Take one down, pass it around,\n'
-                '0 bottles of beer on the wall!')
+                'No more bottles of beer on the wall!')
 
     rv, out = getstatusoutput('{} --num 1'.format(prg))
     assert rv == 0
@@ -79,7 +79,7 @@ def test_two():
                 '1 bottle of beer on the wall,\n'
                 '1 bottle of beer,\n'
                 'Take one down, pass it around,\n'
-                '0 bottles of beer on the wall!')
+                'No more bottles of beer on the wall!')
 
     rv, out = getstatusoutput('{} -n 2'.format(prg))
     assert rv == 0

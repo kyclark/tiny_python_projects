@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """tests for article.py"""
 
-import re
 import os
 from subprocess import getstatusoutput, getoutput
 
 prg = './article.py'
 consonant_words = [
-    'bear', 'cow', 'deer', 'frog', 'giraffe', 'horse', 'jackyl', 'kestrel',
+    'bear', 'cow', 'dragon', 'frog', 'giraffe', 'horse', 'jackyl', 'kestrel',
     'lion', 'marmot', 'nutria', 'porpoise', 'quark', 'rooster', 'sturgeon',
-    'turtle', 'vermin', 'walrus', 'xray', 'yoosy', 'zebra'
+    'turtle', 'vermin', 'walrus', 'xolo', 'yak', 'zebra'
 ]
-vowel_words = ['appaloosa', 'elephant', 'ingot', 'octopus', 'unicorn']
+vowel_words = ['appaloosa', 'elephant', 'ingot', 'octopus', 'ungulate']
 
 
 # --------------------------------------------------
@@ -28,7 +27,7 @@ def test_usage():
     for flag in ['-h', '--help']:
         rv, out = getstatusoutput('{} {}'.format(prg, flag))
         assert rv == 0
-        assert re.match("usage", out, re.IGNORECASE)
+        assert out.lower().startswith('usage')
 
 
 # --------------------------------------------------

@@ -34,11 +34,12 @@ def verse(bottle):
     next_bottle = bottle - 1
     s1 = '' if bottle == 1 else 's'
     s2 = '' if next_bottle == 1 else 's'
+    num_next = 'No more' if next_bottle == 0 else next_bottle
     return '\n'.join([
         f'{bottle} bottle{s1} of beer on the wall,',
         f'{bottle} bottle{s1} of beer,',
         f'Take one down, pass it around,',
-        f'{next_bottle} bottle{s2} of beer on the wall!',
+        f'{num_next} bottle{s2} of beer on the wall!',
     ])
 
 

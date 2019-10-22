@@ -2,3 +2,6 @@
 
 test:
 	pytest -xv test.py
+
+sums:
+	./mk-sums.sh > sums.txt

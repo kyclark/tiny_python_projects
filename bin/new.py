@@ -81,7 +81,7 @@ def main():
                       email=args.email,
                       purpose=args.purpose,
                       date=str(date.today()))
-    text = simple() if args.simple else body()
+    text = simple() if args.simple else body(args.purpose)
 
     out_fh = open(program, 'w')
     out_fh.write(header + text)
@@ -130,8 +130,8 @@ if __name__ == '__main__':
 
 
 # --------------------------------------------------
-def body():
-    return """
+def body(purpose):
+    text = """
 import argparse
 import os
 import sys
@@ -142,7 +142,7 @@ def get_args():
     \"\"\"Get command-line arguments\"\"\"
 
     parser = argparse.ArgumentParser(
-        description='Argparse Python script',
+        description='{}',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('positional',
@@ -189,17 +189,18 @@ def main():
     flag_arg = args.on
     pos_arg = args.positional
 
-    print('str_arg = "{}"'.format(str_arg))
-    print('int_arg = "{}"'.format(int_arg))
-    print('file_arg = "{}"'.format(file_arg.name))
-    print('flag_arg = "{}"'.format(flag_arg))
-    print('positional = "{}"'.format(pos_arg))
+    print('str_arg = "{{}}"'.format(str_arg))
+    print('int_arg = "{{}}"'.format(int_arg))
+    print('file_arg = "{{}}"'.format(file_arg.name))
+    print('flag_arg = "{{}}"'.format(flag_arg))
+    print('positional = "{{}}"'.format(pos_arg))
 
 
 # --------------------------------------------------
 if __name__ == '__main__':
     main()
 """
+    return text.format(purpose)
 
 # --------------------------------------------------
 def get_defaults():
