@@ -1,3 +1,3 @@
 #!/usr/bin/env python3
-# Author: Ken Youens-Clark
+# Purpose: Say hello
 print('Hello, World!')

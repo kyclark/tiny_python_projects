@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Author: Ken Youens-Clark
+# Purpose: Say hello
 
 import sys
 
@@ -10,10 +10,10 @@ def test_greet():
     assert greet('World') == 'Hello, World!'
     assert greet('Terra Firma') == 'Hello, Terra Firma!'
 
-def main():
+def main():                    # new "main" entry function
     args = sys.argv[1:]
     name = args[0] if args else 'World'
-    print(greet(name)) 
+    print(greet(name))
 
-if __name__ == '__main__':
-    main()
+if __name__ == '__main__':     # program starts here
+    main()                     # call "main" function if in "main" namespace

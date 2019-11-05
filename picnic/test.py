@@ -48,3 +48,19 @@ def test_more_than_two():
     expected = ('You are bringing potato chips, coleslaw, '
                 'cupcakes, and French silk pie.')
     assert out.strip() == expected
+
+# --------------------------------------------------
+def test_two_sorted():
+    """two items sorted output"""
+
+    out = getoutput('{} -s soda candy'.format(prg))
+    assert out.strip() == 'You are bringing candy and soda.'
+
+# --------------------------------------------------
+def test_more_than_two_sorted():
+    """more than two items sorted output"""
+
+    arg = 'bananas apples dates cherries'
+    out = getoutput('{} {} --sorted'.format(prg, arg))
+    expected = ('You are bringing apples, bananas, cherries, and dates.')
+    assert out.strip() == expected

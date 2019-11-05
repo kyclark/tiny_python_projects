@@ -1,23 +1,18 @@
 #!/usr/bin/env python3
-# Author: Ken Youens-Clark
+# Purpose: Say hello
 
-import os, sys
+import sys
 
-def greet(name: str) -> str:
+def greet(name: str) -> str:  # "name" is a str, function returns a str
     return f'Hello, {name}!'
 
-def test_greet() -> None:
+def test_greet() -> None:     # function returns None
     assert greet('World') == 'Hello, World!'
     assert greet('Terra Firma') == 'Hello, Terra Firma!'
 
-def main() -> None:
+def main() -> None:           # function returns None
     args = sys.argv[1:]
-    if len(args) != 1:
-        prg_name = os.path.basename(sys.argv[0])
-        print(f'usage: {prg_name} NAME')
-        sys.exit(1)
-    else:
-        print(greet(args[0]))
+    print(greet(args))
 
 if __name__ == '__main__':
     main()

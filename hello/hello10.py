@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-# Author: Ken Youens-Clark
+# Purpose: Say hello
 
-import argparse
+import os, sys
 
 def greet(name: str) -> str:
     return f'Hello, {name}!'
@@ -10,17 +10,14 @@ def test_greet() -> None:
     assert greet('World') == 'Hello, World!'
     assert greet('Terra Firma') == 'Hello, Terra Firma!'
 
-def get_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description='Say hello',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('name', metavar='str', help='The name to greet')
-    return parser.parse_args()
-
 def main() -> None:
-    args = get_args()
-    print(greet(args.name))
+    args = sys.argv[1:]
+    val = args[0] if args else ''
+    if len(args) != 1 or val == '-h' or val == '--help':
+        prg_name = os.path.basename(sys.argv[0])
+        print(f'usage: {prg_name} NAME')
+    else:
+        print(greet(val))
 
 if __name__ == '__main__':
     main()

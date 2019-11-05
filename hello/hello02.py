@@ -1,2 +1,2 @@
-# Author: Ken Youens-Clark
+# Purpose: Say hello
 print('Hello, World!')
