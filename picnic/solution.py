@@ -17,6 +17,11 @@ def get_args():
                         nargs='+',
                         help='Item(s) to bring')
 
+    parser.add_argument('-s',
+                        '--sorted',
+                        action='store_true',
+                        help='Sort the items')
+
     return parser.parse_args()
 
 
@@ -28,13 +33,17 @@ def main():
     items = args.item
     num = len(items)
 
+    if args.sorted:
+        items.sort()
+
     bringing = ''
     if num == 1:
         bringing = items[0]
     elif num == 2:
         bringing = ' and '.join(items)
     else:
-        bringing = ', '.join(items[:-1] + ['and ' + items[-1]])
+        items[-1] = 'and ' + items[-1]
+        bringing = ', '.join(items)
 
     print('You are bringing {}.'.format(bringing))
 
