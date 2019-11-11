@@ -38,7 +38,7 @@ def main():
     args = get_args()
     text = args.text
     out_fh = open(args.outfile, 'wt') if args.outfile else sys.stdout
-    out_fh.write(text.upper())
+    out_fh.write(text.upper() + '\n')
     out_fh.close()
 
 

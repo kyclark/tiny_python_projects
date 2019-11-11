@@ -15,10 +15,10 @@ def get_args() -> argparse.Namespace:
         description='Say hello',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-n',            # short option name
-                        '--name',        # long option name
-                        default='World', # default value
-                        metavar='str',   # data type
+    parser.add_argument('-n',
+                        '--name',
+                        default='World',
+                        metavar='str',
                         help='The name to greet')
 
     return parser.parse_args()

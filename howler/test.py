@@ -46,9 +46,8 @@ def test_usage():
 def test_text_stdout():
     """Test STDIN/STDOUT"""
 
-    out = getoutput('{} "foo bar baz"'.format(prg))
-    expected = 'FOO BAR BAZ'
-    assert out.strip() == expected
+    out = getoutput(f'{prg} "foo bar baz"')
+    assert out.strip() == 'FOO BAR BAZ'
 
 
 # --------------------------------------------------
@@ -56,13 +55,11 @@ def test_text_outfile():
     """Test STDIN/outfile"""
 
     out_file = random_string()
-
     if os.path.isfile(out_file):
         os.remove(out_file)
 
     try:
-        out = getoutput('{} {} {} "foo bar baz"'.format(
-            prg, out_flag(), out_file))
+        out = getoutput(f'{prg} {out_flag()} {out_file} "foo bar baz"')
         assert out.strip() == ''
         assert os.path.isfile(out_file)
         text = open(out_file).read().rstrip()
@@ -84,8 +81,7 @@ def test_file():
 
             basename = os.path.basename(expected_file)
             in_file = os.path.join('../inputs', basename)
-            out = getoutput('{} {} {} {}'.format(prg, out_flag(), out_file,
-                                                 in_file))
+            out = getoutput(f'{prg} {out_flag()} {out_file} {in_file}')
             assert out.strip() == ''
             produced = open(out_file).read().rstrip()
             expected = open(os.path.join('test-outs',

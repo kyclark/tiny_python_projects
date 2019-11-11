@@ -11,18 +11,9 @@ def test_greet() -> None:
     assert greet('Terra Firma') == 'Hello, Terra Firma!'
 
 def main() -> None:
-    # create argument parser
-    parser = argparse.ArgumentParser(
-        description='Say hello',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    # add "name" parameter
+    parser = argparse.ArgumentParser(description='Say hello')
     parser.add_argument('name', help='Name to greet')
-
-    # get the parsed arguments
     args = parser.parse_args()
-
-    # greet the "name" value inside "args"
     print(greet(args.name))
 
 if __name__ == '__main__':

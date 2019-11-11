@@ -15,12 +15,12 @@ def get_args():
     parser.add_argument('color',
                         metavar='COLOR',
                         type=str,
-                        help='First argument')
+                        help='Color')
 
     parser.add_argument('size',
                         metavar='SIZE',
                         type=int,
-                        help='Second argument')
+                        help='Size')
 
     return parser.parse_args()
 

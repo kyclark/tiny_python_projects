@@ -3,16 +3,13 @@
 
 import argparse
 
-def get_args() -> argparse.Namespace:  # function to get arguments
-    parser = argparse.ArgumentParser(
-        description='Say hello',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
+def get_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description='Say hello')
     parser.add_argument('name', metavar='str', help='The name to greet')
     return parser.parse_args()
 
 def main() -> None:
-    args = get_args()                  # call "get_args"
+    args = get_args()
     print(greet(args.name))
 
 def greet(name: str) -> str:
