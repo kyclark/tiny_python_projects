@@ -18,7 +18,7 @@ def get_args():
 
     parser.add_argument('-v',
                         '--vowel',
-                        help='The vowel(s) allowed',
+                        help='The vowel to substitute',
                         metavar='str',
                         type=str,
                         default='a',

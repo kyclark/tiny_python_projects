@@ -30,12 +30,12 @@ def main():
 
     args = get_args()
     letter = args.letter
-    lookup = {line[0]: line.rstrip() for line in args.file}
+    lookup = {line[0].upper(): line.rstrip() for line in args.file}
 
     if letter.upper() in lookup:
         print(lookup[letter.upper()])
     else:
-        print('I do not know "{}".'.format(letter))
+        print(f'I do not know "{letter}".')
 
 
 # --------------------------------------------------

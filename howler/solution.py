@@ -11,7 +11,7 @@ def get_args():
     """get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Howler (upper-case input)',
+        description='Howler (upper-cases input)',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('text', metavar='str', help='Input string or file')

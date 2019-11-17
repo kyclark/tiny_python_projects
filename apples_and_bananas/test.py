@@ -37,7 +37,7 @@ def test_bad_vowel():
 
 
 # --------------------------------------------------
-def test_01():
+def test_command_line():
     """ foo -> faa """
 
     out = getoutput('{} foo'.format(prg))
@@ -45,15 +45,22 @@ def test_01():
 
 
 # --------------------------------------------------
-def test_02():
+def test_command_line_with_vowel():
     """ foo -> fii """
 
     out = getoutput('{} -v i foo'.format(prg))
     assert out.strip() == 'fii'
 
+# --------------------------------------------------
+def test_command_line_with_vowel_preserve_case():
+    """ foo -> fii """
+
+    out = getoutput('{} "APPLES AND BANANAS" --vowel i'.format(prg))
+    assert out.strip() == 'IPPLIS IND BININIS'
+
 
 # --------------------------------------------------
-def test_03():
+def test_file():
     """ fox.txt """
 
     out = getoutput('{} {}'.format(prg, fox))
@@ -61,7 +68,7 @@ def test_03():
 
 
 # --------------------------------------------------
-def test_04():
+def test_file_with_vowel():
     """ fox.txt """
 
     out = getoutput('{} --vowel o {}'.format(prg, fox))
