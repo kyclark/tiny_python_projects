@@ -191,7 +191,7 @@ def main():
 
     print('str_arg = "{{}}"'.format(str_arg))
     print('int_arg = "{{}}"'.format(int_arg))
-    print('file_arg = "{{}}"'.format(file_arg.name))
+    print('file_arg = "{{}}"'.format(file_arg.name if file_arg else ''))
     print('flag_arg = "{{}}"'.format(flag_arg))
     print('positional = "{{}}"'.format(pos_arg))
 

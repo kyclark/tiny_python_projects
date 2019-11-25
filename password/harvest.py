@@ -7,8 +7,8 @@ Purpose: Rock the Casbah
 
 import argparse
 import os
-import sys
 import spacy
+from collections import Counter
 
 
 # --------------------------------------------------
@@ -33,9 +33,11 @@ def get_args():
                         default='words')
 
     parser.add_argument('-l',
-                        '--lower',
-                        help='Lowercase output',
-                        action='store_true')
+                        '--limit',
+                        metavar='int',
+                        type=int,
+                        default=0,
+                        help='Limit to this many')
 
     return parser.parse_args()
 
@@ -53,34 +55,34 @@ def main():
     # Load English tokenizer, tagger, parser, NER and word vectors
     nlp = spacy.load("en_core_web_sm")
 
-    nouns, adjs, verbs = set(), set(), set()
+    nouns, adjs, verbs = Counter(), Counter(), Counter()
     for fh in args.file:
         doc = nlp(fh.read())
 
         for token in doc:
-            pos, word = token.pos_, token.lemma_
-
-            if args.lower:
-                word = word.lower()
+            pos, word = token.pos_, token.lemma_.lower()
 
             if pos == 'NOUN':
-                nouns.add(word)
+                nouns.update([word])
             elif pos == 'VERB':
-                verbs.add(word)
+                verbs.update([word])
             elif pos == 'ADJ':
-                adjs.add(word)
+                adjs.update([word])
+
+    def limiter(words):
+        return sorted(list(map(lambda t: t[0], words.most_common(
+            args.limit)))) if args.limit else sorted(words)
 
     def write(words, name):
         if words:
             out_fh = open(os.path.join(out_dir, name), 'wt')
-            out_fh.write('\n'.join(words))
+            out_fh.write('\n'.join(limiter(words)) + '\n')
 
     write(verbs, 'verbs.txt')
     write(nouns, 'nouns.txt')
     write(adjs, 'adjs.txt')
 
-    total = sum(map(len, [verbs, adjs, nouns]))
-    print(f'Done, wrote {total} to "{out_dir}".')
+    print(f'Done, see output in "{out_dir}".')
 
 
 # --------------------------------------------------
