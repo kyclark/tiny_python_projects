@@ -25,22 +25,11 @@ def main():
     jumper = {'1': '9', '2': '8', '3': '7', '4': '6', '5': '0',
               '6': '4', '7': '3', '8': '2', '9': '1', '0': '5'}
 
-    # Method 1: for loop with print
-    # for char in args.text:
-    #     print(jumper.get(char, char), end='')
-    # print()
-
-    # Method 2: for loop to build new string
-    # new_text = ''
-    # for char in args.text:
-    #     new_text += jumper.get(char, char)
-    # print(new_text)
-
-    # Method 3: list comprehension
-    # print(''.join([jumper.get(char, char) for char in args.text]))
-
-    # Method 4: str.translate
-    print(args.text.translate(str.maketrans(jumper)))
+    # Method 3: for loop to build new list
+    new_text = []
+    for char in args.text:
+        new_text.append(jumper.get(char, char))
+    print(''.join(new_text))
 
 
 # --------------------------------------------------
