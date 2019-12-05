@@ -20,8 +20,8 @@ def get_args():
     parser.add_argument('-s',
                         '--seed',
                         help='Random seed',
-                        metavar='str',
-                        type=str,
+                        metavar='int',
+                        type=int,
                         default=None)
 
     parser.add_argument('-m',
@@ -33,9 +33,8 @@ def get_args():
 
     args = parser.parse_args()
 
-    if not 0 < args.mutations <= 1:
-        msg = '--mutations "{}" must be b/w 0 and 1'.format(args.mutations)
-        parser.error(msg)
+    if not 0 <= args.mutations <= 1:
+        parser.error(f'--mutations "{args.mutations}" must be b/w 0 and 1')
 
     if os.path.isfile(args.text):
         args.text = open(args.text).read().rstrip()
@@ -48,17 +47,15 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    text = args.text
+    text = list(args.text)
     random.seed(args.seed)
-    len_text = len(text)
-    num_mutations = int(args.mutations * len_text)
     alpha = string.ascii_letters + string.punctuation
+    len_text = len(text)
+    num_mutations = round(args.mutations * len_text)
 
-    for _ in range(num_mutations):
-        i = random.choice(range(len_text))
-        text = text[:i] + random.choice(alpha) + text[i + 1:]
-
-    print(text)
+    for i in random.sample(range(len_text), num_mutations):
+        text[i] = random.choice(alpha.replace(text[i], ''))
+    print(''.join(text))
 
 
 # --------------------------------------------------

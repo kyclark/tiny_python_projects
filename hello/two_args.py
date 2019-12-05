@@ -13,12 +13,12 @@ def get_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('color',
-                        metavar='COLOR',
+                        metavar='str',
                         type=str,
                         help='Color')
 
     parser.add_argument('size',
-                        metavar='SIZE',
+                        metavar='int',
                         type=int,
                         help='Size')
 
