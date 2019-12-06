@@ -1,1 +1,0 @@
-Find paths through words that are separated by a given Hamming distance.

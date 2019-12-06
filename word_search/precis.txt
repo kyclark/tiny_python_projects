@@ -1,1 +1,0 @@
-Find all the words hidden in the rows, columns, and diagonals in a block of text.

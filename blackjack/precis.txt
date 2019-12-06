@@ -1,1 +1,0 @@
-An abbreviated version of the card game "Blackjack" (AKA "Twenty-One").

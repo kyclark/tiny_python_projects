@@ -1,1 +1,0 @@
-Find all possible permutations of a licence plate given a confusion matrix. Explore how and verify that regular expressions work.

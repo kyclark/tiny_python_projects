@@ -1,1 +1,0 @@
-Using the Soundex function to find words ending with a given sound.

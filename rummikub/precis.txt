@@ -1,1 +1,0 @@
-Program the tile-based Rummikub game where you find sets of the same number of different colors or consecutive runs of numbers in the same color.

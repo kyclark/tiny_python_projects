@@ -1,1 +1,0 @@
-Find all possible words you could make from a random set of seven characters.

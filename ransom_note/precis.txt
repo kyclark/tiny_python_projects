@@ -1,1 +1,0 @@
-Randomly alternate the case of input text to simulate a ransom note.

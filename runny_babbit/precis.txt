@@ -1,1 +1,0 @@
-Introduce Spoonerisms into text by switching the initial consonant sounds of neighboring words.

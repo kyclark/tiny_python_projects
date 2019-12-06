@@ -1,1 +1,0 @@
-Encode text using the Pig Latin algorithm.
