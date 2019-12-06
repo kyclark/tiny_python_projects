@@ -34,7 +34,7 @@ def get_args():
     args = parser.parse_args()
 
     if not 0 <= args.mutations <= 1:
-        parser.error(f'--mutations "{args.mutations}" must be b/w 0 and 1')
+        parser.error(f'--mutations "{args.mutations}" must be between 0 and 1')
 
     if os.path.isfile(args.text):
         args.text = open(args.text).read().rstrip()
@@ -52,11 +52,13 @@ def main():
     alpha = string.ascii_letters + string.punctuation
     len_text = len(text)
     num_mutations = round(args.mutations * len_text)
+    new_text = text
 
     for i in random.sample(range(len_text), num_mutations):
-        new_char = random.choice(alpha.replace(text[i], ''))
-        text = text[:i] + new_char + text[i + 1:]
-    print(text)
+        new_char = random.choice(alpha.replace(new_text[i], ''))
+        new_text = new_text[:i] + new_char + new_text[i + 1:]
+
+    print(f'You said: "{text}"\nI heard : "{new_text}"')
 
 
 # --------------------------------------------------
