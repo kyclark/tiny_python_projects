@@ -1,1 +1,0 @@
-Find words matching a given pattern to help solve a crossword puzzle. Explores manually finding words and using regular expressions.

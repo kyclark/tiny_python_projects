@@ -1,1 +1,0 @@
-Introduction to Python language basics, the `argparse` module, and the `new.py` program for creating new programs using `argparse`.

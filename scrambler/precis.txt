@@ -1,1 +1,0 @@
-Randomly shuffle the middle letters of every word in a text leaving the first and last letters in place.

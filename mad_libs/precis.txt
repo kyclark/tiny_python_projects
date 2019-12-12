@@ -1,1 +1,0 @@
-Create an interative terminal version of "Mad Libs." Hilarity is sure to ensue.

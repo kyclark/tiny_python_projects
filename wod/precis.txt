@@ -1,1 +1,0 @@
-Generate a Workout-Of-the-Day (WOD) from a list of possible exercises.

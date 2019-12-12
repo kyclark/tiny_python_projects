@@ -1,1 +1,0 @@
-Numerically encode each word of text by summing the ordinal values of the characters.

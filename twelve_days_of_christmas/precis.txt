@@ -1,1 +1,0 @@
-Write a program that will print the "Twelve Days of Christmas" song up to a given day.
