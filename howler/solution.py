@@ -36,9 +36,8 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    text = args.text
     out_fh = open(args.outfile, 'wt') if args.outfile else sys.stdout
-    out_fh.write(text.upper() + '\n')
+    out_fh.write(args.text.upper() + '\n')
     out_fh.close()
 
 
