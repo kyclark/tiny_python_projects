@@ -8,6 +8,17 @@ import string
 from subprocess import getstatusoutput, getoutput
 
 prg = './twelve_days.py'
+day_one = '\n'.join([
+    'On the first day of Christmas,', 'My true love gave to me,',
+    'A partridge in a pear tree.'
+])
+
+day_two = '\n'.join([
+    'On the second day of Christmas,',
+    'My true love gave to me,',
+    'Two turtle doves,',
+    'And a partridge in a pear tree.'
+])
 
 
 # --------------------------------------------------
@@ -39,9 +50,25 @@ def test_bad_num():
 
 # --------------------------------------------------
 def test_one():
+    """test one"""
+
+    out = getoutput(f'{prg} -n 1')
+    assert out.rstrip() == day_one
+
+
+# --------------------------------------------------
+def test_two():
+    """test two"""
+
+    out = getoutput(f'{prg} --num 2')
+    assert out == '\n\n'.join([day_one, day_two])
+
+
+# --------------------------------------------------
+def test_all_stdout():
     """test"""
 
-    out = getoutput('{}'.format(prg)).splitlines()
+    out = getoutput(f'{prg}').splitlines()
     assert len(out) == 113
     assert out[0] == 'On the first day of Christmas,'
     assert out[-1] == 'And a partridge in a pear tree.'

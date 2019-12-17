@@ -7,17 +7,11 @@ import sys
 
 # --------------------------------------------------
 def get_args():
-    """get command-line arguments"""
+    """Get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Twelve Days of Christmas',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-    parser.add_argument('-o',
-                        '--outfile',
-                        help='Outfile (STDOUT)',
-                        metavar='str',
-                        type=str,
-                        default='')
 
     parser.add_argument('-n',
                         '--num',
@@ -26,7 +20,14 @@ def get_args():
                         type=int,
                         default=12)
 
-    args =  parser.parse_args()
+    parser.add_argument('-o',
+                        '--outfile',
+                        help='Outfile (STDOUT)',
+                        metavar='str',
+                        type=str,
+                        default='')
+
+    args = parser.parse_args()
 
     if args.num not in range(1, 13):
         parser.error(f'Cannot sing "{args.num}" days')
@@ -39,36 +40,61 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    num_days = args.num
     out_fh = open(args.outfile, 'wt') if args.outfile else sys.stdout
+    out_fh.write('\n\n'.join(map(verse, range(1, args.num + 1))) + '\n')
+    out_fh.close()
 
-    days = [
-        'A partridge in a pear tree.',
-        'Two turtle doves',
-        'Three French hens',
-        'Four calling birds',
-        'Five gold rings',
-        'Six geese a laying',
-        'Seven swans a swimming',
-        'Eight maids a milking',
-        'Nine ladies dancing',
-        'Ten lords a leaping',
-        'Eleven pipers piping',
-        'Twelve drummers drumming',
-    ]
+
+# --------------------------------------------------
+def verse(day):
+    """Create a verse"""
 
     ordinal = [
         'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh',
         'eighth', 'ninth', 'tenth', 'eleven', 'twelfth'
     ]
 
-    first = 'On the {} day of Christmas,\nMy true love gave to me,\n'
-    for i in range(1, num_days + 1):
-        out_fh.write(first.format(ordinal[i - 1]))
-        lines = list(reversed(days[:i]))
-        if len(lines) > 1:
-            lines[-1] = 'And ' + lines[-1].lower()
-        out_fh.write(',\n'.join(lines) + ('\n\n' if i < num_days else '\n'))
+    gifts = [
+        'A partridge in a pear tree.',
+        'Two turtle doves,',
+        'Three French hens,',
+        'Four calling birds,',
+        'Five gold rings,',
+        'Six geese a laying,',
+        'Seven swans a swimming,',
+        'Eight maids a milking,',
+        'Nine ladies dancing,',
+        'Ten lords a leaping,',
+        'Eleven pipers piping,',
+        'Twelve drummers drumming,',
+    ]
+
+    lines = [
+        f'On the {ordinal[day - 1]} day of Christmas,',
+        'My true love gave to me,'
+    ]
+
+    lines.extend(reversed(gifts[:day]))
+
+    if day > 1:
+        lines[-1] = 'And ' + lines[-1].lower()
+
+    return '\n'.join(lines)
+
+
+# --------------------------------------------------
+def test_verse():
+    """Test verse"""
+
+    assert verse(1) == '\n'.join([
+        'On the first day of Christmas,', 'My true love gave to me,',
+        'A partridge in a pear tree.'
+    ])
+
+    assert verse(2) == '\n'.join([
+        'On the second day of Christmas,', 'My true love gave to me,',
+        'Two turtle doves,', 'And a partridge in a pear tree.'
+    ])
 
 
 # --------------------------------------------------
