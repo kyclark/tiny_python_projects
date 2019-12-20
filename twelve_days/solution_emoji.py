@@ -2,6 +2,7 @@
 """Twelve Days of Christmas"""
 
 import argparse
+import emoji
 import sys
 
 
@@ -30,7 +31,7 @@ def get_args():
     args = parser.parse_args()
 
     if args.num not in range(1, 13):
-        parser.error(f'Cannot sing "{args.num}" days')
+        parser.error(f'--num "{args.num}" must be between 1 and 12')
 
     return args
 
@@ -41,52 +42,61 @@ def main():
 
     args = get_args()
     out_fh = open(args.outfile, 'wt') if args.outfile else sys.stdout
-
-    days = [
-        'A partridge in a pear tree.',
-        'Two turtledoves',
-        'Three French hens',
-        'Four calling birds',
-        'Five gold rings',
-        'Six geese a laying',
-        'Seven swans a swimming',
-        'Eight maids a milking',
-        'Nine ladies dancing',
-        'Ten lords a leaping',
-        'Eleven pipers piping',
-        'Twelve drummers drumming',
-    ]
-
-    first = 'On the {} day of Christmas,\nMy true love gave to me,\n'
-    for day in range(1, args.num + 1):
-        out_fh.write(first.format(ordinal(day)))
-        lines = list(reversed(days[:day]))
-        if day > 1:
-            lines[-1] = 'And ' + lines[-1].lower()
-        out_fh.write(',\n'.join(lines) + ('\n\n' if day < args.num else '\n'))
+    print(emoji.emojize('\n\n'.join(map(verse, range(1, args.num + 1)))),
+          file=out_fh)
+    out_fh.close()
 
 
 # --------------------------------------------------
-def ordinal(n):
-    """Return the ordinal value"""
+def verse(day):
+    """Create a verse"""
 
     ordinal = [
         'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh',
         'eighth', 'ninth', 'tenth', 'eleven', 'twelfth'
     ]
 
-    if n in range(1, len(ordinal) + 1):
-        return ordinal[n - 1]
+    gifts = [
+        'A :bird: in a pear tree.',
+        'Two turtle :bird:s,',
+        'Three French :bird:s,',
+        'Four calling :bird:s,',
+        'Five gold :ring:s,',
+        'Six :bird:s a laying,',
+        'Seven :bird:s a swimming,',
+        'Eight :woman:s a milking,',
+        'Nine :woman:s dancing,',
+        'Ten :man:s a leaping,',
+        'Eleven :man:s piping,',
+        'Twelve :drum:s drumming,',
+    ]
+
+    lines = [
+        f'On the {ordinal[day - 1]} day of Christmas,',
+        'My true love gave to me,'
+    ]
+
+    lines.extend(reversed(gifts[:day]))
+
+    if day > 1:
+        lines[-1] = 'And ' + lines[-1].lower()
+
+    return '\n'.join(lines)
 
 
 # --------------------------------------------------
-def test_ordinal():
-    """Test ordinal"""
+def test_verse():
+    """Test verse"""
 
-    assert ordinal(0) is None
-    assert ordinal(1) == 'first'
-    assert ordinal(12) == 'twelfth'
-    assert ordinal(13) is None
+    assert verse(1) == '\n'.join([
+        'On the first day of Christmas,', 'My true love gave to me,',
+        'A :bird: in a pear tree.'
+    ])
+
+    assert verse(2) == '\n'.join([
+        'On the second day of Christmas,', 'My true love gave to me,',
+        'Two turtle :bird:s,', 'And a :bird: in a pear tree.'
+    ])
 
 
 # --------------------------------------------------

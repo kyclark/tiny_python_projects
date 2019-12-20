@@ -45,7 +45,7 @@ def test_bad_num():
     for n in [random.choice(r) for r in (range(-10, -1), range(13, 20))]:
         rv, out = getstatusoutput('{} -n {}'.format(prg, n))
         assert rv != 0
-        assert re.search(f'Cannot sing "{n}" days', out)
+        assert re.search(f'--num "{n}" must be between 1 and 12', out)
 
 
 # --------------------------------------------------
