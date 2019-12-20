@@ -39,11 +39,8 @@ def main():
     args = get_args()
     text = args.text
     vowel = args.vowel
-
-    # Method 8: Regular expressions
     text = re.sub('[aeiou]', vowel, text)
     text = re.sub('[AEIOU]', vowel.upper(), text)
-
     print(text)
 
 

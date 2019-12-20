@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+"""Twelve Days of Christmas"""
+
+import argparse
+import sys
+
+
+# --------------------------------------------------
+def get_args():
+    """Get command-line arguments"""
+
+    parser = argparse.ArgumentParser(
+        description='Twelve Days of Christmas',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('-n',
+                        '--num',
+                        help='Number of days to sing',
+                        metavar='int',
+                        type=int,
+                        default=12)
+
+    parser.add_argument('-o',
+                        '--outfile',
+                        help='Outfile (STDOUT)',
+                        metavar='str',
+                        type=str,
+                        default='')
+
+    args = parser.parse_args()
+
+    if args.num not in range(1, 13):
+        parser.error(f'Cannot sing "{args.num}" days')
+
+    return args
+
+
+# --------------------------------------------------
+def main():
+    """Make a jazz noise here"""
+
+    args = get_args()
+    out_fh = open(args.outfile, 'wt') if args.outfile else sys.stdout
+
+    days = [
+        'A partridge in a pear tree.',
+        'Two turtledoves',
+        'Three French hens',
+        'Four calling birds',
+        'Five gold rings',
+        'Six geese a laying',
+        'Seven swans a swimming',
+        'Eight maids a milking',
+        'Nine ladies dancing',
+        'Ten lords a leaping',
+        'Eleven pipers piping',
+        'Twelve drummers drumming',
+    ]
+
+    first = 'On the {} day of Christmas,\nMy true love gave to me,\n'
+    for day in range(1, args.num + 1):
+        out_fh.write(first.format(ordinal(day)))
+        lines = list(reversed(days[:day]))
+        if day > 1:
+            lines[-1] = 'And ' + lines[-1].lower()
+        out_fh.write(',\n'.join(lines) + ('\n\n' if day < args.num else '\n'))
+
+
+# --------------------------------------------------
+def ordinal(n):
+    """Return the ordinal value"""
+
+    ordinal = [
+        'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh',
+        'eighth', 'ninth', 'tenth', 'eleven', 'twelfth'
+    ]
+
+    if n in range(1, len(ordinal) + 1):
+        return ordinal[n - 1]
+
+
+# --------------------------------------------------
+def test_ordinal():
+    """Test ordinal"""
+
+    assert ordinal(0) is None
+    assert ordinal(1) == 'first'
+    assert ordinal(12) == 'twelfth'
+    assert ordinal(13) is None
+
+
+# --------------------------------------------------
+if __name__ == '__main__':
+    main()

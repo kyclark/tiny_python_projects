@@ -38,7 +38,7 @@ def test_usage():
 def test_a():
     """Test for 'a'"""
 
-    rv, out = getstatusoutput('{} a'.format(prg))
+    rv, out = getstatusoutput(f'{prg} a')
     assert rv == 0
     expected = 'A is for Amy who fell down the stairs.'
     assert out.strip() == expected
@@ -48,9 +48,18 @@ def test_a():
 def test_y():
     """Test for 'y'"""
 
-    rv, out = getstatusoutput('{} Y'.format(prg))
+    rv, out = getstatusoutput(f'{prg} Y')
     assert rv == 0
     expected = 'Y is for Yorick whose head was bashed in.'
+    assert out.strip() == expected
+
+# --------------------------------------------------
+def test_o_alternate():
+    """ Test for 'o' from 'alternate.txt' """
+
+    rv, out = getstatusoutput(f'{prg} o -f alternate.txt')
+    assert rv == 0
+    expected = 'O is for Orville, who fell in a canyon.'
     assert out.strip() == expected
 
 

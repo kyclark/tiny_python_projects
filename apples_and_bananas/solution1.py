@@ -3,7 +3,6 @@
 
 import argparse
 import os
-import re
 
 
 # --------------------------------------------------
@@ -49,9 +48,8 @@ def main():
             new_text.append(vowel.upper())
         else:
             new_text.append(char)
-    text = ''.join(new_text)
 
-    print(text)
+    print(''.join(new_text))
 
 
 # --------------------------------------------------

@@ -3,7 +3,6 @@
 
 import argparse
 import os
-import re
 
 
 # --------------------------------------------------
@@ -37,16 +36,12 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    text = args.text
     vowel = args.vowel
+    text = map(
+        lambda c: vowel if c in 'aeiou' else vowel.upper()
+        if c in 'AEIOU' else c, args.text)
 
-    # Method 6: Use a `map` to iterate with a `lambda`
-    text = ''.join(
-        map(
-            lambda c: vowel if c in 'aeiou' else vowel.upper()
-            if c in 'AEIOU' else c, text))
-
-    print(text)
+    print(''.join(text))
 
 
 # --------------------------------------------------

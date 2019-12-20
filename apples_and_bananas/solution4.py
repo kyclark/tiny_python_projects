@@ -37,17 +37,12 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    text = args.text
     vowel = args.vowel
-
-    # Method 4: Use a list comprehension
-    new_text = [
+    text = [
         vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
-        for c in text
+        for c in args.text
     ]
-    text = ''.join(new_text)
-
-    print(text)
+    print(''.join(text))
 
 
 # --------------------------------------------------

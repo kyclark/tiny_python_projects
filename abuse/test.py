@@ -43,6 +43,7 @@ def test_bad_adjective_num():
 
     n = random.choice(range(-10, 0))
     rv, out = getstatusoutput(f'{prg} -a {n}')
+    print(out)
     assert rv != 0
     assert re.search(f'--adjectives "{n}" must be > 0', out)
 

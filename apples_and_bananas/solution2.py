@@ -40,7 +40,6 @@ def main():
     text = args.text
     vowel = args.vowel
 
-    # Method 2: str.replace
     for v in 'aeiou':
         text = text.replace(v, vowel).replace(v.upper(), vowel.upper())
 

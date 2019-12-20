@@ -37,12 +37,10 @@ def get_args():
     args = parser.parse_args()
 
     if args.adjectives < 1:
-        parser.print_usage()
-        sys.exit(1)
-        #parser.error('--adjectives "{}" must be > 0'.format(args.adjectives))
+        parser.error(f'--adjectives "{args.adjectives}" must be > 0')
 
     if args.number < 1:
-        parser.error('--number "{}" must be > 0'.format(args.number))
+        parser.error(f'--number "{args.number}" must be > 0')
 
     return args
 

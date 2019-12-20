@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Apples and Bananas"""
+"""Howler"""
 
 import argparse
 import os
-import re
+import io
+import sys
 
 
 # --------------------------------------------------
@@ -11,23 +12,24 @@ def get_args():
     """get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Apples and bananas',
+        description='Howler (upper-cases input)',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('text', metavar='str', help='Input text or file')
+    parser.add_argument('text', metavar='str', help='Input string or file')
 
-    parser.add_argument('-v',
-                        '--vowel',
-                        help='The vowel to substitute',
+    parser.add_argument('-o',
+                        '--outfile',
+                        help='Output filename',
                         metavar='str',
                         type=str,
-                        default='a',
-                        choices=list('aeiou'))
+                        default='')
 
     args = parser.parse_args()
 
     if os.path.isfile(args.text):
-        args.text = open(args.text).read().rstrip()
+        args.text = open(args.text)
+    else:
+        args.text = io.StringIO(args.text + '\n')
 
     return args
 
@@ -37,11 +39,10 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    vowel = args.vowel
-    trans = str.maketrans('aeiouAEIOU', vowel * 5 + vowel.upper() * 5)
-    text = args.text.translate(trans)
-
-    print(text)
+    out_fh = open(args.outfile, 'wt') if args.outfile else sys.stdout
+    for line in args.text:
+        out_fh.write(line.upper())
+    out_fh.close()
 
 
 # --------------------------------------------------

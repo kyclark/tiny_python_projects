@@ -3,7 +3,6 @@
 
 import argparse
 import os
-import re
 
 
 # --------------------------------------------------
@@ -37,16 +36,12 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    text = args.text
     vowel = args.vowel
 
-    # Method 7: `map` with the function
     def new_char(c):
         return vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
 
-    text = ''.join(map(new_char, text))
-
-    print(text)
+    print(''.join(map(new_char(), args.text)))
 
 
 # --------------------------------------------------
