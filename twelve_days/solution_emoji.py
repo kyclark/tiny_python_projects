@@ -53,7 +53,7 @@ def verse(day):
 
     ordinal = [
         'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh',
-        'eighth', 'ninth', 'tenth', 'eleven', 'twelfth'
+        'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth'
     ]
 
     gifts = [

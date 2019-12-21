@@ -30,7 +30,7 @@ def get_args():
     args = parser.parse_args()
 
     if args.num not in range(1, 13):
-        parser.error(f'Cannot sing "{args.num}" days')
+        parser.error(f'--num "{args.num}" must be between 1 and 12')
 
     return args
 
@@ -51,7 +51,7 @@ def verse(day):
 
     ordinal = [
         'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh',
-        'eighth', 'ninth', 'tenth', 'eleven', 'twelfth'
+        'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth'
     ]
 
     gifts = [

@@ -43,18 +43,18 @@ def test_stemmer():
 # --------------------------------------------------
 def main():
     """Make a jazz noise here"""
+
     args = get_args()
-    word = args.word
     prefixes = list('bcdfghjklmnpqrstvwxyz') + (
         'bl br ch cl cr dr fl fr gl gr pl pr sc '
         'sh sk sl sm sn sp st sw th tr tw wh wr'
         'sch scr shr sph spl spr squ str thr').split()
 
-    start, rest = stemmer(word.lower())
+    start, rest = stemmer(args.word.lower())
     if rest:
         print('\n'.join([p + rest for p in prefixes if p != start]))
     else:
-        print('Cannot rhyme "{}"'.format(word))
+        print('Cannot rhyme "{}"'.format(args.word))
 
 
 # --------------------------------------------------
