@@ -25,27 +25,45 @@ def test_usage():
 
 # --------------------------------------------------
 def test_take():
-    """one item"""
+    """leading consonant"""
 
     out = getoutput('{} take'.format(prg)).splitlines()
-    assert len(out) == 54
+    assert len(out) == 56
     assert out[0] == 'bake'
     assert out[-1] == 'thrake'
 
 
 # --------------------------------------------------
 def test_chair():
-    """one item"""
+    """consonant cluster"""
 
     out = getoutput('{} chair'.format(prg)).splitlines()
-    assert len(out) == 54
+    assert len(out) == 56
     assert out[1] == 'cair'
     assert out[-2] == 'strair'
 
+# --------------------------------------------------
+def test_chair_uppercase():
+    """consonant cluster"""
+
+    out = getoutput('{} CHAIR'.format(prg)).splitlines()
+    assert len(out) == 56
+    assert out[1] == 'cair'
+    assert out[-2] == 'strair'
 
 # --------------------------------------------------
-def test_bad():
-    """bad"""
+def test_apple():
+    """leading vowel"""
+
+    out = getoutput('{} apple'.format(prg)).splitlines()
+    assert len(out) == 57
+    assert out[10] == 'napple'
+    assert out[-10] == 'wrapple'
+
+
+# --------------------------------------------------
+def test_no_vowels():
+    """no vowels"""
 
     out = getoutput('{} bbb'.format(prg))
     assert out == 'Cannot rhyme "bbb"'
