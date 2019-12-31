@@ -8,7 +8,8 @@ import re
 
 # --------------------------------------------------
 def get_args():
-    """get command-line arguments"""
+    """Get command-line arguments"""
+
     parser = argparse.ArgumentParser(
         description='Southern fry text',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -24,18 +25,27 @@ def get_args():
 
 
 # --------------------------------------------------
+def main():
+    """Make a jazz noise here"""
+
+    args = get_args()
+
+    for line in args.text.splitlines():
+        print(''.join(map(fry, re.split(r'(\W+)', line.rstrip()))))
+
+
+# --------------------------------------------------
 def fry(word):
     """Drop the `g` from `-ing` words, change `you` to `y'all`"""
 
-    ing_word = re.search('(.+)ing$', word)
-    you = re.match('([Yy])ou$', word)
+    if word.lower() == 'you':
+        return word[0] + "'all"
 
-    if ing_word:
-        prefix = ing_word.group(1)
-        if re.search('[aeiouy]', prefix, re.IGNORECASE):
-            return prefix + "in'"
-    elif you:
-        return you.group(1) + "'all"
+    if word.endswith('ing'):
+        if any(map(lambda c: c.lower() in 'aeiouy', word[:-3])):
+            return word[:-1] + "'"
+        else:
+            return word
 
     return word
 
@@ -49,16 +59,6 @@ def test_fry():
     assert fry('fishing') == "fishin'"
     assert fry('Aching') == "Achin'"
     assert fry('swing') == "swing"
-
-
-# --------------------------------------------------
-def main():
-    """Make a jazz noise here"""
-
-    args = get_args()
-
-    for line in args.text.splitlines():
-        print(''.join(map(fry, re.split(r'(\W+)', line.rstrip()))))
 
 
 # --------------------------------------------------
