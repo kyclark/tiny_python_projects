@@ -23,7 +23,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput('{} {}'.format(prg, flag))
+        rv, out = getstatusoutput(f'{prg} {flag}')
         assert rv == 0
         assert re.match("usage", out, re.IGNORECASE)
 
@@ -32,7 +32,7 @@ def test_usage():
 def test_text1():
     """Text"""
 
-    out = getoutput('{} foobar -s 1'.format(prg))
+    out = getoutput(f'{prg} foobar -s 1')
     assert out.strip() == 'faobor'
 
 
@@ -41,8 +41,8 @@ def test_text2():
     """Text"""
 
     text = 'The quick brown fox jumps over the lazy dog.'
-    expected = 'The qicuk bworn fox jpmus oevr the lzay dog.'
-    out = getoutput('{} "{}" -s 2'.format(prg, text))
+    expected = 'The qicuk bworn fox jpmus over the lzay dog.'
+    out = getoutput(f'{prg} "{text}" -s 2')
     assert out.strip() == expected
 
 
@@ -54,15 +54,15 @@ def test_file_bustle():
 The blutse in a hosue
 The mrinong afetr daeth
 Is seosnmelt of iinuetdrss
-Etecand uopn eatrh,--
+Etecand upon etrah,--
 
-The sweenpig up the hraet,
-And pttinug lvoe aawy
-We slhal not wnat to use aagin
-Utnil enterity.
+The sweenipg up the herat,
+And pniuttg lvoe away
+We slahl not want to use again
+Unitl eettnriy.
     """.strip()
 
-    out = getoutput('{} --seed 3 {}'.format(prg, bustle))
+    out = getoutput(f'{prg} --seed 3 {bustle}')
     assert out.strip() == expected.strip()
 
 
@@ -70,7 +70,7 @@ Utnil enterity.
 def test_file_fox():
     """File input"""
 
-    out = getoutput('{} --seed 4 {}'.format(prg, fox))
+    out = getoutput(f'{prg} --seed 4 {fox}')
     assert out.strip() == 'The qciuk bworn fox jpums oevr the lzay dog.'
 
 
@@ -78,5 +78,6 @@ def test_file_fox():
 def test_file_spiders():
     """File input"""
 
-    out = getoutput('{} --seed 9 {}'.format(prg, spiders))
-    assert out.strip() == "Do'nt wrory, sedrpis,\nI keep huose\ncaslaluy."
+    out = getoutput(f'{prg} --seed 9 {spiders}')
+    expected = "Do'nt wrory, sedrpis,\nI keep hsoue\ncalusaly."
+    assert out.strip() == expected
