@@ -35,7 +35,7 @@ def main():
 
     args = get_args()
     inputs = args.inputs
-    regex = re.compile('(<([^>])+>)')
+    regex = re.compile('(<([^>]+)>)')
     text = args.file.read().rstrip()
     blanks = list(regex.finditer(text))
 
@@ -43,9 +43,11 @@ def main():
         print('File "{}" has no placeholders'.format(args.file.name))
         sys.exit(1)
 
+    tmpl = 'Give me {} {}: '
     for match in blanks:
-        placeholder, name = match.groups()
-        answer = inputs.pop(0) if inputs else input('{}: '.format(name))
+        placeholder, pos = match.groups()
+        article = 'an' if pos.lower()[0] in 'aeiou' else 'a'
+        answer = inputs.pop(0) if inputs else input(tmpl.format(article, pos))
         text = re.sub(placeholder, answer, text, count=1)
 
     print(text)
