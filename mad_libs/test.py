@@ -4,9 +4,14 @@
 import re
 import os
 import random
+import string
 from subprocess import getstatusoutput
 
-prg = './mad_lib.py'
+prg = './mad.py'
+no_blanks = 'inputs/no_blanks.txt'
+fox = 'inputs/fox.txt'
+hlp = 'inputs/help.txt'
+verona = 'inputs/romeo_juliet.txt'
 
 
 # --------------------------------------------------
@@ -27,7 +32,38 @@ def test_usage():
 
 
 # --------------------------------------------------
-def test_01():
+def test_bad_file():
+    """Test bad input file"""
+
+    bad = random_string()
+    rv, out = getstatusoutput(f'{prg} {bad}')
+    assert rv != 0
+    assert re.search(f"No such file or directory: '{bad}'", out)
+
+
+# --------------------------------------------------
+def test_no_blanks():
+    """Test no blanks"""
+
+    rv, out = getstatusoutput(f'{prg} {no_blanks}')
+    assert rv != 0
+    assert out == f'"{no_blanks}" has no placeholders.'
+
+
+# --------------------------------------------------
+def test_fox():
+    """test fox"""
+
+    args = f'{fox} -i surly car under bicycle'
+    rv, out = getstatusoutput(f'{prg} {args}')
+    assert rv == 0
+    assert out.strip() == 'The quick surly car jumps under the lazy bicycle.'
+
+
+# --------------------------------------------------
+def test_help():
+    """test help"""
+
     expected = """
 Hey! I need tacos!
 Oi! Not just salsa!
@@ -35,14 +71,16 @@ Hola! You know I need queso!
 Arriba!
     """.strip()
 
-    args = 'help.txt -i Hey tacos Oi salsa Hola queso Arriba'
-    rv, out = getstatusoutput('{} {}'.format(prg, args))
+    args = f'{hlp} -i Hey tacos Oi salsa Hola queso Arriba'
+    rv, out = getstatusoutput(f'{prg} {args}')
     assert rv == 0
     assert out.strip() == expected.strip()
 
 
 # --------------------------------------------------
-def test_02():
+def test_verona():
+    """test verona"""
+
     expected = """
 Two cars, both alike in dignity,
 In fair Detroit, where we lay our scene,
@@ -60,8 +98,16 @@ The which if you with patient foot attend,
 What here shall hammer, our toil shall strive to mend.
     """.strip()
 
-    args = ('romeo_juliet.txt --inputs cars Detroit oil pistons '
+    args = (f'{verona} --inputs cars Detroit oil pistons '
             '"stick shift" furious accelerate 42 foot hammer')
-    rv, out = getstatusoutput('{} {}'.format(prg, args))
+    rv, out = getstatusoutput(f'{prg} {args}')
     assert rv == 0
     assert out.strip() == expected.strip()
+
+
+# --------------------------------------------------
+def random_string():
+    """generate a random string"""
+
+    k = random.randint(5, 10)
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=k))

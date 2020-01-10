@@ -3,6 +3,7 @@
 
 import argparse
 import re
+import sys
 
 
 # --------------------------------------------------
@@ -23,8 +24,7 @@ def get_args():
                         help='Inputs (for testing)',
                         metavar='str',
                         type=str,
-                        nargs='+',
-                        required=False)
+                        nargs='*')
 
     return parser.parse_args()
 
@@ -35,22 +35,47 @@ def main():
 
     args = get_args()
     inputs = args.inputs
-    regex = re.compile('(<([^>]+)>)')
     text = args.file.read().rstrip()
-    blanks = list(regex.finditer(text))
-
-    if not blanks:
-        print('File "{}" has no placeholders'.format(args.file.name))
-        sys.exit(1)
-
+    had_placeholders = False
     tmpl = 'Give me {} {}: '
-    for match in blanks:
-        placeholder, pos = match.groups()
+
+    while True:
+        brackets = find_brackets(text)
+        if not brackets:
+            break
+
+        start, stop = brackets
+        placeholder = text[start:stop + 1]
+        pos = placeholder[1:-1]
         article = 'an' if pos.lower()[0] in 'aeiou' else 'a'
         answer = inputs.pop(0) if inputs else input(tmpl.format(article, pos))
-        text = re.sub(placeholder, answer, text, count=1)
+        text = text[0:start] + answer + text[stop + 1:]
+        had_placeholders = True
 
-    print(text)
+    if had_placeholders:
+        print(text)
+    else:
+        print(f'"{args.file.name}" has no placeholders.', file=sys.stderr)
+        sys.exit(1)
+
+
+# --------------------------------------------------
+def find_brackets(text):
+    """Find angle brackets"""
+
+    start = text.index('<') if '<' in text else -1
+    stop = text.index('>') if start >= 0 and '>' in text[start + 2:] else -1
+    return (start, stop) if start >= 0 and stop >= 0 else and balanced None
+
+
+# --------------------------------------------------
+def test_find_brackets():
+    """Test for finding angle brackets"""
+
+    assert find_brackets('') == None
+    assert find_brackets('<>') == None
+    assert find_brackets('<x>') == (0, 2)
+    assert find_brackets('foo <bar> baz') == (4, 8)
 
 
 # --------------------------------------------------
