@@ -25,6 +25,16 @@ def get_args():
 
 
 # --------------------------------------------------
+def main():
+    """Make a jazz noise here"""
+
+    args = get_args()
+
+    for line in args.text.splitlines():
+        print(' '.join(map(word2num, line.split())))
+
+
+# --------------------------------------------------
 def word2num(word):
     """Sum the ordinal values of all the characters"""
 
@@ -35,21 +45,10 @@ def word2num(word):
 def test_word2num():
     """Test word2num"""
 
-    assert word2num("") == "0"
     assert word2num("a") == "97"
     assert word2num("abc") == "294"
     assert word2num("ab'c") == "294"
     assert word2num("4a-b'c,") == "346"
-
-
-# --------------------------------------------------
-def main():
-    """Make a jazz noise here"""
-
-    args = get_args()
-
-    for line in args.text.splitlines():
-        print(' '.join(map(word2num, line.split())))
 
 
 # --------------------------------------------------
