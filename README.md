@@ -1,6 +1,6 @@
 # Introduction
 
-This is the code repository for the Manning Publications book, _Playful Python_, by Ken Youens-Clark.
+This is the code repository for the Manning Publications book, _Tiny Python Projects_, by Ken Youens-Clark.
 
 # Forking GitHub repo
 
