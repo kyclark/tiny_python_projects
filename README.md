@@ -14,4 +14,4 @@ This will allow you to `git pull upstream master` in order to get updates. When 
 
 # Copyright
 
-© Ken Youens-Clark 2019
+© Ken Youens-Clark 2019-2020
