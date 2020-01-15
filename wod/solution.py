@@ -47,6 +47,23 @@ def get_args():
 
 
 # --------------------------------------------------
+def main():
+    """Make a jazz noise here"""
+
+    args = get_args()
+    random.seed(args.seed)
+    exercises = read_csv(args.file)
+
+    def mk_exercise(name, low, high):
+        if args.easy:
+            low, high = int(low / 2), int(high / 2)
+        return (name, random.randint(low, high))
+
+    wod = starmap(mk_exercise, random.sample(exercises, k=args.num_exercises))
+    print(tabulate(wod, headers=('Exercise', 'Reps')))
+
+
+# --------------------------------------------------
 def read_csv(fh):
     """Read the CSV input"""
     exercises = []
@@ -65,23 +82,6 @@ def test_read_csv():
 
     text = io.StringIO('exercise,reps\nfoo,10-20\nbar,30-40')
     assert read_csv(text) == [('foo', 10, 20), ('bar', 30, 40)]
-
-
-# --------------------------------------------------
-def main():
-    """Make a jazz noise here"""
-
-    args = get_args()
-    random.seed(args.seed)
-    exercises = read_csv(args.file)
-
-    def mk_exercise(name, low, high):
-        if args.easy:
-            low, high = int(low / 2), int(high / 2)
-        return (name, random.randint(low, high))
-
-    wod = starmap(mk_exercise, random.sample(exercises, k=args.num_exercises))
-    print(tabulate(wod, headers=('Exercise', 'Reps')))
 
 
 # --------------------------------------------------

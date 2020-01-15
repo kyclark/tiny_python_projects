@@ -6,6 +6,7 @@ import os
 import sys
 import string
 from itertools import zip_longest
+from tabulate import tabulate
 
 
 # --------------------------------------------------
@@ -20,7 +21,9 @@ def main():
 def cell(n):
     """Format a cell"""
 
-    return '{:3} {:2}'.format(n, chr(n) if n >= 33 else 'NA')
+    return '{:3} {:5}'.format(
+        n, 'SPACE'
+        if n == 32 else 'DEL' if n == 127 else chr(n) if n >= 33 else 'NA')
 
 
 # --------------------------------------------------
