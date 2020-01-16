@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Purpose: Say hello
 
-import argparse, os, sys
+import argparse
 
 def greet(name: str) -> str:
     return f'Hello, {name}!'

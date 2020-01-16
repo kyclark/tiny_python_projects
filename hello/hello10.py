@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # Purpose: Say hello
 
-import os, sys
+import os
+import sys
 
 def greet(name: str) -> str:
     return f'Hello, {name}!'
