@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Howler"""
+"""Low-memory Howler"""
 
 import argparse
 import os
