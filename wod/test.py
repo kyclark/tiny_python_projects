@@ -6,6 +6,8 @@ import random
 from subprocess import getstatusoutput
 
 prg = './wod.py'
+input1 = 'exercises.csv'
+input2 = 'silly-exercises.tab'
 
 
 # --------------------------------------------------
@@ -20,7 +22,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput('{} {}'.format(prg, flag))
+        rv, out = getstatusoutput(f'{prg} {flag}')
         assert rv == 0
         assert out.lower().startswith('usage')
 
@@ -39,7 +41,7 @@ Pullups            24
 """
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
-    rv, out = getstatusoutput('{} {} {}'.format(prg, seed_flag, 1))
+    rv, out = getstatusoutput(f'{prg} {seed_flag} 1')
     assert rv == 0
     assert out.strip() == expected.strip()
 
@@ -59,8 +61,7 @@ Pullups            12
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
     easy_flag = '-e' if random.choice([0, 1]) else '--easy'
-    rv, out = getstatusoutput('{} {} {} {}'.format(prg, easy_flag, seed_flag,
-                                                   1))
+    rv, out = getstatusoutput(f'{prg} {easy_flag} {seed_flag} 1')
     assert rv == 0
     assert out.strip() == expected.strip()
 
@@ -84,8 +85,7 @@ Plank           43
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
     num_flag = '-n' if random.choice([0, 1]) else '--num_exercises'
-    rv, out = getstatusoutput('{} {} 8 {} 2 -f wod.csv'.format(
-        prg, num_flag, seed_flag))
+    rv, out = getstatusoutput(f'{prg} {num_flag} 8 {seed_flag} 2 -f {input1}')
     assert rv == 0
     assert out.strip() == expected.strip()
 
@@ -104,7 +104,6 @@ Squatting Chinups           35
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
     num_flag = '-n' if random.choice([0, 1]) else '--num_exercises'
-    rv, out = getstatusoutput('{} {} 3 {} 4 -f wod2.csv'.format(
-        prg, num_flag, seed_flag))
+    rv, out = getstatusoutput(f'{prg} {num_flag} 3 {seed_flag} 4 -f {input2}')
     assert rv == 0
     assert out.strip() == expected.strip()
