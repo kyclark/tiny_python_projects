@@ -42,7 +42,12 @@ def get_args():
                         help='Halve the reps',
                         action='store_true')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if args.num < 1:
+        parser.error(f'--num "{args.num}" must be greater than 0')
+
+    return args
 
 
 # --------------------------------------------------
@@ -53,13 +58,12 @@ def main():
     random.seed(args.seed)
     wod = []
 
-    for name, low, high in read_csv(args.file):
+    for name, low, high in random.sample(read_csv(args.file), k=args.num):
         reps = random.randint(low, high)
         if args.easy:
             reps = int(reps / 2)
         wod.append((name, reps))
 
-    wod = random.sample(wod, k=args.num)
     print(tabulate(wod, headers=('Exercise', 'Reps')))
 
 
@@ -69,9 +73,8 @@ def read_csv(fh):
 
     exercises = []
     for row in csv.DictReader(fh, delimiter=','):
-        low, high = row['reps'].split('-')
-        if low.isdigit() and high.isdigit():
-            exercises.append((row['exercise'], int(low), int(high)))
+        low, high = map(int, row['reps'].split('-'))
+        exercises.append((row['exercise'], low, high))
 
     return exercises
 

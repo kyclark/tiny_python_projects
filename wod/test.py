@@ -30,6 +30,16 @@ def test_usage():
 
 
 # --------------------------------------------------
+def test_bad_num():
+    """Dies on bad --num"""
+
+    bad = random.choice(range(-10, 0))
+    rv, out = getstatusoutput(f'{prg} -n {bad}')
+    assert rv != 0
+    assert re.search(f'--num "{bad}" must be greater than 0', out)
+
+
+# --------------------------------------------------
 def test_bad_file():
     """Dies on bad file"""
 
@@ -46,10 +56,10 @@ def test_seed1():
     expected = """
 Exercise      Reps
 ----------  ------
-Plank           54
-Lunges          35
+Pushups         56
+Situps          88
 Crunches        27
-Situps          76
+Burpees         35
 """
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
@@ -65,10 +75,10 @@ def test_seed1_easy():
     expected = """
 Exercise      Reps
 ----------  ------
-Plank           27
-Lunges          17
+Pushups         28
+Situps          44
 Crunches        13
-Situps          38
+Burpees         17
 """
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
@@ -83,16 +93,16 @@ def test_seed2_num8():
     """Runs OK"""
 
     expected = """
-Exercise      Reps
-----------  ------
-Pullups         12
-Crunches        30
-Plank           53
-Situps          95
-Lunges          25
-Burpees         50
-Pushups         28
-Squats          22
+Exercise              Reps
+------------------  ------
+Burpees                 39
+Situps                  42
+Crunches                29
+Pushups                 68
+Plank                   35
+Hand-stand pushups      18
+Pullups                 30
+Lunges                  32
 """
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
@@ -107,11 +117,11 @@ def test_seed4_num3_input2():
     """Runs OK"""
 
     expected = """
-Exercise                Reps
---------------------  ------
-Squatting Chinups         27
-Existential Earflaps      24
-Erstwhile Lunges          20
+Exercise             Reps
+-----------------  ------
+Hanging Chads          86
+Red Barchettas         50
+Squatting Chinups      35
 """
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'

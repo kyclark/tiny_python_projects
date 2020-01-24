@@ -4,6 +4,7 @@
 import argparse
 import csv
 import io
+import re
 import random
 from tabulate import tabulate
 
@@ -42,7 +43,12 @@ def get_args():
                         help='Halve the reps',
                         action='store_true')
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if args.num < 1:
+        parser.error('--num "{args.num}" must be greater than 0')
+
+    return args
 
 
 # --------------------------------------------------
@@ -51,16 +57,18 @@ def main():
 
     args = get_args()
     random.seed(args.seed)
-    wod = []
+    exercises = read_csv(args.file)
 
-    for name, low, high in read_csv(args.file):
-        reps = random.randint(low, high)
-        if args.easy:
-            reps = int(reps / 2)
-        wod.append((name, reps))
+    if exercises:
+        for name, low, high in random.sample(exercises, k=args.num):
+            reps = random.randint(low, high)
+            if args.easy:
+                reps = int(reps / 2)
+            wod.append((name, reps))
 
-    wod = random.sample(wod, k=args.num)
-    print(tabulate(wod, headers=('Exercise', 'Reps')))
+        print(tabulate(wod, headers=('Exercise', 'Reps')))
+    else:
+        print(f'No usable data in --file "{args.file.name}"')
 
 
 # --------------------------------------------------
@@ -69,19 +77,14 @@ def read_csv(fh):
 
     exercises = []
     for row in csv.DictReader(fh, delimiter=','):
-        low, high = row['reps'].split('-')
-        if low.isdigit() and high.isdigit():
-            exercises.append((row['exercise'], int(low), int(high)))
+        name, reps = row.get('exercise'), row.get('reps')
+        if name and reps:
+            match = re.match(r'(\d+)-(\d+)', reps)
+            if match:
+                low, high = map(int, match.groups())
+                exercises.append((name, low, high))
 
     return exercises
-
-
-# --------------------------------------------------
-def test_read_csv():
-    """Test read_csv"""
-
-    text = io.StringIO('exercise,reps\nBurpees,20-50\nSitups,40-100')
-    assert read_csv(text) == [('Burpees', 20, 50), ('Situps', 40, 100)]
 
 
 # --------------------------------------------------
