@@ -29,9 +29,21 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput('{} {}'.format(prg, flag))
+        rv, out = getstatusoutput(f'{prg} {flag}')
         assert rv == 0
         assert re.match("usage", out, re.IGNORECASE)
+
+
+# --------------------------------------------------
+def test_bad_file():
+    """Test for bad --file"""
+
+    bad = random_string()
+    letter = random.choice(string.ascii_lowercase)
+    rv, out = getstatusoutput(f'{prg} {letter} -f {bad}')
+    assert rv != 0
+    expected = f"No such file or directory: '{bad}'"
+    assert re.search(expected, out)
 
 
 # --------------------------------------------------
@@ -45,6 +57,17 @@ def test_a():
 
 
 # --------------------------------------------------
+def test_b_c():
+    """Test for 'b c'"""
+
+    rv, out = getstatusoutput(f'{prg} b c')
+    assert rv == 0
+    expected = ('B is for Basil assaulted by bears.\n'
+                'C is for Clara who wasted away.')
+    assert out.strip() == expected
+
+
+# --------------------------------------------------
 def test_y():
     """Test for 'y'"""
 
@@ -53,37 +76,27 @@ def test_y():
     expected = 'Y is for Yorick whose head was bashed in.'
     assert out.strip() == expected
 
+
 # --------------------------------------------------
 def test_o_alternate():
     """ Test for 'o' from 'alternate.txt' """
 
-    rv, out = getstatusoutput(f'{prg} o -f alternate.txt')
+    rv, out = getstatusoutput(f'{prg} o P q -f alternate.txt')
     assert rv == 0
-    expected = 'O is for Orville, who fell in a canyon.'
+    expected = ('O is for Orville, who fell in a canyon.\n'
+                'P is for Paul, strangled by his banyan.\n'
+                'Q is for Quintanna, flayed in the night.')
     assert out.strip() == expected
 
 
 # --------------------------------------------------
-def test_bad_input():
+def test_bad_letter():
     """Test for bad input"""
 
-    for arg in ['5', 'ch']:
-        rv, out = getstatusoutput('{} {}'.format(prg, arg))
-        assert rv == 0
-        expected = 'I do not know "{}".'.format(arg)
-        assert out.strip() == expected
-
-
-# --------------------------------------------------
-def test_bad_file():
-    """Test for bad --file"""
-
-    bad_file = random_string()
-    letter = random.choice(string.ascii_lowercase)
-    rv, out = getstatusoutput('{} {} -f {}'.format(prg, letter, bad_file))
-    assert rv != 0
-    expected = "No such file or directory: '{}'".format(bad_file)
-    assert re.search(expected, out)
+    rv, out = getstatusoutput(f'{prg} 5 CH')
+    assert rv == 0
+    expected = ('I do not know "5".\n' 'I do not know "CH".')
+    assert out.strip() == expected
 
 
 # --------------------------------------------------

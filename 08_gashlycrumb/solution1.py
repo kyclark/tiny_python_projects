@@ -12,7 +12,11 @@ def get_args():
         description='Gashlycrumb',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('letter', help='Letter', metavar='str', type=str)
+    parser.add_argument('letter',
+                        help='Letter(s)',
+                        metavar='str',
+                        nargs='+',
+                        type=str)
 
     parser.add_argument('-f',
                         '--file',
@@ -29,13 +33,13 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    letter = args.letter
     lookup = {line[0].upper(): line.rstrip() for line in args.file}
 
-    if letter.upper() in lookup:
-        print(lookup[letter.upper()])
-    else:
-        print(f'I do not know "{letter}".')
+    for letter in args.letter:
+        if letter.upper() in lookup:
+            print(lookup[letter.upper()])
+        else:
+            print(f'I do not know "{letter}".')
 
 
 # --------------------------------------------------

@@ -93,21 +93,12 @@ def l33t(text):
     """l33t"""
 
     text = ransom(text)
-    xform = {
-        'a': '@',
-        'A': '4',
-        'o': '0',
-        'O': '0',
-        't': '+',
-        'e': '3',
-        'E': '3',
-        'I': '1',
-        'S': '5'
-    }
-    for x, y in xform.items():
-        text = text.replace(x, y)
-
-    return text + random.choice(string.punctuation)
+    xform = str.maketrans({
+        'a': '@', 'A': '4', 'o': '0',
+        'O': '0', 't': '+', 'e': '3',
+        'E': '3', 'I': '1', 'S': '5'
+    })
+    return text.translate(xform) + random.choice(string.punctuation)
 
 
 # --------------------------------------------------
