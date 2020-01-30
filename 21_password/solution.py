@@ -42,7 +42,7 @@ def get_args():
                         '--min_word_len',
                         metavar='int',
                         type=int,
-                        default=3,
+                        default=4,
                         help='Minimum word length')
 
     parser.add_argument('-s',
@@ -67,12 +67,12 @@ def main():
     random.seed(args.seed)
     words = set()
 
-    clean = lambda word: re.sub('[^a-zA-Z]', '', word)
     for fh in args.file:
-        for word in filter(lambda w: len(w) > args.min_word_len,
-                           map(clean,
-                               fh.read().lower().split())):
-            words.add(word.title())
+        for line in fh:
+            for word in filter(lambda w: len(w) >= args.min_word_len,
+                               map(clean,
+                                   line.lower().split())):
+                words.add(word.title())
 
     words = sorted(list(words))
 
@@ -82,25 +82,23 @@ def main():
 
 
 # --------------------------------------------------
+def clean(word):
+    """Remove non-word characters from word"""
+
+    return re.sub('[^a-zA-Z]', '', word)
+
+
+# --------------------------------------------------
 def l33t(text):
     """l33t"""
 
     text = ransom(text)
-    xform = {
-        'a': '@',
-        'A': '4',
-        'o': '0',
-        'O': '0',
-        't': '+',
-        'e': '3',
-        'E': '3',
-        'I': '1',
-        'S': '5'
-    }
-    for x, y in xform.items():
-        text = text.replace(x, y)
-
-    return text + random.choice(string.punctuation)
+    xform = str.maketrans({
+        'a': '@', 'A': '4', 'o': '0',
+        'O': '0', 't': '+', 'e': '3',
+        'E': '3', 'I': '1', 'S': '5'
+    })
+    return text.translate(xform) + random.choice(string.punctuation)
 
 
 # --------------------------------------------------
