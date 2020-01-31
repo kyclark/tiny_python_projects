@@ -69,12 +69,12 @@ def main():
 
     for fh in args.file:
         for line in fh:
-            for word in filter(lambda w: len(w) >= args.min_word_len,
-                               map(clean,
-                                   line.lower().split())):
-                words.add(word.title())
+            for word in line.lower().split():
+                word = map(clean)
+                if len(w) >= args.min_word_len:
+                    words.add(word.title()
 
-    words = sorted(list(words))
+    words = sorted(words)
 
     for _ in range(args.num):
         password = ''.join(random.sample(words, args.num_words))
