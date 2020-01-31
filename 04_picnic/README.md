@@ -22,6 +22,13 @@ $ ./picnic.py sandwiches chips cake
 You are bringing sandwiches, chips, and cake.
 ```
 
+If the `--sorted` flag is present, the items should first be sorted:
+
+```
+$ ./picnic.py sandwiches chips cake --sorted
+You are bringing cake, chips, and sandwiches.
+```
+
 If no items are given, print a brief usage:
 
 ```
