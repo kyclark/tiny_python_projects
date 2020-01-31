@@ -63,6 +63,14 @@ optional arguments:
   -f str, --file str  Input file (default: gashlycrumb.txt)
 ```
 
+The program should reject a bad `--file` argument:
+
+```
+$ ./gashlycrumb.py -f alskdf
+usage: gashlycrumb.py [-h] [-f str] str [str ...]
+gashlycrumb.py: error: argument -f/--file: can't open 'alskdf': [Errno 2] No such file or directory: 'alskdf'
+```
+
 Run the test suite to ensure your program is correct:
 
 ```
