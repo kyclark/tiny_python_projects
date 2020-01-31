@@ -4,9 +4,15 @@ This is the code repository for the Manning Publications book, _Tiny Python Proj
 
 https://www.manning.com/books/tiny-python-projects
 
-There is a directory for each chapter of the book which describes in detail the skills you need to solve the coding challenges.
+There is a directory for each chapter of the book.
 Each directory contains a `test.py` program you can use with `pytest` to check that you have written the program correctly.
-The testing step is integral to writing.
+I have included a short README to describe each exercise.
+If you have problems writing code (or if you would like to support this project!), the book contains details about the skills you need.
+
+The testing step is integral to writing and solving these challenges as well as to the methodology of the book.
+I advocate a "test-driven development" mentality where we write tests _before_ we write code.
+The tests should define what it means for a program to be correct, and then we write programs to satisfy the tests.
+In this project, I've written all the tests for you, but I also encourage you to write your own functions and tests.
 You should run the test suite after every change to your program to ensure you are making progress!
 
 # Forking GitHub repo
