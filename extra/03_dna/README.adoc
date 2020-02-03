@@ -1,0 +1,68 @@
+= Counting DNA Nucleotides
+
+In this exercise, we'll count the frequency of the four nucleotide bases in a given string of DNA as described on the http://rosalind.info/problems/dna/[Rosalind.info site]footnote:[This is a website with various bioinformatics coding challenges. It's named after Rosalind Franklin who should have gotten a Nobel Prize for her work on discovering the double-helix structure of DNA. Instead, she died early with little recognition of her contributions, but she did get this website named after her.]
+Write a Python program called `dna.py` that will accept a single, required, positional argument that is a string of `dna` and print the number of times you see each of the bases A, C, G, and T (in that order) separated by spaces.
+
+The program should print a brief usage when run with no input:
+
+----
+$ ./dna.py
+usage: dna.py [-h] str
+dna.py: error: the following arguments are required: str
+----
+
+Or a longer usage for the `-h` or `--help` flags:
+
+----
+$ ./dna.py -h
+usage: dna.py [-h] str
+
+Count DNA nucleotides
+
+positional arguments:
+  str         DNA
+
+optional arguments:
+  -h, --help  show this help message and exit
+----
+
+Examples of running:
+
+----
+$ ./dna.py A
+1 0 0 0
+$ ./dna.py C
+0 1 0 0
+$ ./dna.py G
+0 0 1 0
+$ ./dna.py T
+0 0 0 1
+$ ./dna.py AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
+20 12 17 21
+----
+
+A passing test suite looks like this:
+
+----
+$ make test
+pytest -xv test.py
+============================= test session starts ==============================
+...
+collected 11 items
+
+test.py::test_exists PASSED                                              [  9%]
+test.py::test_no_arg_and_usage PASSED                                    [ 18%]
+test.py::test_a_upper PASSED                                             [ 27%]
+test.py::test_a_lower PASSED                                             [ 36%]
+test.py::test_c_upper PASSED                                             [ 45%]
+test.py::test_c_lower PASSED                                             [ 54%]
+test.py::test_g_upper PASSED                                             [ 63%]
+test.py::test_g_lower PASSED                                             [ 72%]
+test.py::test_t_upper PASSED                                             [ 81%]
+test.py::test_t_lower PASSED                                             [ 90%]
+test.py::test_rosalind_example PASSED                                    [100%]
+
+============================== 11 passed in 0.61s ==============================
+----
+
+NOTE: Solve this problem using only the skills you've learned up to chapter 3 -- that is, only using Python `str` methods.

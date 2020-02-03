@@ -1,0 +1,71 @@
+= Text Classifier
+
+Write a Python program called `classify.py` that will report if a given input is:
+
+* uppercase, e.g., "HELLO"
+* lowercase, e.g., "hello"
+* title case, e.g., "Hello"
+* a digit, e.g., "10"
+* a space, e.g., " " or the tab character "\t"
+* none of the above, e.g., "1.2"
+
+The program should work like so:
+
+----
+$ ./classify.py HELLO
+HELLO is uppercase.
+$ ./classify.py hello
+hello is lowercase.
+$ ./classify.py Hello
+Hello is title case.
+$ ./classify.py 10
+10 is a digit.
+$ ./classify.py " "
+input is space.
+$ ./classify.py "1.2"
+1.2 is unclassified.
+----
+
+It should print a brief usage if provided with no arguments:
+
+----
+$ ./classify.py
+usage: classify.py [-h] str
+classify.py: error: the following arguments are required: str
+----
+
+And a longer usage for the `-h` or `--help` flags:
+
+----
+$ ./classify.py -h
+usage: classify.py [-h] str
+
+Classify a given string
+
+positional arguments:
+  str         Some text
+
+optional arguments:
+  -h, --help  show this help message and exit
+----
+
+It should pass all the tests:
+
+----
+$ make test
+pytest -xv test.py
+============================= test session starts ==============================
+...
+collected 8 items
+
+test.py::test_exists PASSED                                              [ 12%]
+test.py::test_usage PASSED                                               [ 25%]
+test.py::test_upper PASSED                                               [ 37%]
+test.py::test_lower PASSED                                               [ 50%]
+test.py::test_title PASSED                                               [ 62%]
+test.py::test_digit PASSED                                               [ 75%]
+test.py::test_space PASSED                                               [ 87%]
+test.py::test_unclassified PASSED                                        [100%]
+
+============================== 8 passed in 0.44s ===============================
+----
