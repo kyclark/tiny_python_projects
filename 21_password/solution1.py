@@ -72,7 +72,6 @@ def main():
                                    line.lower().split())):
                 words.add(word.title())
 
-    words = sorted(words)
     passwords = []
     for _ in range(args.num):
         passwords.append(''.join(random.sample(words, args.num_words)))
