@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-"""Password maker"""
+"""Password maker, https://xkcd.com/936/"""
 
 import argparse
-import os
 import random
 import re
 import string
-import sys
 
 
 # --------------------------------------------------
@@ -69,16 +67,16 @@ def main():
 
     for fh in args.file:
         for line in fh:
-            for word in line.lower().split():
-                word = map(clean)
-                if len(w) >= args.min_word_len:
-                    words.add(word.title()
+            for word in filter(lambda w: len(w) >= args.min_word_len,
+                               map(clean,
+                                   line.lower().split())):
+                words.add(word.title())
 
     words = sorted(words)
-
-    for _ in range(args.num):
-        password = ''.join(random.sample(words, args.num_words))
-        print(l33t(password) if args.l33t else password)
+    passwords = [
+        ''.join(random.sample(words, args.num_words)) for _ in range(args.num)
+    ]
+    print('\n'.join(map(l33t, passwords) if args.l33t else passwords))
 
 
 # --------------------------------------------------
@@ -94,9 +92,7 @@ def l33t(text):
 
     text = ransom(text)
     xform = str.maketrans({
-        'a': '@', 'A': '4', 'o': '0',
-        'O': '0', 't': '+', 'e': '3',
-        'E': '3', 'I': '1', 'S': '5'
+        'a': '@', 'A': '4', 'O': '0', 't': '+', 'E': '3', 'I': '1', 'S': '5'
     })
     return text.translate(xform) + random.choice(string.punctuation)
 
