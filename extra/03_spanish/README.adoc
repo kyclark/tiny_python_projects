@@ -1,0 +1,66 @@
+= Spanish article selector
+
+Write a Python program called `article.py` that will choose the correct article for word given as a single positional argument. 
+Although there are exceptions, Spanish tends to use "el" for words ending in "o" and "la" otherwise.
+The entire output will be in the form:
+
+----
+Me gusto {article} {word}.
+----
+
+For example, if the input is "chico", the article should be "el":
+
+----
+$ ./article.py chico
+Me gusto el chico.
+----
+
+And "la" for "chica":
+
+----
+$ ./article.py chica
+Me gusto la chica.
+----
+
+It should print a brief usage if provided with no arguments:
+
+----
+$ ./article.py
+usage: article.py [-h] str
+article.py: error: the following arguments are required: str
+----
+
+And a longer usage for the `-h` or `--help` flags:
+
+----
+$ ./article.py -h
+usage: article.py [-h] str
+
+Choose the correct Spanish article
+
+positional arguments:
+  str         Input text
+
+optional arguments:
+  -h, --help  show this help message and exit
+----
+
+
+It should pass all the tests:
+
+----
+$ make test
+pytest -xv test.py
+============================= test session starts ==============================
+...
+collected 6 items
+
+test.py::test_exists PASSED                                              [ 16%]
+test.py::test_usage PASSED                                               [ 33%]
+test.py::test_masculine_lower PASSED                                     [ 50%]
+test.py::test_masculine_upper PASSED                                     [ 66%]
+test.py::test_feminine_lower PASSED                                      [ 83%]
+test.py::test_feminine_upper PASSED                                      [100%]
+
+============================== 6 passed in 0.33s ===============================
+----
