@@ -4,7 +4,7 @@ import random
 
 # --------------------------------------------------
 def test_board_no_state():
-    """makes board"""
+    """makes default board"""
 
     board = """
 -------------

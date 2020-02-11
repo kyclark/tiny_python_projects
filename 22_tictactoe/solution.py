@@ -3,8 +3,6 @@
 
 import argparse
 import re
-import os
-import sys
 
 
 # --------------------------------------------------
@@ -44,8 +42,7 @@ def get_args():
         parser.error('Must provide both --player and --cell')
 
     if not re.search('^[.XO]{9}$', args.state):
-        parser.error(f'--state "{args.state}" must be 9 characters, '
-                     'only ., X, O')
+        parser.error(f'--state "{args.state}" must be 9 characters of ., X, O')
 
     if args.player and args.cell and args.state[args.cell - 1] in 'XO':
         parser.error(f'--cell "{args.cell}" already taken')
@@ -67,21 +64,14 @@ def main():
 
     print(format_board(state))
     winner = find_winner(state)
-
-    if winner:
-        print(f'{winner} has won!')
-    else:
-        print('No winner.')
+    print(f'{winner} has won!' if winner else 'No winner.')
 
 
 # --------------------------------------------------
 def format_board(state):
     """Format the board"""
 
-    cells = []
-    for i, char in enumerate(state, start=1):
-        cells.append(str(i) if char == '.' else char)
-
+    cells = [str(i) if c == '.' else c for i, c in enumerate(state, 1)]
     bar = '-------------'
     cells_tmpl = '| {} | {} | {} |'
     return '\n'.join([
