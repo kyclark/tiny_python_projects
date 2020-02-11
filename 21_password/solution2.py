@@ -72,6 +72,7 @@ def main():
                                    line.lower().split())):
                 words.add(word.title())
 
+    words = sorted(words)
     passwords = [
         ''.join(random.sample(words, args.num_words)) for _ in range(args.num)
     ]
