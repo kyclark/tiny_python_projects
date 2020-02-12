@@ -51,7 +51,7 @@ No winner.
 def test_bad_state():
     """dies on bad state"""
 
-    expected = '--state "{}" must be 9 characters, only ., X, O'
+    expected = '--state "{}" must be 9 characters of ., X, O'
 
     for bad in ['ABC', '...XXX', 'XXXOOOXX']:
         rv, out = getstatusoutput(f'{prg} --state {bad}')

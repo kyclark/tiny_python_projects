@@ -71,7 +71,10 @@ def main():
 def format_board(state):
     """Format the board"""
 
-    cells = [str(i) if c == '.' else c for i, c in enumerate(state, 1)]
+    cells = []
+    for i, char in enumerate(state, start=1):
+        cells.append(str(i) if char == '.' else char)
+
     bar = '-------------'
     cells_tmpl = '| {} | {} | {} |'
     return '\n'.join([
@@ -89,10 +92,10 @@ def find_winner(state):
     winning = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7],
                [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 
-    for player in ['X', 'O']:
-        for i, j, k in winning:
-            combo = [state[i], state[j], state[k]]
-            if combo == [player, player, player]:
+    for combo in winning:
+        group = list(map(lambda i: state[i], combo))
+        for player in ['X', 'O']:
+            if all(x == player for x in group):
                 return player
 
 
