@@ -1,0 +1,90 @@
+= Seven Days of the Week
+
+For this exercise, we'll draw inspiration from the song "Seven Days of the Week" by They Might Be Giants.
+You can enjoy the official video here:
+
+https://www.youtube.com/watch?v=geTSBFb_GR4
+
+Your program will accept one or more positional arguments which may or may not name a day of the week.
+For each day, you should print the appropriate line from the following list:
+
+* On Mondays I never go to work
+* On Tuesdays I stay at home
+* On Wednesdays I never feel inclined
+* On Thursdays, it's a holiday
+* And Fridays I detest
+* Oh, it's much too late on a Saturday
+* And Sunday is the day of rest
+
+For example, it should handle one day:
+
+----
+$ ./days.py Monday
+On Mondays I never go to work
+----
+
+Or several:
+
+----
+$ ./days.py Tuesday Wednesday Friday
+On Tuesdays I stay at home
+On Wednesdays I never feel inclined
+And Fridays I detest
+----
+
+If any argument does not name a day of the week, print 'Can't find "{day}"':
+
+----
+$ ./days.py Tuesday Odinsday Saturday
+On Tuesdays I stay at home
+Can't find "Odinsday"
+Oh, it's much too late on a Saturday
+----
+
+If run with no arguments, it should print a short usage:
+
+----
+$ ./days.py
+usage: days.py [-h] str [str ...]
+days.py: error: the following arguments are required: str
+----
+
+And it should respond to `-h` or `--help` with a longer usage:
+
+----
+$ ./days.py -h
+usage: days.py [-h] str [str ...]
+
+What to do on each day
+
+positional arguments:
+  str         Days of the week
+
+optional arguments:
+  -h, --help  show this help message and exit
+----
+
+Your program should pass all tests:
+
+----
+$ make test
+pytest -xv test.py
+============================= test session starts ==============================
+...
+collected 12 items
+
+test.py::test_exists PASSED                                              [  8%]
+test.py::test_usage PASSED                                               [ 16%]
+test.py::test_monday PASSED                                              [ 25%]
+test.py::test_tuesday PASSED                                             [ 33%]
+test.py::test_wednesday PASSED                                           [ 41%]
+test.py::test_thursday PASSED                                            [ 50%]
+test.py::test_friday PASSED                                              [ 58%]
+test.py::test_saturday PASSED                                            [ 66%]
+test.py::test_sunday PASSED                                              [ 75%]
+test.py::test_lower PASSED                                               [ 83%]
+test.py::test_monday_tuesday PASSED                                      [ 91%]
+test.py::test_mix PASSED                                                 [100%]
+
+============================== 12 passed in 0.93s ==============================
+----

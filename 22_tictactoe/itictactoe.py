@@ -79,7 +79,7 @@ def format_board(board: List[str]) -> str:
     cells_tmpl = '| {} | {} | {} |'
     return '\n'.join([
         bar,
-        cells_tmpl.format(*cells[0:3]), bar,
+        cells_tmpl.format(*cells[:3]), bar,
         cells_tmpl.format(*cells[3:6]), bar,
         cells_tmpl.format(*cells[6:]), bar
     ])
