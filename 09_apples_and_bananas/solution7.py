@@ -41,7 +41,7 @@ def main():
     def new_char(c):
         return vowel if c in 'aeiou' else vowel.upper() if c in 'AEIOU' else c
 
-    print(''.join(map(new_char(), args.text)))
+    print(''.join(map(new_char, args.text)))
 
 
 # --------------------------------------------------
