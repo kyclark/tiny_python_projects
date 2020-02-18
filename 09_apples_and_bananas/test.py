@@ -3,7 +3,6 @@
 
 import re
 import os
-import random
 from subprocess import getstatusoutput, getoutput
 
 prg = './apples.py'
@@ -50,6 +49,7 @@ def test_command_line_with_vowel():
 
     out = getoutput('{} -v i foo'.format(prg))
     assert out.strip() == 'fii'
+
 
 # --------------------------------------------------
 def test_command_line_with_vowel_preserve_case():
