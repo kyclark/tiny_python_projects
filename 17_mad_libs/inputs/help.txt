@@ -1,0 +1,4 @@
+<exclamation>! I need <pronoun>!
+<exclamation>! Not just <pronoun>!
+<exclamation>! You know I need <pronoun>!
+<exclamation>!
