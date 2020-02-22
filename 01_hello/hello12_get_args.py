@@ -3,19 +3,19 @@
 
 import argparse
 
-def get_args() -> argparse.Namespace:
+def get_args():
     parser = argparse.ArgumentParser(description='Say hello')
     parser.add_argument('name', metavar='str', help='The name to greet')
     return parser.parse_args()
 
-def main() -> None:
+def main():
     args = get_args()
     print(greet(args.name))
 
-def greet(name: str) -> str:
+def greet(name):
     return f'Hello, {name}!'
 
-def test_greet() -> None:
+def test_greet():
     assert greet('World') == 'Hello, World!'
     assert greet('Terra Firma') == 'Hello, Terra Firma!'
 

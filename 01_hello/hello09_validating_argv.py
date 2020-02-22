@@ -4,14 +4,14 @@
 import os
 import sys
 
-def greet(name: str) -> str:
+def greet(name):
     return f'Hello, {name}!'
 
-def test_greet() -> None:
+def test_greet():
     assert greet('World') == 'Hello, World!'
     assert greet('Terra Firma') == 'Hello, Terra Firma!'
 
-def main() -> None:
+def main():
     args = sys.argv[1:]
     if len(args) != 1:                           # must have 1 element
         prg_name = os.path.basename(sys.argv[0]) # get program name

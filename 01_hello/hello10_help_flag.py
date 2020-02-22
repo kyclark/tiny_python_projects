@@ -4,14 +4,14 @@
 import os
 import sys
 
-def greet(name: str) -> str:
+def greet(name):
     return f'Hello, {name}!'
 
-def test_greet() -> None:
+def test_greet():
     assert greet('World') == 'Hello, World!'
     assert greet('Terra Firma') == 'Hello, Terra Firma!'
 
-def main() -> None:
+def main():
     args = sys.argv[1:]
     val = args[0] if args else ''
     if len(args) != 1 or val == '-h' or val == '--help':

@@ -8,16 +8,24 @@ import argparse
 
 
 # --------------------------------------------------
-def get_args() -> argparse.Namespace:
+def get_args():
     """Get command-line arguments"""
 
-    parser = argparse.ArgumentParser(description='Say hello')
-    parser.add_argument('name', metavar='str', help='The name to greet')
+    parser = argparse.ArgumentParser(
+        description='Say hello',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('-n',
+                        '--name',
+                        default='World',
+                        metavar='str',
+                        help='The name to greet')
+
     return parser.parse_args()
 
 
 # --------------------------------------------------
-def main() -> None:
+def main():
     """Start here"""
 
     args = get_args()
@@ -25,14 +33,14 @@ def main() -> None:
 
 
 # --------------------------------------------------
-def greet(name: str) -> str:
+def greet(name):
     """Create a greeting"""
 
     return f'Hello, {name}!'
 
 
 # --------------------------------------------------
-def test_greet() -> None:
+def test_greet():
     """Test greet"""
 
     assert greet('World') == 'Hello, World!'

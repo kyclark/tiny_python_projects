@@ -3,14 +3,14 @@
 
 import argparse
 
-def greet(name: str) -> str:
+def greet(name):
     return f'Hello, {name}!'
 
-def test_greet() -> None:
+def test_greet():
     assert greet('World') == 'Hello, World!'
     assert greet('Terra Firma') == 'Hello, Terra Firma!'
 
-def main() -> None:
+def main():
     parser = argparse.ArgumentParser(description='Say hello')
     parser.add_argument('name', help='Name to greet')
     args = parser.parse_args()
