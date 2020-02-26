@@ -24,7 +24,7 @@ def test_usage():
     """usage"""
 
     for flag in ['', '-h', '--help']:
-        out = getoutput('{} {}'.format(prg, flag))
+        out = getoutput(f'{prg} {flag}')
         assert re.match('usage', out, re.IGNORECASE)
 
 
@@ -55,8 +55,7 @@ def test_bad_mutation():
     for val in ['-1.0', '10.0']:
         rv, out = getstatusoutput(f'{prg} -m {val} {fox}')
         assert rv > 0
-        assert re.search(
-            '--mutations "{}" must be between 0 and 1'.format(val), out)
+        assert re.search(f'--mutations "{val}" must be between 0 and 1', out)
 
 
 # --------------------------------------------------

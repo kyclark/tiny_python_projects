@@ -33,7 +33,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput('{} {}'.format(prg, flag))
+        rv, out = getstatusoutput(f'{prg} {flag}')
         assert rv == 0
         assert re.match("usage", out, re.IGNORECASE)
 
@@ -43,7 +43,7 @@ def test_bad_num():
     """test bad_num"""
 
     for n in [random.choice(r) for r in (range(-10, -1), range(13, 20))]:
-        rv, out = getstatusoutput('{} -n {}'.format(prg, n))
+        rv, out = getstatusoutput(f'{prg} -n {n}')
         assert rv != 0
         assert re.search(f'--num "{n}" must be between 1 and 12', out)
 

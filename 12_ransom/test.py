@@ -28,7 +28,7 @@ def test_usage():
     """usage"""
 
     for flag in ['-h', '--help']:
-        rv, out = getstatusoutput('{} {}'.format(prg, flag))
+        rv, out = getstatusoutput(f'{prg} {flag}')
         assert rv == 0
         assert re.match("usage", out, re.IGNORECASE)
 
@@ -40,9 +40,9 @@ def test_text1():
              ('3', 'thE quICk BROwn Fox jUmPS OVEr the lAZY DOG.')]
 
     for seed, expected in tests:
-        cmd = '{} {} {} "{}"'.format(prg, seed_flag(), seed, in_text)
-        rv, out = getstatusoutput(cmd)
+        rv, out = getstatusoutput(f'{prg} {seed_flag()} {seed} "{in_text}"')
         assert out.strip() == expected
+
 
 # --------------------------------------------------
 def test_text2():
@@ -55,8 +55,7 @@ def test_text2():
     ]
 
     for seed, expected in tests:
-        cmd = '{} {} {} "{}"'.format(prg, seed_flag(), seed, in_text)
-        rv, out = getstatusoutput(cmd)
+        rv, out = getstatusoutput(f'{prg} {seed_flag()} {seed} "{in_text}"')
         assert out.strip() == expected
 
 
@@ -66,8 +65,7 @@ def test_file1():
              ('3', 'thE quICk BROwn Fox jUmPS OVEr the lAZY DOG.')]
 
     for seed, expected in tests:
-        cmd = '{} {} {} {}'.format(prg, seed_flag(), seed, fox)
-        rv, out = getstatusoutput(cmd)
+        rv, out = getstatusoutput(f'{prg} {seed_flag()} {seed} {fox}')
         assert out.strip() == expected
 
 
@@ -81,6 +79,5 @@ def test_file2():
     ]
 
     for seed, expected in tests:
-        cmd = '{} {} {} {}'.format(prg, seed_flag(), seed, now)
-        rv, out = getstatusoutput(cmd)
+        rv, out = getstatusoutput(f'{prg} {seed_flag()} {seed} {now}')
         assert out.strip() == expected

@@ -19,7 +19,7 @@ def test_usage():
     """usage"""
 
     for flag in ['', '-h', '--help']:
-        out = getoutput('{} {}'.format(prg, flag))
+        out = getoutput(f'{prg} {flag}')
         assert out.lower().startswith('usage')
 
 
@@ -49,12 +49,14 @@ def test_more_than_two():
                 'cupcakes, and French silk pie.')
     assert out.strip() == expected
 
+
 # --------------------------------------------------
 def test_two_sorted():
     """two items sorted output"""
 
     out = getoutput(f'{prg} -s soda candy')
     assert out.strip() == 'You are bringing candy and soda.'
+
 
 # --------------------------------------------------
 def test_more_than_two_sorted():
