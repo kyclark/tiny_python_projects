@@ -1,4 +1,7 @@
-pytest>=5.3.2
-pylint>=2.4.4
-flake8>=3.7.9
-mypy>=0.75
+black
+flake8
+ipython
+mypy
+pylint
+pytest
+yapf

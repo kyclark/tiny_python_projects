@@ -9,3 +9,4 @@ tex2pdf*
 .mypy_cache
 .log
 .coverage
+.idea
