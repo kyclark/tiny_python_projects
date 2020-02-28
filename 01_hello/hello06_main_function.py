@@ -1,19 +1,13 @@
 #!/usr/bin/env python3
 # Purpose: Say hello
 
-import sys
+import argparse
 
-def greet(name):
-    return f'Hello, {name}!'
+def main():
+    parser = argparse.ArgumentParser(description='Say hello')
+    parser.add_argument('-n', '--name', default='World', help='Name to greet')
+    args = parser.parse_args()
+    print('Hello, ' + args.name + '!')
 
-def test_greet():
-    assert greet('World') == 'Hello, World!'
-    assert greet('Terra Firma') == 'Hello, Terra Firma!'
-
-def main():                    # new "main" entry function
-    args = sys.argv[1:]
-    name = args[0] if args else 'World'
-    print(greet(name))
-
-if __name__ == '__main__':     # program starts here
-    main()                     # call "main" function if in "main" namespace
+if __name__ == '__main__':
+    main()
