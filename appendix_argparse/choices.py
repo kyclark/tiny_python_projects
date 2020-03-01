@@ -13,9 +13,15 @@ def get_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('color',
-                        metavar='str',
+                        metavar='color',
                         help='Color',
                         choices=['red', 'yellow', 'blue'])
+
+    parser.add_argument('size',
+                        metavar='size',
+                        type=int,
+                        choices=range(1, 11),
+                        help='The size of the garment')
 
     return parser.parse_args()
 
@@ -26,6 +32,7 @@ def main():
 
     args = get_args()
     print('color =', args.color)
+    print('size =', args.size)
 
 
 # --------------------------------------------------
