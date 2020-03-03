@@ -13,12 +13,12 @@ def get_args():
         description='Apples and bananas',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('text', metavar='str', help='Input text or file')
+    parser.add_argument('text', metavar='text', help='Input text or file')
 
     parser.add_argument('-v',
                         '--vowel',
                         help='The vowel to substitute',
-                        metavar='str',
+                        metavar='vowel',
                         type=str,
                         default='a',
                         choices=list('aeiou'))
@@ -38,9 +38,8 @@ def main():
     args = get_args()
     text = args.text
     vowel = args.vowel
-
-    # Method 1: Iterate every character
     new_text = []
+
     for char in text:
         if char in 'aeiou':
             new_text.append(vowel)
