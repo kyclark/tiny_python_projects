@@ -16,21 +16,21 @@ def get_args():
     parser.add_argument('-a',
                         '--adjectives',
                         help='Number of adjectives',
-                        metavar='int',
+                        metavar='adjectives',
                         type=int,
                         default=2)
 
     parser.add_argument('-n',
                         '--number',
                         help='Number of insults',
-                        metavar='int',
+                        metavar='insults',
                         type=int,
                         default=3)
 
     parser.add_argument('-s',
                         '--seed',
                         help='Random seed',
-                        metavar='int',
+                        metavar='seed',
                         type=int,
                         default=None)
 
