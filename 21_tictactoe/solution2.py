@@ -13,9 +13,9 @@ def get_args():
         description='Tic-Tac-Toe',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-s',
-                        '--state',
-                        help='Board state',
+    parser.add_argument('-b',
+                        '--board',
+                        help='The state of the board',
                         metavar='str',
                         type=str,
                         default='.' * 9)
@@ -41,10 +41,10 @@ def get_args():
     if any([args.player, args.cell]) and not all([args.player, args.cell]):
         parser.error('Must provide both --player and --cell')
 
-    if not re.search('^[.XO]{9}$', args.state):
-        parser.error(f'--state "{args.state}" must be 9 characters of ., X, O')
+    if not re.search('^[.XO]{9}$', args.board):
+        parser.error(f'--board "{args.board}" must be 9 characters of ., X, O')
 
-    if args.player and args.cell and args.state[args.cell - 1] in 'XO':
+    if args.player and args.cell and args.board[args.cell - 1] in 'XO':
         parser.error(f'--cell "{args.cell}" already taken')
 
     return args
@@ -55,24 +55,24 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    state = list(args.state)
+    board = list(args.board)
     player = args.player
     cell = args.cell
 
     if player and cell:
-        state[cell - 1] = player
+        board[cell - 1] = player
 
-    print(format_board(state))
-    winner = find_winner(state)
+    print(format_board(board))
+    winner = find_winner(board)
     print(f'{winner} has won!' if winner else 'No winner.')
 
 
 # --------------------------------------------------
-def format_board(state):
+def format_board(board):
     """Format the board"""
 
     cells = []
-    for i, char in enumerate(state, start=1):
+    for i, char in enumerate(board, start=1):
         cells.append(str(i) if char == '.' else char)
 
     bar = '-------------'
@@ -86,14 +86,14 @@ def format_board(state):
 
 
 # --------------------------------------------------
-def find_winner(state):
+def find_winner(board):
     """Return the winner"""
 
     winning = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7],
                [2, 5, 8], [0, 4, 8], [2, 4, 6]]
 
     for combo in winning:
-        group = list(map(lambda i: state[i], combo))
+        group = list(map(lambda i: board[i], combo))
         for player in ['X', 'O']:
             if all(x == player for x in group):
                 return player

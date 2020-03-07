@@ -48,13 +48,13 @@ No winner.
 
 
 # --------------------------------------------------
-def test_bad_state():
-    """dies on bad state"""
+def test_bad_board():
+    """dies on bad board"""
 
-    expected = '--state "{}" must be 9 characters of ., X, O'
+    expected = '--board "{}" must be 9 characters of ., X, O'
 
     for bad in ['ABC', '...XXX', 'XXXOOOXX']:
-        rv, out = getstatusoutput(f'{prg} --state {bad}')
+        rv, out = getstatusoutput(f'{prg} --board {bad}')
         print(out)
         assert rv != 0
         assert re.search(expected.format(bad), out)
@@ -104,10 +104,10 @@ def test_both_player_and_cell():
 
 
 # --------------------------------------------------
-def test_good_state():
+def test_good_board_01():
     """makes board on good input"""
 
-    board1 = """
+    board = """
 -------------
 | 1 | 2 | 3 |
 -------------
@@ -118,11 +118,17 @@ def test_good_state():
 No winner.
 """.strip()
 
-    rv1, out1 = getstatusoutput(f'{prg} -s .........')
-    assert rv1 == 0
-    assert out1.strip() == board1
+    rv, out = getstatusoutput(f'{prg} -b .........')
+    print(f'rv = "{rv}"')
+    assert rv == 0
+    assert out.strip() == board
 
-    board2 = """
+
+# --------------------------------------------------
+def test_good_board_02():
+    """makes board on good input"""
+
+    board = """
 -------------
 | 1 | 2 | 3 |
 -------------
@@ -133,15 +139,15 @@ No winner.
 No winner.
 """.strip()
 
-    rv2, out2 = getstatusoutput(f'{prg} -s ...OXX...')
-    assert out2.strip() == board2
+    rv, out = getstatusoutput(f'{prg} --board ...OXX...')
+    assert out.strip() == board
 
 
 # --------------------------------------------------
-def test_mutate_state():
+def test_mutate_board_01():
     """mutates board on good input"""
 
-    board1 = """
+    board = """
 -------------
 | X | 2 | 3 |
 -------------
@@ -152,11 +158,16 @@ def test_mutate_state():
 No winner.
 """.strip()
 
-    rv1, out1 = getstatusoutput(f'{prg} -s ......... --player X -c 1')
-    assert rv1 == 0
-    assert out1.strip() == board1
+    rv, out = getstatusoutput(f'{prg} -b ......... --player X -c 1')
+    assert rv == 0
+    assert out.strip() == board
 
-    board2 = """
+
+# --------------------------------------------------
+def test_mutate_board_02():
+    """mutates board on good input"""
+
+    board = """
 -------------
 | X | X | O |
 -------------
@@ -167,27 +178,27 @@ No winner.
 O has won!
 """.strip()
 
-    rv2, out2 = getstatusoutput(f'{prg} --state XXO...OOX --p O -c 5')
-    assert rv2 == 0
-    assert out2.strip() == board2
+    rv, out = getstatusoutput(f'{prg} --board XXO...OOX --p O -c 5')
+    assert rv == 0
+    assert out.strip() == board
 
 
 # --------------------------------------------------
-def test_mutate_state_taken():
+def test_mutate_cell_taken():
     """test for a cell already taken"""
 
-    rv1, out1 = getstatusoutput(f'{prg} -s XXO...OOX --player X --cell 9')
+    rv1, out1 = getstatusoutput(f'{prg} -b XXO...OOX --player X --cell 9')
     assert rv1 != 0
     assert re.search('--cell "9" already taken', out1)
 
-    rv2, out2 = getstatusoutput(f'{prg} --state XXO...OOX --p O -c 1')
+    rv2, out2 = getstatusoutput(f'{prg} --board XXO...OOX --p O -c 1')
     assert rv2 != 0
     assert re.search('--cell "1" already taken', out2)
 
 
 # --------------------------------------------------
 def test_winning():
-    """test winning states"""
+    """test winning boards"""
 
     wins = [('PPP......'), ('...PPP...'), ('......PPP'), ('P..P..P..'),
             ('.P..P..P.'), ('..P..P..P'), ('P...P...P'), ('..P.P.P..')]
@@ -195,25 +206,25 @@ def test_winning():
     for player in 'XO':
         other_player = 'O' if player == 'X' else 'X'
 
-        for state in wins:
-            state = state.replace('P', player)
-            dots = [i for i in range(len(state)) if state[i] == '.']
+        for board in wins:
+            board = board.replace('P', player)
+            dots = [i for i in range(len(board)) if board[i] == '.']
             mut = random.sample(dots, k=2)
-            test_state = ''.join([
-                other_player if i in mut else state[i]
-                for i in range(len(state))
+            test_board = ''.join([
+                other_player if i in mut else board[i]
+                for i in range(len(board))
             ])
-            out = getoutput(f'{prg} -s {test_state}').splitlines()
+            out = getoutput(f'{prg} -b {test_board}').splitlines()
             assert out[-1].strip() == f'{player} has won!'
 
 
 # --------------------------------------------------
 def test_losing():
-    """test losing states"""
+    """test losing boards"""
 
-    losing_state = list('XXOO.....')
+    losing_board = list('XXOO.....')
     for i in range(10):
-        random.shuffle(losing_state)
-        print(f'{prg} {" ".join(losing_state)}')
-        out = getoutput(f'{prg} -s {"".join(losing_state)}').splitlines()
+        random.shuffle(losing_board)
+        print(f'{prg} {" ".join(losing_board)}')
+        out = getoutput(f'{prg} -b {"".join(losing_board)}').splitlines()
         assert out[-1].strip() == 'No winner.'
