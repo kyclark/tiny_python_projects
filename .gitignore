@@ -10,3 +10,4 @@ tex2pdf*
 .log
 .coverage
 .idea
+.vscode
