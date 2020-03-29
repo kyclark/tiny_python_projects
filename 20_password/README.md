@@ -105,7 +105,7 @@ optional arguments:
   -m int, --min_word_len int
                         Minimum word length (default: 4)
   -s int, --seed int    Random seed (default: None)
-  -l, --l33t            Obsfuscate letters (default: False)
+  -l, --l33t            Obfuscate letters (default: False)
 ```
 
 Run the test suite to ensure your program is correct:

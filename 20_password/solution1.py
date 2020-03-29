@@ -52,7 +52,7 @@ def get_args():
     parser.add_argument('-l',
                         '--l33t',
                         action='store_true',
-                        help='Obsfuscate letters')
+                        help='Obfuscate letters')
 
     return parser.parse_args()
 
