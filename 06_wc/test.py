@@ -8,6 +8,9 @@ import string
 from subprocess import getstatusoutput
 
 prg = './wc.py'
+empty = './inputs/empty.txt'
+one_line = './inputs/one.txt'
+two_lines = './inputs/two.txt'
 fox = '../inputs/fox.txt'
 sonnet = '../inputs/sonnet-29.txt'
 
@@ -51,27 +54,27 @@ def test_bad_file():
 def test_empty():
     """Test on empty"""
 
-    rv, out = getstatusoutput(f'{prg} ./empty.txt')
+    rv, out = getstatusoutput(f'{prg} {empty}')
     assert rv == 0
-    assert out.rstrip() == '       0       0       0 ./empty.txt'
+    assert out.rstrip() == '       0       0       0 ./inputs/empty.txt'
 
 
 # --------------------------------------------------
 def test_one():
     """Test on one"""
 
-    rv, out = getstatusoutput(f'{prg} ./one.txt')
+    rv, out = getstatusoutput(f'{prg} {one_line}')
     assert rv == 0
-    assert out.rstrip() == '       1       1       2 ./one.txt'
+    assert out.rstrip() == '       1       1       2 ./inputs/one.txt'
 
 
 # --------------------------------------------------
 def test_two():
     """Test on two"""
 
-    rv, out = getstatusoutput(f'{prg} ./two.txt')
+    rv, out = getstatusoutput(f'{prg} {two_lines}')
     assert rv == 0
-    assert out.rstrip() == '       2       2       4 ./two.txt'
+    assert out.rstrip() == '       2       2       4 ./inputs/two.txt'
 
 
 # --------------------------------------------------
