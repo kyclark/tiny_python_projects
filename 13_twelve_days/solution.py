@@ -16,16 +16,16 @@ def get_args():
     parser.add_argument('-n',
                         '--num',
                         help='Number of days to sing',
-                        metavar='int',
+                        metavar='days',
                         type=int,
                         default=12)
 
     parser.add_argument('-o',
                         '--outfile',
-                        help='Outfile (STDOUT)',
-                        metavar='str',
-                        type=str,
-                        default='')
+                        help='Outfile',
+                        metavar='FILE',
+                        type=argparse.FileType('wt'),
+                        default=sys.stdout)
 
     args = parser.parse_args()
 
@@ -40,9 +40,8 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    out_fh = open(args.outfile, 'wt') if args.outfile else sys.stdout
-    out_fh.write('\n\n'.join(map(verse, range(1, args.num + 1))) + '\n')
-    out_fh.close()
+    verses = map(verse, range(1, args.num + 1))
+    print('\n\n'.join(verses), file=args.outfile)
 
 
 # --------------------------------------------------
