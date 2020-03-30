@@ -35,17 +35,22 @@ def test_usage():
 
 # --------------------------------------------------
 def test_text1():
+    """Test"""
+
     in_text = 'The quick brown fox jumps over the lazy dog.'
     tests = [('1', 'thE QUICk BrOWn Fox jumpS OveR tHe LAzY dOg.'),
              ('3', 'thE quICk BROwn Fox jUmPS OVEr the lAZY DOG.')]
 
     for seed, expected in tests:
         rv, out = getstatusoutput(f'{prg} {seed_flag()} {seed} "{in_text}"')
+        assert rv == 0
         assert out.strip() == expected
 
 
 # --------------------------------------------------
 def test_text2():
+    """Test"""
+
     in_text = 'Now is the time for all good men to come to the aid of the party.'
     tests = [
         ('2',
@@ -56,21 +61,27 @@ def test_text2():
 
     for seed, expected in tests:
         rv, out = getstatusoutput(f'{prg} {seed_flag()} {seed} "{in_text}"')
+        assert rv == 0
         assert out.strip() == expected
 
 
 # --------------------------------------------------
 def test_file1():
+    """Test"""
+
     tests = [('1', 'thE QUICk BrOWn Fox jumpS OveR tHe LAzY dOg.'),
              ('3', 'thE quICk BROwn Fox jUmPS OVEr the lAZY DOG.')]
 
     for seed, expected in tests:
         rv, out = getstatusoutput(f'{prg} {seed_flag()} {seed} {fox}')
+        assert rv == 0
         assert out.strip() == expected
 
 
 # --------------------------------------------------
 def test_file2():
+    """Test"""
+
     tests = [
         ('2',
          'now iS the TIME fOR ALl good meN TO COMe To THE AID oF THE PArTY.'),
@@ -80,4 +91,5 @@ def test_file2():
 
     for seed, expected in tests:
         rv, out = getstatusoutput(f'{prg} {seed_flag()} {seed} {now}')
+        assert rv == 0
         assert out.strip() == expected
