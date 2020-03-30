@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 Author : Ken Youens-Clark <kyclark@gmail.com>
-Date   : 24 October 2018
 Purpose: Python program to write a Python program
 """
 
@@ -19,17 +18,12 @@ def get_args():
     """Get arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Create Python argparse/simple program',
+        description='Create Python argparse program',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     defaults = get_defaults()
 
     parser.add_argument('program', help='Program name', type=str)
-
-    parser.add_argument('-s',
-                        '--simple',
-                        help='Use simple format',
-                        action='store_true')
 
     parser.add_argument('-n',
                         '--name',
@@ -59,7 +53,10 @@ def get_args():
     args.program = args.program.strip().replace('-', '_')
 
     if not args.program:
-        parser.error('Not a usable filename "{}"'.format(args.program))
+        parser.error(f'Not a usable filename "{args.program}"')
+
+    if args.email:
+        args.email = f'<{args.email}>'
 
     return args
 
@@ -72,22 +69,19 @@ def main():
     program = args.program
 
     if os.path.isfile(program) and not args.force:
-        answer = input('"{}" exists.  Overwrite? [yN] '.format(program))
+        answer = input(f'"{program}" exists.  Overwrite? [yN] ')
         if not answer.lower().startswith('y'):
             print('Will not overwrite. Bye!')
             sys.exit()
 
-    header = preamble(name=args.name,
-                      email=args.email,
-                      purpose=args.purpose,
-                      date=str(date.today()))
-    text = simple() if args.simple else body(args.purpose)
+    text = body(name=args.name,
+                email=args.email,
+                purpose=args.purpose,
+                date=str(date.today()))
 
-    out_fh = open(program, 'w')
-    out_fh.write(header + text)
-    out_fh.close()
+    print(text, file=open(program, 'wt'), end='')
     subprocess.run(['chmod', '+x', program])
-    print('Done, see new script "{}."'.format(program))
+    print(f'Done, see new script "{program}."')
 
 
 # --------------------------------------------------
@@ -102,39 +96,17 @@ Purpose: {args['purpose']}
 
 
 # --------------------------------------------------
-def simple():
-    return """
-import os
-import sys
+def body(**args):
+    """ The program template """
 
+    return f"""#!/usr/bin/env python3
+\"\"\"
+Author : {args['name']}{args['email']}
+Date   : {args['date']}
+Purpose: {args['purpose']}
+\"\"\"
 
-# --------------------------------------------------
-def main():
-    \"\"\"Make a jazz noise here\"\"\"
-
-    args = sys.argv[1:]
-
-    if len(args) != 1:
-        print('Usage: {} ARG'.format(os.path.basename(sys.argv[0])))
-        sys.exit(1)
-
-    arg = args[0]
-
-    print('Arg is "{}"'.format(arg))
-
-
-# --------------------------------------------------
-if __name__ == '__main__':
-    main()
-"""
-
-
-# --------------------------------------------------
-def body(purpose):
-    text = """
 import argparse
-import os
-import sys
 
 
 # --------------------------------------------------
@@ -142,7 +114,7 @@ def get_args():
     \"\"\"Get command-line arguments\"\"\"
 
     parser = argparse.ArgumentParser(
-        description='{}',
+        description='{args["purpose"]}',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('positional',
@@ -189,18 +161,18 @@ def main():
     flag_arg = args.on
     pos_arg = args.positional
 
-    print('str_arg = "{{}}"'.format(str_arg))
-    print('int_arg = "{{}}"'.format(int_arg))
+    print(f'str_arg = "{{str_arg}}"')
+    print(f'int_arg = "{{int_arg}}"')
     print('file_arg = "{{}}"'.format(file_arg.name if file_arg else ''))
-    print('flag_arg = "{{}}"'.format(flag_arg))
-    print('positional = "{{}}"'.format(pos_arg))
+    print(f'flag_arg = "{{flag_arg}}"')
+    print(f'positional = "{{pos_arg}}"')
 
 
 # --------------------------------------------------
 if __name__ == '__main__':
     main()
 """
-    return text.format(purpose)
+
 
 # --------------------------------------------------
 def get_defaults():

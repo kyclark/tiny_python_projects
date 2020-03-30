@@ -1,4 +1,4 @@
-from tictactoe import format_board, find_winner
+from itictactoe import format_board, find_winner
 import random
 
 
