@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Interactive Gashlycrumb"""
+"""Lookup tables"""
 
 import argparse
 
@@ -9,13 +9,19 @@ def get_args():
     """get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Interactive Gashlycrumb',
+        description='Gashlycrumb',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+    parser.add_argument('letter',
+                        help='Letter(s)',
+                        metavar='letter',
+                        nargs='+',
+                        type=str)
 
     parser.add_argument('-f',
                         '--file',
                         help='Input file',
-                        metavar='str',
+                        metavar='FILE',
                         type=argparse.FileType('r'),
                         default='gashlycrumb.txt')
 
@@ -27,15 +33,9 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    lookup = {line[0]: line.rstrip() for line in args.file}
+    lookup = {line[0].upper(): line.rstrip() for line in args.file}
 
-    while True:
-        letter = input('Please provide a letter [! to quit]: ')
-
-        if letter == '!':
-            print('Bye')
-            break
-
+    for letter in args.letter:
         print(lookup.get(letter.upper(), f'I do not know "{letter}".'))
 
 

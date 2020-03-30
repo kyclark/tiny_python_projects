@@ -14,14 +14,14 @@ def get_args():
 
     parser.add_argument('letter',
                         help='Letter(s)',
-                        metavar='str',
+                        metavar='letter',
                         nargs='+',
                         type=str)
 
     parser.add_argument('-f',
                         '--file',
                         help='Input file',
-                        metavar='str',
+                        metavar='FILE',
                         type=argparse.FileType('r'),
                         default='gashlycrumb.txt')
 
@@ -33,7 +33,10 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    lookup = {line[0].upper(): line.rstrip() for line in args.file}
+
+    lookup = {}
+    for line in args.file:
+        lookup[line[0].upper()] = line.rstrip()
 
     for letter in args.letter:
         if letter.upper() in lookup:
