@@ -3,8 +3,6 @@
 
 import argparse
 import io
-import re
-import string
 from pydash import flatten
 
 

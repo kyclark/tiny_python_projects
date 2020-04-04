@@ -2,8 +2,6 @@
 """Make rhyming words"""
 
 import argparse
-import re
-import string
 
 
 # --------------------------------------------------
@@ -41,9 +39,9 @@ def stemmer(word):
     """Return leading consonants (if any), and 'stem' of word"""
 
     word = word.lower()
-    pos = list(
-        filter(lambda v: v >= 0,
-               map(lambda c: word.index(c) if c in word else -1, 'aeiou')))
+    vowel_map = map(lambda c: word.index(c) if c in word else -1, 'aeiou')
+    pos = list(filter(lambda v: v >= 0, vowel_map))
+
     if pos:
         first = min(pos)
         return (word[:first], word[first:])
