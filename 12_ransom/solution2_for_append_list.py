@@ -57,12 +57,13 @@ def choose(char):
 def test_choose():
     """Test choose"""
 
+    state = random.getstate()
     random.seed(1)
     assert choose('a') == 'a'
     assert choose('b') == 'b'
     assert choose('c') == 'C'
     assert choose('d') == 'd'
-    random.seed(None)
+    random.setstate(state)
 
 
 # --------------------------------------------------
