@@ -14,7 +14,7 @@ def get_args():
         description='Gematria',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('text', metavar='str', help='Input text or file')
+    parser.add_argument('text', metavar='text', help='Input text or file')
 
     args = parser.parse_args()
 
@@ -38,7 +38,7 @@ def main():
 def word2num(word):
     """Sum the ordinal values of all the characters"""
 
-    return str(sum(map(ord, re.sub('[^a-zA-Z0-9]', '', word))))
+    return str(sum(map(ord, re.sub('[^A-Za-z0-9]', '', word))))
 
 
 # --------------------------------------------------
