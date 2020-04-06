@@ -14,7 +14,7 @@ def get_args():
 
     parser.add_argument('-n',
                         '--num',
-                        metavar='int',
+                        metavar='number',
                         type=int,
                         default=10,
                         help='How many bottles')
