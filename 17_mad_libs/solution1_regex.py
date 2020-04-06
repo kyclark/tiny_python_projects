@@ -22,7 +22,7 @@ def get_args():
     parser.add_argument('-i',
                         '--inputs',
                         help='Inputs (for testing)',
-                        metavar='str',
+                        metavar='input',
                         type=str,
                         nargs='*')
 
