@@ -14,7 +14,7 @@ def get_args():
         description='Southern fry text',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('text', metavar='str', help='Input text or file')
+    parser.add_argument('text', metavar='text', help='Input text or file')
 
     args = parser.parse_args()
 
