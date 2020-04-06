@@ -6,6 +6,7 @@ import csv
 import io
 import re
 import random
+import sys
 from tabulate import tabulate
 
 
@@ -20,21 +21,21 @@ def get_args():
     parser.add_argument('-f',
                         '--file',
                         help='CSV input file of exercises',
-                        metavar='str',
+                        metavar='FILE',
                         type=argparse.FileType('r'),
-                        default='exercises.csv')
+                        default='inputs/exercises.csv')
 
     parser.add_argument('-s',
                         '--seed',
                         help='Random seed',
-                        metavar='int',
+                        metavar='seed',
                         type=int,
                         default=None)
 
     parser.add_argument('-n',
                         '--num',
                         help='Number of exercises',
-                        metavar='int',
+                        metavar='exercises',
                         type=int,
                         default=4)
 
@@ -46,7 +47,7 @@ def get_args():
     args = parser.parse_args()
 
     if args.num < 1:
-        parser.error('--num "{args.num}" must be greater than 0')
+        parser.error(f'--num "{args.num}" must be greater than 0')
 
     return args
 
@@ -59,16 +60,29 @@ def main():
     random.seed(args.seed)
     exercises = read_csv(args.file)
 
-    if exercises:
-        for name, low, high in random.sample(exercises, k=args.num):
-            reps = random.randint(low, high)
-            if args.easy:
-                reps = int(reps / 2)
-            wod.append((name, reps))
+    if not exercises:
+        die(f'No usable data in --file "{args.file.name}"')
 
-        print(tabulate(wod, headers=('Exercise', 'Reps')))
-    else:
-        print(f'No usable data in --file "{args.file.name}"')
+    num_exercises = len(exercises)
+    if args.num > num_exercises:
+        die(f'--num "{args.num}" greater than exercises "{num_exercises}"')
+
+    wod = []
+    for name, low, high in random.sample(exercises, k=args.num):
+        reps = random.randint(low, high)
+        if args.easy:
+            reps = int(reps / 2)
+        wod.append((name, reps))
+
+    print(tabulate(wod, headers=('Exercise', 'Reps')))
+
+
+# --------------------------------------------------
+def die(msg):
+    """Print message to STDERR and exit with an error"""
+
+    print(msg, file=sys.stderr)
+    sys.exit(1)
 
 
 # --------------------------------------------------

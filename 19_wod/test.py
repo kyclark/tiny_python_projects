@@ -8,8 +8,8 @@ import string
 from subprocess import getstatusoutput
 
 prg = './wod.py'
-input1 = 'exercises.csv'
-input2 = 'silly-exercises.csv'
+input1 = 'inputs/exercises.csv'
+input2 = 'inputs/silly-exercises.csv'
 
 
 # --------------------------------------------------
@@ -107,7 +107,8 @@ Lunges                  32
 
     seed_flag = '-s' if random.choice([0, 1]) else '--seed'
     num_flag = '-n' if random.choice([0, 1]) else '--num'
-    rv, out = getstatusoutput(f'{prg} {num_flag} 8 {seed_flag} 2 -f {input1}')
+    cmd = f'{prg} {num_flag} 8 {seed_flag} 2 -f {input1}'
+    rv, out = getstatusoutput(cmd)
     assert rv == 0
     assert out.strip() == expected.strip()
 

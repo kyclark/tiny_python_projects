@@ -19,21 +19,21 @@ def get_args():
     parser.add_argument('-f',
                         '--file',
                         help='CSV input file of exercises',
-                        metavar='str',
+                        metavar='FILE',
                         type=argparse.FileType('r'),
-                        default='exercises.csv')
+                        default='inputs/exercises.csv')
 
     parser.add_argument('-s',
                         '--seed',
                         help='Random seed',
-                        metavar='int',
+                        metavar='seed',
                         type=int,
                         default=None)
 
     parser.add_argument('-n',
                         '--num',
                         help='Number of exercises',
-                        metavar='int',
+                        metavar='exercises',
                         type=int,
                         default=4)
 
@@ -57,8 +57,9 @@ def main():
     args = get_args()
     random.seed(args.seed)
     wod = []
+    exercises = read_csv(args.file)
 
-    for name, low, high in random.sample(read_csv(args.file), k=args.num):
+    for name, low, high in random.sample(exercises, k=args.num):
         reps = random.randint(low, high)
         if args.easy:
             reps = int(reps / 2)

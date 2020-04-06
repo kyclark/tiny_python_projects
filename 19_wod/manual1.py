@@ -2,7 +2,7 @@
 
 from pprint import pprint
 
-with open('exercises.csv') as fh:
+with open('inputs/exercises.csv') as fh:
     headers = fh.readline().rstrip().split(',')
     records = []
     for line in fh:
