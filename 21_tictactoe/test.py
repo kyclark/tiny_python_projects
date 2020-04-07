@@ -140,6 +140,7 @@ No winner.
 """.strip()
 
     rv, out = getstatusoutput(f'{prg} --board ...OXX...')
+    assert rv == 0
     assert out.strip() == board
 
 
