@@ -26,6 +26,6 @@ def test_l33t():
     """Test l33t"""
 
     random.seed(1)
-    assert (l33t('Money') == 'm0N3Y{')
-    assert (l33t('Dollars') == 'D0ll4r5`')
+    assert l33t('Money') == 'moNeY{'
+    assert l33t('Dollars') == 'D0ll4r5`'
     random.seed(None)

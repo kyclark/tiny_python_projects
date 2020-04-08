@@ -8,8 +8,6 @@ import string
 from subprocess import getstatusoutput
 
 prg = './password.py'
-input1 = 'exercises.csv'
-input2 = 'silly-exercises.csv'
 
 
 # --------------------------------------------------

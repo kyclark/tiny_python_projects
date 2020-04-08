@@ -1,4 +1,4 @@
 .PHONY: test
 
 test:
-	pytest -xv test.py
+	pytest -xv test.py unit.py
