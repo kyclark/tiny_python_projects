@@ -18,34 +18,40 @@ def get_args():
     parser.add_argument('file',
                         metavar='FILE',
                         type=argparse.FileType('r'),
-                        nargs='*',
-                        help='Input file(s)',
-                        default=[open('/usr/share/dict/words')])
+                        nargs='+',
+                        help='Input file(s)')
 
     parser.add_argument('-n',
                         '--num',
-                        metavar='int',
+                        metavar='num_passwords',
                         type=int,
                         default=3,
                         help='Number of passwords to generate')
 
     parser.add_argument('-w',
                         '--num_words',
-                        metavar='int',
+                        metavar='num_words',
                         type=int,
                         default=4,
                         help='Number of words to use for password')
 
     parser.add_argument('-m',
                         '--min_word_len',
-                        metavar='int',
+                        metavar='mininum',
                         type=int,
-                        default=4,
+                        default=3,
                         help='Minimum word length')
+
+    parser.add_argument('-x',
+                        '--max_word_len',
+                        metavar='maximumm',
+                        type=int,
+                        default=6,
+                        help='Maximum word length')
 
     parser.add_argument('-s',
                         '--seed',
-                        metavar='int',
+                        metavar='seed',
                         type=int,
                         help='Random seed')
 
@@ -59,26 +65,27 @@ def get_args():
 
 # --------------------------------------------------
 def main():
-    """Make a jazz noise here"""
-
     args = get_args()
-    random.seed(args.seed)
+    random.seed(args.seed)  # <1>
     words = set()
+
+    def word_len(word):
+        return args.min_word_len <= len(word) <= args.max_word_len
 
     for fh in args.file:
         for line in fh:
-            for word in filter(lambda w: len(w) >= args.min_word_len,
-                               map(clean,
-                                   line.lower().split())):
+            for word in filter(word_len, map(clean, line.lower().split())):
                 words.add(word.title())
 
     words = sorted(words)
-    passwords = []
-    for _ in range(args.num):
-        passwords.append(''.join(random.sample(words, args.num_words)))
+    passwords = [
+        ''.join(random.sample(words, args.num_words)) for _ in range(args.num)
+    ]
 
-    for password in passwords:
-        print(l33t(password) if args.l33t else password)
+    if args.l33t:
+        passwords = map(l33t, passwords)
+
+    print('\n'.join(passwords))
 
 
 # --------------------------------------------------
