@@ -15,6 +15,12 @@ The tests should define what it means for a program to be correct, and then we w
 In this project, I've written all the tests for you, but I also encourage you to write your own functions and tests.
 You should run the test suite after every change to your program to ensure you are making progress!
 
+# Videos
+
+I've been making videos for each chapter on my YouTube channel:
+
+https://www.youtube.com/user/kyclark
+
 # Forking GitHub repo
 
 First use the GitHub interface to "fork" this repository into your own account. Then do `git clone` of *your* repository to get a local copy. Inside that checkout, do:
