@@ -1,5 +1,7 @@
 # Picnic
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNMuQohHrNxRjhFTR9UlUOIa
+
 Write a program that will correctly format the items we're taking on our picnic.
 For one item, it should print the one item:
 

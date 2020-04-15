@@ -1,5 +1,7 @@
 # Howler
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNNzo5zqtx0388myQkUKyrQz
+
 Write a program that uppercases the given text:
 
 ```

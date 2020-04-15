@@ -1,5 +1,7 @@
 # Apples and Bananas
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNMe_qrKzw6jtxzHkTOszozs
+
 Write a program that will substitute all the vowels in a given text with a single vowel (default "a"):
 
 ```

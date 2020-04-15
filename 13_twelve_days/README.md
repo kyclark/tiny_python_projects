@@ -1,5 +1,7 @@
 # Twelve Days of Christmas
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNNZEMX12PE1OvSKy02UQoB4
+
 Write a program that will generate the verse "The Twelve Days of Christmas" song:
 
 ```

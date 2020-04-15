@@ -1,5 +1,7 @@
 # Crow's Nest
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNPBqIwfD-0RedqsitBliLhT
+
 Write a program that will announce the appearance of something "off the larboard bow" to the captain of the ship.
 Note that you need to "a" before a word starting with a consonant:
 

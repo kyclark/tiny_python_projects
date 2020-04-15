@@ -1,5 +1,7 @@
 # Jump the Five
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNNd1Mbu3h6SGfhD-8rRxLTp
+
 Write a program that will encode any number in a given string using an algorightm to "jump the five" on a standard US telephone keypad such that "1" becomes "9," "4" becomes "6," etc. 
 The "5" and the "0" will swap with each other.
 Here is the entire substitution table:

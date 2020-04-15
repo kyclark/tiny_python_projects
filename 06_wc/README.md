@@ -1,5 +1,7 @@
 # wc (word count)
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNOGPw5Mu5FyhnumZjb9F6kk
+
 Write a Python implementation of `wc` (word count).
 The program should print lines, words, and characters for each input.
 Files are acceptable arguments:

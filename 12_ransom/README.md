@@ -1,5 +1,7 @@
 # Ransom
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNMxWhckg7FO4cEx57WgHbd_
+
 Write a program that will randomly capitalize the letters in a given piece of text a la a ransom note.
 The text may be provided on the command line:
 
