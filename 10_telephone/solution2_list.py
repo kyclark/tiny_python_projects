@@ -49,7 +49,7 @@ def main():
     args = get_args()
     text = args.text
     random.seed(args.seed)
-    alpha = string.ascii_letters + string.punctuation
+    alpha = ''.join(sorted(string.ascii_letters + string.punctuation))
     len_text = len(text)
     num_mutations = round(args.mutations * len_text)
     new_text = list(text)

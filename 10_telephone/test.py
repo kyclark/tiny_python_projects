@@ -76,7 +76,7 @@ def test_now_cmd_s1():
     rv, out = getstatusoutput(f'{prg} -s 1 "{txt}"')
     assert rv == 0
     expected = """
-    Now is B*e time X'r all good mem to come to the ,id of the party.
+    Now is Ege time [dr all good me- to come to the jid of the party.
     """.strip()
     assert out.rstrip() == f'You said: "{txt}"\nI heard : "{expected}"'
 
@@ -89,7 +89,7 @@ def test_now_cmd_s2_m4():
     rv, out = getstatusoutput(f'{prg} -s 2 -m .4 "{txt}"')
     assert rv == 0
     expected = """
-    Nod ie .he(JiFe ?orvalldg/osxmenUt? cxxe.t$PtheOaidWEV:the xa/ty.
+    No$ i% khefMiIe sor@all$glo<BmenYts cAAeltaTtheSaid[HYnthe Aalty.
     """.strip()
     assert out.rstrip() == f'You said: "{txt}"\nI heard : "{expected}"'
 
@@ -101,7 +101,7 @@ def test_fox_file_s1():
     rv, out = getstatusoutput(f'{prg} --seed 1 {fox}')
     assert rv == 0
     txt = open(fox).read().rstrip()
-    expected = "The 'uicq brown *ox jumps over the l-zy dog."
+    expected = "The duic: brown hox jumps over the lkzy dog."
     assert out.rstrip() == f'You said: "{txt}"\nI heard : "{expected}"'
 
 
@@ -112,7 +112,7 @@ def test_fox_file_s2_m6():
     rv, out = getstatusoutput(f'{prg} --seed 2 --mutations .6 {fox}')
     assert rv == 0
     txt = open(fox).read().rstrip()
-    expected = "V;xvq?ic# E]'Qy x/xdjumFs.o/U? th!Ulv'yrVox."
+    expected = "ZoA@qric` HwdTB Alx$jumIslolXs th^Yl?dy<YoA."
     assert out.rstrip() == f'You said: "{txt}"\nI heard : "{expected}"'
 
 
