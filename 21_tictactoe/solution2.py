@@ -56,11 +56,9 @@ def main():
 
     args = get_args()
     board = list(args.board)
-    player = args.player
-    cell = args.cell
 
-    if player and cell:
-        board[cell - 1] = player
+    if args.player and args.cell:
+        board[args.cell - 1] = args.player
 
     print(format_board(board))
     winner = find_winner(board)

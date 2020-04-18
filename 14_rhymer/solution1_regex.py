@@ -14,7 +14,7 @@ def get_args():
         description='Make rhyming "words"',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('word', metavar='str', help='A word to rhyme')
+    parser.add_argument('word', metavar='word', help='A word to rhyme')
 
     return parser.parse_args()
 

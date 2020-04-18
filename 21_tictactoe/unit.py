@@ -63,6 +63,6 @@ def test_losing():
 
     losing_board = list('XXOO.....')
 
-    for i in range(10):
+    for _ in range(10):
         random.shuffle(losing_board)
-        assert find_winner(''.join(losing_board)) == None
+        assert find_winner(''.join(losing_board)) is None
