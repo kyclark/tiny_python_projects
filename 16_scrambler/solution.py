@@ -15,19 +15,19 @@ def get_args():
         description='Scramble the letters of words',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('text', metavar='str', help='Input text or file')
+    parser.add_argument('text', metavar='text', help='Input text or file')
 
     parser.add_argument('-s',
                         '--seed',
                         help='Random seed',
-                        metavar='int',
+                        metavar='seed',
                         type=int,
                         default=None)
 
     args = parser.parse_args()
 
     if os.path.isfile(args.text):
-        args.text = open(args.text).read()
+        args.text = open(args.text).read().rstrip()
 
     return args
 
@@ -60,6 +60,7 @@ def scramble(word):
 def test_scramble():
     """Test scramble"""
 
+    state = random.getstate()
     random.seed(1)
     assert scramble("a") == "a"
     assert scramble("ab") == "ab"
@@ -68,7 +69,7 @@ def test_scramble():
     assert scramble("abcde") == "acbde"
     assert scramble("abcdef") == "aecbdf"
     assert scramble("abcde'f") == "abcd'ef"
-    random.seed(None)
+    random.setstate(state)
 
 
 # --------------------------------------------------
