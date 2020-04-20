@@ -19,7 +19,7 @@ def get_args():
     args = parser.parse_args()
 
     if os.path.isfile(args.text):
-        args.text = open(args.text).read()
+        args.text = open(args.text).read().rstrip()
 
     return args
 
