@@ -22,7 +22,7 @@ def get_args():
     args = parser.parse_args()
 
     if args.num < 1:
-        parser.error('--num ({}) must > 0'.format(args.num))
+        parser.error(f'--num "{args.num}" must be greater than 0')
 
     return args
 

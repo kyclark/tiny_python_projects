@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """tests for bottles.py"""
 
-import os
-import re
-import random
 import hashlib
+import os
+import random
+import re
+import string
 from subprocess import getstatusoutput
 
 prg = './bottles.py'
@@ -31,7 +32,7 @@ def test_usage():
 def test_bad_int():
     """Bad integer value"""
 
-    bad = random.randint(-10, -1)
+    bad = random.randint(-10, 1)
     rv, out = getstatusoutput(f'{prg} -n {bad}')
     assert rv != 0
     assert re.search(f'--num "{bad}" must be greater than 0', out)
@@ -41,18 +42,20 @@ def test_bad_int():
 def test_float():
     """float value"""
 
-    rv, out = getstatusoutput(f'{prg} --num 2.1')
+    bad = round(random.random() * 10, 2)
+    rv, out = getstatusoutput(f'{prg} --num {bad}')
     assert rv != 0
-    assert re.search(r"invalid int value: '2.1'", out)
+    assert re.search(f"invalid int value: '{bad}'", out)
 
 
 # --------------------------------------------------
 def test_str():
     """str value"""
 
-    rv, out = getstatusoutput(f'{prg} -n lsdfkl')
+    bad = random_string()
+    rv, out = getstatusoutput(f'{prg} -n {bad}')
     assert rv != 0
-    assert re.search(r"invalid int value: 'lsdfkl'", out)
+    assert re.search(f"invalid int value: '{bad}'", out)
 
 
 # --------------------------------------------------
@@ -101,3 +104,11 @@ def test_random():
         out += '\n'  # because the last newline is removed
         assert rv == 0
         assert hashlib.md5(out.encode('utf-8')).hexdigest() == sums[n]
+
+
+# --------------------------------------------------
+def random_string():
+    """generate a random string"""
+
+    k = random.randint(5, 10)
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=k))
