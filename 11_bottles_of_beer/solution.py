@@ -28,6 +28,14 @@ def get_args():
 
 
 # --------------------------------------------------
+def main():
+    """Make a jazz noise here"""
+
+    args = get_args()
+    print('\n\n'.join(map(verse, range(args.num, 0, -1))))
+
+
+# --------------------------------------------------
 def verse(bottle):
     """Sing a verse"""
 
@@ -59,14 +67,6 @@ def test_verse():
         '2 bottles of beer on the wall,', '2 bottles of beer,',
         'Take one down, pass it around,', '1 bottle of beer on the wall!'
     ])
-
-
-# --------------------------------------------------
-def main():
-    """Make a jazz noise here"""
-
-    args = get_args()
-    print('\n\n'.join(map(verse, range(args.num, 0, -1))))
 
 
 # --------------------------------------------------
