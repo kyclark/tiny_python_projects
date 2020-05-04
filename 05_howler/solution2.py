@@ -15,7 +15,10 @@ def get_args():
         description='Howler (upper-cases input)',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('text', metavar='str', help='Input string or file')
+    parser.add_argument('text',
+                        metavar='text',
+                        type=str,
+                        help='Input string or file')
 
     parser.add_argument('-o',
                         '--outfile',
