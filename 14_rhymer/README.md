@@ -1,5 +1,7 @@
 # Rhymer
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNPNn2qa5ATHJ0qd-JUgM_s0
+
 Write a program that will create rhyming words for a given word by removing the initial consonant sounds and substituting other sounds.
 Note that the given word should not appear in the output, so "cake" will be omitted from this run:
 
