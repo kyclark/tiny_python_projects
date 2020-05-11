@@ -6,7 +6,7 @@ from subprocess import getstatusoutput, getoutput
 
 prg = './crowsnest.py'
 consonant_words = [
-    'brigatine', 'clipper', 'dreadnought', 'frigate', 'galleon', 'haddock',
+    'brigantine', 'clipper', 'dreadnought', 'frigate', 'galleon', 'haddock',
     'junk', 'ketch', 'longboat', 'mullet', 'narwhal', 'porpoise', 'quay',
     'regatta', 'submarine', 'tanker', 'vessel', 'whale', 'xebec', 'yatch',
     'zebrafish'
@@ -34,7 +34,7 @@ def test_usage():
 
 # --------------------------------------------------
 def test_consonant():
-    """brigatine -> a brigatine"""
+    """brigantine -> a brigantine"""
 
     for word in consonant_words:
         out = getoutput(f'{prg} {word}')
@@ -43,7 +43,7 @@ def test_consonant():
 
 # --------------------------------------------------
 def test_consonant_upper():
-    """brigatine -> a Brigatine"""
+    """brigantine -> a Brigatine"""
 
     for word in consonant_words:
         out = getoutput(f'{prg} {word.title()}')
