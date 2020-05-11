@@ -45,24 +45,24 @@ If given no arguments, it should print a brief usage:
 
 ```
 $ ./gashlycrumb.py
-usage: gashlycrumb.py [-h] [-f str] str [str ...]
-gashlycrumb.py: error: the following arguments are required: str
+usage: gashlycrumb.py [-h] [-f FILE] letter [letter ...]
+gashlycrumb.py: error: the following arguments are required: letter
 ```
 
 Or a longer usage for `-h` or `--help`:
 
 ```
 $ ./gashlycrumb.py -h
-usage: gashlycrumb.py [-h] [-f str] str [str ...]
+usage: gashlycrumb.py [-h] [-f FILE] letter [letter ...]
 
 Gashlycrumb
 
 positional arguments:
-  str                 Letter(s)
+  letter                Letter(s)
 
 optional arguments:
-  -h, --help          show this help message and exit
-  -f str, --file str  Input file (default: gashlycrumb.txt)
+  -h, --help            show this help message and exit
+  -f FILE, --file FILE  Input file (default: gashlycrumb.txt)
 ```
 
 The program should reject a bad `--file` argument:
@@ -70,7 +70,8 @@ The program should reject a bad `--file` argument:
 ```
 $ ./gashlycrumb.py -f alskdf
 usage: gashlycrumb.py [-h] [-f str] str [str ...]
-gashlycrumb.py: error: argument -f/--file: can't open 'alskdf': [Errno 2] No such file or directory: 'alskdf'
+gashlycrumb.py: error: argument -f/--file: can't open 'alskdf': \
+[Errno 2] No such file or directory: 'alskdf'
 ```
 
 Run the test suite to ensure your program is correct:
