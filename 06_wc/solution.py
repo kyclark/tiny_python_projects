@@ -17,7 +17,7 @@ def get_args():
                         metavar='FILE',
                         nargs='*',
                         default=[sys.stdin],
-                        type=argparse.FileType('r'),
+                        type=argparse.FileType('rt'),
                         help='Input file(s)')
 
     return parser.parse_args()
