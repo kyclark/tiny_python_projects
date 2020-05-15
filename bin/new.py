@@ -139,7 +139,7 @@ def get_args():
                         '--file',
                         help='A readable file',
                         metavar='FILE',
-                        type=argparse.FileType('r'),
+                        type=argparse.FileType('rt'),
                         default=None)
 
     parser.add_argument('-o',
