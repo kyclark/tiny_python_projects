@@ -2,7 +2,6 @@
 """Mad Libs"""
 
 import argparse
-import re
 import sys
 
 
@@ -16,7 +15,7 @@ def get_args():
 
     parser.add_argument('file',
                         metavar='FILE',
-                        type=argparse.FileType('r'),
+                        type=argparse.FileType('rt'),
                         help='Input file')
 
     parser.add_argument('-i',
@@ -55,8 +54,7 @@ def main():
     if had_placeholders:
         print(text)
     else:
-        print(f'"{args.file.name}" has no placeholders.', file=sys.stderr)
-        sys.exit(1)
+        sys.exit(f'"{args.file.name}" has no placeholders.')
 
 
 # --------------------------------------------------
@@ -65,15 +63,15 @@ def find_brackets(text):
 
     start = text.index('<') if '<' in text else -1
     stop = text.index('>') if start >= 0 and '>' in text[start + 2:] else -1
-    return (start, stop) if start >= 0 and stop >= 0 else and balanced None
+    return (start, stop) if start >= 0 and stop >= 0 else None
 
 
 # --------------------------------------------------
 def test_find_brackets():
     """Test for finding angle brackets"""
 
-    assert find_brackets('') == None
-    assert find_brackets('<>') == None
+    assert find_brackets('') is None
+    assert find_brackets('<>') is None
     assert find_brackets('<x>') == (0, 2)
     assert find_brackets('foo <bar> baz') == (4, 8)
 

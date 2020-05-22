@@ -16,7 +16,7 @@ def get_args():
 
     parser.add_argument('file',
                         metavar='FILE',
-                        type=argparse.FileType('r'),
+                        type=argparse.FileType('rt'),
                         help='Input file')
 
     parser.add_argument('-i',
@@ -39,8 +39,7 @@ def main():
     blanks = re.findall('(<([^<>]+)>)', text)
 
     if not blanks:
-        print(f'"{args.file.name}" has no placeholders.', file=sys.stderr)
-        sys.exit(1)
+        sys.exit(f'"{args.file.name}" has no placeholders.')
 
     tmpl = 'Give me {} {}: '
     for placeholder, pos in blanks:
