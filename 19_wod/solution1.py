@@ -20,7 +20,7 @@ def get_args():
                         '--file',
                         help='CSV input file of exercises',
                         metavar='FILE',
-                        type=argparse.FileType('r'),
+                        type=argparse.FileType('rt'),
                         default='inputs/exercises.csv')
 
     parser.add_argument('-s',

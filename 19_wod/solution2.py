@@ -22,7 +22,7 @@ def get_args():
                         '--file',
                         help='CSV input file of exercises',
                         metavar='FILE',
-                        type=argparse.FileType('r'),
+                        type=argparse.FileType('rt'),
                         default='inputs/exercises.csv')
 
     parser.add_argument('-s',
@@ -61,11 +61,11 @@ def main():
     exercises = read_csv(args.file)
 
     if not exercises:
-        die(f'No usable data in --file "{args.file.name}"')
+        sys.exit(f'No usable data in --file "{args.file.name}"')
 
     num_exercises = len(exercises)
     if args.num > num_exercises:
-        die(f'--num "{args.num}" greater than exercises "{num_exercises}"')
+        sys.exit(f'--num "{args.num}" > exercises "{num_exercises}"')
 
     wod = []
     for name, low, high in random.sample(exercises, k=args.num):
@@ -75,14 +75,6 @@ def main():
         wod.append((name, reps))
 
     print(tabulate(wod, headers=('Exercise', 'Reps')))
-
-
-# --------------------------------------------------
-def die(msg):
-    """Print message to STDERR and exit with an error"""
-
-    print(msg, file=sys.stderr)
-    sys.exit(1)
 
 
 # --------------------------------------------------
