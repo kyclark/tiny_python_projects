@@ -37,14 +37,14 @@ def get_args():
 
     parser.add_argument('-m',
                         '--min_word_len',
-                        metavar='mininum',
+                        metavar='minimum',
                         type=int,
                         default=3,
                         help='Minimum word length')
 
     parser.add_argument('-x',
                         '--max_word_len',
-                        metavar='maximumm',
+                        metavar='maximum',
                         type=int,
                         default=6,
                         help='Maximum word length')
