@@ -32,6 +32,7 @@ def main() -> None:
             print('You lose, loser!')
             break
         elif state.winner:
+            print(format_board(state.board))
             print(f'{state.winner} has won!')
             break
         elif state.draw:
