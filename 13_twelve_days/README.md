@@ -36,7 +36,7 @@ A number outside the range 1-12 should be rejected:
 
 ```
 $ ./twelve_days.py -n 21
-usage: twelve_days.py [-h] [-n int] [-o str]
+usage: twelve_days.py [-h] [-n days] [-o FILE]
 twelve_days.py: error: --num "21" must be between 1 and 12
 ```
 
@@ -57,15 +57,16 @@ The program should respond to `-h` and `--help` with a usage:
 
 ```
 $ ./twelve_days.py -h
-usage: twelve_days.py [-h] [-n int] [-o str]
+usage: twelve_days.py [-h] [-n days] [-o FILE]
 
 Twelve Days of Christmas
 
 optional arguments:
   -h, --help            show this help message and exit
-  -n int, --num int     Number of days to sing (default: 12)
-  -o str, --outfile str
-                        Outfile (STDOUT) (default: )
+  -n days, --num days   Number of days to sing (default: 12)
+  -o FILE, --outfile FILE
+                        Outfile (default: <_io.TextIOWrapper name='<stdout>'
+                        mode='w' encoding='utf-8'>)
 ```
 
 ```
