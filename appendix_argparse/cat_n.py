@@ -14,7 +14,7 @@ def get_args():
 
     parser.add_argument('file',
                         metavar='FILE',
-                        type=argparse.FileType('r'),
+                        type=argparse.FileType('rt'),
                         help='Input file')
 
     return parser.parse_args()
