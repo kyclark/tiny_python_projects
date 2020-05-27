@@ -13,7 +13,7 @@ def get_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('numbers',
-                        metavar='INT',
+                        metavar='int',
                         nargs='+',
                         type=int,
                         help='Numbers')
