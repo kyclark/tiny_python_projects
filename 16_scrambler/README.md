@@ -1,5 +1,7 @@
 # Scrambler
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNPcLby3JXlKSo6duCIjh93S
+
 Write a program that will randomly scramble the middle parts of words of 3 letters or more in a given text which may come from the command line:
 
 ```

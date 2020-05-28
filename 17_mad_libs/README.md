@@ -1,5 +1,7 @@
 # Mad Libs
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNPnNx_Emds00y2RX1Tbk59r
+
 Write a "Mad Libs" program that will read a given file and prompt the user for the parts of speech indicated in angle brackets, e.g., `<verb>`, replacing those values and printing the new text a la the beloved "Mad Libs" game.
 For example, the input file might look like this:
 
