@@ -4,6 +4,8 @@ This is the code repository for the Manning Publications book, _Tiny Python Proj
 
 https://www.manning.com/books/tiny-python-projects?a_aid=youens&a_bid=b6485d52
 
+http://tinypythonprojects.com/
+
 There is a directory for each chapter of the book.
 Each directory contains a `test.py` program you can use with `pytest` to check that you have written the program correctly.
 I have included a short README to describe each exercise.
