@@ -12,9 +12,19 @@ import sys
 from datetime import date
 from pathlib import Path
 
+from typing import NamedTuple
+
+
+class Args(NamedTuple):
+    program: str
+    name: str
+    email: str
+    purpose: str
+    overwrite: bool
+
 
 # --------------------------------------------------
-def get_args():
+def get_args() -> Args:
     """Get arguments"""
 
     parser = argparse.ArgumentParser(
@@ -22,25 +32,27 @@ def get_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     defaults = get_defaults()
+    username = os.getenv('USER') or 'Anonymous'
+    hostname = os.getenv('HOSTNAME') or 'localhost'
 
     parser.add_argument('program', help='Program name', type=str)
 
     parser.add_argument('-n',
                         '--name',
                         type=str,
-                        default=defaults.get('name', os.getenv('USER')),
+                        default=defaults.get('name', username),
                         help='Name for docstring')
 
     parser.add_argument('-e',
                         '--email',
                         type=str,
-                        default=defaults.get('email', ''),
+                        default=defaults.get('email', f'{username}@{hostname}'),
                         help='Email for docstring')
 
     parser.add_argument('-p',
                         '--purpose',
                         type=str,
-                        default='Rock the Casbah',
+                        default=defaults.get('purpose', 'Rock the Casbah'),
                         help='Purpose for docstring')
 
     parser.add_argument('-f',
@@ -55,55 +67,37 @@ def get_args():
     if not args.program:
         parser.error(f'Not a usable filename "{args.program}"')
 
-    if args.email:
-        args.email = f'<{args.email}>'
-
-    return args
+    return Args(args.program, args.name, args.email, args.purpose, args.force)
 
 
 # --------------------------------------------------
-def main():
+def main() -> None:
     """Make a jazz noise here"""
 
     args = get_args()
     program = args.program
 
-    if os.path.isfile(program) and not args.force:
+    if os.path.isfile(program) and not args.overwrite:
         answer = input(f'"{program}" exists.  Overwrite? [yN] ')
         if not answer.lower().startswith('y'):
-            print('Will not overwrite. Bye!')
-            sys.exit()
+            sys.exit('Will not overwrite. Bye!')
 
-    text = body(name=args.name,
-                email=args.email,
-                purpose=args.purpose,
-                date=str(date.today()))
-
-    print(text, file=open(program, 'wt'), end='')
+    print(body(args), file=open(program, 'wt'), end='')
     subprocess.run(['chmod', '+x', program])
     print(f'Done, see new script "{program}."')
 
 
 # --------------------------------------------------
-def preamble(**args):
-    return f"""#!/usr/bin/env python3
-\"\"\"
-Author : {args['name']}{' <' + args['email'] + '>' if args['email'] else ''}
-Date   : {args['date']}
-Purpose: {args['purpose']}
-\"\"\"
-"""
-
-
-# --------------------------------------------------
-def body(**args):
+def body(args: Args) -> str:
     """ The program template """
 
+    today = str(date.today())
+
     return f"""#!/usr/bin/env python3
 \"\"\"
-Author : {args['name']}{args['email']}
-Date   : {args['date']}
-Purpose: {args['purpose']}
+Author : {args.name}{' <' + args.email + '>' if args.email else ''}
+Date   : {today}
+Purpose: {args.purpose}
 \"\"\"
 
 import argparse
@@ -114,7 +108,7 @@ def get_args():
     \"\"\"Get command-line arguments\"\"\"
 
     parser = argparse.ArgumentParser(
-        description='{args["purpose"]}',
+        description='{args.purpose}',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('positional',
