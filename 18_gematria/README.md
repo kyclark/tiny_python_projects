@@ -1,5 +1,7 @@
 # Gematria
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNMI45XbeSAiLdivKhzygwgr
+
 Write a program that will encode each word of a given text by summing the ASCII values of the characters.
 The text may come from the command line:
 
