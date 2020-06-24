@@ -1,6 +1,6 @@
 .PHONY = fa clean run pdf
 
-MOOG = "../08_synthetic_dna/moog.py"
+MOOG = "../09_moog/moog.py"
 
 run: fasta
 	./sampler.py *.fa
