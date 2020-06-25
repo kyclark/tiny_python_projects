@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 TESTS=$(mktemp)
-find . -name all_test.sh > "$TESTS"
+find . -mindepth 2 -maxdepth 2 -name all_test.sh | sort > "$TESTS"
 
 while read -r TEST; do
     DIR=$(dirname "$TEST")
