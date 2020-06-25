@@ -32,7 +32,7 @@ def main():
     splitter = re.compile(r'(\W+)')
 
     for line in args.text.splitlines():
-        print(''.join(map(fry, splitter(line.rstrip()))))
+        print(''.join(map(fry, splitter.split(line.rstrip()))))
 
 
 # --------------------------------------------------
