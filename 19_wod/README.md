@@ -1,5 +1,7 @@
 # WOD (Workout of the Day)
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNM2jtyu3zw3aIeZ8Ov7hSy-
+
 Create a program that will read a CSV `-f` or `--file` of exercises (default `exercises.csv`) and create a Workout of the Day:
 
 ```
