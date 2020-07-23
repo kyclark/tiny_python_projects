@@ -1,5 +1,7 @@
 # Password
 
+https://www.youtube.com/playlist?list=PLhOuww6rJJNMRNnUQyUkGjpztCBUCiwZt
+
 Cf. https://xkcd.com/936/
 
 Create a program that will randomly combine words from given text(s) to create novel, memorable, unbreakable passwords:
