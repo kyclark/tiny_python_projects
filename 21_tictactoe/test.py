@@ -55,7 +55,6 @@ def test_bad_board():
 
     for bad in ['ABC', '...XXX', 'XXXOOOXX']:
         rv, out = getstatusoutput(f'{prg} --board {bad}')
-        print(out)
         assert rv != 0
         assert re.search(expected.format(bad), out)
 
@@ -65,9 +64,7 @@ def test_bad_player():
     """dies on bad player"""
 
     bad = random.choice([c for c in string.ascii_uppercase if c not in 'XO'])
-    print(f'{prg} -p {bad}')
     rv, out = getstatusoutput(f'{prg} -p {bad}')
-    print(out)
     assert rv != 0
     expected = f"-p/--player: invalid choice: '{bad}'"
     assert re.search(expected, out)
@@ -119,7 +116,6 @@ No winner.
 """.strip()
 
     rv, out = getstatusoutput(f'{prg} -b .........')
-    print(f'rv = "{rv}"')
     assert rv == 0
     assert out.strip() == board
 
@@ -226,6 +222,5 @@ def test_losing():
     losing_board = list('XXOO.....')
     for i in range(10):
         random.shuffle(losing_board)
-        print(f'{prg} {" ".join(losing_board)}')
         out = getoutput(f'{prg} -b {"".join(losing_board)}').splitlines()
         assert out[-1].strip() == 'No winner.'
