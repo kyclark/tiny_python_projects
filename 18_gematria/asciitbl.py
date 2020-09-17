@@ -2,10 +2,7 @@
 """ Make ASCII table """
 
 import argparse
-from itertools import zip_longest
-from tabulate import tabulate
 import pandas as pd
-from pprint import pprint
 
 
 # --------------------------------------------------
