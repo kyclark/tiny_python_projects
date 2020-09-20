@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# This is a daily git push request
+branch=$(date +%m_%d_%Y_%M) 
+
+# change directory
+
+echo -e "cd ~/koy/environments/\n"
+
+# create a new branch
+echo -e "git branch $branch\n"
+
+# switch to new branch
+echo -e "git checkout $branch\n"
+
+# add recent changes to the git staing area
+echo -e "git add .\n"
+
+# provide email/name
+echo -e 'git config user.email "kerimyurtbay@gmail.com"\n'
+echo -e 'git config user.name "kyurt"\n'
+
+# commit changes
+echo -e "git commit\n"
+echo -e "ry\n"
+echo -e ":wq\n"
+
+# push changes to remote fork
+echo -e "git push origin $branch\n"
+
+# password
+
+
+
+
