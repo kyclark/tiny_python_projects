@@ -6,6 +6,7 @@ Purpose: Python program to write a Python program
 
 import argparse
 import os
+import platform
 import re
 import subprocess
 import sys
@@ -83,7 +84,10 @@ def main() -> None:
             sys.exit('Will not overwrite. Bye!')
 
     print(body(args), file=open(program, 'wt'), end='')
-    subprocess.run(['chmod', '+x', program])
+
+    if platform.system() != 'Windows':
+        subprocess.run(['chmod', '+x', program], check=True)
+
     print(f'Done, see new script "{program}."')
 
 
