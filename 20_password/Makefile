@@ -6,4 +6,4 @@ test: words
 	pytest -xv test.py unit.py
 
 words:
-	[[ ! -f $(WORDS) ]] && (cd ../inputs && unzip words.txt.zip)
+	[[ -f $(WORDS) ]] || (cd ../inputs && unzip words.txt.zip)
