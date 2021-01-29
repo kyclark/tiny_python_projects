@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Author : petra <petra@localhost>
+Author : petra
 Date   : 2021-01-26
-Purpose: Rock the Casbah
+Purpose: Crow's Nest
 """
 
 import argparse
@@ -29,7 +29,9 @@ def main():
 
     args = get_args()
     word = args.word
-    print('Ahoy, Captain, a ' + word + ' off the larboard bow!')
+    article = 'an' if word[0].lower() in 'aeiou' else 'a'
+
+    print(f'Ahoy, Captain, {article} {word} off the larboard bow!')
 
 
 # --------------------------------------------------
