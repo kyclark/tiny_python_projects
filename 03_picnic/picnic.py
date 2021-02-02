@@ -25,7 +25,7 @@ def get_args():
     parser.add_argument('-s',
                         '--sorted',
                         help='Sort the items',
-                        action='store_true')
+                        action='store_true')    # if option is used by user, set to True, default is False
 
     return parser.parse_args()
 
@@ -35,17 +35,19 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    str_arg = args.arg
-    int_arg = args.int
-    file_arg = args.file
-    flag_arg = args.on
-    pos_arg = args.positional
+    items = args.str
+    sort = args.sorted
+    comma_space = ', '
 
-    print(f'str_arg = "{str_arg}"')
-    print(f'int_arg = "{int_arg}"')
-    print('file_arg = "{}"'.format(file_arg.name if file_arg else ''))
-    print(f'flag_arg = "{flag_arg}"')
-    print(f'positional = "{pos_arg}"')
+    if sort:
+        items.sort()
+
+    if len(items) == 1:
+        print(f'You are bringing {items[0]}.')
+    elif len(items) == 2:
+        print(f'You are bringing {items[0]} and {items[1]}.')
+    else:
+        print(f'You are bringing {comma_space.join(items[:len(items)-1])}, and {items[len(items)-1]}.')
 
 
 # --------------------------------------------------
