@@ -36,18 +36,19 @@ def main():
 
     args = get_args()
     items = args.str
-    sort = args.sorted
-    comma_space = ', '
+    bringing = ''
 
-    if sort:
+    if args.sorted:
         items.sort()
 
     if len(items) == 1:
-        print(f'You are bringing {items[0]}.')
+        bringing = items[0]
     elif len(items) == 2:
-        print(f'You are bringing {items[0]} and {items[1]}.')
+        bringing = ' and '.join(items)
     else:
-        print(f'You are bringing {comma_space.join(items[:len(items)-1])}, and {items[len(items)-1]}.')
+        bringing = ', '.join(items[:len(items)-1]) + ', and ' + items[-1]
+
+    print(f'You are bringing {bringing}.')
 
 
 # --------------------------------------------------
