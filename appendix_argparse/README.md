@@ -4,7 +4,6 @@ https://www.youtube.com/playlist?list=PLhOuww6rJJNNx06soCkb4aMFhuioQ7tY5
 
 This is a collection of example programs to show how you can use the standard Python module `argparse` to handle command-line aruguments.
 
-* `sys_argv.py`: sys.argv
 * `one_arg.py`: one positional argument
 * `two_args.py`: two positional arguments
 * `nargs2.py`: another way to handle two positional arguments
