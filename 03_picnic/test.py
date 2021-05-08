@@ -40,7 +40,7 @@ def test_two():
 
 
 # --------------------------------------------------
-def test_more_than_two():
+def test_more_than_two_with_oxford():
     """more than two items"""
 
     arg = '"potato chips" coleslaw cupcakes "French silk pie"'
@@ -59,10 +59,31 @@ def test_two_sorted():
 
 
 # --------------------------------------------------
-def test_more_than_two_sorted():
+def test_more_than_two_sorted_with_oxford():
     """more than two items sorted output"""
 
     arg = 'bananas apples dates cherries'
     out = getoutput(f'{prg} {arg} --sorted')
     expected = ('You are bringing apples, bananas, cherries, and dates.')
+    assert out.strip() == expected
+
+
+# --------------------------------------------------
+def test_more_than_two_sorted_no_oxford():
+    """more than two items sorted output"""
+
+    arg = 'bananas apples dates cherries'
+    out = getoutput(f'{prg} {arg} --sorted --nooxford')
+    expected = ('You are bringing apples, bananas, cherries and dates.')
+    assert out.strip() == expected
+
+
+# --------------------------------------------------
+def test_more_than_two_no_oxford():
+    """more than two items"""
+
+    arg = '"potato chips" coleslaw cupcakes "French silk pie"'
+    out = getoutput(f'{prg} {arg} --nooxford')
+    expected = ('You are bringing potato chips, coleslaw, '
+                'cupcakes and French silk pie.')
     assert out.strip() == expected
