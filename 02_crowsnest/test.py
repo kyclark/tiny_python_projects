@@ -12,6 +12,7 @@ consonant_words = [
     'zebrafish'
 ]
 vowel_words = ['aviso', 'eel', 'iceberg', 'octopus', 'upbound']
+match_case_words = ['Octopus', 'Eel']
 template = 'Ahoy, Captain, {} {} off the larboard bow!'
 
 
@@ -42,15 +43,6 @@ def test_consonant():
 
 
 # --------------------------------------------------
-def test_consonant_upper():
-    """brigantine -> a Brigatine"""
-
-    for word in consonant_words:
-        out = getoutput(f'{prg} {word.title()}')
-        assert out.strip() == template.format('a', word.title())
-
-
-# --------------------------------------------------
 def test_vowel():
     """octopus -> an octopus"""
 
@@ -60,9 +52,10 @@ def test_vowel():
 
 
 # --------------------------------------------------
-def test_vowel_upper():
-    """octopus -> an Octopus"""
+def test_match_case():
+    """Octopus -> An Octopus"""
 
-    for word in vowel_words:
-        out = getoutput(f'{prg} {word.upper()}')
-        assert out.strip() == template.format('an', word.upper())
+    for word in match_case_words:
+        out = getoutput(f'{prg} {word}')
+        print(out)
+        assert out.strip() == template.format('An', word)
