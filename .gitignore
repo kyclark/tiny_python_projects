@@ -12,3 +12,4 @@ tex2pdf*
 .coverage
 .idea
 .vscode
+.metals
