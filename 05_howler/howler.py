@@ -6,6 +6,8 @@ Purpose: Rock the Casbah
 """
 
 import argparse
+import sys
+import os
 
 
 # --------------------------------------------------
@@ -16,37 +18,24 @@ def get_args():
         description='Rock the Casbah',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('positional',
+    parser.add_argument('text',
                         metavar='str',
-                        help='A positional argument')
+                        help='A positional argument',
+                        default='../inputs/fox.txt')
 
-    parser.add_argument('-a',
-                        '--arg',
-                        help='A named string argument',
+    parser.add_argument('-o',
+                        '--outfile',
+                        help='Output file path (relative) string',
                         metavar='str',
                         type=str,
                         default='')
 
-    parser.add_argument('-i',
-                        '--int',
-                        help='A named integer argument',
-                        metavar='int',
-                        type=int,
-                        default=0)
+    args = parser.parse_args()
 
-    parser.add_argument('-f',
-                        '--file',
-                        help='A readable file',
-                        metavar='FILE',
-                        type=argparse.FileType('r'),
-                        default=None)
+    # Check if input is a string or valid filename  
+    args.text = open(args.text).read() if os.path.isfile(args.text) else args.text
 
-    parser.add_argument('-o',
-                        '--on',
-                        help='A boolean flag',
-                        action='store_true')
-
-    return parser.parse_args()
+    return args
 
 
 # --------------------------------------------------
@@ -54,17 +43,11 @@ def main():
     """Make a jazz noise here"""
 
     args = get_args()
-    pos_arg = args.positional
-    str_arg = args.arg
-    int_arg = args.int
-    file_arg = args.file
-    flag_arg = args.on
-
-    print(f'positional = "{pos_arg}"')
-    print(f'str_arg = "{str_arg}"')
-    print(f'int_arg = "{int_arg}"')
-    print('file_arg = "{}"'.format(file_arg.name if file_arg else ''))
-    print(f'flag_arg = "{flag_arg}"')
+   
+    # Open output file or stdout
+    out_fh = open(args.outfile, 'wt') if args.outfile else sys.stdout
+    out_fh.write(args.text.upper())
+    out_fh.close()
 
 
 # --------------------------------------------------
