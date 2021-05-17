@@ -16,22 +16,21 @@ def get_args():
         description='Choose the article',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('word',
-                        metavar='word',
-                        help='The thing we see')
-
-    
+    parser.add_argument('word', metavar='word', help='The thing we see')
 
     return parser.parse_args()
 
 
-def print_object(w):
-    vowels = ('a','e','i','o','u')
+def print_object(object_seen):
+    """Print object seen
+       First check for vowel or consonant
+    """
+    vowels = ('a', 'e', 'i', 'o', 'u')
 
-    if w[0].lower() in (vowels):
-        print("Ahoy, Captain, an " + w + " off the larboard bow!")
+    if object_seen[0].lower() in vowels:
+        print("Ahoy, Captain, an " + object_seen + " off the larboard bow!")
     else:
-        print("Ahoy, Captain, a " + w + " off the larboard bow!")
+        print("Ahoy, Captain, a " + object_seen + " off the larboard bow!")
 
 
 # --------------------------------------------------
@@ -41,7 +40,6 @@ def main():
     args = get_args()
     word = args.word
     print_object(word)
-
 
 
 # --------------------------------------------------
