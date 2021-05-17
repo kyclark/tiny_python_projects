@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "tiny_python"
+version = "0.1.0"
+description = ""
+authors = ["mattdube"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+black = "^21.5b1"
+flake8 = "^3.9.2"
+ipython = "^7.23.1"
+mypy = "^0.812"
+pylint = "^2.8.2"
+pytest = "^6.2.4"
+yapf = "^0.31.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
