@@ -2,7 +2,7 @@
 """
 Author : matt <matt@localhost>
 Date   : 2021-05-18
-Purpose: Rock the Casbah
+Purpose: Picnic game
 """
 
 import argparse
@@ -13,12 +13,14 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Rock the Casbah',
+        description='Picnic game',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument('positional',
                         metavar='str',
-                        help='A positional argument')
+                        nargs='+',
+                        type=str,
+                        help='picnic game')
 
     parser.add_argument('-a',
                         '--arg',
