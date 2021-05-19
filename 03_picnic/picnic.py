@@ -20,14 +20,14 @@ def get_args():
                         metavar='str',
                         nargs='+',
                         type=str,
-                        help='picnic game')
+                        help='Item(s) to bring')
 
-    parser.add_argument('-a',
-                        '--arg',
-                        help='A named string argument',
+    parser.add_argument('-s',
+                        '--sorted',
+                        help='Sort the items',
                         metavar='str',
                         type=str,
-                        default='')
+                        default='False')
 
     parser.add_argument('-i',
                         '--int',
