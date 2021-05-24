@@ -16,15 +16,14 @@ def get_args():
         description='Picnic game',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('positional',
+    parser.add_argument('item',
                         metavar='str',
                         nargs='+',
-                        type=str,
                         help='Item(s) to bring')
 
     parser.add_argument('-s',
                         '--sorted',
-                        help='sort the items',
+                        help='Sort the items',
                         action='store_true')
 
     return parser.parse_args()
@@ -51,9 +50,12 @@ def main():
 
     args = get_args()
     #flag_arg = args.on
-    pos_arg = args.positional
+    items = args.item
 
-    picnic_items = create_picnic_list(pos_arg)
+    if args.sorted:
+        items.sort()
+
+    picnic_items = create_picnic_list(items)
     print(picnic_items)
 
 
