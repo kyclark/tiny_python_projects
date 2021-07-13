@@ -40,3 +40,20 @@ def test_02():
     rv, out = getstatusoutput(f'{prg} "That number to call is 098-765-4321."')
     assert rv == 0
     assert out.rstrip() == 'That number to call is 512-340-6789.'
+
+# --------------------------------------------------
+def test_03():
+    """test convert to string"""
+
+    rv, out = getstatusoutput(f'{prg} 123-456-7890 -s')
+    assert rv == 0
+    assert out == 'one two three - four five six - seven eight nine zero '
+
+
+# --------------------------------------------------
+def test_04():
+    """test convert to string"""
+
+    rv, out = getstatusoutput(f'{prg} --substitutestring "That number to call is 098-765-4321."')
+    assert rv == 0
+    assert out.rstrip() == 'That number to call is zero nine eight - seven six five - four three two one .'

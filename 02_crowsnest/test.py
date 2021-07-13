@@ -12,7 +12,9 @@ consonant_words = [
     'zebrafish'
 ]
 vowel_words = ['aviso', 'eel', 'iceberg', 'octopus', 'upbound']
-template = 'Ahoy, Captain, {} {} off the larboard bow!'
+invalid_words = ['1one', '#hash', '1#both']
+side = 'larboard'
+template = 'Ahoy, Captain, {} {} off the {} bow!'
 
 
 # --------------------------------------------------
@@ -33,21 +35,30 @@ def test_usage():
 
 
 # --------------------------------------------------
+def test_word_alpha():
+    """sighting must start with alpha character"""
+
+    for word in invalid_words:
+        rv, out = getstatusoutput(f'{prg} {word}')
+        assert rv == 2
+        assert out.lower().startswith('usage')
+
+# --------------------------------------------------
 def test_consonant():
     """brigantine -> a brigantine"""
 
     for word in consonant_words:
         out = getoutput(f'{prg} {word}')
-        assert out.strip() == template.format('a', word)
+        assert out.strip() == template.format('a', word, 'larboard', side)
 
 
 # --------------------------------------------------
 def test_consonant_upper():
-    """brigantine -> a Brigatine"""
+    """brigantine -> A Brigantine"""
 
     for word in consonant_words:
         out = getoutput(f'{prg} {word.title()}')
-        assert out.strip() == template.format('a', word.title())
+        assert out.strip() == template.format('A', word.title(), 'larboard', side)
 
 
 # --------------------------------------------------
@@ -56,13 +67,21 @@ def test_vowel():
 
     for word in vowel_words:
         out = getoutput(f'{prg} {word}')
-        assert out.strip() == template.format('an', word)
+        assert out.strip() == template.format('an', word, 'larboard', side)
 
 
 # --------------------------------------------------
 def test_vowel_upper():
-    """octopus -> an Octopus"""
+    """Octopus -> An Octopus"""
 
     for word in vowel_words:
         out = getoutput(f'{prg} {word.upper()}')
-        assert out.strip() == template.format('an', word.upper())
+        assert out.strip() == template.format('An', word.upper(), 'larboard', side)
+
+# --------------------------------------------------
+def test_starboard():
+    """--side starboard -> starboard"""
+
+    for word in consonant_words:
+        out = getoutput(f'{prg} {word} --side starboard')
+        assert out.strip() == template.format('a', word, 'starboard', side)
