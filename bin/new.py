@@ -2,6 +2,7 @@
 """
 Author : Ken Youens-Clark <kyclark@gmail.com>
 Purpose: Python program to write a Python program
+Modified by Lee A. Congdon <lee@lcongdon.com> 2021-07-10
 """
 
 import argparse
@@ -95,7 +96,7 @@ def main() -> None:
 def body(args: Args) -> str:
     """ The program template """
 
-    today = str(date.today())
+    today = (date.today()).isoformat()
 
     return f"""#!/usr/bin/env python3
 \"\"\"
@@ -107,9 +108,8 @@ Purpose: {args.purpose}
 import argparse
 
 
-# --------------------------------------------------
 def get_args():
-    \"\"\"Get command-line arguments\"\"\"
+    \"\"\"Parse arguments\"\"\"
 
     parser = argparse.ArgumentParser(
         description='{args.purpose}',
@@ -148,9 +148,8 @@ def get_args():
     return parser.parse_args()
 
 
-# --------------------------------------------------
 def main():
-    \"\"\"Make a jazz noise here\"\"\"
+    \"\"\"Main program\"\"\"
 
     args = get_args()
     str_arg = args.arg
@@ -166,7 +165,6 @@ def main():
     print(f'positional = "{{pos_arg}}"')
 
 
-# --------------------------------------------------
 if __name__ == '__main__':
     main()
 """
