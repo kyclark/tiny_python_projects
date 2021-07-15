@@ -1,0 +1,1 @@
+tr -d "[:punct:]" | tr -d "[:digit:]" | tr "[:lower:]" "[:upper:]" | tr -cs "[:alpha:]" "\n" | sort -u | wc -l
