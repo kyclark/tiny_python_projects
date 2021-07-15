@@ -115,35 +115,42 @@ def get_args():
         description='{args.purpose}',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('positional',
-                        metavar='str',
-                        help='A positional argument')
 
     parser.add_argument('-a',
                         '--arg',
+                        default='',
+                        type=str,
                         help='A named string argument',
                         metavar='str',
-                        type=str,
-                        default='')
+
 
     parser.add_argument('-i',
                         '--int',
-                        help='A named integer argument',
-                        metavar='int',
+                        default=0,
                         type=int,
-                        default=0)
+                        help='A named integer argument',
+                        metavar='int')
+
 
     parser.add_argument('-f',
                         '--file',
-                        help='A readable file',
-                        metavar='FILE',
+                        default=None,
                         type=argparse.FileType('rt'),
-                        default=None)
+                        help='A readable file',
+                        metavar='FILE')
+
 
     parser.add_argument('-o',
                         '--on',
-                        help='A boolean flag',
-                        action='store_true')
+                        action='store_true',
+                        help='A boolean flag')
+
+
+    parser.add_argument('positional',
+                        nargs='+',
+                        help='A positional argument',
+                        metavar='str')
+
 
     return parser.parse_args()
 

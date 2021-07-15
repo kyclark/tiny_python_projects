@@ -1,0 +1,22 @@
+{
+    "Uncle Paul": 
+        {
+            "emailAddress": "pminor@example.com",
+            "phoneNumber": "688 397-2232"
+        },
+    "Pete Quint":
+        {
+            "emailAddress": "quint@example.com",
+            "phoneNumber": "335 332-4478"
+        },
+    "Rachel Smith":
+        {
+            "emailAddress": "rsmith33@example.com",
+            "phoneNumber": "558 544-6787"
+        },
+    "Tom Upbridge":
+        {
+            "emailAddress": "tup@example.com",
+            "phoneNumber": "118 885-6687"
+        }
+}
