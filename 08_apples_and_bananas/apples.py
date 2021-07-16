@@ -2,75 +2,64 @@
 """
 Author : Lee A. Congdon <lee@lcongdon.com>
 Date   : 2021-07-15
-Purpose: Rock the Casbah
+Purpose: Tiny Python Projects exercise: Find and replace 
 """
 
 import argparse
+import os
+import io
 
 
 def get_args():
     """Parse arguments"""
 
     parser = argparse.ArgumentParser(
-        description='Rock the Casbah',
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        description="Apples and bananas",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
 
+    parser.add_argument(
+        "-v",
+        "--vowel",
+        default="a",
+        type=str,
+        choices=list('aeiou'),
+        help="The vowel to substitute",
+        metavar="vowel",
+    )
 
-    parser.add_argument('-a',
-                        '--arg',
-                        default='',
-                        type=str,
-                        help='A named string argument',
-                        metavar='str',
+    parser.add_argument("text", help="Input text or file", metavar="text")
 
+    args = parser.parse_args()
 
-    parser.add_argument('-i',
-                        '--int',
-                        default=0,
-                        type=int,
-                        help='A named integer argument',
-                        metavar='int')
+    if os.path.isfile(args.text):
+        args.text = open(args.text, "rt")
+    else:
+        args.text = io.StringIO(args.text + "\n")
 
-
-    parser.add_argument('-f',
-                        '--file',
-                        default=None,
-                        type=argparse.FileType('rt'),
-                        help='A readable file',
-                        metavar='FILE')
-
-
-    parser.add_argument('-o',
-                        '--on',
-                        action='store_true',
-                        help='A boolean flag')
-
-
-    parser.add_argument('positional',
-                        nargs='+',
-                        help='A positional argument',
-                        metavar='str')
-
-
-    return parser.parse_args()
+    return args
 
 
 def main():
     """Main program"""
 
     args = get_args()
-    str_arg = args.arg
-    int_arg = args.int
-    file_arg = args.file
-    flag_arg = args.on
-    pos_arg = args.positional
+    table = {
+        "a": args.vowel,
+        "e": args.vowel,
+        "i": args.vowel,
+        "o": args.vowel,
+        "u": args.vowel,
+        "A": args.vowel.upper(),
+        "E": args.vowel.upper(),
+        "I": args.vowel.upper(),
+        "O": args.vowel.upper(),
+        "U": args.vowel.upper(),
+    }
+    for line in args.text:
+        line = line.translate(str.maketrans(table))
+        print(line.rstrip())
 
-    print(f'str_arg = "{str_arg}"')
-    print(f'int_arg = "{int_arg}"')
-    print('file_arg = "{}"'.format(file_arg.name if file_arg else ''))
-    print(f'flag_arg = "{flag_arg}"')
-    print(f'positional = "{pos_arg}"')
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

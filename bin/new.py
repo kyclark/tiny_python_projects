@@ -121,7 +121,7 @@ def get_args():
                         default='',
                         type=str,
                         help='A named string argument',
-                        metavar='str',
+                        metavar='str')
 
 
     parser.add_argument('-i',
