@@ -53,10 +53,10 @@ def test_command_line_with_vowel():
 
 # --------------------------------------------------
 def test_command_line_with_vowel_preserve_case():
-    """ APPLES AND BANANAS -> IPPLIS IND BININIS """
+    """ FOO AND FAA -> FE END FE """
 
-    out = getoutput(f'{prg} "APPLES AND BANANAS" --vowel i')
-    assert out.strip() == 'IPPLIS IND BININIS'
+    out = getoutput(f'{prg} "FOO AND FAA" --vowel e')
+    assert out.strip() == 'FE END FE'
 
 
 # --------------------------------------------------
