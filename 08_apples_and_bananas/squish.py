@@ -44,6 +44,9 @@ def main():
     pattern = vowel + '+'
     result = vowel
     text = re.sub(pattern, result, text)
+    pattern = vowel.upper() + '+'
+    result = vowel.upper()
+    text = re.sub(pattern, result, text)
     print(text)
 
 
