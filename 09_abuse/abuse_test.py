@@ -12,7 +12,7 @@ prg = './abuse.py'
 
 # --------------------------------------------------
 def adjective_file_parameter():
-    """Either -f or -adjective_file"""
+    """Either -f or --adjective_file"""
 
     return "-f" if random.randint(0, 1) else "--adjective_file"
 
