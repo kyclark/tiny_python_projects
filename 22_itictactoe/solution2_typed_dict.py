@@ -33,15 +33,14 @@ def main() -> None:
         elif state['winner']:
             print(f"{state['winner']} has won!")
             break
-
-        state = get_move(state)
-
-        if state['quit']:
+        elif state['quit']:
             print('You lose, loser!')
             break
         elif state['draw']:
             print('No winner.')
             break
+
+        state = get_move(state)
 
 
 # --------------------------------------------------
