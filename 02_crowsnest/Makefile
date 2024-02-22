@@ -1,4 +1,4 @@
 .PHONY: test
 
 test:
-	pytest -xv test.py
+	pytest-3 -xv test.py
