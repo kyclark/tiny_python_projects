@@ -32,7 +32,7 @@ def test_usage():
 def test_bad_int():
     """Bad integer value"""
 
-    bad = random.randint(-10, 1)
+    bad = random.randint(-10, 0)
     rv, out = getstatusoutput(f'{prg} -n {bad}')
     assert rv != 0
     assert re.search(f'--num "{bad}" must be greater than 0', out)
