@@ -37,8 +37,18 @@ def main():
 # --------------------------------------------------
 def word2num(word):
     """Sum the ordinal values of all the characters"""
-
-    return str(sum(map(ord, re.sub('[^A-Za-z0-9]', '', word))))
+    word2numList=[]
+    sum=0
+    for i in word:
+        asciinumber=ord(i)
+        if (i>47 and i<58) or  (i>64 and i<123) :
+            sum+=asciinumber
+        else:
+            if i==32:
+                word2numList.append(sum)
+                sum=0
+      
+    return word2numList
 
 
 # --------------------------------------------------
