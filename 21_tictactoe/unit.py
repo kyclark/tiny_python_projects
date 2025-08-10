@@ -2,7 +2,7 @@ from tictactoe import format_board, find_winner
 import random
 
 
-# --------------------------------------------------
+
 def test_board_no_board():
     """makes default board"""
 
@@ -19,7 +19,6 @@ def test_board_no_board():
     assert format_board('.' * 9) == board
 
 
-# --------------------------------------------------
 def test_board_with_board():
     """makes board"""
 
@@ -36,7 +35,6 @@ def test_board_with_board():
     assert format_board('...OXX...') == board
 
 
-# --------------------------------------------------
 def test_winning():
     """test winning boards"""
 
