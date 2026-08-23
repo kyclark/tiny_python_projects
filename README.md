@@ -67,3 +67,6 @@ Then do `git clone` of *your* repository to get a local copy.
 # Copyright
 
 © Ken Youens-Clark 2019-2024
+## Project Update
+
+This project demonstrates Git branch management and merge conflict resolution.
