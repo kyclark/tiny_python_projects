@@ -65,7 +65,9 @@ If you like, you can use the GitHub interface to _fork_ this repository into you
 Then do `git clone` of *your* repository to get a local copy.
 
 # Copyright
+## Project Update
 
+This project demonstrates Git branching and collaboration.
 © Ken Youens-Clark 2019-2024
 ## Project Update
 
