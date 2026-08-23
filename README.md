@@ -67,3 +67,10 @@ Then do `git clone` of *your* repository to get a local copy.
 # Copyright
 
 © Ken Youens-Clark 2019-2024
+## New Contribution
+
+This project was updated as part of a GitHub fork-and-pull request workflow demonstration.
+
+### Contribution
+- Updated project documentation
+- Added contribution information
